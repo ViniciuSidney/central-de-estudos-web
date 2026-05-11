@@ -145,6 +145,16 @@ button {
   background: var(--surface-soft);
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.button:disabled:hover {
+  background: transparent;
+}
+
 .navigation-panel {
   padding: 28px;
   margin-bottom: 28px;
