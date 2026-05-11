@@ -6,6 +6,8 @@ export function initSubjects() {
   const subjectForm = document.querySelector("#subject-form");
   const subjectNameInput = document.querySelector("#subject-name");
   const subjectDescriptionInput = document.querySelector("#subject-description");
+  const clearSubjectFormButton = document.querySelector("#clear-subject-form");
+  const subjectFormMessage = document.querySelector("#subject-form-message");
   const subjectsList = document.querySelector("#subjects-list");
   const subjectsEmptyState = document.querySelector("#subjects-empty-state");
   const subjectsCount = document.querySelector("#subjects-count");
@@ -15,6 +17,8 @@ export function initSubjects() {
     !subjectForm ||
     !subjectNameInput ||
     !subjectDescriptionInput ||
+    !clearSubjectFormButton ||
+    !subjectFormMessage ||
     !subjectsList ||
     !subjectsEmptyState ||
     !subjectsCount ||
@@ -38,6 +42,30 @@ export function initSubjects() {
       description,
       createdAt: new Date().toISOString()
     };
+  }
+
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
+
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+  }
+
+  function setFormMessage(message, type = "default") {
+    subjectFormMessage.textContent = message;
+
+    subjectFormMessage.classList.remove("is-error", "is-success");
+
+    if (type === "error") {
+      subjectFormMessage.classList.add("is-error");
+    }
+
+    if (type === "success") {
+      subjectFormMessage.classList.add("is-success");
+    }
   }
 
   function updateSubjectsCount(subjects) {
@@ -73,6 +101,9 @@ export function initSubjects() {
         <div class="subject-card__content">
           <h3>${subject.name}</h3>
           <p>${subject.description || "Sem descrição adicionada."}</p>
+          <span class="subject-card__date">
+            Criada em ${formatDate(subject.createdAt)}
+          </span>
         </div>
 
         <div class="subject-card__actions">
@@ -89,6 +120,7 @@ export function initSubjects() {
   function clearForm() {
     subjectNameInput.value = "";
     subjectDescriptionInput.value = "";
+    setFormMessage("");
     subjectNameInput.focus();
   }
 
@@ -99,12 +131,12 @@ export function initSubjects() {
     const subjectDescription = subjectDescriptionInput.value.trim();
 
     if (!subjectName) {
+      setFormMessage("Informe o nome da matéria antes de cadastrar.", "error");
       subjectNameInput.focus();
       return;
     }
 
     const subjects = getSubjects();
-
     const newSubject = createSubject(subjectName, subjectDescription);
 
     subjects.push(newSubject);
@@ -112,6 +144,8 @@ export function initSubjects() {
     saveSubjects(subjects);
     renderSubjects();
     clearForm();
+
+    setFormMessage("Matéria cadastrada com sucesso.", "success");
   }
 
   function handleSubjectDelete(event) {
@@ -122,17 +156,33 @@ export function initSubjects() {
     }
 
     const subjectId = deleteButton.dataset.deleteSubject;
+    const subject = getSubjects().find((currentSubject) => {
+      return currentSubject.id === subjectId;
+    });
 
-    const updatedSubjects = getSubjects().filter((subject) => {
-      return subject.id !== subjectId;
+    if (!subject) {
+      return;
+    }
+
+    const shouldDelete = confirm(`Deseja excluir a matéria "${subject.name}"?`);
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    const updatedSubjects = getSubjects().filter((currentSubject) => {
+      return currentSubject.id !== subjectId;
     });
 
     saveSubjects(updatedSubjects);
     renderSubjects();
+
+    setFormMessage("Matéria excluída com sucesso.", "success");
   }
 
   subjectForm.addEventListener("submit", handleSubjectSubmit);
   subjectsList.addEventListener("click", handleSubjectDelete);
+  clearSubjectFormButton.addEventListener("click", clearForm);
 
   renderSubjects();
 

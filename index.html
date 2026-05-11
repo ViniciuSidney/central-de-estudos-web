@@ -162,9 +162,25 @@
               ></textarea>
             </div>
 
-            <button class="button button--primary" type="submit">
-              Adicionar matéria
-            </button>
+            <p
+              class="form-message"
+              id="subject-form-message"
+              aria-live="polite"
+            ></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Adicionar matéria
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-subject-form"
+              >
+                Limpar
+              </button>
+            </div>
           </form>
 
           <div class="subjects-area">

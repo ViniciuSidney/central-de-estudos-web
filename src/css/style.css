@@ -311,6 +311,32 @@ button {
   border-radius: 16px;
 }
 
+.form-message {
+  min-height: 22px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.form-message.is-error {
+  color: #b34a4a;
+}
+
+.form-message.is-success {
+  color: var(--accent);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.subject-card__date {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
