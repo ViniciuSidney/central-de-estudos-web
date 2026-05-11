@@ -90,36 +90,46 @@ A versão v0.2 foi considerada concluída porque o usuário consegue:
 # v0.3 — Sistema de temas
 
 ### Objetivo
-Permitir que cada matéria tenha seus próprios temas de estudo.
+Permitir que cada matéria tenha seus próprios temas de estudo, mantendo a relação entre matéria e tema de forma organizada.
 
 ### Status
-Em desenvolvimento.
+Concluída.
 
 ---
 
 ## Previsto para a v0.3
 
-- Tela de temas por matéria
-- Cadastro de temas
-- Listagem de temas
-- Edição básica de tema
-- Exclusão de temas
-- Salvamento dos temas no `localStorage`
-- Relação entre matéria e tema
-- Estado vazio quando uma matéria não tiver temas
+- Tela de temas por matéria ✅
+- Seleção de matéria para cadastrar tema ✅
+- Cadastro de temas ✅
+- Listagem de temas por matéria ✅
+- Exclusão de temas ✅
+- Salvamento dos temas no `localStorage` ✅
+- Relação entre matéria e tema ✅
+- Estado vazio quando uma matéria não tiver temas ✅
+- Estado de aviso quando não houver matérias cadastradas ✅
+- Validação de campo obrigatório ✅
+- Botão para limpar formulário ✅
+- Data de criação do tema no card ✅
+- Atualização do contador de temas no Dashboard ✅
+- Destaque visual da matéria selecionada ✅
+- Modal de confirmação reutilizável ✅
+- Remoção dos temas relacionados ao excluir uma matéria ✅
 
 ---
 
 ## Fechamento da v0.3
 
-A versão v0.3 será considerada concluída quando o usuário conseguir:
+A versão v0.3 foi considerada concluída porque o usuário consegue:
 
-- Entrar em uma matéria
-- Criar temas dentro dela
-- Visualizar os temas cadastrados
-- Editar informações básicas do tema
-- Excluir temas
-- Manter os dados salvos no navegador
+- Selecionar uma matéria cadastrada ✅
+- Criar temas dentro de uma matéria ✅
+- Visualizar apenas os temas da matéria selecionada ✅
+- Excluir temas com confirmação ✅
+- Manter os temas salvos no navegador ✅
+- Ver a quantidade total de temas no Dashboard ✅
+- Ver estados vazios e mensagens de aviso corretamente ✅
+- Excluir uma matéria sem deixar temas órfãos no sistema ✅
 
 ---
 
