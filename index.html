@@ -280,6 +280,44 @@
       </section>
     </main>
 
+    <div
+      class="modal-overlay"
+      id="confirm-delete-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-delete-title"
+      aria-describedby="confirm-delete-description"
+      hidden
+    >
+      <div class="modal">
+        <p class="modal__tag">⚠️ Confirmação</p>
+
+        <h3 class="modal__title" id="confirm-delete-title">Excluir matéria</h3>
+
+        <p class="modal__description" id="confirm-delete-description">
+          Tem certeza que deseja excluir esta matéria?
+        </p>
+
+        <div class="modal__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            id="confirm-delete-cancel"
+          >
+            Cancelar
+          </button>
+
+          <button
+            class="button button--danger"
+            type="button"
+            id="confirm-delete-confirm"
+          >
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+
     <button class="theme-toggle" type="button" aria-label="Alternar tema">
       🌙
     </button>

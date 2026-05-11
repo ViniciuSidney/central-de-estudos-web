@@ -446,6 +446,61 @@ button {
   background: #7f2f2f;
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: grid;
+  place-items: center;
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  width: min(460px, 100%);
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.modal__tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+
+  background: var(--success-soft);
+  border-radius: 999px;
+}
+
+.modal__title {
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  letter-spacing: -0.03em;
+}
+
+.modal__description {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
   .nav-grid,
@@ -493,6 +548,14 @@ button {
   }
 
   .subject-card__actions .button {
+    width: 100%;
+  }
+
+  .modal__actions {
+    flex-direction: column;
+  }
+
+  .modal__actions .button {
     width: 100%;
   }
 }
