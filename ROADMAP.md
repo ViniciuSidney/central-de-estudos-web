@@ -93,7 +93,7 @@ A versão v0.2 foi considerada concluída porque o usuário consegue:
 Permitir que cada matéria tenha seus próprios temas de estudo.
 
 ### Status
-Planejada.
+Em desenvolvimento.
 
 ---
 
