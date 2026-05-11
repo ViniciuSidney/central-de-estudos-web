@@ -358,27 +358,27 @@
 
     <div
       class="modal-overlay"
-      id="confirm-delete-modal"
+      id="app-confirm-modal"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="confirm-delete-title"
-      aria-describedby="confirm-delete-description"
+      aria-labelledby="app-confirm-title"
+      aria-describedby="app-confirm-description"
       hidden
     >
       <div class="modal">
-        <p class="modal__tag">⚠️ Confirmação</p>
+        <p class="modal__tag" id="app-confirm-tag">⚠️ Confirmação</p>
 
-        <h3 class="modal__title" id="confirm-delete-title">Excluir matéria</h3>
+        <h3 class="modal__title" id="app-confirm-title">Confirmar ação</h3>
 
-        <p class="modal__description" id="confirm-delete-description">
-          Tem certeza que deseja excluir esta matéria?
+        <p class="modal__description" id="app-confirm-description">
+          Tem certeza que deseja continuar?
         </p>
 
         <div class="modal__actions">
           <button
             class="button button--secondary"
             type="button"
-            id="confirm-delete-cancel"
+            id="app-confirm-cancel"
           >
             Cancelar
           </button>
@@ -386,9 +386,9 @@
           <button
             class="button button--danger"
             type="button"
-            id="confirm-delete-confirm"
+            id="app-confirm-confirm"
           >
-            Excluir
+            Confirmar
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 
@@ -17,17 +18,6 @@ export function initSubjects() {
     "#dashboard-subjects-count",
   );
 
-  const confirmDeleteModal = document.querySelector("#confirm-delete-modal");
-  const confirmDeleteDescription = document.querySelector(
-    "#confirm-delete-description",
-  );
-  const confirmDeleteCancelButton = document.querySelector(
-    "#confirm-delete-cancel",
-  );
-  const confirmDeleteConfirmButton = document.querySelector(
-    "#confirm-delete-confirm",
-  );
-
   if (
     !subjectForm ||
     !subjectNameInput ||
@@ -37,16 +27,10 @@ export function initSubjects() {
     !subjectsList ||
     !subjectsEmptyState ||
     !subjectsCount ||
-    !dashboardSubjectsCount ||
-    !confirmDeleteModal ||
-    !confirmDeleteDescription ||
-    !confirmDeleteCancelButton ||
-    !confirmDeleteConfirmButton
+    !dashboardSubjectsCount
   ) {
     return;
   }
-
-  let subjectIdPendingDeletion = null;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -149,20 +133,6 @@ export function initSubjects() {
     subjectNameInput.focus();
   }
 
-  function openDeleteModal(subject) {
-    subjectIdPendingDeletion = subject.id;
-
-    confirmDeleteDescription.textContent = `Tem certeza que deseja excluir a matéria "${subject.name}"?`;
-
-    confirmDeleteModal.hidden = false;
-    confirmDeleteConfirmButton.focus();
-  }
-
-  function closeDeleteModal() {
-    subjectIdPendingDeletion = null;
-    confirmDeleteModal.hidden = true;
-  }
-
   function handleSubjectSubmit(event) {
     event.preventDefault();
 
@@ -205,36 +175,28 @@ export function initSubjects() {
       return;
     }
 
-    openDeleteModal(subject);
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir matéria",
+      message: `Tem certeza que deseja excluir a matéria "${subject.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteSubject(subject.id);
+      },
+    });
   }
 
-  function confirmSubjectDeletion() {
-    if (!subjectIdPendingDeletion) {
-      return;
-    }
-
+  function deleteSubject(subjectId) {
     const updatedSubjects = getSubjects().filter((currentSubject) => {
-      return currentSubject.id !== subjectIdPendingDeletion;
+      return currentSubject.id !== subjectId;
     });
 
     saveSubjects(updatedSubjects);
     renderSubjects();
-    closeDeleteModal();
     notifySubjectsChanged();
-    
+
     setFormMessage("Matéria excluída com sucesso.", "success");
-  }
-
-  function handleModalOverlayClick(event) {
-    if (event.target === confirmDeleteModal) {
-      closeDeleteModal();
-    }
-  }
-
-  function handleEscapeKey(event) {
-    if (event.key === "Escape" && !confirmDeleteModal.hidden) {
-      closeDeleteModal();
-    }
   }
 
   function notifySubjectsChanged() {
@@ -244,11 +206,6 @@ export function initSubjects() {
   subjectForm.addEventListener("submit", handleSubjectSubmit);
   subjectsList.addEventListener("click", handleSubjectDelete);
   clearSubjectFormButton.addEventListener("click", clearForm);
-
-  confirmDeleteCancelButton.addEventListener("click", closeDeleteModal);
-  confirmDeleteConfirmButton.addEventListener("click", confirmSubjectDeletion);
-  confirmDeleteModal.addEventListener("click", handleModalOverlayClick);
-  document.addEventListener("keydown", handleEscapeKey);
 
   renderSubjects();
 

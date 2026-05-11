@@ -1,5 +1,6 @@
 import { initTheme } from "../ui/theme.js";
 import { initNavigation } from "../ui/navigation.js";
+import { initConfirmModal } from "../ui/confirmModal.js";
 import { initSubjects } from "../features/subjects.js";
 import { initThemes } from "../features/themes.js";
 import { initQuestions } from "../features/questions.js";
@@ -11,6 +12,7 @@ export function startApp() {
 
   initTheme();
   initNavigation();
+  initConfirmModal();
   initSubjects();
   initThemes();
   initQuestions();
