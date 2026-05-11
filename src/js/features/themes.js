@@ -9,12 +9,18 @@ export function initThemes() {
   const themeDescriptionInput = document.querySelector("#theme-description");
   const clearThemeFormButton = document.querySelector("#clear-theme-form");
   const themeFormMessage = document.querySelector("#theme-form-message");
-  const themeNoSubjectWarning = document.querySelector("#theme-no-subject-warning");
-  const themesCurrentSubject = document.querySelector("#themes-current-subject");
+  const themeNoSubjectWarning = document.querySelector(
+    "#theme-no-subject-warning",
+  );
+  const themesCurrentSubject = document.querySelector(
+    "#themes-current-subject",
+  );
   const themesCount = document.querySelector("#themes-count");
   const themesEmptyState = document.querySelector("#themes-empty-state");
   const themesList = document.querySelector("#themes-list");
-  const dashboardThemesCount = document.querySelector("#dashboard-themes-count");
+  const dashboardThemesCount = document.querySelector(
+    "#dashboard-themes-count",
+  );
 
   if (
     !themeForm ||
@@ -60,10 +66,11 @@ export function initThemes() {
 
   function renderSubjectOptions() {
     const subjects = getSubjects();
+    const previousSelectedSubjectId = themeSubjectSelect.value;
 
     themeSubjectSelect.innerHTML = `
-      <option value="">Selecione uma matéria</option>
-    `;
+    <option value="">Selecione uma matéria</option>
+  `;
 
     subjects.forEach((subject) => {
       const option = document.createElement("option");
@@ -75,11 +82,16 @@ export function initThemes() {
     });
 
     const hasSubjects = subjects.length > 0;
+    const selectedSubjectStillExists = subjects.some((subject) => {
+      return subject.id === previousSelectedSubjectId;
+    });
 
     themeNoSubjectWarning.hidden = hasSubjects;
     themeForm.hidden = !hasSubjects;
 
     if (!hasSubjects) {
+      themeSubjectSelect.value = "";
+
       themesCurrentSubject.textContent =
         "Cadastre uma matéria antes de criar temas.";
 
@@ -87,7 +99,17 @@ export function initThemes() {
       dashboardThemesCount.textContent = "0";
       themesEmptyState.hidden = false;
       themesList.innerHTML = "";
+
+      return;
     }
+
+    if (selectedSubjectStillExists) {
+      themeSubjectSelect.value = previousSelectedSubjectId;
+    } else {
+      themeSubjectSelect.value = "";
+    }
+
+    updateSelectedSubjectText();
   }
 
   function updateSelectedSubjectText() {
@@ -112,14 +134,15 @@ export function initThemes() {
 
     setThemeFormMessage(
       "O cadastro real de temas será implementado na próxima etapa.",
-      "success"
+      "success",
     );
   }
 
   themeForm.addEventListener("submit", handleThemeSubmit);
   themeSubjectSelect.addEventListener("change", updateSelectedSubjectText);
   clearThemeFormButton.addEventListener("click", clearThemeForm);
-
+  document.addEventListener("subjects:changed", renderSubjectOptions);
+  
   renderSubjectOptions();
   updateSelectedSubjectText();
 

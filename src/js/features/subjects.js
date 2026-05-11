@@ -5,18 +5,28 @@ const SUBJECTS_COLLECTION = "subjects";
 export function initSubjects() {
   const subjectForm = document.querySelector("#subject-form");
   const subjectNameInput = document.querySelector("#subject-name");
-  const subjectDescriptionInput = document.querySelector("#subject-description");
+  const subjectDescriptionInput = document.querySelector(
+    "#subject-description",
+  );
   const clearSubjectFormButton = document.querySelector("#clear-subject-form");
   const subjectFormMessage = document.querySelector("#subject-form-message");
   const subjectsList = document.querySelector("#subjects-list");
   const subjectsEmptyState = document.querySelector("#subjects-empty-state");
   const subjectsCount = document.querySelector("#subjects-count");
-  const dashboardSubjectsCount = document.querySelector("#dashboard-subjects-count");
+  const dashboardSubjectsCount = document.querySelector(
+    "#dashboard-subjects-count",
+  );
 
   const confirmDeleteModal = document.querySelector("#confirm-delete-modal");
-  const confirmDeleteDescription = document.querySelector("#confirm-delete-description");
-  const confirmDeleteCancelButton = document.querySelector("#confirm-delete-cancel");
-  const confirmDeleteConfirmButton = document.querySelector("#confirm-delete-confirm");
+  const confirmDeleteDescription = document.querySelector(
+    "#confirm-delete-description",
+  );
+  const confirmDeleteCancelButton = document.querySelector(
+    "#confirm-delete-cancel",
+  );
+  const confirmDeleteConfirmButton = document.querySelector(
+    "#confirm-delete-confirm",
+  );
 
   if (
     !subjectForm ||
@@ -51,7 +61,7 @@ export function initSubjects() {
       id: crypto.randomUUID(),
       name,
       description,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
   }
 
@@ -61,7 +71,7 @@ export function initSubjects() {
     return date.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric"
+      year: "numeric",
     });
   }
 
@@ -142,8 +152,7 @@ export function initSubjects() {
   function openDeleteModal(subject) {
     subjectIdPendingDeletion = subject.id;
 
-    confirmDeleteDescription.textContent =
-      `Tem certeza que deseja excluir a matéria "${subject.name}"?`;
+    confirmDeleteDescription.textContent = `Tem certeza que deseja excluir a matéria "${subject.name}"?`;
 
     confirmDeleteModal.hidden = false;
     confirmDeleteConfirmButton.focus();
@@ -174,6 +183,7 @@ export function initSubjects() {
     saveSubjects(subjects);
     renderSubjects();
     clearForm();
+    notifySubjectsChanged();
 
     setFormMessage("Matéria cadastrada com sucesso.", "success");
   }
@@ -210,7 +220,8 @@ export function initSubjects() {
     saveSubjects(updatedSubjects);
     renderSubjects();
     closeDeleteModal();
-
+    notifySubjectsChanged();
+    
     setFormMessage("Matéria excluída com sucesso.", "success");
   }
 
@@ -224,6 +235,10 @@ export function initSubjects() {
     if (event.key === "Escape" && !confirmDeleteModal.hidden) {
       closeDeleteModal();
     }
+  }
+
+  function notifySubjectsChanged() {
+    document.dispatchEvent(new CustomEvent("subjects:changed"));
   }
 
   subjectForm.addEventListener("submit", handleSubjectSubmit);
