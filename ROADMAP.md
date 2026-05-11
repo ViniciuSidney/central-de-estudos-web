@@ -146,15 +146,27 @@ Planejada.
 ## Previsto para a v0.4
 
 - Tela de questões por tema
-- Formulário para cadastrar questão
+- Seleção de matéria para filtrar temas
+- Seleção de tema para cadastrar questão
+- Formulário de cadastro de questão
 - Campo para enunciado
 - Campos para alternativas A, B, C, D e E
 - Campo para alternativa correta
 - Campo para explicação/correção
-- Listagem de questões cadastradas
+- Cadastro de questões
+- Listagem de questões por tema
 - Exclusão de questões
 - Salvamento das questões no `localStorage`
-- Relação entre tema e questão
+- Relação entre matéria, tema e questão
+- Estado vazio quando um tema não tiver questões
+- Estado de aviso quando não houver matérias cadastradas
+- Estado de aviso quando a matéria não tiver temas cadastrados
+- Validação de campos obrigatórios
+- Botão para limpar formulário
+- Data de criação da questão no card
+- Atualização do contador de questões no Dashboard
+- Modal de confirmação reutilizável para excluir questões
+- Remoção das questões relacionadas ao excluir tema ou matéria
 
 ---
 
