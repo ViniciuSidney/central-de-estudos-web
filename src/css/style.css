@@ -474,7 +474,7 @@ button {
 }
 
 .themes-header h3 {
-  font-size: 1.15rem;
+  font-size: 1.3rem;
 }
 
 .themes-header p,
@@ -482,6 +482,17 @@ button {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.5;
+}
+
+#themes-current-subject {
+  margin-top: 15px;
+  font-size: 1.03em;
+}
+
+.highlighted-subject-name {
+  color: var(--accent);
+  font-size: 1.05em;
+  font-weight: 800;
 }
 
 .themes-list {

@@ -151,8 +151,9 @@ export function initThemes() {
       return;
     }
 
-    themesCurrentSubject.textContent = `Temas de ${selectedSubject.name}`;
-
+    themesCurrentSubject.innerHTML = `
+  Temas de <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+`;
     if (selectedSubjectThemes.length === 0) {
       themesEmptyState.hidden = false;
       themesEmptyState.innerHTML = `
