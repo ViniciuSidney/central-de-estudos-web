@@ -112,7 +112,10 @@ button {
   padding: 13px 18px;
   border: 1px solid transparent;
   border-radius: 999px;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .button:hover {
@@ -180,7 +183,10 @@ button {
   border: 1px solid var(--border);
   border-radius: 16px;
 
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .nav-card:hover {
@@ -280,12 +286,134 @@ button {
   border-radius: 50%;
   box-shadow: var(--shadow);
 
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .theme-toggle:hover {
   transform: translateY(-2px);
   background: var(--surface-soft);
+}
+
+.subject-form {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  margin-top: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 13px 14px;
+
+  color: var(--text);
+  font: inherit;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
+}
+
+.subjects-area {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.subjects-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.subjects-header h3 {
+  font-size: 1.15rem;
+}
+
+.subjects-header span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.subjects-list {
+  display: grid;
+  gap: 12px;
+}
+
+.subject-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 18px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.subject-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.subject-card__content h3 {
+  font-size: 1.05rem;
+}
+
+.subject-card__content p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.subject-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.button--danger {
+  color: #ffffff;
+  background: #9f3d3d;
+}
+
+.button--danger:hover {
+  background: #7f2f2f;
 }
 
 /* Media Queries */
@@ -322,5 +450,19 @@ button {
 
   .nav-card {
     min-height: 125px;
+  }
+
+  .subjects-header,
+  .subject-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .subject-card__actions {
+    width: 100%;
+  }
+
+  .subject-card__actions .button {
+    width: 100%;
   }
 }

@@ -1,203 +1,273 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Central de Estudos Web</title>
+    <title>Central de Estudos Web</title>
 
-  <link rel="stylesheet" href="src/css/style.css" />
-</head>
-<body>
-  <main class="app">
-    <section class="hero">
-      <p class="hero__tag">📚 Projeto pessoal de estudos</p>
+    <link rel="stylesheet" href="src/css/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <p class="hero__tag">📚 Projeto pessoal de estudos</p>
 
-      <h1>Central de Estudos Web</h1>
+        <h1>Central de Estudos Web</h1>
 
-      <p class="hero__description">
-        Organize matérias, temas, questões, anotações e revisões em um único lugar.
-      </p>
-
-      <div class="hero__actions">
-        <button class="button button--primary" type="button" data-section-target="dashboard">
-          Começar estudos
-        </button>
-
-        <button class="button button--secondary" type="button" data-section-target="roadmap">
-          Ver roadmap
-        </button>
-      </div>
-    </section>
-
-    <section class="navigation-panel" aria-label="Navegação principal do sistema">
-      <div class="section-heading">
-        <p class="section-heading__tag">🧭 Navegação</p>
-        <h2>Áreas da central</h2>
-        <p>Escolha uma área para visualizar a função planejada dentro do sistema.</p>
-      </div>
-
-      <div class="nav-grid">
-        <button class="nav-card is-active" type="button" data-section-target="dashboard">
-          <span>📊</span>
-          <strong>Dashboard</strong>
-          <small>Visão geral dos estudos</small>
-        </button>
-
-        <button class="nav-card" type="button" data-section-target="subjects">
-          <span>📘</span>
-          <strong>Matérias</strong>
-          <small>Organize suas disciplinas</small>
-        </button>
-
-        <button class="nav-card" type="button" data-section-target="themes">
-          <span>🧩</span>
-          <strong>Temas</strong>
-          <small>Divida os conteúdos</small>
-        </button>
-
-        <button class="nav-card" type="button" data-section-target="questions">
-          <span>📝</span>
-          <strong>Questões</strong>
-          <small>Cadastre exercícios</small>
-        </button>
-
-        <button class="nav-card" type="button" data-section-target="notes">
-          <span>📒</span>
-          <strong>Anotações</strong>
-          <small>Registre resumos</small>
-        </button>
-
-        <button class="nav-card" type="button" data-section-target="reviews">
-          <span>🔁</span>
-          <strong>Revisões</strong>
-          <small>Revise seus erros</small>
-        </button>
-      </div>
-    </section>
-
-    <section class="content-panel">
-      <article class="app-section is-visible" id="dashboard">
-        <p class="app-section__tag">📊 Dashboard</p>
-        <h2>Visão geral dos estudos</h2>
-        <p>
-          Esta área será usada para mostrar um resumo geral do progresso, incluindo matérias,
-          temas, questões respondidas, acertos, erros e revisões pendentes.
+        <p class="hero__description">
+          Organize matérias, temas, questões, anotações e revisões em um único
+          lugar.
         </p>
 
-        <div class="placeholder-grid">
-          <div class="placeholder-card">
-            <strong>0</strong>
-            <span>Matérias</span>
+        <div class="hero__actions">
+          <button
+            class="button button--primary"
+            type="button"
+            data-section-target="dashboard"
+          >
+            Começar estudos
+          </button>
+
+          <button
+            class="button button--secondary"
+            type="button"
+            data-section-target="roadmap"
+          >
+            Ver roadmap
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="navigation-panel"
+        aria-label="Navegação principal do sistema"
+      >
+        <div class="section-heading">
+          <p class="section-heading__tag">🧭 Navegação</p>
+          <h2>Áreas da central</h2>
+          <p>
+            Escolha uma área para visualizar a função planejada dentro do
+            sistema.
+          </p>
+        </div>
+
+        <div class="nav-grid">
+          <button
+            class="nav-card is-active"
+            type="button"
+            data-section-target="dashboard"
+          >
+            <span>📊</span>
+            <strong>Dashboard</strong>
+            <small>Visão geral dos estudos</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="subjects">
+            <span>📘</span>
+            <strong>Matérias</strong>
+            <small>Organize suas disciplinas</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="themes">
+            <span>🧩</span>
+            <strong>Temas</strong>
+            <small>Divida os conteúdos</small>
+          </button>
+
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="questions"
+          >
+            <span>📝</span>
+            <strong>Questões</strong>
+            <small>Cadastre exercícios</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="notes">
+            <span>📒</span>
+            <strong>Anotações</strong>
+            <small>Registre resumos</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="reviews">
+            <span>🔁</span>
+            <strong>Revisões</strong>
+            <small>Revise seus erros</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="content-panel">
+        <article class="app-section is-visible" id="dashboard">
+          <p class="app-section__tag">📊 Dashboard</p>
+          <h2>Visão geral dos estudos</h2>
+          <p>
+            Esta área será usada para mostrar um resumo geral do progresso,
+            incluindo matérias, temas, questões respondidas, acertos, erros e
+            revisões pendentes.
+          </p>
+
+          <div class="placeholder-grid">
+            <div class="placeholder-card">
+              <strong id="dashboard-subjects-count">0</strong>
+              <span>Matérias</span>
+            </div>
+
+            <div class="placeholder-card">
+              <strong>0</strong>
+              <span>Temas</span>
+            </div>
+
+            <div class="placeholder-card">
+              <strong>0</strong>
+              <span>Questões</span>
+            </div>
+
+            <div class="placeholder-card">
+              <strong>0</strong>
+              <span>Erros pendentes</span>
+            </div>
           </div>
+        </article>
 
-          <div class="placeholder-card">
-            <strong>0</strong>
-            <span>Temas</span>
+        <article class="app-section" id="subjects">
+          <p class="app-section__tag">📘 Matérias</p>
+          <h2>Organização por matérias</h2>
+          <p>
+            Cadastre suas matérias de estudo para organizar temas, questões,
+            anotações e revisões futuramente.
+          </p>
+
+          <form class="subject-form" id="subject-form">
+            <div class="form-group">
+              <label for="subject-name">Nome da matéria</label>
+              <input
+                type="text"
+                id="subject-name"
+                name="subjectName"
+                placeholder="Ex: História"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="subject-description">Descrição</label>
+              <textarea
+                id="subject-description"
+                name="subjectDescription"
+                rows="3"
+                placeholder="Ex: Conteúdos de História Geral e do Brasil"
+              ></textarea>
+            </div>
+
+            <button class="button button--primary" type="submit">
+              Adicionar matéria
+            </button>
+          </form>
+
+          <div class="subjects-area">
+            <div class="subjects-header">
+              <h3>Matérias cadastradas</h3>
+              <span id="subjects-count">0 matérias</span>
+            </div>
+
+            <div class="empty-state" id="subjects-empty-state">
+              <strong>Nenhuma matéria cadastrada ainda.</strong>
+              <span
+                >Use o formulário acima para adicionar sua primeira
+                matéria.</span
+              >
+            </div>
+
+            <div class="subjects-list" id="subjects-list"></div>
           </div>
+        </article>
 
-          <div class="placeholder-card">
-            <strong>0</strong>
-            <span>Questões</span>
+        <article class="app-section" id="themes">
+          <p class="app-section__tag">🧩 Temas</p>
+          <h2>Divisão dos conteúdos</h2>
+          <p>
+            Esta área será usada para dividir cada matéria em temas menores,
+            facilitando o estudo por blocos.
+          </p>
+
+          <div class="empty-state">
+            <strong>Nenhum tema cadastrado ainda.</strong>
+            <span>Os temas serão ligados às matérias cadastradas.</span>
           </div>
+        </article>
 
-          <div class="placeholder-card">
-            <strong>0</strong>
-            <span>Erros pendentes</span>
+        <article class="app-section" id="questions">
+          <p class="app-section__tag">📝 Questões</p>
+          <h2>Banco de questões</h2>
+          <p>
+            Aqui ficarão as questões cadastradas pelo usuário, com enunciado,
+            alternativas, gabarito e explicação.
+          </p>
+
+          <div class="empty-state">
+            <strong>Nenhuma questão cadastrada ainda.</strong>
+            <span
+              >Depois, esta tela receberá o formulário de cadastro de
+              questões.</span
+            >
           </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="app-section" id="subjects">
-        <p class="app-section__tag">📘 Matérias</p>
-        <h2>Organização por matérias</h2>
-        <p>
-          Aqui será possível cadastrar, visualizar e excluir matérias de estudo.
-          Esta será a principal função da v0.2.
-        </p>
+        <article class="app-section" id="notes">
+          <p class="app-section__tag">📒 Anotações</p>
+          <h2>Anotações de estudo</h2>
+          <p>
+            Esta área será usada para guardar resumos, observações pessoais,
+            regras de correção e ideias importantes sobre os temas estudados.
+          </p>
 
-        <div class="empty-state">
-          <strong>Nenhuma matéria cadastrada ainda.</strong>
-          <span>Em breve, esta tela terá um formulário para criar matérias.</span>
-        </div>
-      </article>
+          <div class="empty-state">
+            <strong>Nenhuma anotação criada ainda.</strong>
+            <span>As anotações serão organizadas por tema.</span>
+          </div>
+        </article>
 
-      <article class="app-section" id="themes">
-        <p class="app-section__tag">🧩 Temas</p>
-        <h2>Divisão dos conteúdos</h2>
-        <p>
-          Esta área será usada para dividir cada matéria em temas menores,
-          facilitando o estudo por blocos.
-        </p>
+        <article class="app-section" id="reviews">
+          <p class="app-section__tag">🔁 Revisões</p>
+          <h2>Revisão de erros</h2>
+          <p>
+            Aqui ficarão as questões erradas, os motivos dos erros e as regras
+            criadas para evitar repetir os mesmos problemas.
+          </p>
 
-        <div class="empty-state">
-          <strong>Nenhum tema cadastrado ainda.</strong>
-          <span>Os temas serão ligados às matérias cadastradas.</span>
-        </div>
-      </article>
+          <div class="empty-state">
+            <strong>Nenhum erro registrado ainda.</strong>
+            <span
+              >Quando houver questões respondidas, os erros aparecerão
+              aqui.</span
+            >
+          </div>
+        </article>
 
-      <article class="app-section" id="questions">
-        <p class="app-section__tag">📝 Questões</p>
-        <h2>Banco de questões</h2>
-        <p>
-          Aqui ficarão as questões cadastradas pelo usuário, com enunciado,
-          alternativas, gabarito e explicação.
-        </p>
+        <article class="app-section" id="roadmap">
+          <p class="app-section__tag">🗺️ Roadmap</p>
+          <h2>Planejamento do projeto</h2>
+          <p>
+            O roadmap completo está documentado no arquivo
+            <strong>ROADMAP.md</strong>. Esta área serve apenas como atalho
+            visual dentro da interface inicial.
+          </p>
 
-        <div class="empty-state">
-          <strong>Nenhuma questão cadastrada ainda.</strong>
-          <span>Depois, esta tela receberá o formulário de cadastro de questões.</span>
-        </div>
-      </article>
+          <div class="empty-state">
+            <strong>Versão atual: v0.1</strong>
+            <span>Base inicial do projeto em construção.</span>
+          </div>
+        </article>
+      </section>
+    </main>
 
-      <article class="app-section" id="notes">
-        <p class="app-section__tag">📒 Anotações</p>
-        <h2>Anotações de estudo</h2>
-        <p>
-          Esta área será usada para guardar resumos, observações pessoais,
-          regras de correção e ideias importantes sobre os temas estudados.
-        </p>
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      🌙
+    </button>
 
-        <div class="empty-state">
-          <strong>Nenhuma anotação criada ainda.</strong>
-          <span>As anotações serão organizadas por tema.</span>
-        </div>
-      </article>
-
-      <article class="app-section" id="reviews">
-        <p class="app-section__tag">🔁 Revisões</p>
-        <h2>Revisão de erros</h2>
-        <p>
-          Aqui ficarão as questões erradas, os motivos dos erros e as regras
-          criadas para evitar repetir os mesmos problemas.
-        </p>
-
-        <div class="empty-state">
-          <strong>Nenhum erro registrado ainda.</strong>
-          <span>Quando houver questões respondidas, os erros aparecerão aqui.</span>
-        </div>
-      </article>
-
-      <article class="app-section" id="roadmap">
-        <p class="app-section__tag">🗺️ Roadmap</p>
-        <h2>Planejamento do projeto</h2>
-        <p>
-          O roadmap completo está documentado no arquivo <strong>ROADMAP.md</strong>.
-          Esta área serve apenas como atalho visual dentro da interface inicial.
-        </p>
-
-        <div class="empty-state">
-          <strong>Versão atual: v0.1</strong>
-          <span>Base inicial do projeto em construção.</span>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <button class="theme-toggle" type="button" aria-label="Alternar tema">
-    🌙
-  </button>
-
-  <script src="src/js/main.js"></script>
-</body>
+    <script src="src/js/main.js"></script>
+  </body>
 </html>
