@@ -6,7 +6,7 @@
 Criar a primeira fundação do projeto, com estrutura organizada, documentação inicial, tela inicial simples e arquivos preparados para o desenvolvimento da central de estudos.
 
 ### Status
-Planejada.
+Em desenvolvimento.
 
 ---
 
@@ -17,12 +17,13 @@ Planejada.
 - Arquivo `README.md` criado ✅
 - Arquivo `ROADMAP.md` criado ✅
 - Arquivo `.gitignore` criado ✅
-- Página inicial simples
-- Estilo visual base
-- JavaScript principal conectado
-- Organização inicial das pastas `src`, `docs` e `assets`
-- Primeira tela de apresentação do projeto
-- Navegação visual inicial entre áreas do sistema
+- Página inicial simples ✅
+- Estilo visual base ✅
+- JavaScript principal conectado ✅
+- Organização inicial das pastas `src`, `docs` e `assets` ✅
+- Primeira tela de apresentação do projeto ✅
+- Navegação visual inicial entre áreas do sistema ✅
+- Alternância entre tema claro e escuro ✅
 
 ---
 
@@ -30,12 +31,14 @@ Planejada.
 
 A versão v0.1 será considerada concluída quando o projeto tiver:
 
-- Estrutura de arquivos organizada
-- Documentação inicial clara
-- Tela inicial funcionando no navegador
-- CSS conectado corretamente
-- JavaScript conectado corretamente
-- Base visual simples e minimalista
+- Estrutura de arquivos organizada ✅
+- Documentação inicial clara ✅
+- Tela inicial funcionando no navegador ✅
+- CSS conectado corretamente ✅
+- JavaScript conectado corretamente ✅
+- Base visual simples e minimalista ✅
+- Navegação inicial entre seções ✅
+- Alternância entre tema claro e escuro ✅
 - Projeto pronto para iniciar o sistema de matérias
 
 ---
