@@ -2,6 +2,7 @@ import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
 
 const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
 
 export function initSubjects() {
   const subjectForm = document.querySelector("#subject-form");
@@ -192,11 +193,23 @@ export function initSubjects() {
       return currentSubject.id !== subjectId;
     });
 
+    deleteThemesFromSubject(subjectId);
     saveSubjects(updatedSubjects);
     renderSubjects();
     notifySubjectsChanged();
 
-    setFormMessage("Matéria excluída com sucesso.", "success");
+    setFormMessage(
+      "Matéria e temas relacionados excluídos com sucesso.",
+      "success",
+    );
+  }
+
+  function deleteThemesFromSubject(subjectId) {
+    const updatedThemes = getCollection(THEMES_COLLECTION).filter((theme) => {
+      return theme.subjectId !== subjectId;
+    });
+
+    saveCollection(THEMES_COLLECTION, updatedThemes);
   }
 
   function notifySubjectsChanged() {
