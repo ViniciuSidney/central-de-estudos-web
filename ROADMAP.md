@@ -50,31 +50,40 @@ A versão v0.1 será considerada concluída quando o projeto tiver:
 Permitir o cadastro, visualização e exclusão de matérias de estudo, com salvamento local no navegador.
 
 ### Status
-Em desenvolvimento.
+Concluída.
 
 ---
 
 ## Previsto para a v0.2
 
-- Tela de matérias
-- Formulário para cadastrar matéria
-- Listagem de matérias cadastradas
-- Exclusão de matérias
-- Salvamento das matérias no `localStorage`
-- Estrutura inicial de dados das matérias
-- Estado vazio quando não houver matérias cadastradas
-- Feedback visual ao cadastrar ou remover matéria
+- Tela de matérias ✅
+- Formulário para cadastrar matéria ✅
+- Listagem de matérias cadastradas ✅
+- Exclusão de matérias ✅
+- Salvamento das matérias no `localStorage` ✅
+- Estrutura inicial de dados das matérias ✅
+- Estado vazio quando não houver matérias cadastradas ✅
+- Feedback visual ao cadastrar ou remover matéria ✅
+- Validação de campo obrigatório ✅
+- Botão para limpar formulário ✅
+- Confirmação customizada antes da exclusão ✅
+- Data de criação da matéria no card ✅
+- Atualização do contador de matérias no Dashboard ✅
 
 ---
 
 ## Fechamento da v0.2
 
-A versão v0.2 será considerada concluída quando o usuário conseguir:
+A versão v0.2 foi considerada concluída porque o usuário consegue:
 
-- Criar uma matéria
-- Visualizar matérias cadastradas
-- Excluir uma matéria
-- Fechar e abrir o navegador sem perder os dados
+- Criar uma matéria ✅
+- Visualizar matérias cadastradas ✅
+- Excluir uma matéria ✅
+- Fechar e abrir o navegador sem perder os dados ✅
+- Ver feedback visual das ações realizadas ✅
+- Limpar o formulário de cadastro ✅
+- Confirmar a exclusão antes de apagar uma matéria ✅
+- Acompanhar a quantidade de matérias cadastradas no Dashboard ✅
 
 ---
 
