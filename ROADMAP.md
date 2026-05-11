@@ -50,7 +50,7 @@ A versão v0.1 será considerada concluída quando o projeto tiver:
 Permitir o cadastro, visualização e exclusão de matérias de estudo, com salvamento local no navegador.
 
 ### Status
-Planejada.
+Em desenvolvimento.
 
 ---
 
