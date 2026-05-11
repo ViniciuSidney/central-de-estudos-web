@@ -6,7 +6,7 @@
 Criar a primeira fundação do projeto, com estrutura organizada, documentação inicial, tela inicial simples e arquivos preparados para o desenvolvimento da central de estudos.
 
 ### Status
-Em desenvolvimento.
+Concluída.
 
 ---
 
@@ -39,7 +39,8 @@ A versão v0.1 será considerada concluída quando o projeto tiver:
 - Base visual simples e minimalista ✅
 - Navegação inicial entre seções ✅
 - Alternância entre tema claro e escuro ✅
-- Projeto pronto para iniciar o sistema de matérias
+- Projeto pronto para iniciar o sistema de matérias ✅
+- Alternância entre tema claro e escuro ✅
 
 ---
 
