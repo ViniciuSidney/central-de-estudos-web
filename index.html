@@ -116,7 +116,7 @@
             </div>
 
             <div class="placeholder-card">
-              <strong>0</strong>
+              <strong id="dashboard-themes-count">0</strong>
               <span>Temas</span>
             </div>
 
@@ -205,13 +205,89 @@
           <p class="app-section__tag">🧩 Temas</p>
           <h2>Divisão dos conteúdos</h2>
           <p>
-            Esta área será usada para dividir cada matéria em temas menores,
-            facilitando o estudo por blocos.
+            Organize cada matéria em temas menores para facilitar o estudo por
+            blocos, revisões e questões futuramente.
           </p>
 
-          <div class="empty-state">
-            <strong>Nenhum tema cadastrado ainda.</strong>
-            <span>Os temas serão ligados às matérias cadastradas.</span>
+          <div class="theme-warning" id="theme-no-subject-warning" hidden>
+            <strong>Cadastre uma matéria primeiro.</strong>
+            <span>
+              Para criar temas, é necessário ter pelo menos uma matéria
+              cadastrada.
+            </span>
+          </div>
+
+          <form class="theme-form" id="theme-form">
+            <div class="form-group">
+              <label for="theme-subject">Matéria relacionada</label>
+              <select id="theme-subject" name="themeSubject">
+                <option value="">Selecione uma matéria</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="theme-name">Nome do tema</label>
+              <input
+                type="text"
+                id="theme-name"
+                name="themeName"
+                placeholder="Ex: Brasil República"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="theme-description">Descrição</label>
+              <textarea
+                id="theme-description"
+                name="themeDescription"
+                rows="3"
+                placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"
+              ></textarea>
+            </div>
+
+            <p
+              class="form-message"
+              id="theme-form-message"
+              aria-live="polite"
+            ></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Adicionar tema
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-theme-form"
+              >
+                Limpar
+              </button>
+            </div>
+          </form>
+
+          <div class="themes-area">
+            <div class="themes-header">
+              <div>
+                <h3>Temas cadastrados</h3>
+                <p id="themes-current-subject">
+                  Selecione uma matéria para visualizar seus temas.
+                </p>
+              </div>
+
+              <span id="themes-count">0 temas</span>
+            </div>
+
+            <div class="empty-state" id="themes-empty-state">
+              <strong>Nenhum tema cadastrado ainda.</strong>
+              <span
+                >Escolha uma matéria e use o formulário acima para adicionar um
+                tema.</span
+              >
+            </div>
+
+            <div class="themes-list" id="themes-list"></div>
           </div>
         </article>
 

@@ -301,7 +301,8 @@ button {
   background: var(--surface-soft);
 }
 
-.subject-form {
+.subject-form,
+.theme-form {
   display: grid;
   gap: 16px;
   padding: 20px;
@@ -349,7 +350,8 @@ button {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   width: 100%;
   padding: 13px 14px;
 
@@ -371,7 +373,8 @@ button {
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
 }
@@ -444,6 +447,92 @@ button {
 
 .button--danger:hover {
   background: #7f2f2f;
+}
+
+.themes-area {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.themes-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.themes-header h3 {
+  font-size: 1.15rem;
+}
+
+.themes-header p,
+.themes-header span {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.themes-list {
+  display: grid;
+  gap: 12px;
+}
+
+.theme-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 18px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.theme-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.theme-card__content h3 {
+  font-size: 1.05rem;
+}
+
+.theme-card__content p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.theme-card__date {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.theme-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.theme-warning {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  padding: 18px;
+  margin-top: 12px;
+
+  background: var(--success-soft);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.theme-warning span {
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .modal-overlay {
@@ -538,7 +627,9 @@ button {
   }
 
   .subjects-header,
-  .subject-card {
+  .subject-card,
+  .themes-header,
+  .theme-card {
     flex-direction: column;
     align-items: stretch;
   }
@@ -551,11 +642,13 @@ button {
     width: 100%;
   }
 
-  .modal__actions {
-    flex-direction: column;
+  .subject-card__actions,
+  .theme-card__actions {
+    width: 100%;
   }
 
-  .modal__actions .button {
+  .subject-card__actions .button,
+  .theme-card__actions .button {
     width: 100%;
   }
 }
