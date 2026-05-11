@@ -1,4 +1,5 @@
 import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -185,6 +186,14 @@ export function initThemes() {
           <button class="button button--secondary" type="button" disabled>
             Questões em breve
           </button>
+
+          <button
+            class="button button--danger"
+            type="button"
+            data-delete-theme="${theme.id}"
+          >
+            Excluir
+          </button>
         </div>
       `;
 
@@ -296,6 +305,46 @@ export function initThemes() {
     setThemeFormMessage("Tema cadastrado com sucesso.", "success");
   }
 
+  function handleThemeDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-theme]");
+
+    if (!deleteButton) {
+      return;
+    }
+
+    const themeId = deleteButton.dataset.deleteTheme;
+
+    const theme = getThemes().find((currentTheme) => {
+      return currentTheme.id === themeId;
+    });
+
+    if (!theme) {
+      return;
+    }
+
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir tema",
+      message: `Tem certeza que deseja excluir o tema "${theme.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteTheme(theme.id);
+      },
+    });
+  }
+
+  function deleteTheme(themeId) {
+    const updatedThemes = getThemes().filter((theme) => {
+      return theme.id !== themeId;
+    });
+
+    saveThemes(updatedThemes);
+    renderThemes();
+
+    setThemeFormMessage("Tema excluído com sucesso.", "success");
+  }
+
   function handleSubjectChange() {
     setThemeFormMessage("");
     renderThemes();
@@ -304,6 +353,7 @@ export function initThemes() {
   themeForm.addEventListener("submit", handleThemeSubmit);
   themeSubjectSelect.addEventListener("change", handleSubjectChange);
   clearThemeFormButton.addEventListener("click", clearThemeForm);
+  themesList.addEventListener("click", handleThemeDelete);
   document.addEventListener("subjects:changed", renderSubjectOptions);
 
   renderSubjectOptions();
