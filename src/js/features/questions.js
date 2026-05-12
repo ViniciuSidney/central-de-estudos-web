@@ -1,4 +1,4 @@
-import { getCollection } from '../core/storage.js';
+import { getCollection, saveCollection } from '../core/storage.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
@@ -77,13 +77,56 @@ export function initQuestions() {
 		return getCollection(QUESTIONS_COLLECTION);
 	}
 
+	function saveQuestions(questions) {
+		saveCollection(QUESTIONS_COLLECTION, questions);
+	}
+
+	function createQuestion({
+		subjectId,
+		themeId,
+		statement,
+		alternatives,
+		correctAlternative,
+		explanation,
+	}) {
+		return {
+			id: crypto.randomUUID(),
+			subjectId,
+			themeId,
+			statement,
+			alternatives,
+			correctAlternative,
+			explanation,
+			shouldShuffleAlternatives: true,
+			createdAt: new Date().toISOString(),
+		};
+	}
+
+	function formatDate(dateValue) {
+		const date = new Date(dateValue);
+
+		return date.toLocaleDateString('pt-BR', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		});
+	}
+
 	function escapeHTML(value) {
-		return value
+		return String(value)
 			.replaceAll('&', '&amp;')
 			.replaceAll('<', '&lt;')
 			.replaceAll('>', '&gt;')
 			.replaceAll('"', '&quot;')
 			.replaceAll("'", '&#039;');
+	}
+
+	function getShortText(text, maxLength = 170) {
+		if (text.length <= maxLength) {
+			return text;
+		}
+
+		return `${text.slice(0, maxLength).trim()}...`;
 	}
 
 	function setQuestionFormMessage(message, type = 'default') {
@@ -177,9 +220,11 @@ export function initQuestions() {
 
 		if (!hasSubjects) {
 			questionForm.hidden = true;
+
 			questionThemeSelect.innerHTML = `
         <option value="">Selecione um tema</option>
       `;
+
 			questionNoThemeWarning.hidden = true;
 
 			questionsCurrentTheme.textContent =
@@ -310,11 +355,12 @@ export function initQuestions() {
 			questionCard.innerHTML = `
         <div class="question-card__content">
           <h3>Questão ${String(index + 1).padStart(2, '0')}</h3>
-          <p>${escapeHTML(question.statement || 'Enunciado da questão.')}</p>
+          <p>${escapeHTML(getShortText(question.statement))}</p>
 
           <div class="question-card__meta">
-            <span>Correta: ${escapeHTML(question.correctAlternative || '-')}</span>
-            <span>Cadastro em breve</span>
+            <span>Correta: ${escapeHTML(question.correctAlternative)}</span>
+            <span>Criada em ${formatDate(question.createdAt)}</span>
+            <span>Alternativas aleatórias: ${question.shouldShuffleAlternatives ? 'sim' : 'não'}</span>
           </div>
         </div>
 
@@ -342,13 +388,117 @@ export function initQuestions() {
 		questionStatementInput.focus();
 	}
 
+	function validateQuestionForm({
+		selectedSubjectId,
+		selectedThemeId,
+		statement,
+		alternatives,
+		correctAlternative,
+	}) {
+		if (!selectedSubjectId) {
+			setQuestionFormMessage(
+				'Selecione uma matéria antes de cadastrar a questão.',
+				'error',
+			);
+			questionSubjectSelect.focus();
+			return false;
+		}
+
+		if (!selectedThemeId) {
+			setQuestionFormMessage(
+				'Selecione um tema antes de cadastrar a questão.',
+				'error',
+			);
+			questionThemeSelect.focus();
+			return false;
+		}
+
+		if (!statement) {
+			setQuestionFormMessage('Informe o enunciado da questão.', 'error');
+			questionStatementInput.focus();
+			return false;
+		}
+
+		if (!correctAlternative) {
+			setQuestionFormMessage(
+				'Selecione a alternativa correta da questão.',
+				'error',
+			);
+			correctAlternativeSelect.focus();
+			return false;
+		}
+
+		const correctAlternativeText = alternatives[correctAlternative];
+
+		if (!correctAlternativeText) {
+			setQuestionFormMessage(
+				`Preencha o texto da alternativa ${correctAlternative}.`,
+				'error',
+			);
+
+			const alternativeInputs = {
+				A: alternativeAInput,
+				B: alternativeBInput,
+				C: alternativeCInput,
+				D: alternativeDInput,
+				E: alternativeEInput,
+			};
+
+			alternativeInputs[correctAlternative].focus();
+			return false;
+		}
+
+		return true;
+	}
+
 	function handleQuestionSubmit(event) {
 		event.preventDefault();
 
-		setQuestionFormMessage(
-			'O cadastro real de questões será implementado na próxima etapa.',
-			'success',
-		);
+		const selectedSubjectId = questionSubjectSelect.value;
+		const selectedThemeId = questionThemeSelect.value;
+		const statement = questionStatementInput.value.trim();
+
+		const alternatives = {
+			A: alternativeAInput.value.trim(),
+			B: alternativeBInput.value.trim(),
+			C: alternativeCInput.value.trim(),
+			D: alternativeDInput.value.trim(),
+			E: alternativeEInput.value.trim(),
+		};
+
+		const correctAlternative = correctAlternativeSelect.value;
+		const explanation = questionExplanationInput.value.trim();
+
+		const isValidQuestion = validateQuestionForm({
+			selectedSubjectId,
+			selectedThemeId,
+			statement,
+			alternatives,
+			correctAlternative,
+		});
+
+		if (!isValidQuestion) {
+			return;
+		}
+
+		const questions = getQuestions();
+
+		const newQuestion = createQuestion({
+			subjectId: selectedSubjectId,
+			themeId: selectedThemeId,
+			statement,
+			alternatives,
+			correctAlternative,
+			explanation,
+		});
+
+		questions.push(newQuestion);
+
+		saveQuestions(questions);
+		renderQuestions();
+		clearQuestionForm();
+
+		setQuestionFormMessage('Questão cadastrada com sucesso.', 'success');
 	}
 
 	function handleSubjectChange() {
