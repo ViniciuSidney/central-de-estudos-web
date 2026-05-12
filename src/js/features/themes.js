@@ -3,6 +3,7 @@ import { openConfirmModal } from '../ui/confirmModal.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
+const QUESTIONS_COLLECTION = 'questions';
 
 export function initThemes() {
 	const themeForm = document.querySelector('#theme-form');
@@ -98,6 +99,16 @@ export function initThemes() {
 		if (type === 'success') {
 			themeFormMessage.classList.add('is-success');
 		}
+	}
+
+	function deleteQuestionsFromTheme(themeId) {
+		const updatedQuestions = getCollection(QUESTIONS_COLLECTION).filter(
+			(question) => {
+				return question.themeId !== themeId;
+			},
+		);
+
+		saveCollection(QUESTIONS_COLLECTION, updatedQuestions);
 	}
 
 	function updateDashboardThemesCount() {
@@ -302,7 +313,7 @@ export function initThemes() {
 		saveThemes(themes);
 		renderThemes();
 		notifyThemesChanged();
-    
+
 		themeNameInput.value = '';
 		themeDescriptionInput.value = '';
 		themeNameInput.focus();
@@ -344,11 +355,15 @@ export function initThemes() {
 			return theme.id !== themeId;
 		});
 
+		deleteQuestionsFromTheme(themeId);
 		saveThemes(updatedThemes);
 		renderThemes();
 		notifyThemesChanged();
 
-		setThemeFormMessage('Tema excluído com sucesso.', 'success');
+		setThemeFormMessage(
+			'Tema e questões relacionadas excluídos com sucesso.',
+			'success',
+		);
 	}
 
 	function handleSubjectChange() {

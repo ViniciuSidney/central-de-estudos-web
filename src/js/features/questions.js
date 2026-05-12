@@ -1,4 +1,5 @@
 import { getCollection, saveCollection } from '../core/storage.js';
+import { openConfirmModal } from '../ui/confirmModal.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
@@ -100,6 +101,17 @@ export function initQuestions() {
 			shouldShuffleAlternatives: true,
 			createdAt: new Date().toISOString(),
 		};
+	}
+
+	function deleteQuestion(questionId) {
+		const updatedQuestions = getQuestions().filter((question) => {
+			return question.id !== questionId;
+		});
+
+		saveQuestions(updatedQuestions);
+		renderQuestions();
+
+		setQuestionFormMessage('Questão excluída com sucesso.', 'success');
 	}
 
 	function formatDate(dateValue) {
@@ -368,6 +380,14 @@ export function initQuestions() {
           <button class="button button--secondary" type="button" disabled>
             Resolver em breve
           </button>
+
+          <button
+            class="button button--danger"
+            type="button"
+            data-delete-question="${question.id}"
+          >
+            Excluir
+          </button>
         </div>
       `;
 
@@ -501,6 +521,35 @@ export function initQuestions() {
 		setQuestionFormMessage('Questão cadastrada com sucesso.', 'success');
 	}
 
+	function handleQuestionDelete(event) {
+		const deleteButton = event.target.closest('[data-delete-question]');
+
+		if (!deleteButton) {
+			return;
+		}
+
+		const questionId = deleteButton.dataset.deleteQuestion;
+
+		const question = getQuestions().find((currentQuestion) => {
+			return currentQuestion.id === questionId;
+		});
+
+		if (!question) {
+			return;
+		}
+
+		openConfirmModal({
+			tag: '⚠️ Confirmação',
+			title: 'Excluir questão',
+			message: 'Tem certeza que deseja excluir esta questão?',
+			confirmText: 'Excluir',
+			cancelText: 'Cancelar',
+			onConfirm: () => {
+				deleteQuestion(question.id);
+			},
+		});
+	}
+
 	function handleSubjectChange() {
 		setQuestionFormMessage('');
 		questionThemeSelect.value = '';
@@ -516,6 +565,7 @@ export function initQuestions() {
 	questionSubjectSelect.addEventListener('change', handleSubjectChange);
 	questionThemeSelect.addEventListener('change', handleThemeChange);
 	clearQuestionFormButton.addEventListener('click', clearQuestionForm);
+	questionsList.addEventListener('click', handleQuestionDelete);
 
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:changed', renderThemeOptions);
