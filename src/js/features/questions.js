@@ -40,13 +40,17 @@ export function initQuestions() {
   const dashboardQuestionsCount = document.querySelector(
     "#dashboard-questions-count",
   );
-  const toggleQuestionFormButton = document.querySelector(
-    "#toggle-question-form",
-  );
+  const questionTabButtons = document.querySelectorAll("[data-question-tab]");
+  const questionListTab = document.querySelector("#question-list-tab");
+  const questionFormTab = document.querySelector("#question-form-tab");
+  const questionFilters = document.querySelector("#question-filters");
 
   if (
+    !questionFilters ||
     !questionForm ||
-    !toggleQuestionFormButton ||
+    !questionTabButtons.length ||
+    !questionListTab ||
+    !questionFormTab ||
     !questionSubjectSelect ||
     !questionThemeSelect ||
     !questionStatementInput ||
@@ -118,17 +122,15 @@ export function initQuestions() {
     setQuestionFormMessage("Questão excluída com sucesso.", "success");
   }
 
-  function toggleQuestionForm() {
-    const isCollapsed = questionForm.classList.toggle("is-collapsed");
+  function showQuestionTab(tabName) {
+    questionTabButtons.forEach((button) => {
+      const isSelectedTab = button.dataset.questionTab === tabName;
 
-    toggleQuestionFormButton.textContent = isCollapsed
-      ? "Mostrar formulário"
-      : "Ocultar formulário";
+      button.classList.toggle("is-active", isSelectedTab);
+    });
 
-    toggleQuestionFormButton.setAttribute(
-      "aria-expanded",
-      String(!isCollapsed),
-    );
+    questionListTab.classList.toggle("is-active", tabName === "list");
+    questionFormTab.classList.toggle("is-active", tabName === "form");
   }
 
   function formatDate(dateValue) {
@@ -248,7 +250,12 @@ export function initQuestions() {
     questionNoSubjectWarning.hidden = hasSubjects;
 
     if (!hasSubjects) {
-      questionForm.hidden = true;
+      questionFilters.hidden = true;
+      questionTabButtons.forEach((button) => {
+        button.hidden = true;
+      });
+      questionListTab.hidden = true;
+      questionFormTab.hidden = true;
 
       questionThemeSelect.innerHTML = `
         <option value="">Selecione um tema</option>
@@ -272,7 +279,12 @@ export function initQuestions() {
       return;
     }
 
-    questionForm.hidden = false;
+    questionFilters.hidden = false;
+    questionTabButtons.forEach((button) => {
+      button.hidden = false;
+    });
+    questionListTab.hidden = false;
+    questionFormTab.hidden = false;
 
     if (selectedSubjectStillExists) {
       questionSubjectSelect.value = previousSelectedSubjectId;
@@ -542,10 +554,7 @@ export function initQuestions() {
     saveQuestions(questions);
     renderQuestions();
     clearQuestionForm();
-
-    questionForm.classList.add("is-collapsed");
-    toggleQuestionFormButton.textContent = "Mostrar formulário";
-    toggleQuestionFormButton.setAttribute("aria-expanded", "false");
+    showQuestionTab("list");
 
     questionsList.scrollIntoView({
       behavior: "smooth",
@@ -599,8 +608,12 @@ export function initQuestions() {
   questionSubjectSelect.addEventListener("change", handleSubjectChange);
   questionThemeSelect.addEventListener("change", handleThemeChange);
   clearQuestionFormButton.addEventListener("click", clearQuestionForm);
-  toggleQuestionFormButton.addEventListener("click", toggleQuestionForm);
   questionsList.addEventListener("click", handleQuestionDelete);
+  questionTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      showQuestionTab(button.dataset.questionTab);
+    });
+  });
 
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:changed", renderThemeOptions);
