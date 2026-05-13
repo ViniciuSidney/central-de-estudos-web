@@ -1,577 +1,612 @@
-import { getCollection, saveCollection } from '../core/storage.js';
-import { openConfirmModal } from '../ui/confirmModal.js';
+import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
 
-const SUBJECTS_COLLECTION = 'subjects';
-const THEMES_COLLECTION = 'themes';
-const QUESTIONS_COLLECTION = 'questions';
+const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
+const QUESTIONS_COLLECTION = "questions";
 
 export function initQuestions() {
-	const questionForm = document.querySelector('#question-form');
-	const questionSubjectSelect = document.querySelector('#question-subject');
-	const questionThemeSelect = document.querySelector('#question-theme');
-	const questionStatementInput = document.querySelector('#question-statement');
-	const alternativeAInput = document.querySelector('#alternative-a');
-	const alternativeBInput = document.querySelector('#alternative-b');
-	const alternativeCInput = document.querySelector('#alternative-c');
-	const alternativeDInput = document.querySelector('#alternative-d');
-	const alternativeEInput = document.querySelector('#alternative-e');
-	const correctAlternativeSelect = document.querySelector(
-		'#correct-alternative',
-	);
-	const questionExplanationInput = document.querySelector(
-		'#question-explanation',
-	);
-	const clearQuestionFormButton = document.querySelector(
-		'#clear-question-form',
-	);
-	const questionFormMessage = document.querySelector('#question-form-message');
-	const questionNoSubjectWarning = document.querySelector(
-		'#question-no-subject-warning',
-	);
-	const questionNoThemeWarning = document.querySelector(
-		'#question-no-theme-warning',
-	);
-	const questionsCurrentTheme = document.querySelector(
-		'#questions-current-theme',
-	);
-	const questionsCount = document.querySelector('#questions-count');
-	const questionsEmptyState = document.querySelector('#questions-empty-state');
-	const questionsList = document.querySelector('#questions-list');
-	const dashboardQuestionsCount = document.querySelector(
-		'#dashboard-questions-count',
-	);
+  const questionForm = document.querySelector("#question-form");
+  const questionSubjectSelect = document.querySelector("#question-subject");
+  const questionThemeSelect = document.querySelector("#question-theme");
+  const questionStatementInput = document.querySelector("#question-statement");
+  const alternativeAInput = document.querySelector("#alternative-a");
+  const alternativeBInput = document.querySelector("#alternative-b");
+  const alternativeCInput = document.querySelector("#alternative-c");
+  const alternativeDInput = document.querySelector("#alternative-d");
+  const alternativeEInput = document.querySelector("#alternative-e");
+  const correctAlternativeSelect = document.querySelector(
+    "#correct-alternative",
+  );
+  const questionExplanationInput = document.querySelector(
+    "#question-explanation",
+  );
+  const clearQuestionFormButton = document.querySelector(
+    "#clear-question-form",
+  );
+  const questionFormMessage = document.querySelector("#question-form-message");
+  const questionNoSubjectWarning = document.querySelector(
+    "#question-no-subject-warning",
+  );
+  const questionNoThemeWarning = document.querySelector(
+    "#question-no-theme-warning",
+  );
+  const questionsCurrentTheme = document.querySelector(
+    "#questions-current-theme",
+  );
+  const questionsCount = document.querySelector("#questions-count");
+  const questionsEmptyState = document.querySelector("#questions-empty-state");
+  const questionsList = document.querySelector("#questions-list");
+  const dashboardQuestionsCount = document.querySelector(
+    "#dashboard-questions-count",
+  );
+  const toggleQuestionFormButton = document.querySelector(
+    "#toggle-question-form",
+  );
 
-	if (
-		!questionForm ||
-		!questionSubjectSelect ||
-		!questionThemeSelect ||
-		!questionStatementInput ||
-		!alternativeAInput ||
-		!alternativeBInput ||
-		!alternativeCInput ||
-		!alternativeDInput ||
-		!alternativeEInput ||
-		!correctAlternativeSelect ||
-		!questionExplanationInput ||
-		!clearQuestionFormButton ||
-		!questionFormMessage ||
-		!questionNoSubjectWarning ||
-		!questionNoThemeWarning ||
-		!questionsCurrentTheme ||
-		!questionsCount ||
-		!questionsEmptyState ||
-		!questionsList ||
-		!dashboardQuestionsCount
-	) {
-		return;
-	}
+  if (
+    !questionForm ||
+    !toggleQuestionFormButton ||
+    !questionSubjectSelect ||
+    !questionThemeSelect ||
+    !questionStatementInput ||
+    !alternativeAInput ||
+    !alternativeBInput ||
+    !alternativeCInput ||
+    !alternativeDInput ||
+    !alternativeEInput ||
+    !correctAlternativeSelect ||
+    !questionExplanationInput ||
+    !clearQuestionFormButton ||
+    !questionFormMessage ||
+    !questionNoSubjectWarning ||
+    !questionNoThemeWarning ||
+    !questionsCurrentTheme ||
+    !questionsCount ||
+    !questionsEmptyState ||
+    !questionsList ||
+    !dashboardQuestionsCount
+  ) {
+    return;
+  }
 
-	function getSubjects() {
-		return getCollection(SUBJECTS_COLLECTION);
-	}
+  function getSubjects() {
+    return getCollection(SUBJECTS_COLLECTION);
+  }
 
-	function getThemes() {
-		return getCollection(THEMES_COLLECTION);
-	}
+  function getThemes() {
+    return getCollection(THEMES_COLLECTION);
+  }
 
-	function getQuestions() {
-		return getCollection(QUESTIONS_COLLECTION);
-	}
+  function getQuestions() {
+    return getCollection(QUESTIONS_COLLECTION);
+  }
 
-	function saveQuestions(questions) {
-		saveCollection(QUESTIONS_COLLECTION, questions);
-	}
+  function saveQuestions(questions) {
+    saveCollection(QUESTIONS_COLLECTION, questions);
+  }
 
-	function createQuestion({
-		subjectId,
-		themeId,
-		statement,
-		alternatives,
-		correctAlternative,
-		explanation,
-	}) {
-		return {
-			id: crypto.randomUUID(),
-			subjectId,
-			themeId,
-			statement,
-			alternatives,
-			correctAlternative,
-			explanation,
-			shouldShuffleAlternatives: true,
-			createdAt: new Date().toISOString(),
-		};
-	}
+  function createQuestion({
+    subjectId,
+    themeId,
+    statement,
+    alternatives,
+    correctAlternative,
+    explanation,
+  }) {
+    return {
+      id: crypto.randomUUID(),
+      subjectId,
+      themeId,
+      statement,
+      alternatives,
+      correctAlternative,
+      explanation,
+      shouldShuffleAlternatives: true,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
-	function deleteQuestion(questionId) {
-		const updatedQuestions = getQuestions().filter((question) => {
-			return question.id !== questionId;
-		});
+  function deleteQuestion(questionId) {
+    const updatedQuestions = getQuestions().filter((question) => {
+      return question.id !== questionId;
+    });
 
-		saveQuestions(updatedQuestions);
-		renderQuestions();
+    saveQuestions(updatedQuestions);
+    renderQuestions();
 
-		setQuestionFormMessage('Questão excluída com sucesso.', 'success');
-	}
+    setQuestionFormMessage("Questão excluída com sucesso.", "success");
+  }
 
-	function formatDate(dateValue) {
-		const date = new Date(dateValue);
+  function toggleQuestionForm() {
+    const isCollapsed = questionForm.classList.toggle("is-collapsed");
 
-		return date.toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric',
-		});
-	}
+    toggleQuestionFormButton.textContent = isCollapsed
+      ? "Mostrar formulário"
+      : "Ocultar formulário";
 
-	function escapeHTML(value) {
-		return String(value)
-			.replaceAll('&', '&amp;')
-			.replaceAll('<', '&lt;')
-			.replaceAll('>', '&gt;')
-			.replaceAll('"', '&quot;')
-			.replaceAll("'", '&#039;');
-	}
+    toggleQuestionFormButton.setAttribute(
+      "aria-expanded",
+      String(!isCollapsed),
+    );
+  }
 
-	function getShortText(text, maxLength = 170) {
-		if (text.length <= maxLength) {
-			return text;
-		}
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
 
-		return `${text.slice(0, maxLength).trim()}...`;
-	}
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
 
-	function setQuestionFormMessage(message, type = 'default') {
-		questionFormMessage.textContent = message;
+  function escapeHTML(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
 
-		questionFormMessage.classList.remove('is-error', 'is-success');
+  function getShortText(text, maxLength = 170) {
+    if (text.length <= maxLength) {
+      return text;
+    }
 
-		if (type === 'error') {
-			questionFormMessage.classList.add('is-error');
-		}
+    return `${text.slice(0, maxLength).trim()}...`;
+  }
 
-		if (type === 'success') {
-			questionFormMessage.classList.add('is-success');
-		}
-	}
+  function setQuestionFormMessage(message, type = "default") {
+    questionFormMessage.textContent = message;
 
-	function updateDashboardQuestionsCount() {
-		dashboardQuestionsCount.textContent = getQuestions().length;
-	}
+    questionFormMessage.classList.remove("is-error", "is-success");
 
-	function updateQuestionsCount(questions) {
-		const totalQuestions = questions.length;
+    if (type === "error") {
+      questionFormMessage.classList.add("is-error");
+    }
 
-		questionsCount.textContent =
-			totalQuestions === 1 ? '1 questão' : `${totalQuestions} questões`;
-	}
+    if (type === "success") {
+      questionFormMessage.classList.add("is-success");
+    }
+  }
 
-	function getSelectedSubject() {
-		const selectedSubjectId = questionSubjectSelect.value;
+  function updateDashboardQuestionsCount() {
+    dashboardQuestionsCount.textContent = getQuestions().length;
+  }
 
-		return getSubjects().find((subject) => {
-			return subject.id === selectedSubjectId;
-		});
-	}
+  function updateQuestionsCount(questions) {
+    const totalQuestions = questions.length;
 
-	function getSelectedTheme() {
-		const selectedThemeId = questionThemeSelect.value;
+    questionsCount.textContent =
+      totalQuestions === 1 ? "1 questão" : `${totalQuestions} questões`;
+  }
 
-		return getThemes().find((theme) => {
-			return theme.id === selectedThemeId;
-		});
-	}
+  function getSelectedSubject() {
+    const selectedSubjectId = questionSubjectSelect.value;
 
-	function getThemesFromSelectedSubject() {
-		const selectedSubjectId = questionSubjectSelect.value;
+    return getSubjects().find((subject) => {
+      return subject.id === selectedSubjectId;
+    });
+  }
 
-		if (!selectedSubjectId) {
-			return [];
-		}
+  function getSelectedTheme() {
+    const selectedThemeId = questionThemeSelect.value;
 
-		return getThemes().filter((theme) => {
-			return theme.subjectId === selectedSubjectId;
-		});
-	}
+    return getThemes().find((theme) => {
+      return theme.id === selectedThemeId;
+    });
+  }
 
-	function getQuestionsFromSelectedTheme() {
-		const selectedThemeId = questionThemeSelect.value;
+  function getThemesFromSelectedSubject() {
+    const selectedSubjectId = questionSubjectSelect.value;
 
-		if (!selectedThemeId) {
-			return [];
-		}
+    if (!selectedSubjectId) {
+      return [];
+    }
 
-		return getQuestions().filter((question) => {
-			return question.themeId === selectedThemeId;
-		});
-	}
+    return getThemes().filter((theme) => {
+      return theme.subjectId === selectedSubjectId;
+    });
+  }
 
-	function renderSubjectOptions() {
-		const subjects = getSubjects();
-		const previousSelectedSubjectId = questionSubjectSelect.value;
+  function getQuestionsFromSelectedTheme() {
+    const selectedThemeId = questionThemeSelect.value;
 
-		questionSubjectSelect.innerHTML = `
+    if (!selectedThemeId) {
+      return [];
+    }
+
+    return getQuestions().filter((question) => {
+      return question.themeId === selectedThemeId;
+    });
+  }
+
+  function renderSubjectOptions() {
+    const subjects = getSubjects();
+    const previousSelectedSubjectId = questionSubjectSelect.value;
+
+    questionSubjectSelect.innerHTML = `
       <option value="">Selecione uma matéria</option>
     `;
 
-		subjects.forEach((subject) => {
-			const option = document.createElement('option');
+    subjects.forEach((subject) => {
+      const option = document.createElement("option");
 
-			option.value = subject.id;
-			option.textContent = subject.name;
+      option.value = subject.id;
+      option.textContent = subject.name;
 
-			questionSubjectSelect.appendChild(option);
-		});
+      questionSubjectSelect.appendChild(option);
+    });
 
-		const hasSubjects = subjects.length > 0;
-		const selectedSubjectStillExists = subjects.some((subject) => {
-			return subject.id === previousSelectedSubjectId;
-		});
+    const hasSubjects = subjects.length > 0;
+    const selectedSubjectStillExists = subjects.some((subject) => {
+      return subject.id === previousSelectedSubjectId;
+    });
 
-		questionNoSubjectWarning.hidden = hasSubjects;
+    questionNoSubjectWarning.hidden = hasSubjects;
 
-		if (!hasSubjects) {
-			questionForm.hidden = true;
+    if (!hasSubjects) {
+      questionForm.hidden = true;
 
-			questionThemeSelect.innerHTML = `
+      questionThemeSelect.innerHTML = `
         <option value="">Selecione um tema</option>
       `;
 
-			questionNoThemeWarning.hidden = true;
+      questionNoThemeWarning.hidden = true;
 
-			questionsCurrentTheme.textContent =
-				'Cadastre uma matéria antes de criar questões.';
+      questionsCurrentTheme.textContent =
+        "Cadastre uma matéria antes de criar questões.";
 
-			updateQuestionsCount([]);
-			updateDashboardQuestionsCount();
+      updateQuestionsCount([]);
+      updateDashboardQuestionsCount();
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
         <strong>Nenhuma matéria disponível.</strong>
         <span>Cadastre uma matéria antes de criar questões.</span>
       `;
 
-			questionsList.innerHTML = '';
-			return;
-		}
+      questionsList.innerHTML = "";
+      return;
+    }
 
-		questionForm.hidden = false;
+    questionForm.hidden = false;
 
-		if (selectedSubjectStillExists) {
-			questionSubjectSelect.value = previousSelectedSubjectId;
-		} else {
-			questionSubjectSelect.value = '';
-		}
+    if (selectedSubjectStillExists) {
+      questionSubjectSelect.value = previousSelectedSubjectId;
+    } else {
+      questionSubjectSelect.value = "";
+    }
 
-		renderThemeOptions();
-	}
+    renderThemeOptions();
+  }
 
-	function renderThemeOptions() {
-		const selectedSubject = getSelectedSubject();
-		const themesFromSubject = getThemesFromSelectedSubject();
-		const previousSelectedThemeId = questionThemeSelect.value;
+  function renderThemeOptions() {
+    const selectedSubject = getSelectedSubject();
+    const themesFromSubject = getThemesFromSelectedSubject();
+    const previousSelectedThemeId = questionThemeSelect.value;
 
-		questionThemeSelect.innerHTML = `
+    questionThemeSelect.innerHTML = `
       <option value="">Selecione um tema</option>
     `;
 
-		if (!selectedSubject) {
-			questionNoThemeWarning.hidden = true;
-			renderQuestions();
-			return;
-		}
+    if (!selectedSubject) {
+      questionNoThemeWarning.hidden = true;
+      renderQuestions();
+      return;
+    }
 
-		themesFromSubject.forEach((theme) => {
-			const option = document.createElement('option');
+    themesFromSubject.forEach((theme) => {
+      const option = document.createElement("option");
 
-			option.value = theme.id;
-			option.textContent = theme.name;
+      option.value = theme.id;
+      option.textContent = theme.name;
 
-			questionThemeSelect.appendChild(option);
-		});
+      questionThemeSelect.appendChild(option);
+    });
 
-		const hasThemes = themesFromSubject.length > 0;
-		const selectedThemeStillExists = themesFromSubject.some((theme) => {
-			return theme.id === previousSelectedThemeId;
-		});
+    const hasThemes = themesFromSubject.length > 0;
+    const selectedThemeStillExists = themesFromSubject.some((theme) => {
+      return theme.id === previousSelectedThemeId;
+    });
 
-		questionNoThemeWarning.hidden = hasThemes;
+    questionNoThemeWarning.hidden = hasThemes;
 
-		if (selectedThemeStillExists) {
-			questionThemeSelect.value = previousSelectedThemeId;
-		} else {
-			questionThemeSelect.value = '';
-		}
+    if (selectedThemeStillExists) {
+      questionThemeSelect.value = previousSelectedThemeId;
+    } else {
+      questionThemeSelect.value = "";
+    }
 
-		renderQuestions();
-	}
+    renderQuestions();
+  }
 
-	function renderQuestions() {
-		const selectedSubject = getSelectedSubject();
-		const selectedTheme = getSelectedTheme();
-		const questionsFromTheme = getQuestionsFromSelectedTheme();
+  function renderQuestions() {
+    const selectedSubject = getSelectedSubject();
+    const selectedTheme = getSelectedTheme();
+    const questionsFromTheme = getQuestionsFromSelectedTheme();
 
-		questionsList.innerHTML = '';
+    questionsList.innerHTML = "";
 
-		updateDashboardQuestionsCount();
-		updateQuestionsCount(questionsFromTheme);
+    updateDashboardQuestionsCount();
+    updateQuestionsCount(questionsFromTheme);
 
-		if (!selectedSubject) {
-			questionsCurrentTheme.textContent =
-				'Selecione uma matéria para carregar os temas.';
+    if (!selectedSubject) {
+      questionsCurrentTheme.textContent =
+        "Selecione uma matéria para carregar os temas.";
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
         <strong>Nenhuma matéria selecionada.</strong>
         <span>Escolha uma matéria para visualizar os temas disponíveis.</span>
       `;
 
-			return;
-		}
+      return;
+    }
 
-		if (!selectedTheme) {
-			questionsCurrentTheme.textContent =
-				'Selecione um tema para visualizar suas questões.';
+    if (!selectedTheme) {
+      questionsCurrentTheme.textContent =
+        "Selecione um tema para visualizar suas questões.";
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
         <strong>Nenhum tema selecionado.</strong>
         <span>Escolha um tema para visualizar ou cadastrar questões.</span>
       `;
 
-			return;
-		}
+      return;
+    }
 
-		questionsCurrentTheme.innerHTML = `
+    questionsCurrentTheme.innerHTML = `
       Questões de <strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
     `;
 
-		if (questionsFromTheme.length === 0) {
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+    if (questionsFromTheme.length === 0) {
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
         <strong>Nenhuma questão cadastrada ainda.</strong>
         <span>Use o formulário acima para adicionar a primeira questão deste tema.</span>
       `;
 
-			return;
-		}
+      return;
+    }
 
-		questionsEmptyState.hidden = true;
+    questionsEmptyState.hidden = true;
 
-		questionsFromTheme.forEach((question, index) => {
-			const questionCard = document.createElement('article');
+    questionsFromTheme.forEach((question, index) => {
+      const questionCard = document.createElement("article");
 
-			questionCard.classList.add('question-card');
-			questionCard.dataset.questionId = question.id;
+      questionCard.classList.add("question-card");
+      questionCard.dataset.questionId = question.id;
 
-			questionCard.innerHTML = `
-        <div class="question-card__content">
-          <h3>Questão ${String(index + 1).padStart(2, '0')}</h3>
-          <p>${escapeHTML(getShortText(question.statement))}</p>
+      questionCard.innerHTML = `
+		<div class="question-card__content">
+			<div class="question-card__top">
+				<h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
 
-          <div class="question-card__meta">
-            <span>Correta: ${escapeHTML(question.correctAlternative)}</span>
-            <span>Criada em ${formatDate(question.createdAt)}</span>
-            <span>Alternativas aleatórias: ${question.shouldShuffleAlternatives ? 'sim' : 'não'}</span>
-          </div>
-        </div>
+				<span class="question-card__answer">
+				Correta: <u>${escapeHTML(question.correctAlternative)}</u>	
+				</span>
+			</div>
 
-        <div class="question-card__actions">
-          <button class="button button--secondary" type="button" disabled>
-            Resolver em breve
-          </button>
+			<p class="question-card__statement">
+				${escapeHTML(getShortText(question.statement))}
+			</p>
 
-          <button
-            class="button button--danger"
-            type="button"
-            data-delete-question="${question.id}"
-          >
-            Excluir
-          </button>
-        </div>
-      `;
+			<div class="question-card__meta">
+				<span>Criada em ${formatDate(question.createdAt)}</span>
+				<span>${question.shouldShuffleAlternatives ? "Alternativas serão embaralhadas" : "Ordem fixa das alternativas"}</span>
+			</div>
+		</div>
 
-			questionsList.appendChild(questionCard);
-		});
-	}
+		<div class="question-card__actions">
+			<button class="button button--secondary" type="button" disabled>
+				Resolver em breve
+			</button>
 
-	function clearQuestionForm() {
-		questionStatementInput.value = '';
-		alternativeAInput.value = '';
-		alternativeBInput.value = '';
-		alternativeCInput.value = '';
-		alternativeDInput.value = '';
-		alternativeEInput.value = '';
-		correctAlternativeSelect.value = '';
-		questionExplanationInput.value = '';
-		setQuestionFormMessage('');
-		questionStatementInput.focus();
-	}
+			<button
+				class="button button--danger"
+				type="button"
+				data-delete-question="${question.id}"
+			>
+				Excluir
+			</button>
+		</div>
+		`;
 
-	function validateQuestionForm({
-		selectedSubjectId,
-		selectedThemeId,
-		statement,
-		alternatives,
-		correctAlternative,
-	}) {
-		if (!selectedSubjectId) {
-			setQuestionFormMessage(
-				'Selecione uma matéria antes de cadastrar a questão.',
-				'error',
-			);
-			questionSubjectSelect.focus();
-			return false;
-		}
+      questionsList.appendChild(questionCard);
+    });
+  }
 
-		if (!selectedThemeId) {
-			setQuestionFormMessage(
-				'Selecione um tema antes de cadastrar a questão.',
-				'error',
-			);
-			questionThemeSelect.focus();
-			return false;
-		}
+  function clearQuestionForm() {
+    questionStatementInput.value = "";
+    alternativeAInput.value = "";
+    alternativeBInput.value = "";
+    alternativeCInput.value = "";
+    alternativeDInput.value = "";
+    alternativeEInput.value = "";
+    correctAlternativeSelect.value = "";
+    questionExplanationInput.value = "";
+    setQuestionFormMessage("");
+    questionStatementInput.focus();
+  }
 
-		if (!statement) {
-			setQuestionFormMessage('Informe o enunciado da questão.', 'error');
-			questionStatementInput.focus();
-			return false;
-		}
+  function validateQuestionForm({
+    selectedSubjectId,
+    selectedThemeId,
+    statement,
+    alternatives,
+    correctAlternative,
+  }) {
+    if (!selectedSubjectId) {
+      setQuestionFormMessage(
+        "Selecione uma matéria antes de cadastrar a questão.",
+        "error",
+      );
+      questionSubjectSelect.focus();
+      return false;
+    }
 
-		if (!correctAlternative) {
-			setQuestionFormMessage(
-				'Selecione a alternativa correta da questão.',
-				'error',
-			);
-			correctAlternativeSelect.focus();
-			return false;
-		}
+    if (!selectedThemeId) {
+      setQuestionFormMessage(
+        "Selecione um tema antes de cadastrar a questão.",
+        "error",
+      );
+      questionThemeSelect.focus();
+      return false;
+    }
 
-		const correctAlternativeText = alternatives[correctAlternative];
+    if (!statement) {
+      setQuestionFormMessage("Informe o enunciado da questão.", "error");
+      questionStatementInput.focus();
+      return false;
+    }
 
-		if (!correctAlternativeText) {
-			setQuestionFormMessage(
-				`Preencha o texto da alternativa ${correctAlternative}.`,
-				'error',
-			);
+    if (!correctAlternative) {
+      setQuestionFormMessage(
+        "Selecione a alternativa correta da questão.",
+        "error",
+      );
+      correctAlternativeSelect.focus();
+      return false;
+    }
 
-			const alternativeInputs = {
-				A: alternativeAInput,
-				B: alternativeBInput,
-				C: alternativeCInput,
-				D: alternativeDInput,
-				E: alternativeEInput,
-			};
+    const correctAlternativeText = alternatives[correctAlternative];
 
-			alternativeInputs[correctAlternative].focus();
-			return false;
-		}
+    if (!correctAlternativeText) {
+      setQuestionFormMessage(
+        `Preencha o texto da alternativa ${correctAlternative}.`,
+        "error",
+      );
 
-		return true;
-	}
+      const alternativeInputs = {
+        A: alternativeAInput,
+        B: alternativeBInput,
+        C: alternativeCInput,
+        D: alternativeDInput,
+        E: alternativeEInput,
+      };
 
-	function handleQuestionSubmit(event) {
-		event.preventDefault();
+      alternativeInputs[correctAlternative].focus();
+      return false;
+    }
 
-		const selectedSubjectId = questionSubjectSelect.value;
-		const selectedThemeId = questionThemeSelect.value;
-		const statement = questionStatementInput.value.trim();
+    return true;
+  }
 
-		const alternatives = {
-			A: alternativeAInput.value.trim(),
-			B: alternativeBInput.value.trim(),
-			C: alternativeCInput.value.trim(),
-			D: alternativeDInput.value.trim(),
-			E: alternativeEInput.value.trim(),
-		};
+  function handleQuestionSubmit(event) {
+    event.preventDefault();
 
-		const correctAlternative = correctAlternativeSelect.value;
-		const explanation = questionExplanationInput.value.trim();
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
+    const statement = questionStatementInput.value.trim();
 
-		const isValidQuestion = validateQuestionForm({
-			selectedSubjectId,
-			selectedThemeId,
-			statement,
-			alternatives,
-			correctAlternative,
-		});
+    const alternatives = {
+      A: alternativeAInput.value.trim(),
+      B: alternativeBInput.value.trim(),
+      C: alternativeCInput.value.trim(),
+      D: alternativeDInput.value.trim(),
+      E: alternativeEInput.value.trim(),
+    };
 
-		if (!isValidQuestion) {
-			return;
-		}
+    const correctAlternative = correctAlternativeSelect.value;
+    const explanation = questionExplanationInput.value.trim();
 
-		const questions = getQuestions();
+    const isValidQuestion = validateQuestionForm({
+      selectedSubjectId,
+      selectedThemeId,
+      statement,
+      alternatives,
+      correctAlternative,
+    });
 
-		const newQuestion = createQuestion({
-			subjectId: selectedSubjectId,
-			themeId: selectedThemeId,
-			statement,
-			alternatives,
-			correctAlternative,
-			explanation,
-		});
+    if (!isValidQuestion) {
+      return;
+    }
 
-		questions.push(newQuestion);
+    const questions = getQuestions();
 
-		saveQuestions(questions);
-		renderQuestions();
-		clearQuestionForm();
+    const newQuestion = createQuestion({
+      subjectId: selectedSubjectId,
+      themeId: selectedThemeId,
+      statement,
+      alternatives,
+      correctAlternative,
+      explanation,
+    });
 
-		setQuestionFormMessage('Questão cadastrada com sucesso.', 'success');
-	}
+    questions.push(newQuestion);
 
-	function handleQuestionDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-question]');
+    saveQuestions(questions);
+    renderQuestions();
+    clearQuestionForm();
 
-		if (!deleteButton) {
-			return;
-		}
+    questionForm.classList.add("is-collapsed");
+    toggleQuestionFormButton.textContent = "Mostrar formulário";
+    toggleQuestionFormButton.setAttribute("aria-expanded", "false");
 
-		const questionId = deleteButton.dataset.deleteQuestion;
+    questionsList.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
 
-		const question = getQuestions().find((currentQuestion) => {
-			return currentQuestion.id === questionId;
-		});
+    setQuestionFormMessage("Questão cadastrada com sucesso.", "success");
+  }
 
-		if (!question) {
-			return;
-		}
+  function handleQuestionDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-question]");
 
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir questão',
-			message: 'Tem certeza que deseja excluir esta questão?',
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteQuestion(question.id);
-			},
-		});
-	}
+    if (!deleteButton) {
+      return;
+    }
 
-	function handleSubjectChange() {
-		setQuestionFormMessage('');
-		questionThemeSelect.value = '';
-		renderThemeOptions();
-	}
+    const questionId = deleteButton.dataset.deleteQuestion;
 
-	function handleThemeChange() {
-		setQuestionFormMessage('');
-		renderQuestions();
-	}
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
 
-	questionForm.addEventListener('submit', handleQuestionSubmit);
-	questionSubjectSelect.addEventListener('change', handleSubjectChange);
-	questionThemeSelect.addEventListener('change', handleThemeChange);
-	clearQuestionFormButton.addEventListener('click', clearQuestionForm);
-	questionsList.addEventListener('click', handleQuestionDelete);
+    if (!question) {
+      return;
+    }
 
-	document.addEventListener('subjects:changed', renderSubjectOptions);
-	document.addEventListener('themes:changed', renderThemeOptions);
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir questão",
+      message: "Tem certeza que deseja excluir esta questão?",
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteQuestion(question.id);
+      },
+    });
+  }
 
-	renderSubjectOptions();
-	updateDashboardQuestionsCount();
+  function handleSubjectChange() {
+    setQuestionFormMessage("");
+    questionThemeSelect.value = "";
+    renderThemeOptions();
+  }
 
-	console.log('Sistema de questões carregado.');
+  function handleThemeChange() {
+    setQuestionFormMessage("");
+    renderQuestions();
+  }
+
+  questionForm.addEventListener("submit", handleQuestionSubmit);
+  questionSubjectSelect.addEventListener("change", handleSubjectChange);
+  questionThemeSelect.addEventListener("change", handleThemeChange);
+  clearQuestionFormButton.addEventListener("click", clearQuestionForm);
+  toggleQuestionFormButton.addEventListener("click", toggleQuestionForm);
+  questionsList.addEventListener("click", handleQuestionDelete);
+
+  document.addEventListener("subjects:changed", renderSubjectOptions);
+  document.addEventListener("themes:changed", renderThemeOptions);
+
+  renderSubjectOptions();
+  updateDashboardQuestionsCount();
+
+  console.log("Sistema de questões carregado.");
 }

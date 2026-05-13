@@ -1,602 +1,581 @@
 <!doctype html>
 <html lang="pt-BR">
-   <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-      <title>Central de Estudos Web</title>
-
-      <link rel="stylesheet" href="src/css/style.css" />
-   </head>
-   <body>
-      <main class="app">
-         <section class="hero">
-            <p class="hero__tag">📚 Projeto pessoal de estudos</p>
-
-            <h1>Central de Estudos Web</h1>
-
-            <p class="hero__description">
-               Organize matérias, temas, questões, anotações e revisões em um
-               único lugar.
-            </p>
-
-            <div class="hero__actions">
-               <button
-                  class="button button--primary"
-                  type="button"
-                  data-section-target="dashboard"
-               >
-                  Começar estudos
-               </button>
-
-               <button
-                  class="button button--secondary"
-                  type="button"
-                  data-section-target="roadmap"
-               >
-                  Ver roadmap
-               </button>
-            </div>
-         </section>
-
-         <section
-            class="navigation-panel"
-            aria-label="Navegação principal do sistema"
-         >
-            <div class="section-heading">
-               <p class="section-heading__tag">🧭 Navegação</p>
-               <h2>Áreas da central</h2>
-               <p>
-                  Escolha uma área para visualizar a função planejada dentro do
-                  sistema.
-               </p>
-            </div>
-
-            <div class="nav-grid">
-               <button
-                  class="nav-card is-active"
-                  type="button"
-                  data-section-target="dashboard"
-               >
-                  <span>📊</span>
-                  <strong>Dashboard</strong>
-                  <small>Visão geral dos estudos</small>
-               </button>
-
-               <button
-                  class="nav-card"
-                  type="button"
-                  data-section-target="subjects"
-               >
-                  <span>📘</span>
-                  <strong>Matérias</strong>
-                  <small>Organize suas disciplinas</small>
-               </button>
-
-               <button
-                  class="nav-card"
-                  type="button"
-                  data-section-target="themes"
-               >
-                  <span>🧩</span>
-                  <strong>Temas</strong>
-                  <small>Divida os conteúdos</small>
-               </button>
-
-               <button
-                  class="nav-card"
-                  type="button"
-                  data-section-target="questions"
-               >
-                  <span>📝</span>
-                  <strong>Questões</strong>
-                  <small>Cadastre exercícios</small>
-               </button>
-
-               <button
-                  class="nav-card"
-                  type="button"
-                  data-section-target="notes"
-               >
-                  <span>📒</span>
-                  <strong>Anotações</strong>
-                  <small>Registre resumos</small>
-               </button>
-
-               <button
-                  class="nav-card"
-                  type="button"
-                  data-section-target="reviews"
-               >
-                  <span>🔁</span>
-                  <strong>Revisões</strong>
-                  <small>Revise seus erros</small>
-               </button>
-            </div>
-         </section>
-
-         <section class="content-panel">
-            <article class="app-section is-visible" id="dashboard">
-               <p class="app-section__tag">📊 Dashboard</p>
-               <h2>Visão geral dos estudos</h2>
-               <p>
-                  Esta área será usada para mostrar um resumo geral do
-                  progresso, incluindo matérias, temas, questões respondidas,
-                  acertos, erros e revisões pendentes.
-               </p>
-
-               <div class="placeholder-grid">
-                  <div class="placeholder-card">
-                     <strong id="dashboard-subjects-count">0</strong>
-                     <span>Matérias</span>
-                  </div>
-
-                  <div class="placeholder-card">
-                     <strong id="dashboard-themes-count">0</strong>
-                     <span>Temas</span>
-                  </div>
-
-                  <div class="placeholder-card">
-                     <strong id="dashboard-questions-count">0</strong>
-                     <span>Questões</span>
-                  </div>
-
-                  <div class="placeholder-card">
-                     <strong id="dashboard-errors-count">0</strong>
-                     <span>Erros pendentes</span>
-                  </div>
-               </div>
-            </article>
-
-            <article class="app-section" id="subjects">
-               <p class="app-section__tag">📘 Matérias</p>
-               <h2>Organização por matérias</h2>
-               <p>
-                  Cadastre suas matérias de estudo para organizar temas,
-                  questões, anotações e revisões futuramente.
-               </p>
-
-               <form class="subject-form" id="subject-form">
-                  <div class="form-group">
-                     <label for="subject-name">Nome da matéria</label>
-                     <input
-                        type="text"
-                        id="subject-name"
-                        name="subjectName"
-                        placeholder="Ex: História"
-                        autocomplete="off"
-                     />
-                  </div>
-
-                  <div class="form-group">
-                     <label for="subject-description">Descrição</label>
-                     <textarea
-                        id="subject-description"
-                        name="subjectDescription"
-                        rows="3"
-                        placeholder="Ex: Conteúdos de História Geral e do Brasil"
-                     ></textarea>
-                  </div>
-
-                  <p
-                     class="form-message"
-                     id="subject-form-message"
-                     aria-live="polite"
-                  ></p>
-
-                  <div class="form-actions">
-                     <button class="button button--primary" type="submit">
-                        Adicionar matéria
-                     </button>
-
-                     <button
-                        class="button button--secondary"
-                        type="button"
-                        id="clear-subject-form"
-                     >
-                        Limpar
-                     </button>
-                  </div>
-               </form>
-
-               <div class="subjects-area">
-                  <div class="subjects-header">
-                     <h3>Matérias cadastradas</h3>
-                     <span id="subjects-count">0 matérias</span>
-                  </div>
-
-                  <div class="empty-state" id="subjects-empty-state">
-                     <strong>Nenhuma matéria cadastrada ainda.</strong>
-                     <span
-                        >Use o formulário acima para adicionar sua primeira
-                        matéria.</span
-                     >
-                  </div>
-
-                  <div class="subjects-list" id="subjects-list"></div>
-               </div>
-            </article>
-
-            <article class="app-section" id="themes">
-               <p class="app-section__tag">🧩 Temas</p>
-               <h2>Divisão dos conteúdos</h2>
-               <p>
-                  Organize cada matéria em temas menores para facilitar o estudo
-                  por blocos, revisões e questões futuramente.
-               </p>
-
-               <div class="theme-warning" id="theme-no-subject-warning" hidden>
-                  <strong>Cadastre uma matéria primeiro.</strong>
-                  <span>
-                     Para criar temas, é necessário ter pelo menos uma matéria
-                     cadastrada.
-                  </span>
-               </div>
-
-               <form class="theme-form" id="theme-form">
-                  <div class="form-group">
-                     <label for="theme-subject">Matéria relacionada</label>
-                     <select id="theme-subject" name="themeSubject">
-                        <option value="">Selecione uma matéria</option>
-                     </select>
-                  </div>
-
-                  <div class="form-group">
-                     <label for="theme-name">Nome do tema</label>
-                     <input
-                        type="text"
-                        id="theme-name"
-                        name="themeName"
-                        placeholder="Ex: Brasil República"
-                        autocomplete="off"
-                     />
-                  </div>
-
-                  <div class="form-group">
-                     <label for="theme-description">Descrição</label>
-                     <textarea
-                        id="theme-description"
-                        name="themeDescription"
-                        rows="3"
-                        placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"
-                     ></textarea>
-                  </div>
-
-                  <p
-                     class="form-message"
-                     id="theme-form-message"
-                     aria-live="polite"
-                  ></p>
-
-                  <div class="form-actions">
-                     <button class="button button--primary" type="submit">
-                        Adicionar tema
-                     </button>
-
-                     <button
-                        class="button button--secondary"
-                        type="button"
-                        id="clear-theme-form"
-                     >
-                        Limpar
-                     </button>
-                  </div>
-               </form>
-
-               <div class="themes-area">
-                  <div class="themes-header">
-                     <div>
-                        <h3>Temas cadastrados</h3>
-                        <p id="themes-current-subject">
-                           Selecione uma matéria para visualizar seus temas.
-                        </p>
-                     </div>
-
-                     <span id="themes-count">0 temas</span>
-                  </div>
-
-                  <div class="empty-state" id="themes-empty-state">
-                     <strong>Nenhum tema cadastrado ainda.</strong>
-                     <span
-                        >Escolha uma matéria e use o formulário acima para
-                        adicionar um tema.</span
-                     >
-                  </div>
-
-                  <div class="themes-list" id="themes-list"></div>
-               </div>
-            </article>
-
-            <article class="app-section" id="questions">
-               <p class="app-section__tag">📝 Questões</p>
-               <h2>Banco de questões</h2>
-               <p>
-                  Cadastre questões dentro de um tema específico para organizar
-                  exercícios, gabaritos e explicações em um único lugar.
-               </p>
-
-               <div
-                  class="question-warning"
-                  id="question-no-subject-warning"
-                  hidden
-               >
-                  <strong>Cadastre uma matéria primeiro.</strong>
-                  <span>
-                     Para criar questões, é necessário ter pelo menos uma
-                     matéria cadastrada.
-                  </span>
-               </div>
-
-               <div
-                  class="question-warning"
-                  id="question-no-theme-warning"
-                  hidden
-               >
-                  <strong>Cadastre um tema primeiro.</strong>
-                  <span>
-                     Para criar questões, selecione uma matéria que já possua
-                     temas cadastrados.
-                  </span>
-               </div>
-
-               <form class="question-form" id="question-form">
-                  <div class="form-grid">
-                     <div class="form-group">
-                        <label for="question-subject"
-                           >Matéria relacionada</label
-                        >
-                        <select id="question-subject" name="questionSubject">
-                           <option value="">Selecione uma matéria</option>
-                        </select>
-                     </div>
-
-                     <div class="form-group">
-                        <label for="question-theme">Tema relacionado</label>
-                        <select id="question-theme" name="questionTheme">
-                           <option value="">Selecione um tema</option>
-                        </select>
-                     </div>
-                  </div>
-
-                  <div class="form-group">
-                     <label for="question-statement">Enunciado</label>
-                     <textarea
-                        id="question-statement"
-                        name="questionStatement"
-                        rows="5"
-                        placeholder="Cole ou escreva o enunciado da questão"
-                     ></textarea>
-                  </div>
-
-                  <div class="alternatives-grid">
-                     <div class="form-group">
-                        <label for="alternative-a">Alternativa A</label>
-                        <input
-                           type="text"
-                           id="alternative-a"
-                           name="alternativeA"
-                           placeholder="Texto da alternativa A"
-                           autocomplete="off"
-                        />
-                     </div>
-
-                     <div class="form-group">
-                        <label for="alternative-b">Alternativa B</label>
-                        <input
-                           type="text"
-                           id="alternative-b"
-                           name="alternativeB"
-                           placeholder="Texto da alternativa B"
-                           autocomplete="off"
-                        />
-                     </div>
-
-                     <div class="form-group">
-                        <label for="alternative-c">Alternativa C</label>
-                        <input
-                           type="text"
-                           id="alternative-c"
-                           name="alternativeC"
-                           placeholder="Texto da alternativa C"
-                           autocomplete="off"
-                        />
-                     </div>
-
-                     <div class="form-group">
-                        <label for="alternative-d">Alternativa D</label>
-                        <input
-                           type="text"
-                           id="alternative-d"
-                           name="alternativeD"
-                           placeholder="Texto da alternativa D"
-                           autocomplete="off"
-                        />
-                     </div>
-
-                     <div class="form-group">
-                        <label for="alternative-e">Alternativa E</label>
-                        <input
-                           type="text"
-                           id="alternative-e"
-                           name="alternativeE"
-                           placeholder="Texto da alternativa E"
-                           autocomplete="off"
-                        />
-                     </div>
-                  </div>
-
-                  <div class="form-grid">
-                     <div class="form-group">
-                        <label for="correct-alternative"
-                           >Alternativa correta</label
-                        >
-                        <select
-                           id="correct-alternative"
-                           name="correctAlternative"
-                        >
-                           <option value="">Selecione a correta</option>
-                           <option value="A">Alternativa A</option>
-                           <option value="B">Alternativa B</option>
-                           <option value="C">Alternativa C</option>
-                           <option value="D">Alternativa D</option>
-                           <option value="E">Alternativa E</option>
-                        </select>
-                     </div>
-                  </div>
-
-                  <div class="form-group">
-                     <label for="question-explanation"
-                        >Explicação / Correção</label
-                     >
-                     <textarea
-                        id="question-explanation"
-                        name="questionExplanation"
-                        rows="4"
-                        placeholder="Explique por que a alternativa correta está certa"
-                     ></textarea>
-                  </div>
-
-                  <p
-                     class="form-message"
-                     id="question-form-message"
-                     aria-live="polite"
-                  ></p>
-
-                  <div class="form-actions">
-                     <button class="button button--primary" type="submit">
-                        Adicionar questão
-                     </button>
-
-                     <button
-                        class="button button--secondary"
-                        type="button"
-                        id="clear-question-form"
-                     >
-                        Limpar
-                     </button>
-                  </div>
-               </form>
-
-               <div class="questions-area">
-                  <div class="questions-header">
-                     <div>
-                        <h3>Questões cadastradas</h3>
-                        <p id="questions-current-theme">
-                           Selecione uma matéria e um tema para visualizar suas
-                           questões.
-                        </p>
-                     </div>
-
-                     <span id="questions-count">0 questões</span>
-                  </div>
-
-                  <div class="empty-state" id="questions-empty-state">
-                     <strong>Nenhuma questão selecionada ainda.</strong>
-                     <span
-                        >Escolha um tema para visualizar ou cadastrar
-                        questões.</span
-                     >
-                  </div>
-
-                  <div class="questions-list" id="questions-list"></div>
-               </div>
-            </article>
-
-            <article class="app-section" id="notes">
-               <p class="app-section__tag">📒 Anotações</p>
-               <h2>Anotações de estudo</h2>
-               <p>
-                  Esta área será usada para guardar resumos, observações
-                  pessoais, regras de correção e ideias importantes sobre os
-                  temas estudados.
-               </p>
-
-               <div class="empty-state">
-                  <strong>Nenhuma anotação criada ainda.</strong>
-                  <span>As anotações serão organizadas por tema.</span>
-               </div>
-            </article>
-
-            <article class="app-section" id="reviews">
-               <p class="app-section__tag">🔁 Revisões</p>
-               <h2>Revisão de erros</h2>
-               <p>
-                  Aqui ficarão as questões erradas, os motivos dos erros e as
-                  regras criadas para evitar repetir os mesmos problemas.
-               </p>
-
-               <div class="empty-state">
-                  <strong>Nenhum erro registrado ainda.</strong>
-                  <span
-                     >Quando houver questões respondidas, os erros aparecerão
-                     aqui.</span
-                  >
-               </div>
-            </article>
-
-            <article class="app-section" id="roadmap">
-               <p class="app-section__tag">🗺️ Roadmap</p>
-               <h2>Planejamento do projeto</h2>
-               <p>
-                  O roadmap completo está documentado no arquivo
-                  <strong>ROADMAP.md</strong>. Esta área serve apenas como
-                  atalho visual dentro da interface inicial.
-               </p>
-
-               <div class="empty-state">
-                  <strong>Versão atual: v0.3</strong>
-                  <span
-                     >Permitir que cada matéria tenha seus próprios temas de
-                     estudo, mantendo a relação entre matéria e tema de forma
-                     organizada.</span
-                  >
-               </div>
-            </article>
-         </section>
-      </main>
-
-      <div
-         class="modal-overlay"
-         id="app-confirm-modal"
-         role="dialog"
-         aria-modal="true"
-         aria-labelledby="app-confirm-title"
-         aria-describedby="app-confirm-description"
-         hidden
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Central de Estudos Web</title>
+
+    <link rel="stylesheet" href="src/css/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="hero">
+        <p class="hero__tag">📚 Projeto pessoal de estudos</p>
+
+        <h1>Central de Estudos Web</h1>
+
+        <p class="hero__description">
+          Organize matérias, temas, questões, anotações e revisões em um único
+          lugar.
+        </p>
+
+        <div class="hero__actions">
+          <button
+            class="button button--primary"
+            type="button"
+            data-section-target="dashboard"
+          >
+            Começar estudos
+          </button>
+
+          <button
+            class="button button--secondary"
+            type="button"
+            data-section-target="roadmap"
+          >
+            Ver roadmap
+          </button>
+        </div>
+      </section>
+
+      <section
+        class="navigation-panel"
+        aria-label="Navegação principal do sistema"
       >
-         <div class="modal">
-            <p class="modal__tag" id="app-confirm-tag">⚠️ Confirmação</p>
+        <div class="section-heading">
+          <p class="section-heading__tag">🧭 Navegação</p>
+          <h2>Áreas da central</h2>
+          <p>
+            Escolha uma área para visualizar a função planejada dentro do
+            sistema.
+          </p>
+        </div>
 
-            <h3 class="modal__title" id="app-confirm-title">Confirmar ação</h3>
+        <div class="nav-grid">
+          <button
+            class="nav-card is-active"
+            type="button"
+            data-section-target="dashboard"
+          >
+            <span>📊</span>
+            <strong>Dashboard</strong>
+            <small>Visão geral dos estudos</small>
+          </button>
 
-            <p class="modal__description" id="app-confirm-description">
-               Tem certeza que deseja continuar?
-            </p>
+          <button class="nav-card" type="button" data-section-target="subjects">
+            <span>📘</span>
+            <strong>Matérias</strong>
+            <small>Organize suas disciplinas</small>
+          </button>
 
-            <div class="modal__actions">
-               <button
-                  class="button button--secondary"
-                  type="button"
-                  id="app-confirm-cancel"
-               >
-                  Cancelar
-               </button>
+          <button class="nav-card" type="button" data-section-target="themes">
+            <span>🧩</span>
+            <strong>Temas</strong>
+            <small>Divida os conteúdos</small>
+          </button>
 
-               <button
-                  class="button button--danger"
-                  type="button"
-                  id="app-confirm-confirm"
-               >
-                  Confirmar
-               </button>
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="questions"
+          >
+            <span>📝</span>
+            <strong>Questões</strong>
+            <small>Cadastre exercícios</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="notes">
+            <span>📒</span>
+            <strong>Anotações</strong>
+            <small>Registre resumos</small>
+          </button>
+
+          <button class="nav-card" type="button" data-section-target="reviews">
+            <span>🔁</span>
+            <strong>Revisões</strong>
+            <small>Revise seus erros</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="content-panel">
+        <article class="app-section is-visible" id="dashboard">
+          <p class="app-section__tag">📊 Dashboard</p>
+          <h2>Visão geral dos estudos</h2>
+          <p>
+            Esta área será usada para mostrar um resumo geral do progresso,
+            incluindo matérias, temas, questões respondidas, acertos, erros e
+            revisões pendentes.
+          </p>
+
+          <div class="placeholder-grid">
+            <div class="placeholder-card">
+              <strong id="dashboard-subjects-count">0</strong>
+              <span>Matérias</span>
             </div>
-         </div>
+
+            <div class="placeholder-card">
+              <strong id="dashboard-themes-count">0</strong>
+              <span>Temas</span>
+            </div>
+
+            <div class="placeholder-card">
+              <strong id="dashboard-questions-count">0</strong>
+              <span>Questões</span>
+            </div>
+
+            <div class="placeholder-card">
+              <strong id="dashboard-errors-count">0</strong>
+              <span>Erros pendentes</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="app-section" id="subjects">
+          <p class="app-section__tag">📘 Matérias</p>
+          <h2>Organização por matérias</h2>
+          <p>
+            Cadastre suas matérias de estudo para organizar temas, questões,
+            anotações e revisões futuramente.
+          </p>
+
+          <form class="subject-form" id="subject-form">
+            <div class="form-group">
+              <label for="subject-name">Nome da matéria</label>
+              <input
+                type="text"
+                id="subject-name"
+                name="subjectName"
+                placeholder="Ex: História"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="subject-description">Descrição</label>
+              <textarea
+                id="subject-description"
+                name="subjectDescription"
+                rows="3"
+                placeholder="Ex: Conteúdos de História Geral e do Brasil"
+              ></textarea>
+            </div>
+
+            <p
+              class="form-message"
+              id="subject-form-message"
+              aria-live="polite"
+            ></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Adicionar matéria
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-subject-form"
+              >
+                Limpar
+              </button>
+            </div>
+          </form>
+
+          <div class="subjects-area">
+            <div class="subjects-header">
+              <h3>Matérias cadastradas</h3>
+              <span id="subjects-count">0 matérias</span>
+            </div>
+
+            <div class="empty-state" id="subjects-empty-state">
+              <strong>Nenhuma matéria cadastrada ainda.</strong>
+              <span
+                >Use o formulário acima para adicionar sua primeira
+                matéria.</span
+              >
+            </div>
+
+            <div class="subjects-list" id="subjects-list"></div>
+          </div>
+        </article>
+
+        <article class="app-section" id="themes">
+          <p class="app-section__tag">🧩 Temas</p>
+          <h2>Divisão dos conteúdos</h2>
+          <p>
+            Organize cada matéria em temas menores para facilitar o estudo por
+            blocos, revisões e questões futuramente.
+          </p>
+
+          <div class="theme-warning" id="theme-no-subject-warning" hidden>
+            <strong>Cadastre uma matéria primeiro.</strong>
+            <span>
+              Para criar temas, é necessário ter pelo menos uma matéria
+              cadastrada.
+            </span>
+          </div>
+
+          <form class="theme-form" id="theme-form">
+            <div class="form-group">
+              <label for="theme-subject">Matéria relacionada</label>
+              <select id="theme-subject" name="themeSubject">
+                <option value="">Selecione uma matéria</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="theme-name">Nome do tema</label>
+              <input
+                type="text"
+                id="theme-name"
+                name="themeName"
+                placeholder="Ex: Brasil República"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="theme-description">Descrição</label>
+              <textarea
+                id="theme-description"
+                name="themeDescription"
+                rows="3"
+                placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"
+              ></textarea>
+            </div>
+
+            <p
+              class="form-message"
+              id="theme-form-message"
+              aria-live="polite"
+            ></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Adicionar tema
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-theme-form"
+              >
+                Limpar
+              </button>
+            </div>
+          </form>
+
+          <div class="themes-area">
+            <div class="themes-header">
+              <div>
+                <h3>Temas cadastrados</h3>
+                <p id="themes-current-subject">
+                  Selecione uma matéria para visualizar seus temas.
+                </p>
+              </div>
+
+              <span id="themes-count">0 temas</span>
+            </div>
+
+            <div class="empty-state" id="themes-empty-state">
+              <strong>Nenhum tema cadastrado ainda.</strong>
+              <span
+                >Escolha uma matéria e use o formulário acima para adicionar um
+                tema.</span
+              >
+            </div>
+
+            <div class="themes-list" id="themes-list"></div>
+          </div>
+        </article>
+
+        <article class="app-section" id="questions">
+          <p class="app-section__tag">📝 Questões</p>
+          <h2>Banco de questões</h2>
+          <p>
+            Cadastre questões dentro de um tema específico para organizar
+            exercícios, gabaritos e explicações em um único lugar.
+          </p>
+
+          <div class="question-warning" id="question-no-subject-warning" hidden>
+            <strong>Cadastre uma matéria primeiro.</strong>
+            <span>
+              Para criar questões, é necessário ter pelo menos uma matéria
+              cadastrada.
+            </span>
+          </div>
+
+          <div class="question-warning" id="question-no-theme-warning" hidden>
+            <strong>Cadastre um tema primeiro.</strong>
+            <span>
+              Para criar questões, selecione uma matéria que já possua temas
+              cadastrados.
+            </span>
+          </div>
+
+          <div class="question-form-header">
+            <div>
+              <h3>Cadastrar nova questão</h3>
+              <p>Preencha os dados da questão e vincule ao tema selecionado.</p>
+            </div>
+
+            <button
+              class="button button--secondary"
+              type="button"
+              id="toggle-question-form"
+              aria-expanded="true"
+            >
+              Ocultar formulário
+            </button>
+          </div>
+
+          <form class="question-form" id="question-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="question-subject">Matéria relacionada</label>
+                <select id="question-subject" name="questionSubject">
+                  <option value="">Selecione uma matéria</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="question-theme">Tema relacionado</label>
+                <select id="question-theme" name="questionTheme">
+                  <option value="">Selecione um tema</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="question-statement">Enunciado</label>
+              <textarea
+                id="question-statement"
+                name="questionStatement"
+                rows="5"
+                placeholder="Cole ou escreva o enunciado da questão"
+              ></textarea>
+            </div>
+
+            <div class="alternatives-grid">
+              <div class="form-group">
+                <label for="alternative-a">Alternativa A</label>
+                <input
+                  type="text"
+                  id="alternative-a"
+                  name="alternativeA"
+                  placeholder="Texto da alternativa A"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="alternative-b">Alternativa B</label>
+                <input
+                  type="text"
+                  id="alternative-b"
+                  name="alternativeB"
+                  placeholder="Texto da alternativa B"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="alternative-c">Alternativa C</label>
+                <input
+                  type="text"
+                  id="alternative-c"
+                  name="alternativeC"
+                  placeholder="Texto da alternativa C"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="alternative-d">Alternativa D</label>
+                <input
+                  type="text"
+                  id="alternative-d"
+                  name="alternativeD"
+                  placeholder="Texto da alternativa D"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="alternative-e">Alternativa E</label>
+                <input
+                  type="text"
+                  id="alternative-e"
+                  name="alternativeE"
+                  placeholder="Texto da alternativa E"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="correct-alternative">Alternativa correta</label>
+                <select id="correct-alternative" name="correctAlternative">
+                  <option value="">Selecione a correta</option>
+                  <option value="A">Alternativa A</option>
+                  <option value="B">Alternativa B</option>
+                  <option value="C">Alternativa C</option>
+                  <option value="D">Alternativa D</option>
+                  <option value="E">Alternativa E</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="question-explanation">Explicação / Correção</label>
+              <textarea
+                id="question-explanation"
+                name="questionExplanation"
+                rows="4"
+                placeholder="Explique por que a alternativa correta está certa"
+              ></textarea>
+            </div>
+
+            <p
+              class="form-message"
+              id="question-form-message"
+              aria-live="polite"
+            ></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Adicionar questão
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-question-form"
+              >
+                Limpar
+              </button>
+            </div>
+          </form>
+
+          <div class="questions-area">
+            <div class="questions-header">
+              <div>
+                <h3>Questões cadastradas</h3>
+                <p id="questions-current-theme">
+                  Selecione uma matéria e um tema para visualizar suas questões.
+                </p>
+              </div>
+
+              <span id="questions-count">0 questões</span>
+            </div>
+
+            <div class="empty-state" id="questions-empty-state">
+              <strong>Nenhuma questão selecionada ainda.</strong>
+              <span
+                >Escolha um tema para visualizar ou cadastrar questões.</span
+              >
+            </div>
+
+            <div class="questions-list" id="questions-list"></div>
+          </div>
+        </article>
+
+        <article class="app-section" id="notes">
+          <p class="app-section__tag">📒 Anotações</p>
+          <h2>Anotações de estudo</h2>
+          <p>
+            Esta área será usada para guardar resumos, observações pessoais,
+            regras de correção e ideias importantes sobre os temas estudados.
+          </p>
+
+          <div class="empty-state">
+            <strong>Nenhuma anotação criada ainda.</strong>
+            <span>As anotações serão organizadas por tema.</span>
+          </div>
+        </article>
+
+        <article class="app-section" id="reviews">
+          <p class="app-section__tag">🔁 Revisões</p>
+          <h2>Revisão de erros</h2>
+          <p>
+            Aqui ficarão as questões erradas, os motivos dos erros e as regras
+            criadas para evitar repetir os mesmos problemas.
+          </p>
+
+          <div class="empty-state">
+            <strong>Nenhum erro registrado ainda.</strong>
+            <span
+              >Quando houver questões respondidas, os erros aparecerão
+              aqui.</span
+            >
+          </div>
+        </article>
+
+        <article class="app-section" id="roadmap">
+          <p class="app-section__tag">🗺️ Roadmap</p>
+          <h2>Planejamento do projeto</h2>
+          <p>
+            O roadmap completo está documentado no arquivo
+            <strong>ROADMAP.md</strong>. Esta área serve apenas como atalho
+            visual dentro da interface inicial.
+          </p>
+
+          <div class="empty-state">
+            <strong>Versão atual: v0.3</strong>
+            <span
+              >Permitir que cada matéria tenha seus próprios temas de estudo,
+              mantendo a relação entre matéria e tema de forma organizada.</span
+            >
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <div
+      class="modal-overlay"
+      id="app-confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="app-confirm-title"
+      aria-describedby="app-confirm-description"
+      hidden
+    >
+      <div class="modal">
+        <p class="modal__tag" id="app-confirm-tag">⚠️ Confirmação</p>
+
+        <h3 class="modal__title" id="app-confirm-title">Confirmar ação</h3>
+
+        <p class="modal__description" id="app-confirm-description">
+          Tem certeza que deseja continuar?
+        </p>
+
+        <div class="modal__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            id="app-confirm-cancel"
+          >
+            Cancelar
+          </button>
+
+          <button
+            class="button button--danger"
+            type="button"
+            id="app-confirm-confirm"
+          >
+            Confirmar
+          </button>
+        </div>
       </div>
+    </div>
 
-      <button class="theme-toggle" type="button" aria-label="Alternar tema">
-         🌙
-      </button>
+    <button class="theme-toggle" type="button" aria-label="Alternar tema">
+      🌙
+    </button>
 
-      <script type="module" src="src/js/main.js"></script>
-   </body>
+    <script type="module" src="src/js/main.js"></script>
+  </body>
 </html>
