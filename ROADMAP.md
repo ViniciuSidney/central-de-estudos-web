@@ -136,49 +136,68 @@ A versão v0.3 foi considerada concluída porque o usuário consegue:
 # v0.4 — Sistema de questões
 
 ### Objetivo
-Permitir o cadastro manual de questões dentro de um tema.
+Permitir o cadastro, visualização, edição, movimentação e exclusão de questões dentro de temas específicos, mantendo a relação entre matéria, tema e questão de forma organizada.
 
 ### Status
-Planejada.
+Concluída.
 
 ---
 
 ## Previsto para a v0.4
 
-- Tela de questões por tema
-- Seleção de matéria para filtrar temas
-- Seleção de tema para cadastrar questão
-- Formulário de cadastro de questão
-- Campo para enunciado
-- Campos para alternativas A, B, C, D e E
-- Campo para alternativa correta
-- Campo para explicação/correção
-- Cadastro de questões
-- Listagem de questões por tema
-- Exclusão de questões
-- Salvamento das questões no `localStorage`
-- Relação entre matéria, tema e questão
-- Estado vazio quando um tema não tiver questões
-- Estado de aviso quando não houver matérias cadastradas
-- Estado de aviso quando a matéria não tiver temas cadastrados
-- Validação de campos obrigatórios
-- Botão para limpar formulário
-- Data de criação da questão no card
-- Atualização do contador de questões no Dashboard
-- Modal de confirmação reutilizável para excluir questões
-- Remoção das questões relacionadas ao excluir tema ou matéria
+- Tela de questões por tema ✅
+- Seleção de matéria para filtrar temas ✅
+- Seleção de tema para cadastrar questão ✅
+- Formulário de cadastro de questão ✅
+- Campo para enunciado ✅
+- Campos para alternativas A, B, C, D e E ✅
+- Campo para alternativa correta ✅
+- Campo para explicação/correção ✅
+- Cadastro de questões ✅
+- Listagem de questões por tema ✅
+- Listagem geral de questões por matéria ✅
+- Exclusão de questões ✅
+- Edição de questões ✅
+- Movimentação de questões entre temas ✅
+- Salvamento das questões no `localStorage` ✅
+- Relação entre matéria, tema e questão ✅
+- Estado vazio quando um tema não tiver questões ✅
+- Estado de aviso quando não houver matérias cadastradas ✅
+- Estado de aviso quando a matéria não tiver temas cadastrados ✅
+- Validação de campos obrigatórios ✅
+- Botão para limpar formulário ✅
+- Botão para cancelar edição ✅
+- Data de criação da questão no card ✅
+- Atualização do contador de questões no Dashboard ✅
+- Modal de confirmação reutilizável para excluir questões ✅
+- Modal específico para mover questões ✅
+- Remoção das questões relacionadas ao excluir tema ou matéria ✅
+- Abas de listagem e cadastro ✅
+- Bloqueio do cadastro quando não há tema selecionado ✅
+- Destaque do tema no card da questão ✅
+- Preparação para aleatorização de alternativas ✅
 
 ---
 
 ## Fechamento da v0.4
 
-A versão v0.4 será considerada concluída quando o usuário conseguir:
+A versão v0.4 foi considerada concluída porque o usuário consegue:
 
-- Entrar em um tema
-- Cadastrar questões
-- Visualizar questões cadastradas
-- Excluir questões
-- Manter as questões salvas no navegador
+- Selecionar uma matéria cadastrada ✅
+- Visualizar questões gerais da matéria ✅
+- Selecionar um tema específico ✅
+- Visualizar questões de um tema específico ✅
+- Cadastrar questões dentro de um tema ✅
+- Informar enunciado, alternativas, alternativa correta e explicação ✅
+- Editar questões já cadastradas ✅
+- Cancelar a edição de uma questão ✅
+- Mover questões para outro tema ✅
+- Excluir questões com confirmação ✅
+- Manter as questões salvas no navegador ✅
+- Ver a quantidade total de questões no Dashboard ✅
+- Excluir temas ou matérias sem deixar questões órfãs no sistema ✅
+- Usar uma tela organizada com abas de listagem e cadastro ✅
+- Consultar questões por matéria ou por tema ✅
 
 ---
 
