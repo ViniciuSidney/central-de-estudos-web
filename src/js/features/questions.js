@@ -45,8 +45,14 @@ export function initQuestions() {
   const questionFormTab = document.querySelector("#question-form-tab");
   const questionFilters = document.querySelector("#question-filters");
   const questionTabPanel = document.querySelector("#question-tab-panel");
+  const saveQuestionButton = document.querySelector("#save-question-button");
+  const cancelQuestionEditButton = document.querySelector(
+    "#cancel-question-edit",
+  );
 
   if (
+    !saveQuestionButton ||
+    !cancelQuestionEditButton ||
     !questionTabPanel ||
     !questionFilters ||
     !questionForm ||
@@ -75,6 +81,8 @@ export function initQuestions() {
   ) {
     return;
   }
+
+  let editingQuestionId = null;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -111,6 +119,63 @@ export function initQuestions() {
       shouldShuffleAlternatives: true,
       createdAt: new Date().toISOString(),
     };
+  }
+
+  function enterEditMode(question) {
+    editingQuestionId = question.id;
+
+    questionSubjectSelect.value = question.subjectId;
+    renderThemeOptions();
+
+    questionThemeSelect.value = question.themeId;
+    renderQuestions();
+
+    questionStatementInput.value = question.statement;
+    alternativeAInput.value = question.alternatives.A || "";
+    alternativeBInput.value = question.alternatives.B || "";
+    alternativeCInput.value = question.alternatives.C || "";
+    alternativeDInput.value = question.alternatives.D || "";
+    alternativeEInput.value = question.alternatives.E || "";
+    correctAlternativeSelect.value = question.correctAlternative;
+    questionExplanationInput.value = question.explanation || "";
+
+    saveQuestionButton.textContent = "Salvar alterações";
+    cancelQuestionEditButton.hidden = false;
+
+    setQuestionFormTabEnabled(true);
+    showQuestionTab("form");
+
+    questionForm.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    setQuestionFormMessage("Editando questão selecionada.", "success");
+  }
+
+  function exitEditMode() {
+    editingQuestionId = null;
+
+    saveQuestionButton.textContent = "Adicionar questão";
+    cancelQuestionEditButton.hidden = true;
+
+    clearQuestionForm();
+  }
+
+  function updateQuestion(questionId, updatedQuestionData) {
+    const updatedQuestions = getQuestions().map((question) => {
+      if (question.id !== questionId) {
+        return question;
+      }
+
+      return {
+        ...question,
+        ...updatedQuestionData,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveQuestions(updatedQuestions);
   }
 
   function deleteQuestion(questionId) {
@@ -504,6 +569,14 @@ export function initQuestions() {
         </button>
 
         <button
+          class="button button--secondary"
+          type="button"
+          data-edit-question="${question.id}"
+        >
+          Editar
+        </button>
+
+        <button
           class="button button--danger"
           type="button"
           data-delete-question="${question.id}"
@@ -623,30 +696,47 @@ export function initQuestions() {
       return;
     }
 
-    const questions = getQuestions();
+    if (editingQuestionId) {
+      updateQuestion(editingQuestionId, {
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        statement,
+        alternatives,
+        correctAlternative,
+        explanation,
+      });
 
-    const newQuestion = createQuestion({
-      subjectId: selectedSubjectId,
-      themeId: selectedThemeId,
-      statement,
-      alternatives,
-      correctAlternative,
-      explanation,
-    });
+      renderQuestions();
+      exitEditMode();
+      showQuestionTab("list");
 
-    questions.push(newQuestion);
+      setQuestionFormMessage("Questão atualizada com sucesso.", "success");
+    } else {
+      const questions = getQuestions();
 
-    saveQuestions(questions);
-    renderQuestions();
-    clearQuestionForm();
-    showQuestionTab("list");
+      const newQuestion = createQuestion({
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        statement,
+        alternatives,
+        correctAlternative,
+        explanation,
+      });
+
+      questions.push(newQuestion);
+
+      saveQuestions(questions);
+      renderQuestions();
+      clearQuestionForm();
+      showQuestionTab("list");
+
+      setQuestionFormMessage("Questão cadastrada com sucesso.", "success");
+    }
 
     questionsList.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
-
-    setQuestionFormMessage("Questão cadastrada com sucesso.", "success");
   }
 
   function handleQuestionDelete(event) {
@@ -678,6 +768,26 @@ export function initQuestions() {
     });
   }
 
+  function handleQuestionEdit(event) {
+    const editButton = event.target.closest("[data-edit-question]");
+
+    if (!editButton) {
+      return;
+    }
+
+    const questionId = editButton.dataset.editQuestion;
+
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
+
+    if (!question) {
+      return;
+    }
+
+    enterEditMode(question);
+  }
+
   function handleSubjectChange() {
     setQuestionFormMessage("");
     questionThemeSelect.value = "";
@@ -694,7 +804,10 @@ export function initQuestions() {
   questionSubjectSelect.addEventListener("change", handleSubjectChange);
   questionThemeSelect.addEventListener("change", handleThemeChange);
   clearQuestionFormButton.addEventListener("click", clearQuestionForm);
+  cancelQuestionEditButton.addEventListener("click", exitEditMode);
+  questionsList.addEventListener("click", handleQuestionEdit);
   questionsList.addEventListener("click", handleQuestionDelete);
+
   questionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       if (button.disabled) {
