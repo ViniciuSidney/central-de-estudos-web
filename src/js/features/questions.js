@@ -386,7 +386,7 @@ export function initQuestions() {
       return theme.id === previousSelectedThemeId;
     });
 
-    questionNoThemeWarning.hidden = hasThemes;
+    questionNoThemeWarning.hidden = !selectedSubject || hasThemes;
 
     if (selectedThemeStillExists) {
       questionThemeSelect.value = previousSelectedThemeId;
