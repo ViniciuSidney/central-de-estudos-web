@@ -44,8 +44,10 @@ export function initQuestions() {
   const questionListTab = document.querySelector("#question-list-tab");
   const questionFormTab = document.querySelector("#question-form-tab");
   const questionFilters = document.querySelector("#question-filters");
+  const questionTabPanel = document.querySelector("#question-tab-panel");
 
   if (
+    !questionTabPanel ||
     !questionFilters ||
     !questionForm ||
     !questionTabButtons.length ||
@@ -251,15 +253,15 @@ export function initQuestions() {
 
     if (!hasSubjects) {
       questionFilters.hidden = true;
+      questionTabPanel.hidden = true;
+
       questionTabButtons.forEach((button) => {
         button.hidden = true;
       });
-      questionListTab.hidden = true;
-      questionFormTab.hidden = true;
 
       questionThemeSelect.innerHTML = `
-        <option value="">Selecione um tema</option>
-      `;
+    <option value="">Selecione um tema</option>
+  `;
 
       questionNoThemeWarning.hidden = true;
 
@@ -271,21 +273,24 @@ export function initQuestions() {
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
-        <strong>Nenhuma matéria disponível.</strong>
-        <span>Cadastre uma matéria antes de criar questões.</span>
-      `;
+    <strong>Nenhuma matéria disponível.</strong>
+    <span>Cadastre uma matéria antes de criar questões.</span>
+  `;
 
       questionsList.innerHTML = "";
       return;
     }
 
     questionFilters.hidden = false;
+    questionTabPanel.hidden = false;
+
     questionTabButtons.forEach((button) => {
       button.hidden = false;
     });
+
     questionListTab.hidden = false;
     questionFormTab.hidden = false;
-
+    
     if (selectedSubjectStillExists) {
       questionSubjectSelect.value = previousSelectedSubjectId;
     } else {
