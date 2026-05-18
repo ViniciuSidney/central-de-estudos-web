@@ -49,8 +49,26 @@ export function initQuestions() {
   const cancelQuestionEditButton = document.querySelector(
     "#cancel-question-edit",
   );
+  const moveQuestionModal = document.querySelector("#move-question-modal");
+  const moveQuestionCurrent = document.querySelector("#move-question-current");
+  const moveQuestionThemeSelect = document.querySelector(
+    "#move-question-theme",
+  );
+  const moveQuestionMessage = document.querySelector("#move-question-message");
+  const moveQuestionCancelButton = document.querySelector(
+    "#move-question-cancel",
+  );
+  const moveQuestionConfirmButton = document.querySelector(
+    "#move-question-confirm",
+  );
 
   if (
+    !moveQuestionModal ||
+    !moveQuestionCurrent ||
+    !moveQuestionThemeSelect ||
+    !moveQuestionMessage ||
+    !moveQuestionCancelButton ||
+    !moveQuestionConfirmButton ||
     !saveQuestionButton ||
     !cancelQuestionEditButton ||
     !questionTabPanel ||
@@ -83,6 +101,7 @@ export function initQuestions() {
   }
 
   let editingQuestionId = null;
+  let movingQuestionId = null;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -121,6 +140,11 @@ export function initQuestions() {
     };
   }
 
+  function setQuestionContextFieldsEnabled(isEnabled) {
+    questionSubjectSelect.disabled = !isEnabled;
+    questionThemeSelect.disabled = !isEnabled;
+  }
+
   function enterEditMode(question) {
     editingQuestionId = question.id;
 
@@ -129,6 +153,8 @@ export function initQuestions() {
 
     questionThemeSelect.value = question.themeId;
     renderQuestions();
+
+    setQuestionContextFieldsEnabled(false);
 
     questionStatementInput.value = question.statement;
     alternativeAInput.value = question.alternatives.A || "";
@@ -159,6 +185,7 @@ export function initQuestions() {
     saveQuestionButton.textContent = "Adicionar questão";
     cancelQuestionEditButton.hidden = true;
 
+    setQuestionContextFieldsEnabled(true);
     clearQuestionForm();
   }
 
@@ -296,6 +323,18 @@ export function initQuestions() {
     return theme ? theme.name : "Tema não encontrado";
   }
 
+  function getSubjectById(subjectId) {
+    return getSubjects().find((subject) => {
+      return subject.id === subjectId;
+    });
+  }
+
+  function getSubjectNameById(subjectId) {
+    const subject = getSubjectById(subjectId);
+
+    return subject ? subject.name : "Matéria não encontrada";
+  }
+
   function getQuestionsFromSelectedContext() {
     const selectedSubject = getSelectedSubject();
     const selectedTheme = getSelectedTheme();
@@ -344,6 +383,188 @@ export function initQuestions() {
     return getQuestions().filter((question) => {
       return question.themeId === selectedThemeId;
     });
+  }
+
+  function setMoveQuestionMessage(message, type = "default") {
+    moveQuestionMessage.textContent = message;
+
+    moveQuestionMessage.classList.remove("is-error", "is-success");
+
+    if (type === "error") {
+      moveQuestionMessage.classList.add("is-error");
+    }
+
+    if (type === "success") {
+      moveQuestionMessage.classList.add("is-success");
+    }
+  }
+
+  function renderMoveThemeOptions(question) {
+    const subjects = getSubjects();
+    const themes = getThemes().filter((theme) => {
+      return theme.id !== question.themeId;
+    });
+
+    moveQuestionThemeSelect.innerHTML = `
+    <option value="">Selecione um tema</option>
+  `;
+
+    subjects.forEach((subject) => {
+      const themesFromSubject = themes.filter((theme) => {
+        return theme.subjectId === subject.id;
+      });
+
+      if (themesFromSubject.length === 0) {
+        return;
+      }
+
+      const group = document.createElement("optgroup");
+
+      group.label = subject.name;
+
+      themesFromSubject.forEach((theme) => {
+        const option = document.createElement("option");
+
+        option.value = theme.id;
+        option.textContent = theme.name;
+
+        group.appendChild(option);
+      });
+
+      moveQuestionThemeSelect.appendChild(group);
+    });
+
+    const hasAvailableThemes = themes.length > 0;
+
+    moveQuestionThemeSelect.disabled = !hasAvailableThemes;
+    moveQuestionConfirmButton.disabled = !hasAvailableThemes;
+
+    if (!hasAvailableThemes) {
+      setMoveQuestionMessage(
+        "Não existe outro tema disponível para mover esta questão.",
+        "error",
+      );
+    } else {
+      setMoveQuestionMessage("");
+    }
+  }
+
+  function openMoveQuestionModal(question) {
+    movingQuestionId = question.id;
+
+    const currentSubjectName = getSubjectNameById(question.subjectId);
+    const currentThemeName = getThemeNameById(question.themeId);
+
+    moveQuestionCurrent.innerHTML = `
+    <span><strong>Matéria atual:</strong> ${escapeHTML(currentSubjectName)}</span>
+    <span><strong>Tema atual:</strong> ${escapeHTML(currentThemeName)}</span>
+  `;
+
+    renderMoveThemeOptions(question);
+
+    moveQuestionModal.hidden = false;
+    moveQuestionThemeSelect.focus();
+  }
+
+  function closeMoveQuestionModal() {
+    movingQuestionId = null;
+
+    moveQuestionThemeSelect.value = "";
+    setMoveQuestionMessage("");
+
+    moveQuestionModal.hidden = true;
+  }
+
+  function moveQuestionToTheme(questionId, targetThemeId) {
+    const targetTheme = getThemeById(targetThemeId);
+
+    if (!targetTheme) {
+      setMoveQuestionMessage(
+        "Selecione um tema válido para mover a questão.",
+        "error",
+      );
+      return;
+    }
+
+    const updatedQuestions = getQuestions().map((question) => {
+      if (question.id !== questionId) {
+        return question;
+      }
+
+      return {
+        ...question,
+        subjectId: targetTheme.subjectId,
+        themeId: targetTheme.id,
+        updatedAt: new Date().toISOString(),
+        movedAt: new Date().toISOString(),
+      };
+    });
+
+    saveQuestions(updatedQuestions);
+
+    questionSubjectSelect.value = targetTheme.subjectId;
+    renderThemeOptions();
+
+    questionThemeSelect.value = targetTheme.id;
+    setQuestionFormTabEnabled(true);
+    renderQuestions();
+
+    closeMoveQuestionModal();
+    showQuestionTab("list");
+
+    setQuestionFormMessage("Questão movida com sucesso.", "success");
+  }
+
+  function confirmMoveQuestion() {
+    if (!movingQuestionId) {
+      return;
+    }
+
+    const targetThemeId = moveQuestionThemeSelect.value;
+
+    if (!targetThemeId) {
+      setMoveQuestionMessage("Selecione o novo tema da questão.", "error");
+      moveQuestionThemeSelect.focus();
+      return;
+    }
+
+    moveQuestionToTheme(movingQuestionId, targetThemeId);
+  }
+
+  function handleMoveModalOverlayClick(event) {
+    if (event.target === moveQuestionModal) {
+      closeMoveQuestionModal();
+    }
+  }
+
+  function handleMoveModalEscapeKey(event) {
+    if (event.key === "Escape" && !moveQuestionModal.hidden) {
+      closeMoveQuestionModal();
+    }
+  }
+
+  function handleQuestionMove(event) {
+    const moveButton = event.target.closest("[data-move-question]");
+
+    if (!moveButton) {
+      return;
+    }
+
+    const questionId = moveButton.dataset.moveQuestion;
+
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
+
+    if (!question) {
+      return;
+    }
+
+    if (editingQuestionId === question.id) {
+      exitEditMode();
+    }
+
+    openMoveQuestionModal(question);
   }
 
   function renderSubjectOptions() {
@@ -577,6 +798,14 @@ export function initQuestions() {
         </button>
 
         <button
+          class="button button--secondary"
+          type="button"
+          data-move-question="${question.id}"
+        >
+          Mover
+        </button>
+
+        <button
           class="button button--danger"
           type="button"
           data-delete-question="${question.id}"
@@ -805,8 +1034,15 @@ export function initQuestions() {
   questionThemeSelect.addEventListener("change", handleThemeChange);
   clearQuestionFormButton.addEventListener("click", clearQuestionForm);
   cancelQuestionEditButton.addEventListener("click", exitEditMode);
+
   questionsList.addEventListener("click", handleQuestionEdit);
+  questionsList.addEventListener("click", handleQuestionMove);
   questionsList.addEventListener("click", handleQuestionDelete);
+
+  moveQuestionCancelButton.addEventListener("click", closeMoveQuestionModal);
+  moveQuestionConfirmButton.addEventListener("click", confirmMoveQuestion);
+  moveQuestionModal.addEventListener("click", handleMoveModalOverlayClick);
+  document.addEventListener("keydown", handleMoveModalEscapeKey);
 
   questionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {

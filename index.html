@@ -599,6 +599,61 @@
       </div>
     </div>
 
+    <div
+      class="modal-overlay"
+      id="move-question-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="move-question-title"
+      aria-describedby="move-question-description"
+      hidden
+    >
+      <div class="modal">
+        <p class="modal__tag">🧭 Mover questão</p>
+
+        <h3 class="modal__title" id="move-question-title">
+          Mover questão para outro tema
+        </h3>
+
+        <p class="modal__description" id="move-question-description">
+          Escolha o novo tema em que esta questão deve ficar.
+        </p>
+
+        <div class="move-question-current" id="move-question-current"></div>
+
+        <div class="form-group">
+          <label for="move-question-theme">Novo tema</label>
+          <select id="move-question-theme">
+            <option value="">Selecione um tema</option>
+          </select>
+        </div>
+
+        <p
+          class="form-message"
+          id="move-question-message"
+          aria-live="polite"
+        ></p>
+
+        <div class="modal__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            id="move-question-cancel"
+          >
+            Cancelar
+          </button>
+
+          <button
+            class="button button--primary"
+            type="button"
+            id="move-question-confirm"
+          >
+            Mover questão
+          </button>
+        </div>
+      </div>
+    </div>
+
     <button class="theme-toggle" type="button" aria-label="Alternar tema">
       🌙
     </button>
