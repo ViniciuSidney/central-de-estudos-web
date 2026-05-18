@@ -135,6 +135,22 @@ export function initQuestions() {
     questionFormTab.classList.toggle("is-active", tabName === "form");
   }
 
+  function setQuestionFormTabEnabled(isEnabled) {
+    const formTabButton = Array.from(questionTabButtons).find((button) => {
+      return button.dataset.questionTab === "form";
+    });
+
+    if (!formTabButton) {
+      return;
+    }
+
+    formTabButton.disabled = !isEnabled;
+
+    if (!isEnabled) {
+      showQuestionTab("list");
+    }
+  }
+
   function formatDate(dateValue) {
     const date = new Date(dateValue);
 
@@ -259,6 +275,8 @@ export function initQuestions() {
         button.hidden = true;
       });
 
+      setQuestionFormTabEnabled(false);
+
       questionThemeSelect.innerHTML = `
     <option value="">Selecione um tema</option>
   `;
@@ -290,7 +308,7 @@ export function initQuestions() {
 
     questionListTab.hidden = false;
     questionFormTab.hidden = false;
-    
+
     if (selectedSubjectStillExists) {
       questionSubjectSelect.value = previousSelectedSubjectId;
     } else {
@@ -311,6 +329,7 @@ export function initQuestions() {
 
     if (!selectedSubject) {
       questionNoThemeWarning.hidden = true;
+      setQuestionFormTabEnabled(false);
       renderQuestions();
       return;
     }
@@ -330,6 +349,7 @@ export function initQuestions() {
     });
 
     questionNoThemeWarning.hidden = hasThemes;
+    setQuestionFormTabEnabled(hasThemes);
 
     if (selectedThemeStillExists) {
       questionThemeSelect.value = previousSelectedThemeId;

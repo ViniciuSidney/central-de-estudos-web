@@ -834,6 +834,16 @@ button {
   display: block;
 }
 
+.question-tab-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.question-tab-button:disabled:hover {
+  background: transparent;
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
   .nav-grid,
