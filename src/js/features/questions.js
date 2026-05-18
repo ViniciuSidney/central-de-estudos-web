@@ -387,13 +387,14 @@ export function initQuestions() {
     });
 
     questionNoThemeWarning.hidden = hasThemes;
-    setQuestionFormTabEnabled(hasThemes);
 
     if (selectedThemeStillExists) {
       questionThemeSelect.value = previousSelectedThemeId;
     } else {
       questionThemeSelect.value = "";
     }
+
+    setQuestionFormTabEnabled(Boolean(questionThemeSelect.value));
 
     renderQuestions();
   }
@@ -458,7 +459,7 @@ export function initQuestions() {
       } else {
         questionsEmptyState.innerHTML = `
         <strong>Nenhuma questão cadastrada nesta matéria ainda.</strong>
-        <span>Selecione um tema e use a aba Cadastro para adicionar questões.</span>
+        <span>Selecione um tema para liberar o cadastro de novas questões.</span>
       `;
       }
 
@@ -685,6 +686,7 @@ export function initQuestions() {
 
   function handleThemeChange() {
     setQuestionFormMessage("");
+    setQuestionFormTabEnabled(Boolean(questionThemeSelect.value));
     renderQuestions();
   }
 
@@ -695,6 +697,10 @@ export function initQuestions() {
   questionsList.addEventListener("click", handleQuestionDelete);
   questionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      if (button.disabled) {
+        return;
+      }
+
       showQuestionTab(button.dataset.questionTab);
     });
   });
