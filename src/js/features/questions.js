@@ -211,6 +211,11 @@ export function initQuestions() {
     });
 
     saveQuestions(updatedQuestions);
+
+    if (editingQuestionId === questionId) {
+      exitEditMode();
+    }
+    
     renderQuestions();
 
     setQuestionFormMessage("Questão excluída com sucesso.", "success");
@@ -560,7 +565,7 @@ export function initQuestions() {
       return;
     }
 
-    if (editingQuestionId === question.id) {
+    if (editingQuestionId) {
       exitEditMode();
     }
 
