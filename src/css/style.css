@@ -722,6 +722,13 @@ button {
   border-radius: 999px;
 }
 
+.question-card__theme {
+  color: var(--accent);
+  font-weight: 800;
+  background: var(--success-soft);
+  border-color: var(--accent);
+}
+
 .question-card__actions {
   display: flex;
   flex-wrap: wrap;

@@ -219,6 +219,44 @@ export function initQuestions() {
     });
   }
 
+  function getThemeById(themeId) {
+    return getThemes().find((theme) => {
+      return theme.id === themeId;
+    });
+  }
+
+  function getThemeNameById(themeId) {
+    const theme = getThemeById(themeId);
+
+    return theme ? theme.name : "Tema não encontrado";
+  }
+
+  function getQuestionsFromSelectedContext() {
+    const selectedSubject = getSelectedSubject();
+    const selectedTheme = getSelectedTheme();
+
+    if (!selectedSubject) {
+      return [];
+    }
+
+    const questionsFromSubject = getQuestions().filter((question) => {
+      return question.subjectId === selectedSubject.id;
+    });
+
+    if (selectedTheme) {
+      return questionsFromSubject.filter((question) => {
+        return question.themeId === selectedTheme.id;
+      });
+    }
+
+    return [...questionsFromSubject].sort((firstQuestion, secondQuestion) => {
+      const firstThemeName = getThemeNameById(firstQuestion.themeId);
+      const secondThemeName = getThemeNameById(secondQuestion.themeId);
+
+      return firstThemeName.localeCompare(secondThemeName, "pt-BR");
+    });
+  }
+
   function getThemesFromSelectedSubject() {
     const selectedSubjectId = questionSubjectSelect.value;
 
@@ -363,12 +401,13 @@ export function initQuestions() {
   function renderQuestions() {
     const selectedSubject = getSelectedSubject();
     const selectedTheme = getSelectedTheme();
-    const questionsFromTheme = getQuestionsFromSelectedTheme();
+    const themesFromSubject = getThemesFromSelectedSubject();
+    const questionsFromContext = getQuestionsFromSelectedContext();
 
     questionsList.innerHTML = "";
 
     updateDashboardQuestionsCount();
-    updateQuestionsCount(questionsFromTheme);
+    updateQuestionsCount(questionsFromContext);
 
     if (!selectedSubject) {
       questionsCurrentTheme.textContent =
@@ -376,82 +415,102 @@ export function initQuestions() {
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
-        <strong>Nenhuma matéria selecionada.</strong>
-        <span>Escolha uma matéria para visualizar os temas disponíveis.</span>
-      `;
-
-      return;
-    }
-
-    if (!selectedTheme) {
-      questionsCurrentTheme.textContent =
-        "Selecione um tema para visualizar suas questões.";
-
-      questionsEmptyState.hidden = false;
-      questionsEmptyState.innerHTML = `
-        <strong>Nenhum tema selecionado.</strong>
-        <span>Escolha um tema para visualizar ou cadastrar questões.</span>
-      `;
-
-      return;
-    }
-
-    questionsCurrentTheme.innerHTML = `
-      Questões de <strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
+      <strong>Nenhuma matéria selecionada.</strong>
+      <span>Escolha uma matéria para visualizar os temas disponíveis.</span>
     `;
 
-    if (questionsFromTheme.length === 0) {
+      return;
+    }
+
+    if (themesFromSubject.length === 0) {
+      questionsCurrentTheme.innerHTML = `
+      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+    `;
+
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
-        <strong>Nenhuma questão cadastrada ainda.</strong>
-        <span>Use o formulário acima para adicionar a primeira questão deste tema.</span>
+      <strong>Esta matéria ainda não possui temas.</strong>
+      <span>Cadastre um tema antes de adicionar questões.</span>
+    `;
+
+      return;
+    }
+
+    if (selectedTheme) {
+      questionsCurrentTheme.innerHTML = `
+      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+      com o tema <strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
+    `;
+    } else {
+      questionsCurrentTheme.innerHTML = `
+      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+    `;
+    }
+
+    if (questionsFromContext.length === 0) {
+      questionsEmptyState.hidden = false;
+
+      if (selectedTheme) {
+        questionsEmptyState.innerHTML = `
+        <strong>Nenhuma questão cadastrada neste tema ainda.</strong>
+        <span>Use a aba Cadastro para adicionar a primeira questão deste tema.</span>
       `;
+      } else {
+        questionsEmptyState.innerHTML = `
+        <strong>Nenhuma questão cadastrada nesta matéria ainda.</strong>
+        <span>Selecione um tema e use a aba Cadastro para adicionar questões.</span>
+      `;
+      }
 
       return;
     }
 
     questionsEmptyState.hidden = true;
 
-    questionsFromTheme.forEach((question, index) => {
+    questionsFromContext.forEach((question, index) => {
       const questionCard = document.createElement("article");
+      const questionThemeName = getThemeNameById(question.themeId);
 
       questionCard.classList.add("question-card");
       questionCard.dataset.questionId = question.id;
 
       questionCard.innerHTML = `
-		<div class="question-card__content">
-			<div class="question-card__top">
-				<h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
+      <div class="question-card__content">
+        <div class="question-card__top">
+          <h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
 
-				<span class="question-card__answer">
-				Correta: <u>${escapeHTML(question.correctAlternative)}</u>	
-				</span>
-			</div>
+          <span class="question-card__answer">
+            Correta: <u>${escapeHTML(question.correctAlternative)}</u>
+          </span>
+        </div>
 
-			<p class="question-card__statement">
-				${escapeHTML(getShortText(question.statement))}
-			</p>
+        <p class="question-card__statement">
+          ${escapeHTML(getShortText(question.statement))}
+        </p>
 
-			<div class="question-card__meta">
-				<span>Criada em ${formatDate(question.createdAt)}</span>
-				<span>${question.shouldShuffleAlternatives ? "Alternativas serão embaralhadas" : "Ordem fixa das alternativas"}</span>
-			</div>
-		</div>
+        <div class="question-card__meta">
+          <span class="question-card__theme">
+            Tema: <u>${escapeHTML(questionThemeName)}</u>
+          </span>
+          <span>Criada em ${formatDate(question.createdAt)}</span>
+          <span>${question.shouldShuffleAlternatives ? "Alternativas serão embaralhadas" : "Ordem fixa das alternativas"}</span>
+        </div>
+      </div>
 
-		<div class="question-card__actions">
-			<button class="button button--secondary" type="button" disabled>
-				Resolver em breve
-			</button>
+      <div class="question-card__actions">
+        <button class="button button--secondary" type="button" disabled>
+          Resolver em breve
+        </button>
 
-			<button
-				class="button button--danger"
-				type="button"
-				data-delete-question="${question.id}"
-			>
-				Excluir
-			</button>
-		</div>
-		`;
+        <button
+          class="button button--danger"
+          type="button"
+          data-delete-question="${question.id}"
+        >
+          Excluir
+        </button>
+      </div>
+    `;
 
       questionsList.appendChild(questionCard);
     });
