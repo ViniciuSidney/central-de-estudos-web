@@ -417,7 +417,7 @@ export function initSolve() {
 		</div>
 
 		<div class="solve-feedback__explanation">
-			<small>Explicação</small>
+			<small>Explicação da Questão</small>
 			<p>
 				${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
 			</p>

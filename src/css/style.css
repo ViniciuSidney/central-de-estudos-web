@@ -10,6 +10,18 @@
 	--success-soft: #eef4ef;
 	--shadow: 0 16px 40px rgba(36, 33, 29, 0.08);
 	--radius: 20px;
+
+	--feedback-success-bg: #edf5f0;
+	--feedback-success-border: #5e8f75;
+
+	--feedback-error-bg: #f7ecec;
+	--feedback-error-border: #c36d6d;
+
+	--feedback-inner-success-bg: #f4faf6;
+	--feedback-inner-error-bg: #fbf1f1;
+
+	--feedback-explanation-bg: #f4f4f4;
+	--feedback-explanation-border: #d7d7d7;
 }
 
 body.dark-theme {
@@ -23,6 +35,18 @@ body.dark-theme {
 	--accent-dark: #6fab8c;
 	--success-soft: #24342c;
 	--shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+
+	--feedback-success-bg: #1a3328;
+	--feedback-success-border: #8bd3ae;
+
+	--feedback-error-bg: #341919;
+	--feedback-error-border: #d46a6a;
+
+	--feedback-inner-success-bg: #1d3a2d;
+	--feedback-inner-error-bg: #4a1f1f;
+
+	--feedback-explanation-bg: #2a2623;
+	--feedback-explanation-border: #4a403a;
 }
 
 * {
@@ -999,14 +1023,6 @@ button {
 	gap: 12px;
 }
 
-.solve-feedback {
-	padding: 16px;
-	line-height: 1.6;
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: 14px;
-}
-
 .solve-alternative:disabled {
 	cursor: default;
 	transform: none;
@@ -1024,10 +1040,9 @@ button {
 
 .solve-feedback {
 	display: grid;
-	gap: 8px;
-	padding: 16px;
+	gap: 16px;
+	padding: 18px;
 	line-height: 1.6;
-	background: var(--surface);
 	border: 1px solid var(--border);
 	border-radius: 14px;
 }
@@ -1037,51 +1052,18 @@ button {
 }
 
 .solve-feedback.is-correct {
-	border-color: var(--accent);
-	background: var(--success-soft);
+	background: var(--feedback-success-bg);
+	border-color: var(--feedback-success-border);
 }
 
 .solve-feedback.is-wrong {
-	border-color: #9f3d3d;
-	background: rgba(159, 61, 61, 0.12);
+	background: var(--feedback-error-bg);
+	border-color: var(--feedback-error-border);
 }
 
 .solve-feedback.is-warning {
 	background: var(--surface);
-}
-
-#solve-question-status.is-correct {
-	color: var(--accent);
-	background: var(--success-soft);
-	border-color: var(--accent);
-}
-
-#solve-question-status.is-wrong {
-	color: #9f3d3d;
-	background: rgba(159, 61, 61, 0.12);
-	border-color: #9f3d3d;
-}
-
-.solve-feedback strong {
-	color: var(--text);
-}
-
-.solve-feedback.is-correct > strong {
-	color: var(--accent);
-}
-
-.solve-feedback.is-wrong > strong {
-	color: #d46a6a;
-}
-
-.solve-feedback {
-	display: grid;
-	gap: 16px;
-	padding: 18px;
-	line-height: 1.6;
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: 14px;
+	border-color: var(--border);
 }
 
 .solve-feedback__header {
@@ -1097,6 +1079,14 @@ button {
 	color: var(--muted);
 }
 
+.solve-feedback.is-correct .solve-feedback__header strong {
+	color: var(--accent);
+}
+
+.solve-feedback.is-wrong .solve-feedback__header strong {
+	color: var(--feedback-error-border);
+}
+
 .solve-feedback__grid {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
@@ -1107,7 +1097,6 @@ button {
 	display: grid;
 	gap: 6px;
 	padding: 14px;
-	background: var(--bg);
 	border: 1px solid var(--border);
 	border-radius: 12px;
 }
@@ -1126,37 +1115,27 @@ button {
 }
 
 .solve-feedback__item.is-correct {
-	border-color: var(--accent);
-	background: var(--success-soft);
+	background: var(--feedback-inner-success-bg);
+	border-color: var(--feedback-success-border);
 }
 
 .solve-feedback__item.is-wrong {
-	border-color: #9f3d3d;
-	background: rgba(159, 61, 61, 0.12);
+	background: var(--feedback-inner-error-bg);
+	border-color: var(--feedback-error-border);
 }
 
 .solve-feedback__explanation {
 	display: grid;
-	gap: 6px;
-	padding-top: 4px;
+	gap: 8px;
+	padding: 14px;
+	background: var(--feedback-explanation-bg);
+	border: 1px solid var(--feedback-explanation-border);
+	border-radius: 12px;
 }
 
 .solve-feedback__explanation p {
-	color: var(--muted);
-}
-
-.solve-feedback.is-correct {
-	border-color: var(--accent);
-	background: var(--success-soft);
-}
-
-.solve-feedback.is-wrong {
-	border-color: #9f3d3d;
-	background: rgba(159, 61, 61, 0.12);
-}
-
-.solve-feedback.is-warning {
-	background: var(--surface);
+	color: var(--text);
+	line-height: 1.7;
 }
 
 /* Media Queries */
