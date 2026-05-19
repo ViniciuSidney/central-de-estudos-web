@@ -1,8 +1,9 @@
-import {getCollection} from '../core/storage.js';
+import {getCollection, saveCollection} from '../core/storage.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
 const QUESTIONS_COLLECTION = 'questions';
+const ATTEMPTS_COLLECTION = 'attempts';
 
 const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -42,6 +43,8 @@ export function initSolve() {
 	}
 
 	let selectedOriginalAlternative = null;
+	let selectedVisualAlternative = null;
+	let hasAnsweredCurrentQuestion = false;
 
 	function getSubjects() {
 		return getCollection(SUBJECTS_COLLECTION);
@@ -53,6 +56,14 @@ export function initSolve() {
 
 	function getQuestions() {
 		return getCollection(QUESTIONS_COLLECTION);
+	}
+
+	function getAttempts() {
+		return getCollection(ATTEMPTS_COLLECTION);
+	}
+
+	function saveAttempts(attempts) {
+		saveCollection(ATTEMPTS_COLLECTION, attempts);
 	}
 
 	function getSelectedSubject() {
@@ -140,8 +151,31 @@ export function initSolve() {
 		return alternatives;
 	}
 
+	function createAttempt({question, selectedAlternative, selectedVisualAlternative, isCorrect}) {
+		return {
+			id: crypto.randomUUID(),
+			questionId: question.id,
+			subjectId: question.subjectId,
+			themeId: question.themeId,
+			selectedAlternative,
+			selectedVisualAlternative,
+			correctAlternative: question.correctAlternative,
+			isCorrect,
+			answeredAt: new Date().toISOString()
+		};
+	}
+
+	function saveAttempt(attempt) {
+		const attempts = getAttempts();
+
+		attempts.push(attempt);
+
+		saveAttempts(attempts);
+	}
+
 	function resetSelectedAlternative() {
 		selectedOriginalAlternative = null;
+		selectedVisualAlternative = null;
 
 		document.querySelectorAll('.solve-alternative').forEach((button) => {
 			button.classList.remove('is-selected');
@@ -150,13 +184,17 @@ export function initSolve() {
 
 	function resetSolveCard() {
 		selectedOriginalAlternative = null;
+		selectedVisualAlternative = null;
+		hasAnsweredCurrentQuestion = false;
 
 		solveCard.hidden = true;
 		solveEmptyState.hidden = false;
 		solveAlternatives.innerHTML = '';
 		solveQuestionStatement.textContent = '';
 		solveQuestionStatus.textContent = 'Aguardando resposta';
+		solveQuestionStatus.className = '';
 		solveFeedback.hidden = true;
+		solveFeedback.className = 'solve-feedback';
 		solveFeedback.innerHTML = '';
 		confirmAnswerButton.disabled = false;
 		nextQuestionButton.disabled = true;
@@ -248,9 +286,15 @@ export function initSolve() {
       `;
 
 			alternativeButton.addEventListener('click', () => {
+				if (hasAnsweredCurrentQuestion) {
+					return;
+				}
+
 				resetSelectedAlternative();
 
 				selectedOriginalAlternative = alternative.originalLetter;
+				selectedVisualAlternative = visualLetter;
+
 				alternativeButton.classList.add('is-selected');
 			});
 
@@ -269,6 +313,8 @@ export function initSolve() {
 		}
 
 		selectedOriginalAlternative = null;
+		selectedVisualAlternative = null;
+		hasAnsweredCurrentQuestion = false;
 
 		solveEmptyState.hidden = true;
 		solveCard.hidden = false;
@@ -276,14 +322,114 @@ export function initSolve() {
 		solveQuestionContext.textContent = `${selectedSubject.name} • ${selectedTheme.name}`;
 
 		solveQuestionStatus.textContent = 'Aguardando resposta';
+		solveQuestionStatus.className = '';
 		solveQuestionStatement.textContent = selectedQuestion.statement;
 
 		renderAlternativeButtons(selectedQuestion);
 
 		solveFeedback.hidden = true;
+		solveFeedback.className = 'solve-feedback';
 		solveFeedback.innerHTML = '';
 		confirmAnswerButton.disabled = false;
 		nextQuestionButton.disabled = true;
+	}
+
+	function revealCorrection(question) {
+		document.querySelectorAll('.solve-alternative').forEach((button) => {
+			const originalAlternative = button.dataset.originalAlternative;
+
+			button.disabled = true;
+
+			if (originalAlternative === question.correctAlternative) {
+				button.classList.add('is-correct');
+			}
+
+			if (originalAlternative === selectedOriginalAlternative && selectedOriginalAlternative !== question.correctAlternative) {
+				button.classList.add('is-wrong');
+			}
+		});
+	}
+
+	function confirmAnswer() {
+		const selectedQuestion = getSelectedQuestion();
+
+		if (!selectedQuestion || hasAnsweredCurrentQuestion) {
+			return;
+		}
+
+		if (!selectedOriginalAlternative) {
+			solveFeedback.hidden = false;
+			solveFeedback.className = 'solve-feedback is-warning';
+			solveFeedback.innerHTML = `
+        <strong>Selecione uma alternativa antes de confirmar.</strong>
+      `;
+			return;
+		}
+
+		const isCorrect = selectedOriginalAlternative === selectedQuestion.correctAlternative;
+
+		const attempt = createAttempt({
+			question: selectedQuestion,
+			selectedAlternative: selectedOriginalAlternative,
+			selectedVisualAlternative,
+			isCorrect
+		});
+
+		saveAttempt(attempt);
+
+		hasAnsweredCurrentQuestion = true;
+
+		revealCorrection(selectedQuestion);
+
+		solveQuestionStatus.textContent = isCorrect ? 'Acertou' : 'Errou';
+		solveQuestionStatus.className = isCorrect ? 'is-correct' : 'is-wrong';
+
+		solveFeedback.hidden = false;
+		solveFeedback.className = isCorrect ? 'solve-feedback is-correct' : 'solve-feedback is-wrong';
+
+		solveFeedback.innerHTML = `
+      <strong>${isCorrect ? 'Resposta correta!' : 'Resposta incorreta.'}</strong>
+      <span>
+        Você marcou a alternativa visual ${escapeHTML(selectedVisualAlternative)},
+        que corresponde à alternativa original ${escapeHTML(selectedOriginalAlternative)}.
+      </span>
+      <span>
+        Gabarito original: <strong>${escapeHTML(selectedQuestion.correctAlternative)}</strong>.
+      </span>
+      <span>
+        ${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
+      </span>
+    `;
+
+		confirmAnswerButton.disabled = true;
+		nextQuestionButton.disabled = false;
+	}
+
+	function goToNextQuestion() {
+		const questionOptions = Array.from(solveQuestionSelect.options).filter((option) => {
+			return option.value !== '';
+		});
+
+		const currentQuestionIndex = questionOptions.findIndex((option) => {
+			return option.value === solveQuestionSelect.value;
+		});
+
+		const nextQuestion = questionOptions[currentQuestionIndex + 1];
+
+		if (!nextQuestion) {
+			solveFeedback.hidden = false;
+			solveFeedback.className = 'solve-feedback is-warning';
+			solveFeedback.innerHTML = `
+        <strong>Você chegou à última questão deste tema.</strong>
+        <span>Escolha outra questão, tema ou matéria para continuar praticando.</span>
+      `;
+
+			nextQuestionButton.disabled = true;
+			return;
+		}
+
+		solveQuestionSelect.value = nextQuestion.value;
+		renderSelectedQuestion();
 	}
 
 	solveSubjectSelect.addEventListener('change', () => {
@@ -298,6 +444,9 @@ export function initSolve() {
 	});
 
 	solveQuestionSelect.addEventListener('change', renderSelectedQuestion);
+
+	confirmAnswerButton.addEventListener('click', confirmAnswer);
+	nextQuestionButton.addEventListener('click', goToNextQuestion);
 
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:changed', renderSubjectOptions);

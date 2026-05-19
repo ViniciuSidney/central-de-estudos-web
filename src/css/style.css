@@ -996,6 +996,61 @@ button {
 	border-radius: 14px;
 }
 
+.solve-alternative:disabled {
+	cursor: default;
+	transform: none;
+}
+
+.solve-alternative.is-correct {
+	border-color: var(--accent);
+	background: var(--success-soft);
+}
+
+.solve-alternative.is-wrong {
+	border-color: #9f3d3d;
+	background: rgba(159, 61, 61, 0.12);
+}
+
+.solve-feedback {
+	display: grid;
+	gap: 8px;
+	padding: 16px;
+	line-height: 1.6;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.solve-feedback span {
+	color: var(--muted);
+}
+
+.solve-feedback.is-correct {
+	border-color: var(--accent);
+	background: var(--success-soft);
+}
+
+.solve-feedback.is-wrong {
+	border-color: #9f3d3d;
+	background: rgba(159, 61, 61, 0.12);
+}
+
+.solve-feedback.is-warning {
+	background: var(--surface);
+}
+
+#solve-question-status.is-correct {
+	color: var(--accent);
+	background: var(--success-soft);
+	border-color: var(--accent);
+}
+
+#solve-question-status.is-wrong {
+	color: #9f3d3d;
+	background: rgba(159, 61, 61, 0.12);
+	border-color: #9f3d3d;
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
 	.nav-grid,
