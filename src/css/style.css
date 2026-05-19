@@ -145,14 +145,25 @@ button {
 	background: var(--surface-soft);
 }
 
-.button:disabled {
-	cursor: not-allowed;
-	opacity: 0.65;
-	transform: none;
+.button:disabled,
+.button:disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
 }
 
-.button:disabled:hover {
-	background: transparent;
+.button--primary:disabled,
+.button--primary:disabled:hover {
+  color: var(--muted);
+  background: var(--surface-soft);
+  border-color: var(--border);
+}
+
+.button--secondary:disabled,
+.button--secondary:disabled:hover {
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--border);
 }
 
 .navigation-panel {
@@ -1049,6 +1060,18 @@ button {
 	color: #9f3d3d;
 	background: rgba(159, 61, 61, 0.12);
 	border-color: #9f3d3d;
+}
+
+.solve-feedback strong {
+  color: var(--text);
+}
+
+.solve-feedback.is-correct > strong {
+  color: var(--accent);
+}
+
+.solve-feedback.is-wrong > strong {
+  color: #d46a6a;
 }
 
 /* Media Queries */

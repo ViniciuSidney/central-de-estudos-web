@@ -387,19 +387,24 @@ export function initSolve() {
 		solveFeedback.hidden = false;
 		solveFeedback.className = isCorrect ? 'solve-feedback is-correct' : 'solve-feedback is-wrong';
 
+		const selectedAlternativeText = selectedQuestion.alternatives[selectedOriginalAlternative];
+		const correctAlternativeText = selectedQuestion.alternatives[selectedQuestion.correctAlternative];
+
 		solveFeedback.innerHTML = `
-      <strong>${isCorrect ? 'Resposta correta!' : 'Resposta incorreta.'}</strong>
-      <span>
-        Você marcou a alternativa visual ${escapeHTML(selectedVisualAlternative)},
-        que corresponde à alternativa original ${escapeHTML(selectedOriginalAlternative)}.
-      </span>
-      <span>
-        Gabarito original: <strong>${escapeHTML(selectedQuestion.correctAlternative)}</strong>.
-      </span>
-      <span>
-        ${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
-      </span>
-    `;
+		<strong>${isCorrect ? 'Resposta correta!' : 'Resposta incorreta.'}</strong>
+
+		<span>
+			Sua resposta: <strong>${escapeHTML(selectedVisualAlternative)}) ${escapeHTML(selectedAlternativeText)}</strong>
+		</span>
+
+		<span>
+			Resposta correta: <strong>${escapeHTML(correctAlternativeText)}</strong>
+		</span>
+
+		<span>
+			${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
+		</span>
+		`;
 
 		confirmAnswerButton.disabled = true;
 		nextQuestionButton.disabled = false;
