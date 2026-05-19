@@ -389,21 +389,39 @@ export function initSolve() {
 
 		const selectedAlternativeText = selectedQuestion.alternatives[selectedOriginalAlternative];
 		const correctAlternativeText = selectedQuestion.alternatives[selectedQuestion.correctAlternative];
+		const correctAlternativeButton = document.querySelector(`[data-original-alternative="${selectedQuestion.correctAlternative}"]`);
+		const correctVisualAlternative = correctAlternativeButton?.dataset.visualAlternative || selectedQuestion.correctAlternative;
+
+		const feedbackTitle = isCorrect ? 'Resposta correta!' : 'Resposta incorreta.';
 
 		solveFeedback.innerHTML = `
-		<strong>${isCorrect ? 'Resposta correta!' : 'Resposta incorreta.'}</strong>
+		<div class="solve-feedback__header">
+			<strong>${feedbackTitle}</strong>
+			<span>${isCorrect ? 'Você acertou esta questão.' : 'Compare sua resposta com o gabarito abaixo.'}</span>
+		</div>
 
-		<span>
-			Sua resposta: <strong>${escapeHTML(selectedVisualAlternative)}) ${escapeHTML(selectedAlternativeText)}</strong>
-		</span>
+		<div class="solve-feedback__grid">
+			<div class="solve-feedback__item ${isCorrect ? 'is-correct' : 'is-wrong'}">
+				<small>Sua resposta</small>
+				<strong>
+				${escapeHTML(selectedVisualAlternative)}) ${escapeHTML(selectedAlternativeText)}
+				</strong>
+			</div>
 
-		<span>
-			Resposta correta: <strong>${escapeHTML(correctAlternativeText)}</strong>
-		</span>
+			<div class="solve-feedback__item is-correct">
+			<small>Resposta correta</small>
+			<strong>
+				${escapeHTML(correctVisualAlternative)}) ${escapeHTML(correctAlternativeText)}
+			</strong>
+			</div>
+		</div>
 
-		<span>
-			${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
-		</span>
+		<div class="solve-feedback__explanation">
+			<small>Explicação</small>
+			<p>
+				${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
+			</p>
+		</div>
 		`;
 
 		confirmAnswerButton.disabled = true;
