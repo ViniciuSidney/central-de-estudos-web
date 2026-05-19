@@ -22,8 +22,10 @@ export function initSolve() {
 	const confirmAnswerButton = document.querySelector('#confirm-answer');
 	const nextQuestionButton = document.querySelector('#next-question');
 	const solveFeedback = document.querySelector('#solve-feedback');
+	const retryQuestionButton = document.querySelector('#retry-question');
 
 	if (
+		!retryQuestionButton ||
 		!solveSubjectSelect ||
 		!solveThemeSelect ||
 		!solveQuestionSelect ||
@@ -197,6 +199,7 @@ export function initSolve() {
 		solveFeedback.className = 'solve-feedback';
 		solveFeedback.innerHTML = '';
 		confirmAnswerButton.disabled = false;
+		retryQuestionButton.disabled = true;
 		nextQuestionButton.disabled = true;
 	}
 
@@ -331,6 +334,7 @@ export function initSolve() {
 		solveFeedback.className = 'solve-feedback';
 		solveFeedback.innerHTML = '';
 		confirmAnswerButton.disabled = false;
+		retryQuestionButton.disabled = true;
 		nextQuestionButton.disabled = true;
 	}
 
@@ -425,6 +429,7 @@ export function initSolve() {
 		`;
 
 		confirmAnswerButton.disabled = true;
+		retryQuestionButton.disabled = false;
 		nextQuestionButton.disabled = false;
 	}
 
@@ -455,6 +460,31 @@ export function initSolve() {
 		renderSelectedQuestion();
 	}
 
+	function retryQuestion() {
+		const selectedQuestion = getSelectedQuestion();
+
+		if (!selectedQuestion) {
+			return;
+		}
+
+		selectedOriginalAlternative = null;
+		selectedVisualAlternative = null;
+		hasAnsweredCurrentQuestion = false;
+
+		solveQuestionStatus.textContent = 'Aguardando resposta';
+		solveQuestionStatus.className = '';
+
+		renderAlternativeButtons(selectedQuestion);
+
+		solveFeedback.hidden = true;
+		solveFeedback.className = 'solve-feedback';
+		solveFeedback.innerHTML = '';
+
+		confirmAnswerButton.disabled = false;
+		retryQuestionButton.disabled = true;
+		nextQuestionButton.disabled = true;
+	}
+
 	solveSubjectSelect.addEventListener('change', () => {
 		solveThemeSelect.value = '';
 		solveQuestionSelect.value = '';
@@ -469,6 +499,7 @@ export function initSolve() {
 	solveQuestionSelect.addEventListener('change', renderSelectedQuestion);
 
 	confirmAnswerButton.addEventListener('click', confirmAnswer);
+	retryQuestionButton.addEventListener('click', retryQuestion);
 	nextQuestionButton.addEventListener('click', goToNextQuestion);
 
 	document.addEventListener('subjects:changed', renderSubjectOptions);
