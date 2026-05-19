@@ -4,6 +4,8 @@ const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
 const QUESTIONS_COLLECTION = 'questions';
 
+const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
+
 export function initSolve() {
 	const solveSubjectSelect = document.querySelector('#solve-subject');
 	const solveThemeSelect = document.querySelector('#solve-theme');
@@ -38,6 +40,8 @@ export function initSolve() {
 	) {
 		return;
 	}
+
+	let selectedOriginalAlternative = null;
 
 	function getSubjects() {
 		return getCollection(SUBJECTS_COLLECTION);
@@ -103,7 +107,50 @@ export function initSolve() {
 		return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
 	}
 
+	function shuffleArray(items) {
+		const shuffledItems = [...items];
+
+		for (let index = shuffledItems.length - 1; index > 0; index--) {
+			const randomIndex = Math.floor(Math.random() * (index + 1));
+
+			const currentItem = shuffledItems[index];
+			shuffledItems[index] = shuffledItems[randomIndex];
+			shuffledItems[randomIndex] = currentItem;
+		}
+
+		return shuffledItems;
+	}
+
+	function getRenderableAlternatives(question) {
+		const alternatives = Object.entries(question.alternatives)
+			.filter(([, text]) => {
+				return text.trim() !== '';
+			})
+			.map(([originalLetter, text]) => {
+				return {
+					originalLetter,
+					text
+				};
+			});
+
+		if (question.shouldShuffleAlternatives) {
+			return shuffleArray(alternatives);
+		}
+
+		return alternatives;
+	}
+
+	function resetSelectedAlternative() {
+		selectedOriginalAlternative = null;
+
+		document.querySelectorAll('.solve-alternative').forEach((button) => {
+			button.classList.remove('is-selected');
+		});
+	}
+
 	function resetSolveCard() {
+		selectedOriginalAlternative = null;
+
 		solveCard.hidden = true;
 		solveEmptyState.hidden = false;
 		solveAlternatives.innerHTML = '';
@@ -181,6 +228,36 @@ export function initSolve() {
 		resetSolveCard();
 	}
 
+	function renderAlternativeButtons(question) {
+		const renderableAlternatives = getRenderableAlternatives(question);
+
+		solveAlternatives.innerHTML = '';
+
+		renderableAlternatives.forEach((alternative, index) => {
+			const visualLetter = VISUAL_ALTERNATIVE_LABELS[index];
+			const alternativeButton = document.createElement('button');
+
+			alternativeButton.classList.add('solve-alternative');
+			alternativeButton.type = 'button';
+
+			alternativeButton.dataset.originalAlternative = alternative.originalLetter;
+			alternativeButton.dataset.visualAlternative = visualLetter;
+
+			alternativeButton.innerHTML = `
+        <strong>${escapeHTML(visualLetter)})</strong> ${escapeHTML(alternative.text)}
+      `;
+
+			alternativeButton.addEventListener('click', () => {
+				resetSelectedAlternative();
+
+				selectedOriginalAlternative = alternative.originalLetter;
+				alternativeButton.classList.add('is-selected');
+			});
+
+			solveAlternatives.appendChild(alternativeButton);
+		});
+	}
+
 	function renderSelectedQuestion() {
 		const selectedSubject = getSelectedSubject();
 		const selectedTheme = getSelectedTheme();
@@ -191,6 +268,8 @@ export function initSolve() {
 			return;
 		}
 
+		selectedOriginalAlternative = null;
+
 		solveEmptyState.hidden = true;
 		solveCard.hidden = false;
 
@@ -199,32 +278,7 @@ export function initSolve() {
 		solveQuestionStatus.textContent = 'Aguardando resposta';
 		solveQuestionStatement.textContent = selectedQuestion.statement;
 
-		solveAlternatives.innerHTML = '';
-
-		Object.entries(selectedQuestion.alternatives).forEach(([letter, text]) => {
-			if (!text) {
-				return;
-			}
-
-			const alternativeButton = document.createElement('button');
-
-			alternativeButton.classList.add('solve-alternative');
-			alternativeButton.type = 'button';
-			alternativeButton.dataset.alternative = letter;
-			alternativeButton.innerHTML = `
-        <strong>${escapeHTML(letter)})</strong> ${escapeHTML(text)}
-      `;
-
-			alternativeButton.addEventListener('click', () => {
-				document.querySelectorAll('.solve-alternative').forEach((button) => {
-					button.classList.remove('is-selected');
-				});
-
-				alternativeButton.classList.add('is-selected');
-			});
-
-			solveAlternatives.appendChild(alternativeButton);
-		});
+		renderAlternativeButtons(selectedQuestion);
 
 		solveFeedback.hidden = true;
 		solveFeedback.innerHTML = '';
