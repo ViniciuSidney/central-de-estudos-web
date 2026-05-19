@@ -204,24 +204,28 @@ A versão v0.4 foi considerada concluída porque o usuário consegue:
 # v0.5 — Modo de resolução de questões
 
 ### Objetivo
-Permitir que o usuário resolva as questões cadastradas e veja uma correção básica.
+Permitir que o usuário resolva questões cadastradas, receba feedback de acerto ou erro e registre suas tentativas para futuras revisões.
 
 ### Status
-Planejada.
+Em desenvolvimento.
 
 ---
 
 ## Previsto para a v0.5
 
-- Tela de resolução de questão
-- Exibição do enunciado
-- Exibição das alternativas
-- Seleção de resposta
-- Verificação da alternativa correta
+- Tela de resolução de questões
+- Seleção de matéria
+- Seleção de tema
+- Carregamento das questões cadastradas
+- Exibição de uma questão para resolução
+- Alternativas embaralhadas visualmente
+- Seleção de alternativa
+- Confirmação de resposta
 - Feedback de acerto ou erro
-- Exibição da explicação da questão
-- Registro da resposta do usuário
-- Salvamento das tentativas no `localStorage`
+- Exibição da explicação/correção
+- Registro da tentativa no `localStorage`
+- Contador de questões respondidas
+- Preparação para revisão de erros
 
 ---
 
@@ -229,12 +233,13 @@ Planejada.
 
 A versão v0.5 será considerada concluída quando o usuário conseguir:
 
-- Abrir uma questão cadastrada
-- Selecionar uma alternativa
-- Confirmar a resposta
+- Selecionar uma questão cadastrada
+- Resolver a questão
+- Confirmar uma alternativa
 - Ver se acertou ou errou
-- Ler a explicação da questão
-- Ter sua tentativa registrada
+- Ver a explicação da questão
+- Ter sua tentativa salva no navegador
+- Resolver questões com alternativas embaralhadas
 
 ---
 
