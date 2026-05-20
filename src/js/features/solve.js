@@ -270,8 +270,8 @@ export function initSolve() {
     const questions = getQuestionsFromSelectedTheme();
 
     solveQuestionSelect.innerHTML = `
-      <option value="">Selecione uma questão</option>
-    `;
+    <option value="">Selecione uma questão</option>
+  	 `;
 
     questions.forEach((question, index) => {
       const option = document.createElement("option");
@@ -282,6 +282,7 @@ export function initSolve() {
       solveQuestionSelect.appendChild(option);
     });
 
+    updateNextQuestionButtonText();
     resetSolveCard();
   }
 
@@ -489,6 +490,17 @@ export function initSolve() {
 
     solveQuestionSelect.value = nextQuestion.value;
     renderSelectedQuestion();
+  }
+
+  function updateNextQuestionButtonText() {
+    const questionOptions = Array.from(solveQuestionSelect.options).filter(
+      (option) => {
+        return option.value !== "";
+      },
+    );
+
+    nextQuestionButton.textContent =
+      questionOptions.length === 1 ? "Recarregar questão" : "Próxima questão";
   }
 
   function retryQuestion() {
