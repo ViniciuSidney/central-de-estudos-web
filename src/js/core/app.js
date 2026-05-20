@@ -7,17 +7,19 @@ import {initQuestions} from '../features/questions.js';
 import {initNotes} from '../features/notes.js';
 import {initReviews} from '../features/reviews.js';
 import {initSolve} from '../features/solve.js';
+import { initDashboard } from "../features/dashboard.js";
 
 export function startApp() {
-	console.log('Central de Estudos Web iniciada.');
+  console.log("Central de Estudos Web iniciada.");
 
-	initTheme();
-	initNavigation();
-	initConfirmModal();
-	initSubjects();
-	initThemes();
-	initQuestions();
-	initNotes();
-	initReviews();
-	initSolve();
+  initTheme();
+  initNavigation();
+  initConfirmModal();
+  initDashboard();
+  initSubjects();
+  initThemes();
+  initQuestions();
+  initSolve();
+  initNotes();
+  initReviews();
 }

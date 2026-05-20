@@ -189,6 +189,7 @@ export function initSolve() {
     attempts.push(attempt);
 
     saveAttempts(attempts);
+    document.dispatchEvent(new CustomEvent("attempts:changed"));
   }
 
   function resetSelectedAlternative() {
