@@ -6,15 +6,31 @@ const QUESTIONS_COLLECTION = "questions";
 const ATTEMPTS_COLLECTION = "attempts";
 
 export function initDashboard() {
-  const dashboardSubjectsCount = document.querySelector("#dashboard-subjects-count");
-  const dashboardThemesCount = document.querySelector("#dashboard-themes-count");
-  const dashboardQuestionsCount = document.querySelector("#dashboard-questions-count");
-  const dashboardAttemptsCount = document.querySelector("#dashboard-attempts-count");
-  const dashboardCorrectCount = document.querySelector("#dashboard-correct-count");
-  const dashboardErrorsCount = document.querySelector("#dashboard-errors-count");
-  const dashboardAccuracyRate = document.querySelector("#dashboard-accuracy-rate");
+  const dashboardSubjectsCount = document.querySelector(
+    "#dashboard-subjects-count",
+  );
+  const dashboardThemesCount = document.querySelector(
+    "#dashboard-themes-count",
+  );
+  const dashboardQuestionsCount = document.querySelector(
+    "#dashboard-questions-count",
+  );
+  const dashboardAttemptsCount = document.querySelector(
+    "#dashboard-attempts-count",
+  );
+  const dashboardCorrectCount = document.querySelector(
+    "#dashboard-correct-count",
+  );
+  const dashboardErrorsCount = document.querySelector(
+    "#dashboard-errors-count",
+  );
+  const dashboardAccuracyRate = document.querySelector(
+    "#dashboard-accuracy-rate",
+  );
+  const dashboardWrongCount = document.querySelector("#dashboard-wrong-count");
 
   if (
+    !dashboardWrongCount ||
     !dashboardSubjectsCount ||
     !dashboardThemesCount ||
     !dashboardQuestionsCount ||
@@ -56,6 +72,12 @@ export function initDashboard() {
       return !attempt.isCorrect;
     });
 
+    const pendingErrorQuestionIds = new Set(
+      wrongAttempts.map((attempt) => {
+        return attempt.questionId;
+      }),
+    );
+
     const accuracyRate =
       attempts.length === 0
         ? 0
@@ -66,7 +88,8 @@ export function initDashboard() {
     dashboardQuestionsCount.textContent = questions.length;
     dashboardAttemptsCount.textContent = attempts.length;
     dashboardCorrectCount.textContent = correctAttempts.length;
-    dashboardErrorsCount.textContent = wrongAttempts.length;
+    dashboardWrongCount.textContent = wrongAttempts.length;
+    dashboardErrorsCount.textContent = pendingErrorQuestionIds.size;
     dashboardAccuracyRate.textContent = `${accuracyRate}%`;
   }
 
