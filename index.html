@@ -115,45 +115,74 @@
             revisões pendentes.
           </p>
 
-          <div class="placeholder-grid">
-            <div class="placeholder-card">
-              <strong id="dashboard-subjects-count">0</strong>
-              <span>Matérias</span>
+          <div class="dashboard-tabs">
+            <button
+              class="dashboard-tab-button is-active"
+              type="button"
+              data-dashboard-tab="summary"
+            >
+              Resumo
+            </button>
+
+            <button
+              class="dashboard-tab-button"
+              type="button"
+              data-dashboard-tab="performance"
+            >
+              Desempenho
+            </button>
+          </div>
+
+          <div class="dashboard-tab-panel">
+            <div
+              class="dashboard-tab-content is-active"
+              id="dashboard-summary-tab"
+            >
+              <div class="placeholder-grid">
+                <div class="placeholder-card">
+                  <strong id="dashboard-subjects-count">0</strong>
+                  <span>Matérias</span>
+                </div>
+
+                <div class="placeholder-card">
+                  <strong id="dashboard-themes-count">0</strong>
+                  <span>Temas</span>
+                </div>
+
+                <div class="placeholder-card">
+                  <strong id="dashboard-questions-count">0</strong>
+                  <span>Questões</span>
+                </div>
+
+                <div class="placeholder-card">
+                  <strong id="dashboard-attempts-count">0</strong>
+                  <span>Tentativas</span>
+                </div>
+              </div>
             </div>
 
-            <div class="placeholder-card">
-              <strong id="dashboard-themes-count">0</strong>
-              <span>Temas</span>
-            </div>
+            <div class="dashboard-tab-content" id="dashboard-performance-tab">
+              <div class="placeholder-grid">
+                <div class="placeholder-card">
+                  <strong id="dashboard-correct-count">0</strong>
+                  <span>Acertos</span>
+                </div>
 
-            <div class="placeholder-card">
-              <strong id="dashboard-questions-count">0</strong>
-              <span>Questões</span>
-            </div>
+                <div class="placeholder-card">
+                  <strong id="dashboard-wrong-count">0</strong>
+                  <span>Erros totais</span>
+                </div>
 
-            <div class="placeholder-card">
-              <strong id="dashboard-attempts-count">0</strong>
-              <span>Tentativas</span>
-            </div>
+                <div class="placeholder-card">
+                  <strong id="dashboard-errors-count">0</strong>
+                  <span>Erros pendentes</span>
+                </div>
 
-            <div class="placeholder-card">
-              <strong id="dashboard-correct-count">0</strong>
-              <span>Acertos</span>
-            </div>
-
-            <div class="placeholder-card">
-              <strong id="dashboard-wrong-count">0</strong>
-              <span>Erros totais</span>
-            </div>
-
-            <div class="placeholder-card">
-              <strong id="dashboard-errors-count">0</strong>
-              <span>Erros pendentes</span>
-            </div>
-
-            <div class="placeholder-card">
-              <strong id="dashboard-accuracy-rate">0%</strong>
-              <span>Taxa de acerto</span>
+                <div class="placeholder-card">
+                  <strong id="dashboard-accuracy-rate">0%</strong>
+                  <span>Taxa de acerto</span>
+                </div>
+              </div>
             </div>
           </div>
         </article>

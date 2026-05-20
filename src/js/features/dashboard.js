@@ -28,8 +28,16 @@ export function initDashboard() {
     "#dashboard-accuracy-rate",
   );
   const dashboardWrongCount = document.querySelector("#dashboard-wrong-count");
+  const dashboardTabButtons = document.querySelectorAll("[data-dashboard-tab]");
+  const dashboardSummaryTab = document.querySelector("#dashboard-summary-tab");
+  const dashboardPerformanceTab = document.querySelector(
+    "#dashboard-performance-tab",
+  );
 
   if (
+    !dashboardTabButtons.length ||
+    !dashboardSummaryTab ||
+    !dashboardPerformanceTab ||
     !dashboardWrongCount ||
     !dashboardSubjectsCount ||
     !dashboardThemesCount ||
@@ -93,10 +101,29 @@ export function initDashboard() {
     dashboardAccuracyRate.textContent = `${accuracyRate}%`;
   }
 
+  function showDashboardTab(tabName) {
+    dashboardTabButtons.forEach((button) => {
+      const isSelectedTab = button.dataset.dashboardTab === tabName;
+
+      button.classList.toggle("is-active", isSelectedTab);
+    });
+
+    dashboardSummaryTab.classList.toggle("is-active", tabName === "summary");
+    dashboardPerformanceTab.classList.toggle(
+      "is-active",
+      tabName === "performance",
+    );
+  }
+
   document.addEventListener("subjects:changed", updateDashboard);
   document.addEventListener("themes:changed", updateDashboard);
   document.addEventListener("questions:changed", updateDashboard);
   document.addEventListener("attempts:changed", updateDashboard);
+  dashboardTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      showDashboardTab(button.dataset.dashboardTab);
+    });
+  });
 
   updateDashboard();
 

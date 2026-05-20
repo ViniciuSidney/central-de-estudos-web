@@ -830,6 +830,58 @@ button {
   margin-top: 20px;
 }
 
+.dashboard-tabs {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.dashboard-tab-button {
+  cursor: pointer;
+  padding: 12px 18px;
+
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dashboard-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.dashboard-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.dashboard-tab-panel {
+  margin-top: 16px;
+  padding: 20px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.dashboard-tab-content {
+  display: none;
+}
+
+.dashboard-tab-content.is-active {
+  display: block;
+}
+
 .question-tab-button {
   cursor: pointer;
   padding: 12px 18px;
@@ -1249,5 +1301,13 @@ button {
 
   .solve-feedback__grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-tabs {
+    flex-direction: column;
+  }
+
+  .dashboard-tab-button {
+    width: 100%;
   }
 }
