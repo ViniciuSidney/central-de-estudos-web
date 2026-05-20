@@ -797,10 +797,6 @@ export function initQuestions() {
       </div>
 
       <div class="question-card__actions">
-        <button class="button button--secondary" type="button" disabled>
-          Resolver em breve
-        </button>
-
         <button
           class="button button--secondary"
           type="button"
@@ -825,7 +821,7 @@ export function initQuestions() {
           Excluir
         </button>
       </div>
-    `;
+      `;
 
       questionsList.appendChild(questionCard);
     });
