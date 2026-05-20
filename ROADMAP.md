@@ -204,42 +204,58 @@ A versão v0.4 foi considerada concluída porque o usuário consegue:
 # v0.5 — Modo de resolução de questões
 
 ### Objetivo
-Permitir que o usuário resolva questões cadastradas, receba feedback de acerto ou erro e registre suas tentativas para futuras revisões.
+Permitir que o usuário resolva questões cadastradas, receba feedback imediato de acerto ou erro e registre suas tentativas para acompanhar o próprio desempenho.
 
 ### Status
-Em desenvolvimento.
+Concluída.
 
 ---
 
 ## Previsto para a v0.5
 
-- Tela de resolução de questões
-- Seleção de matéria
-- Seleção de tema
-- Carregamento das questões cadastradas
-- Exibição de uma questão para resolução
-- Alternativas embaralhadas visualmente
-- Seleção de alternativa
-- Confirmação de resposta
-- Feedback de acerto ou erro
-- Exibição da explicação/correção
-- Registro da tentativa no `localStorage`
-- Contador de questões respondidas
-- Preparação para revisão de erros
+- Tela de resolução de questões ✅
+- Seleção de matéria ✅
+- Seleção de tema ✅
+- Seleção de questão ✅
+- Carregamento das questões cadastradas ✅
+- Exibição de uma questão para resolução ✅
+- Alternativas embaralhadas visualmente ✅
+- Preservação da alternativa original correta ✅
+- Seleção de alternativa ✅
+- Confirmação de resposta ✅
+- Feedback de acerto ou erro ✅
+- Destaque da resposta correta ✅
+- Destaque da resposta selecionada ✅
+- Exibição da explicação/correção ✅
+- Registro da tentativa no `localStorage` ✅
+- Botão para tentar novamente ✅
+- Botão para próxima questão ✅
+- Ajuste automático para recarregar questão única ✅
+- Histórico recente de resoluções ✅
+- Atualização do Dashboard com tentativas ✅
+- Contagem de acertos ✅
+- Contagem de erros totais ✅
+- Taxa de acerto ✅
+- Ajustes visuais no feedback para tema claro e escuro ✅
 
 ---
 
 ## Fechamento da v0.5
 
-A versão v0.5 será considerada concluída quando o usuário conseguir:
+A versão v0.5 foi considerada concluída porque o usuário consegue:
 
-- Selecionar uma questão cadastrada
-- Resolver a questão
-- Confirmar uma alternativa
-- Ver se acertou ou errou
-- Ver a explicação da questão
-- Ter sua tentativa salva no navegador
-- Resolver questões com alternativas embaralhadas
+- Selecionar uma questão cadastrada ✅
+- Resolver a questão ✅
+- Confirmar uma alternativa ✅
+- Ver se acertou ou errou ✅
+- Ver a resposta correta ✅
+- Ver a explicação da questão ✅
+- Tentar novamente a mesma questão ✅
+- Avançar para a próxima questão ✅
+- Resolver questões com alternativas embaralhadas ✅
+- Ter suas tentativas salvas no navegador ✅
+- Ver um histórico recente de resoluções ✅
+- Acompanhar dados iniciais de desempenho no Dashboard ✅
 
 ---
 
