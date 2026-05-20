@@ -38,7 +38,6 @@ A versão v0.1 será considerada concluída quando o projeto tiver:
 - JavaScript conectado corretamente ✅
 - Base visual simples e minimalista ✅
 - Navegação inicial entre seções ✅
-- Alternância entre tema claro e escuro ✅
 - Projeto pronto para iniciar o sistema de matérias ✅
 - Alternância entre tema claro e escuro ✅
 
@@ -259,10 +258,10 @@ A versão v0.5 foi considerada concluída porque o usuário consegue:
 
 ---
 
-# v0.6 — Anotações de estudo
+# v0.6 — Histórico completo e revisão de erros
 
 ### Objetivo
-Adicionar um espaço para anotações dentro de cada tema.
+Criar uma área para acompanhar resoluções anteriores e revisar questões respondidas incorretamente, ajudando o usuário a transformar erros em aprendizado.
 
 ### Status
 Planejada.
@@ -271,12 +270,20 @@ Planejada.
 
 ## Previsto para a v0.6
 
-- Tela de anotações por tema
-- Campo para resumo do conteúdo
-- Campo para observações pessoais
-- Edição das anotações
-- Salvamento automático ou manual no `localStorage`
-- Organização das anotações junto ao tema estudado
+- Tela de histórico de resoluções
+- Listagem completa das tentativas registradas
+- Exibição da data da resolução
+- Exibição da matéria e do tema relacionados
+- Exibição do status da tentativa: acerto ou erro
+- Filtro por matéria
+- Filtro por tema
+- Filtro por acertos e erros
+- Tela de revisão de erros
+- Listagem de questões erradas
+- Campo para motivo do erro
+- Campo para regra de correção
+- Marcação de erro como revisado
+- Separação entre erros pendentes e erros revisados
 
 ---
 
@@ -284,17 +291,19 @@ Planejada.
 
 A versão v0.6 será considerada concluída quando o usuário conseguir:
 
-- Escrever anotações dentro de um tema
-- Editar anotações
-- Salvar o conteúdo
-- Fechar e abrir o navegador sem perder as anotações
+- Ver o histórico completo de resoluções
+- Filtrar tentativas por matéria, tema e resultado
+- Identificar questões respondidas incorretamente
+- Registrar o motivo do erro
+- Criar uma regra de correção
+- Marcar erros como revisados
 
 ---
 
-# v0.7 — Revisão de erros
+# v0.7 — Anotações de estudo
 
 ### Objetivo
-Criar uma área para revisar questões respondidas incorretamente.
+Adicionar um espaço para anotações dentro de cada tema, permitindo registrar resumos, observações e ideias importantes relacionadas ao estudo.
 
 ### Status
 Planejada.
@@ -303,13 +312,18 @@ Planejada.
 
 ## Previsto para a v0.7
 
-- Tela de revisão de erros
-- Listagem de questões erradas
-- Exibição da matéria e tema relacionados
-- Campo para motivo do erro
-- Campo para regra de correção
-- Marcação de erro como revisado
-- Filtro de erros pendentes e revisados
+- Tela de anotações por matéria e tema
+- Seleção de matéria
+- Seleção de tema
+- Campo para resumo do conteúdo
+- Campo para observações pessoais
+- Campo para regras importantes
+- Edição das anotações
+- Salvamento manual no `localStorage`
+- Exibição da data de criação
+- Exibição da data da última edição
+- Estado vazio quando não houver anotações
+- Organização das anotações junto ao tema estudado
 
 ---
 
@@ -317,17 +331,18 @@ Planejada.
 
 A versão v0.7 será considerada concluída quando o usuário conseguir:
 
-- Ver as questões que errou
-- Registrar o motivo do erro
-- Criar uma regra para não errar novamente
-- Marcar erros como revisados
+- Criar anotações dentro de um tema
+- Editar anotações já criadas
+- Salvar o conteúdo no navegador
+- Fechar e abrir o sistema sem perder as anotações
+- Consultar anotações por matéria e tema
 
 ---
 
-# v0.8 — Dashboard inicial
+# v0.8 — Dashboard avançado e indicadores
 
 ### Objetivo
-Criar uma tela inicial com resumo geral dos estudos.
+Melhorar o Dashboard para exibir indicadores mais úteis sobre organização, desempenho e evolução nos estudos.
 
 ### Status
 Planejada.
@@ -336,14 +351,22 @@ Planejada.
 
 ## Previsto para a v0.8
 
+- Organização do Dashboard por abas
+- Aba de resumo geral
+- Aba de desempenho
+- Aba de revisão
 - Quantidade de matérias cadastradas
 - Quantidade de temas cadastrados
 - Quantidade de questões cadastradas
-- Quantidade de questões respondidas
+- Quantidade de tentativas registradas
 - Quantidade de acertos
-- Quantidade de erros
+- Quantidade de erros totais
+- Quantidade de erros pendentes
+- Taxa geral de acerto
+- Lista de últimos estudos
 - Lista de erros pendentes
-- Lista de temas recentes
+- Indicadores por matéria
+- Indicadores por tema
 - Cards simples de progresso
 
 ---
@@ -352,17 +375,18 @@ Planejada.
 
 A versão v0.8 será considerada concluída quando o usuário conseguir:
 
-- Abrir o sistema e ver um resumo geral
-- Acompanhar quantidade de estudos cadastrados
+- Abrir o sistema e ver um resumo geral dos estudos
+- Acompanhar quantidade de conteúdos cadastrados
 - Ver seus acertos e erros
 - Identificar pendências de revisão
+- Visualizar indicadores básicos por matéria e tema
 
 ---
 
 # v0.9 — Organização visual e responsividade
 
 ### Objetivo
-Melhorar a aparência, a navegação e o uso do sistema em celulares e computadores.
+Melhorar a aparência, a navegação e a experiência de uso do sistema em celulares e computadores.
 
 ### Status
 Planejada.
@@ -378,8 +402,13 @@ Planejada.
 - Melhor uso em dispositivos móveis
 - Melhor organização dos cards
 - Melhor organização dos formulários
+- Melhor organização das abas
 - Estados visuais de vazio, erro e sucesso
-- Revisão dos espaçamentos, fontes e botões
+- Revisão dos espaçamentos
+- Revisão das fontes
+- Revisão dos botões
+- Revisão do tema claro e escuro
+- Pequenos ajustes de acessibilidade
 
 ---
 
@@ -393,13 +422,14 @@ A versão v0.9 será considerada concluída quando o sistema tiver:
 - Telas bem separadas
 - Formulários mais agradáveis de usar
 - Experiência mais fluida
+- Tema claro e escuro mais equilibrados
 
 ---
 
 # v1.0 — Primeira versão base usável
 
 ### Objetivo
-Entregar a primeira versão realmente utilizável da central de estudos, permitindo cadastrar conteúdos, resolver questões, fazer anotações e revisar erros.
+Entregar a primeira versão realmente utilizável da central de estudos, permitindo cadastrar conteúdos, resolver questões, revisar erros, criar anotações e acompanhar o desempenho básico.
 
 ### Status
 Planejada.
@@ -411,11 +441,14 @@ Planejada.
 - Cadastro de matérias
 - Cadastro de temas
 - Cadastro de questões
+- Edição de questões
+- Movimentação de questões entre temas
 - Resolução de questões
 - Registro de respostas
 - Correção básica das questões
-- Anotações por tema
+- Histórico de resoluções
 - Revisão de erros
+- Anotações por tema
 - Dashboard geral
 - Salvamento local com `localStorage`
 - Interface responsiva
@@ -435,27 +468,61 @@ A versão v1.0 será considerada concluída quando o sistema tiver:
 - Questões cadastradas
 - Modo de resolução funcionando
 - Correção básica funcionando
-- Anotações salvas
+- Tentativas salvas
+- Histórico de resoluções funcionando
 - Revisão de erros funcionando
-- Dashboard inicial funcional
+- Anotações salvas
+- Dashboard funcional
 - Dados salvos no navegador
 - Interface simples, clara e responsiva
 
 ---
 
-## Ideias para versões futuras
+# v1.1 — Sistema de simulados
 
-- Importação rápida de questões copiadas do ChatGPT
-- Leitura automática de enunciado e alternativas
-- Exportação para `.json`
-- Exportação para `.csv`
-- Exportação para Anki
-- Sistema de revisão por data
-- Sistema de dificuldade por questão
-- Busca por matéria, tema e questão
-- Filtros por acerto, erro e não respondida
-- Instalação como PWA
-- Uso offline melhorado
-- Sincronização em nuvem
-- Login de usuário
-- Banco de dados online
+### Objetivo
+Criar um modo de simulado com questões selecionadas, resolução sem feedback imediato e correção apenas ao final.
+
+### Status
+Ideia futura.
+
+---
+
+## Previsto para a v1.1
+
+- Tela de criação de simulado
+- Seleção de matéria
+- Seleção de tema opcional
+- Definição da quantidade de questões
+- Seleção aleatória de questões
+- Resolução sem mostrar acerto ou erro imediatamente
+- Registro das respostas do usuário
+- Gabarito preenchido ao final
+- Correção final do simulado
+- Resultado geral do simulado
+- Quantidade de acertos
+- Quantidade de erros
+- Taxa de acerto do simulado
+- Lista de questões erradas
+- Pequena análise de desempenho ao final
+
+---
+
+## Fechamento da v1.1
+
+A versão v1.1 será considerada concluída quando o usuário conseguir:
+
+- Criar um simulado com questões já cadastradas
+- Resolver as questões sem feedback imediato
+- Finalizar o simulado
+- Ver o resultado final
+- Conferir acertos e erros
+- Consultar uma análise simples do desempenho
+
+### Objetivo
+Entregar a primeira versão realmente utilizável da central de estudos, permitindo cadastrar conteúdos, resolver questões, fazer anotações e revisar erros.
+
+### Status
+Planejada.
+
+---
