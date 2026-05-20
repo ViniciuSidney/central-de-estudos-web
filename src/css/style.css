@@ -994,6 +994,82 @@ button {
   gap: 14px;
 }
 
+.solve-history {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.solve-history__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.solve-history__header h3 {
+  font-size: 1.15rem;
+}
+
+.solve-history__header p,
+.solve-history__header span {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.solve-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.solve-history-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.solve-history-card__content {
+  display: grid;
+  gap: 6px;
+}
+
+.solve-history-card__content strong {
+  font-size: 1rem;
+}
+
+.solve-history-card__content span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.solve-history-card__status {
+  width: fit-content;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 999px;
+}
+
+.solve-history-card__status.is-correct {
+  color: var(--accent);
+  background: var(--feedback-inner-success-bg);
+  border: 1px solid var(--feedback-success-border);
+}
+
+.solve-history-card__status.is-wrong {
+  color: var(--feedback-error-border);
+  background: var(--feedback-inner-error-bg);
+  border: 1px solid var(--feedback-error-border);
+}
+
 .solve-empty-state {
   display: flex;
   flex-direction: column;
@@ -1309,5 +1385,11 @@ button {
 
   .dashboard-tab-button {
     width: 100%;
+  }
+
+  .solve-history__header,
+  .solve-history-card {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

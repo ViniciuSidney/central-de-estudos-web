@@ -29,8 +29,14 @@ export function initSolve() {
   const nextQuestionButton = document.querySelector("#next-question");
   const solveFeedback = document.querySelector("#solve-feedback");
   const retryQuestionButton = document.querySelector("#retry-question");
+  const solveHistoryCount = document.querySelector("#solve-history-count");
+  const solveHistoryEmpty = document.querySelector("#solve-history-empty");
+  const solveHistoryList = document.querySelector("#solve-history-list");
 
   if (
+    !solveHistoryCount ||
+    !solveHistoryEmpty ||
+    !solveHistoryList ||
     !retryQuestionButton ||
     !solveSubjectSelect ||
     !solveThemeSelect ||
@@ -122,6 +128,111 @@ export function initSolve() {
     });
   }
 
+  function getSubjectById(subjectId) {
+    return getSubjects().find((subject) => {
+      return subject.id === subjectId;
+    });
+  }
+
+  function getThemeById(themeId) {
+    return getThemes().find((theme) => {
+      return theme.id === themeId;
+    });
+  }
+
+  function getQuestionById(questionId) {
+    return getQuestions().find((question) => {
+      return question.id === questionId;
+    });
+  }
+
+  function formatDateTime(dateValue) {
+    const date = new Date(dateValue);
+
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function getQuestionIndexWithinTheme(question) {
+    const questionsFromTheme = getQuestions().filter((currentQuestion) => {
+      return currentQuestion.themeId === question.themeId;
+    });
+
+    const questionIndex = questionsFromTheme.findIndex((currentQuestion) => {
+      return currentQuestion.id === question.id;
+    });
+
+    return questionIndex === -1
+      ? "-"
+      : String(questionIndex + 1).padStart(2, "0");
+  }
+
+  function renderSolveHistory() {
+    const attempts = getAttempts()
+      .slice()
+      .sort((firstAttempt, secondAttempt) => {
+        return (
+          new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt)
+        );
+      })
+      .slice(0, 8);
+
+    solveHistoryList.innerHTML = "";
+
+    solveHistoryCount.textContent =
+      attempts.length === 1 ? "1 registro" : `${attempts.length} registros`;
+
+    if (attempts.length === 0) {
+      solveHistoryEmpty.hidden = false;
+      return;
+    }
+
+    solveHistoryEmpty.hidden = true;
+
+    attempts.forEach((attempt) => {
+      const subject = getSubjectById(attempt.subjectId);
+      const theme = getThemeById(attempt.themeId);
+      const question = getQuestionById(attempt.questionId);
+
+      const subjectName = subject ? subject.name : "Matéria removida";
+      const themeName = theme ? theme.name : "Tema removido";
+      const questionNumber = question
+        ? getQuestionIndexWithinTheme(question)
+        : "-";
+
+      const historyCard = document.createElement("article");
+
+      historyCard.classList.add("solve-history-card");
+
+      historyCard.innerHTML = `
+      <div class="solve-history-card__content">
+        <strong>
+          Questão ${escapeHTML(questionNumber)}
+        </strong>
+
+        <span>
+          ${escapeHTML(subjectName)} • ${escapeHTML(themeName)}
+        </span>
+
+        <span>
+          Resolvida em ${escapeHTML(formatDateTime(attempt.answeredAt))}
+        </span>
+      </div>
+
+      <span class="solve-history-card__status ${attempt.isCorrect ? "is-correct" : "is-wrong"}">
+        ${attempt.isCorrect ? "Acertou" : "Errou"}
+      </span>
+    `;
+
+      solveHistoryList.appendChild(historyCard);
+    });
+  }
+
   function escapeHTML(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -190,6 +301,8 @@ export function initSolve() {
 
     saveAttempts(attempts);
     document.dispatchEvent(new CustomEvent("attempts:changed"));
+
+    renderSolveHistory();
   }
 
   function resetSelectedAlternative() {
@@ -548,8 +661,11 @@ export function initSolve() {
 
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:changed", renderSubjectOptions);
+  document.addEventListener("questions:changed", renderSolveHistory);
+  document.addEventListener("attempts:changed", renderSolveHistory);
 
   renderSubjectOptions();
+  renderSolveHistory();
 
   console.log("Modo de resolução carregado.");
 }
