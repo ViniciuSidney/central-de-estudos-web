@@ -469,7 +469,38 @@ export function initReviews() {
     <span><strong>Matéria:</strong> ${escapeHTML(subjectName)}</span>
     <span><strong>Tema:</strong> ${escapeHTML(themeName)}</span>
     <span><strong>Erro em:</strong> ${escapeHTML(formatDateTime(attempt.answeredAt))}</span>
-  `;
+    `;
+
+    reviewErrorCurrent.innerHTML = `
+      <div class="review-error-meta">
+        <div class="review-error-meta__header">
+          <span class="review-error-meta__title">Identificação da questão</span>
+          <span class="review-error-meta__chip is-wrong">Erro registrado</span>
+        </div>
+
+        <div class="review-error-meta__grid">
+          <div class="review-error-meta__item">
+            <small>Questão</small>
+            <strong>${escapeHTML(questionNumber)}</strong>
+          </div>
+
+          <div class="review-error-meta__item">
+            <small>Matéria</small>
+            <strong>${escapeHTML(subjectName)}</strong>
+          </div>
+
+          <div class="review-error-meta__item">
+            <small>Tema</small>
+            <strong>${escapeHTML(themeName)}</strong>
+          </div>
+
+          <div class="review-error-meta__item">
+            <small>Data do erro</small>
+            <span>${escapeHTML(formatDateTime(attempt.answeredAt))}</span>
+          </div>
+        </div>
+      </div>
+    `;
 
     reviewErrorPreview.innerHTML = `
     <div class="review-error-preview">
