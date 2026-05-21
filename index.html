@@ -699,18 +699,103 @@
 
         <article class="app-section" id="reviews">
           <p class="app-section__tag">🔁 Revisões</p>
-          <h2>Revisão de erros</h2>
+          <h2>Histórico e revisão de erros</h2>
           <p>
-            Aqui ficarão as questões erradas, os motivos dos erros e as regras
-            criadas para evitar repetir os mesmos problemas.
+            Acompanhe suas resoluções anteriores, identifique erros recorrentes
+            e transforme respostas incorretas em regras de correção.
           </p>
 
-          <div class="empty-state">
-            <strong>Nenhum erro registrado ainda.</strong>
-            <span
-              >Quando houver questões respondidas, os erros aparecerão
-              aqui.</span
+          <div class="review-tabs">
+            <button
+              class="review-tab-button is-active"
+              type="button"
+              data-review-tab="history"
             >
+              Histórico
+            </button>
+
+            <button
+              class="review-tab-button"
+              type="button"
+              data-review-tab="errors"
+            >
+              Erros pendentes
+            </button>
+          </div>
+
+          <div class="review-tab-panel">
+            <div class="review-tab-content is-active" id="review-history-tab">
+              <div class="review-section-header">
+                <div>
+                  <h3>Histórico de resoluções</h3>
+                  <p>
+                    Veja todas as tentativas registradas durante seus estudos.
+                  </p>
+                </div>
+
+                <span id="review-history-count">0 registros</span>
+              </div>
+
+              <div class="review-filters">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="review-history-subject">Matéria</label>
+                    <select id="review-history-subject">
+                      <option value="">Todas as matérias</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="review-history-theme">Tema</label>
+                    <select id="review-history-theme">
+                      <option value="">Todos os temas</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="review-history-result">Resultado</label>
+                  <select id="review-history-result">
+                    <option value="all">Todos</option>
+                    <option value="correct">Acertos</option>
+                    <option value="wrong">Erros</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="empty-state" id="review-history-empty">
+                <strong>Nenhuma resolução registrada ainda.</strong>
+                <span
+                  >Resolva questões para criar seu histórico de estudos.</span
+                >
+              </div>
+
+              <div class="review-history-list" id="review-history-list"></div>
+            </div>
+
+            <div class="review-tab-content" id="review-errors-tab">
+              <div class="review-section-header">
+                <div>
+                  <h3>Erros pendentes</h3>
+                  <p>
+                    Liste questões erradas que ainda precisam de análise e
+                    revisão.
+                  </p>
+                </div>
+
+                <span id="review-errors-count">0 erros</span>
+              </div>
+
+              <div class="empty-state" id="review-errors-empty">
+                <strong>Nenhum erro pendente encontrado.</strong>
+                <span
+                  >Quando uma questão for respondida incorretamente, ela
+                  aparecerá aqui.</span
+                >
+              </div>
+
+              <div class="review-errors-list" id="review-errors-list"></div>
+            </div>
           </div>
         </article>
 

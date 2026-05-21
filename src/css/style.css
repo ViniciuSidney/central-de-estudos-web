@@ -1266,6 +1266,140 @@ button {
   line-height: 1.7;
 }
 
+.review-tabs {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.review-tab-button {
+  cursor: pointer;
+  padding: 12px 18px;
+
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.review-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.review-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.review-tab-panel {
+  margin-top: 16px;
+  padding: 20px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.review-tab-content {
+  display: none;
+}
+
+.review-tab-content.is-active {
+  display: grid;
+  gap: 16px;
+}
+
+.review-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.review-section-header h3 {
+  font-size: 1.15rem;
+}
+
+.review-section-header p,
+.review-section-header span {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.review-filters {
+  display: grid;
+  gap: 14px;
+
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.review-history-list,
+.review-errors-list {
+  display: grid;
+  gap: 12px;
+}
+
+.review-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.review-card__content {
+  display: grid;
+  gap: 6px;
+}
+
+.review-card__content strong {
+  font-size: 1rem;
+}
+
+.review-card__content span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.review-card__status {
+  width: fit-content;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 999px;
+}
+
+.review-card__status.is-correct {
+  color: var(--accent);
+  background: var(--feedback-inner-success-bg);
+  border: 1px solid var(--feedback-success-border);
+}
+
+.review-card__status.is-wrong {
+  color: var(--feedback-error-border);
+  background: var(--feedback-inner-error-bg);
+  border: 1px solid var(--feedback-error-border);
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
   .nav-grid,
