@@ -32,8 +32,16 @@ export function initReviews() {
 	const reviewErrorCancelButton = document.querySelector('#review-error-cancel');
 	const reviewErrorSaveButton = document.querySelector('#review-error-save');
 	const reviewErrorPreview = document.querySelector('#review-error-preview');
+	const reviewReviewedTab = document.querySelector('#review-reviewed-tab');
+	const reviewReviewedCount = document.querySelector('#review-reviewed-count');
+	const reviewReviewedEmpty = document.querySelector('#review-reviewed-empty');
+	const reviewReviewedList = document.querySelector('#review-reviewed-list');
 
 	if (
+		!reviewReviewedTab ||
+		!reviewReviewedCount ||
+		!reviewReviewedEmpty ||
+		!reviewReviewedList ||
 		!reviewErrorPreview ||
 		!reviewErrorModal ||
 		!reviewErrorCurrent ||
@@ -110,6 +118,7 @@ export function initReviews() {
 
 		reviewHistoryTab.classList.toggle('is-active', tabName === 'history');
 		reviewErrorsTab.classList.toggle('is-active', tabName === 'errors');
+		reviewReviewedTab.classList.toggle('is-active', tabName === 'reviewed');
 	}
 
 	function getSubjectById(subjectId) {
@@ -396,7 +405,7 @@ export function initReviews() {
 		};
 	}
 
-	function openReviewErrorModal(attempt) {
+	function openReviewErrorModal(attempt, existingReview = null) {
 		reviewAttemptId = attempt.id;
 
 		const subject = getSubjectById(attempt.subjectId);
@@ -497,9 +506,9 @@ export function initReviews() {
     </div>
     `;
 
-		reviewErrorReasonInput.value = '';
-		reviewErrorRuleInput.value = '';
-		reviewErrorNoteInput.value = '';
+		reviewErrorReasonInput.value = existingReview ? existingReview.reason : '';
+		reviewErrorRuleInput.value = existingReview ? existingReview.rule : '';
+		reviewErrorNoteInput.value = existingReview ? existingReview.note || '' : '';
 		setReviewErrorMessage('');
 
 		reviewErrorModal.hidden = false;
@@ -582,6 +591,7 @@ export function initReviews() {
 
 		closeReviewErrorModal();
 		renderErrors();
+		renderReviewedErrors();
 	}
 
 	function handleReviewErrorClick(event) {
@@ -604,10 +614,128 @@ export function initReviews() {
 		openReviewErrorModal(attempt);
 	}
 
+	function renderReviewedErrors() {
+		const reviewedErrors = getErrorReviews()
+			.filter((review) => {
+				return review.isReviewed;
+			})
+			.sort((firstReview, secondReview) => {
+				const firstDate = firstReview.reviewedAt || firstReview.updatedAt || firstReview.createdAt;
+				const secondDate = secondReview.reviewedAt || secondReview.updatedAt || secondReview.createdAt;
+
+				return new Date(secondDate) - new Date(firstDate);
+			});
+
+		reviewReviewedList.innerHTML = '';
+
+		reviewReviewedCount.textContent = reviewedErrors.length === 1 ? '1 revisão' : `${reviewedErrors.length} revisões`;
+
+		if (reviewedErrors.length === 0) {
+			reviewReviewedEmpty.hidden = false;
+			return;
+		}
+
+		reviewReviewedEmpty.hidden = true;
+
+		reviewedErrors.forEach((review) => {
+			const subject = getSubjectById(review.subjectId);
+			const theme = getThemeById(review.themeId);
+			const question = getQuestionById(review.questionId);
+
+			const subjectName = subject ? subject.name : 'Matéria removida';
+			const themeName = theme ? theme.name : 'Tema removido';
+			const questionNumber = question ? getQuestionIndexWithinTheme(question) : '-';
+
+			const reviewedAt = review.reviewedAt || review.updatedAt || review.createdAt;
+
+			const reviewedCard = document.createElement('article');
+
+			reviewedCard.classList.add('review-card');
+
+			reviewedCard.innerHTML = `
+      <div class="review-card__content">
+        <strong>Questão ${escapeHTML(questionNumber)}</strong>
+
+        <span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
+
+        <span>Revisada em ${escapeHTML(formatDateTime(reviewedAt))}</span>
+
+        <div class="review-card__review">
+          <div class="review-card__review-item">
+            <small>Motivo do erro</small>
+            <span>${escapeHTML(review.reason)}</span>
+          </div>
+
+          <div class="review-card__review-item">
+            <small>Regra de correção</small>
+            <span>${escapeHTML(review.rule)}</span>
+          </div>
+
+          ${
+					review.note
+						? `
+                <div class="review-card__review-item">
+                  <small>Observação</small>
+                  <span>${escapeHTML(review.note)}</span>
+                </div>
+              `
+						: ''
+				}
+        </div>
+      </div>
+
+      <div class="review-card__actions">
+        <span class="review-card__status is-correct">
+          Revisado
+        </span>
+
+        <button
+          class="button button--secondary"
+          type="button"
+          data-edit-error-review="${review.id}"
+        >
+          Editar revisão
+        </button>
+      </div>
+    `;
+
+			reviewReviewedList.appendChild(reviewedCard);
+		});
+	}
+
+	function handleEditErrorReviewClick(event) {
+		const editButton = event.target.closest('[data-edit-error-review]');
+
+		if (!editButton) {
+			return;
+		}
+
+		const reviewId = editButton.dataset.editErrorReview;
+
+		const review = getErrorReviews().find((currentReview) => {
+			return currentReview.id === reviewId;
+		});
+
+		if (!review) {
+			return;
+		}
+
+		const attempt = getAttempts().find((currentAttempt) => {
+			return currentAttempt.id === review.attemptId;
+		});
+
+		if (!attempt) {
+			return;
+		}
+
+		openReviewErrorModal(attempt, review);
+	}
+
 	function renderReviews() {
 		renderSubjectFilterOptions();
 		renderHistory();
 		renderErrors();
+		renderReviewedErrors();
 	}
 
 	reviewTabButtons.forEach((button) => {
@@ -638,6 +766,7 @@ export function initReviews() {
 			closeReviewErrorModal();
 		}
 	});
+	reviewReviewedList.addEventListener('click', handleEditErrorReviewClick);
 
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape' && !reviewErrorModal.hidden) {
@@ -645,7 +774,10 @@ export function initReviews() {
 		}
 	});
 
-	document.addEventListener('errorReviews:changed', renderErrors);
+	document.addEventListener('errorReviews:changed', () => {
+		renderErrors();
+		renderReviewedErrors();
+	});
 
 	renderReviews();
 
