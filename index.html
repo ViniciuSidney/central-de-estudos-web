@@ -913,6 +913,81 @@
       </div>
     </div>
 
+    <div
+      class="modal-overlay"
+      id="review-error-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="review-error-title"
+      aria-describedby="review-error-description"
+      hidden
+    >
+      <div class="modal">
+        <p class="modal__tag">🔁 Revisar erro</p>
+
+        <h3 class="modal__title" id="review-error-title">
+          Registrar revisão do erro
+        </h3>
+
+        <p class="modal__description" id="review-error-description">
+          Anote o motivo do erro e crie uma regra para evitar repetir o mesmo
+          problema.
+        </p>
+
+        <div class="review-error-current" id="review-error-current"></div>
+
+        <div class="form-group">
+          <label for="review-error-reason">Motivo do erro</label>
+          <textarea
+            id="review-error-reason"
+            rows="3"
+            placeholder="Ex: Confundi verbo com substantivo."
+          ></textarea>
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="review-error-rule">Regra de correção</label>
+          <textarea
+            id="review-error-rule"
+            rows="3"
+            placeholder="Ex: Verbo indica ação, estado ou fenômeno da natureza."
+          ></textarea>
+        </div>
+        <br>
+        <div class="form-group">
+          <label for="review-error-note">Observação opcional</label>
+          <textarea
+            id="review-error-note"
+            rows="2"
+            placeholder="Ex: Revisar esse tipo de questão antes da prova."
+          ></textarea>
+        </div>
+
+        <p
+          class="form-message"
+          id="review-error-message"
+          aria-live="polite"
+        ></p>
+
+        <div class="modal__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            id="review-error-cancel"
+          >
+            Cancelar
+          </button>
+
+          <button
+            class="button button--primary"
+            type="button"
+            id="review-error-save"
+          >
+            Salvar revisão
+          </button>
+        </div>
+      </div>
+    </div>
     <button class="theme-toggle" type="button" aria-label="Alternar tema">
       🌙
     </button>

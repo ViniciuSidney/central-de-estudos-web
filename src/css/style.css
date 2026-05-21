@@ -1400,6 +1400,30 @@ button {
   border: 1px solid var(--feedback-error-border);
 }
 
+.review-error-current {
+  display: grid;
+  gap: 6px;
+
+  padding: 14px;
+  margin: 16px 0;
+
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.review-error-current strong {
+  color: var(--text);
+}
+
+.review-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
   .nav-grid,
@@ -1525,5 +1549,13 @@ button {
   .solve-history-card {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .review-card__actions {
+    width: 100%;
+  }
+
+  .review-card__actions .button {
+    width: 100%;
   }
 }
