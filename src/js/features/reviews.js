@@ -39,8 +39,10 @@ export function initReviews() {
     "#review-error-cancel",
   );
   const reviewErrorSaveButton = document.querySelector("#review-error-save");
+  const reviewErrorPreview = document.querySelector("#review-error-preview");
 
   if (
+    !reviewErrorPreview ||
     !reviewErrorModal ||
     !reviewErrorCurrent ||
     !reviewErrorReasonInput ||
@@ -89,6 +91,16 @@ export function initReviews() {
 
   function saveErrorReviews(errorReviews) {
     saveCollection(ERROR_REVIEWS_COLLECTION, errorReviews);
+  }
+
+  function getAlternativeText(question, alternativeKey) {
+    if (!question || !alternativeKey || !question.alternatives) {
+      return "Informação não disponível.";
+    }
+
+    return (
+      question.alternatives[alternativeKey] || "Informação não disponível."
+    );
   }
 
   function escapeHTML(value) {
@@ -421,11 +433,78 @@ export function initReviews() {
       ? getQuestionIndexWithinTheme(question)
       : "-";
 
+    const selectedAlternativeKey =
+      attempt.selectedVisualAlternative ||
+      attempt.selectedOriginalAlternative ||
+      null;
+
+    const selectedOriginalKey = attempt.selectedOriginalAlternative || null;
+
+    const correctAlternativeKey =
+      question?.correctAlternative || attempt.correctAlternative || null;
+
+    const selectedAlternativeText = getAlternativeText(
+      question,
+      selectedOriginalKey,
+    );
+
+    const correctAlternativeText = getAlternativeText(
+      question,
+      correctAlternativeKey,
+    );
+
+    const explanationText =
+      question?.explanation ||
+      "Nenhuma explicação cadastrada para esta questão.";
+
+    const questionStatement =
+      question?.statement || "Enunciado não encontrado.";
+
     reviewErrorCurrent.innerHTML = `
     <span><strong>Questão:</strong> ${escapeHTML(questionNumber)}</span>
     <span><strong>Matéria:</strong> ${escapeHTML(subjectName)}</span>
     <span><strong>Tema:</strong> ${escapeHTML(themeName)}</span>
     <span><strong>Erro em:</strong> ${escapeHTML(formatDateTime(attempt.answeredAt))}</span>
+  `;
+
+    reviewErrorPreview.innerHTML = `
+    <strong>Prévia da resolução</strong>
+
+    <span class="review-error-preview__status ${attempt.isCorrect ? "is-correct" : "is-wrong"}">
+      ${attempt.isCorrect ? "Acertou" : "Errou"}
+    </span>
+
+    <div class="review-error-preview__block">
+      <small>Enunciado</small>
+      <p>${escapeHTML(questionStatement)}</p>
+    </div>
+
+    <div class="review-error-preview__block">
+      <small>Resposta marcada</small>
+      <p>
+        ${
+          selectedAlternativeKey
+            ? `${escapeHTML(selectedAlternativeKey)}) ${escapeHTML(selectedAlternativeText)}`
+            : "Resposta não encontrada."
+        }
+      </p>
+    </div>
+
+    <div class="review-error-preview__block">
+      <small>Resposta correta</small>
+      <p>
+        ${
+          correctAlternativeKey
+            ? `${escapeHTML(correctAlternativeKey)}) ${escapeHTML(correctAlternativeText)}`
+            : "Resposta correta não encontrada."
+        }
+      </p>
+    </div>
+
+    <div class="review-error-preview__block">
+      <small>Explicação da questão</small>
+      <p>${escapeHTML(explanationText)}</p>
+    </div>
   `;
 
     reviewErrorReasonInput.value = "";
@@ -555,7 +634,7 @@ export function initReviews() {
   document.addEventListener("themes:changed", renderReviews);
   document.addEventListener("questions:changed", renderReviews);
   document.addEventListener("attempts:changed", renderReviews);
-  
+
   reviewErrorsList.addEventListener("click", handleReviewErrorClick);
   reviewErrorCancelButton.addEventListener("click", closeReviewErrorModal);
   reviewErrorSaveButton.addEventListener("click", saveCurrentErrorReview);
