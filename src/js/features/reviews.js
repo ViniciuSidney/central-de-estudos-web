@@ -103,6 +103,10 @@ export function initReviews() {
     );
   }
 
+  function getAlternativeLabel(alternativeKey) {
+    return alternativeKey ? `${alternativeKey})` : "";
+  }
+
   function escapeHTML(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -433,15 +437,15 @@ export function initReviews() {
       ? getQuestionIndexWithinTheme(question)
       : "-";
 
-    const selectedAlternativeKey =
-      attempt.selectedVisualAlternative ||
-      attempt.selectedOriginalAlternative ||
-      null;
-
     const selectedOriginalKey = attempt.selectedOriginalAlternative || null;
+    const selectedVisualKey =
+      attempt.selectedVisualAlternative || selectedOriginalKey || null;
 
-    const correctAlternativeKey =
+    const correctOriginalKey =
       question?.correctAlternative || attempt.correctAlternative || null;
+
+    const correctVisualKey =
+      attempt.correctVisualAlternative || correctOriginalKey || null;
 
     const selectedAlternativeText = getAlternativeText(
       question,
@@ -450,7 +454,7 @@ export function initReviews() {
 
     const correctAlternativeText = getAlternativeText(
       question,
-      correctAlternativeKey,
+      correctOriginalKey,
     );
 
     const explanationText =
@@ -468,42 +472,47 @@ export function initReviews() {
   `;
 
     reviewErrorPreview.innerHTML = `
-    <strong>Prévia da resolução</strong>
+    <div class="review-error-preview">
+      <div class="review-error-preview__header">
+        <span class="review-error-preview__title">Prévia da resolução</span>
+        <span class="review-error-preview__status ${attempt.isCorrect ? "is-correct" : "is-wrong"}">
+          ${attempt.isCorrect ? "Acertou" : "Errou"}
+        </span>
+      </div>
 
-    <span class="review-error-preview__status ${attempt.isCorrect ? "is-correct" : "is-wrong"}">
-      ${attempt.isCorrect ? "Acertou" : "Errou"}
-    </span>
+      <div class="review-error-preview__block">
+        <small>Enunciado</small>
+        <p>${escapeHTML(questionStatement)}</p>
+      </div>
 
-    <div class="review-error-preview__block">
-      <small>Enunciado</small>
-      <p>${escapeHTML(questionStatement)}</p>
-    </div>
+      <div class="review-error-preview__answers">
+        <div class="review-error-preview__answer is-selected">
+          <small>Resposta marcada</small>
+          <strong>
+            ${
+              selectedVisualKey
+                ? `${escapeHTML(getAlternativeLabel(selectedVisualKey))} ${escapeHTML(selectedAlternativeText)}`
+                : "Resposta não encontrada."
+            }
+          </strong>
+        </div>
 
-    <div class="review-error-preview__block">
-      <small>Resposta marcada</small>
-      <p>
-        ${
-          selectedAlternativeKey
-            ? `${escapeHTML(selectedAlternativeKey)}) ${escapeHTML(selectedAlternativeText)}`
-            : "Resposta não encontrada."
-        }
-      </p>
-    </div>
+        <div class="review-error-preview__answer is-correct">
+          <small>Resposta correta</small>
+          <strong>
+            ${
+              correctVisualKey
+                ? `${escapeHTML(getAlternativeLabel(correctVisualKey))} ${escapeHTML(correctAlternativeText)}`
+                : "Resposta correta não encontrada."
+            }
+          </strong>
+        </div>
+      </div>
 
-    <div class="review-error-preview__block">
-      <small>Resposta correta</small>
-      <p>
-        ${
-          correctAlternativeKey
-            ? `${escapeHTML(correctAlternativeKey)}) ${escapeHTML(correctAlternativeText)}`
-            : "Resposta correta não encontrada."
-        }
-      </p>
-    </div>
-
-    <div class="review-error-preview__block">
-      <small>Explicação da questão</small>
-      <p>${escapeHTML(explanationText)}</p>
+      <div class="review-error-preview__block">
+        <small>Explicação da questão</small>
+        <p>${escapeHTML(explanationText)}</p>
+      </div>
     </div>
   `;
 

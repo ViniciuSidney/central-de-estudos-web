@@ -277,8 +277,9 @@ export function initSolve() {
 
   function createAttempt({
     question,
-    selectedAlternative,
+    selectedOriginalAlternative,
     selectedVisualAlternative,
+    correctVisualAlternative,
     isCorrect,
   }) {
     return {
@@ -286,9 +287,10 @@ export function initSolve() {
       questionId: question.id,
       subjectId: question.subjectId,
       themeId: question.themeId,
-      selectedAlternative,
+      selectedOriginalAlternative,
       selectedVisualAlternative,
       correctAlternative: question.correctAlternative,
+      correctVisualAlternative,
       isCorrect,
       answeredAt: new Date().toISOString(),
     };
@@ -508,10 +510,19 @@ export function initSolve() {
     const isCorrect =
       selectedOriginalAlternative === selectedQuestion.correctAlternative;
 
+    const correctAlternativeButton = document.querySelector(
+      `[data-original-alternative="${selectedQuestion.correctAlternative}"]`,
+    );
+
+    const correctVisualAlternative =
+      correctAlternativeButton?.dataset.visualAlternative ||
+      selectedQuestion.correctAlternative;
+
     const attempt = createAttempt({
       question: selectedQuestion,
-      selectedAlternative: selectedOriginalAlternative,
+      selectedOriginalAlternative,
       selectedVisualAlternative,
+      correctVisualAlternative,
       isCorrect,
     });
 
@@ -533,12 +544,6 @@ export function initSolve() {
       selectedQuestion.alternatives[selectedOriginalAlternative];
     const correctAlternativeText =
       selectedQuestion.alternatives[selectedQuestion.correctAlternative];
-    const correctAlternativeButton = document.querySelector(
-      `[data-original-alternative="${selectedQuestion.correctAlternative}"]`,
-    );
-    const correctVisualAlternative =
-      correctAlternativeButton?.dataset.visualAlternative ||
-      selectedQuestion.correctAlternative;
 
     const feedbackTitle = isCorrect
       ? "Resposta correta!"
