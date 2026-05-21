@@ -278,18 +278,8 @@ export function initReviews() {
 	}
 
 	function getPendingErrorAttempts() {
-		const reviewedQuestionIds = new Set(
-			getErrorReviews()
-				.filter((review) => {
-					return review.isReviewed;
-				})
-				.map((review) => {
-					return review.questionId;
-				})
-		);
-
 		const wrongAttempts = getAttempts().filter((attempt) => {
-			return !attempt.isCorrect && !reviewedQuestionIds.has(attempt.questionId);
+			return !attempt.isCorrect;
 		});
 
 		const lastWrongAttemptByQuestion = new Map();
@@ -302,9 +292,23 @@ export function initReviews() {
 			}
 		});
 
-		return Array.from(lastWrongAttemptByQuestion.values()).sort((firstAttempt, secondAttempt) => {
-			return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
-		});
+		const reviewedAttemptIds = new Set(
+			getErrorReviews()
+				.filter((review) => {
+					return review.isReviewed;
+				})
+				.map((review) => {
+					return review.attemptId;
+				})
+		);
+
+		return Array.from(lastWrongAttemptByQuestion.values())
+			.filter((attempt) => {
+				return !reviewedAttemptIds.has(attempt.id);
+			})
+			.sort((firstAttempt, secondAttempt) => {
+				return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
+			});
 	}
 
 	function renderErrors() {
@@ -491,7 +495,7 @@ export function initReviews() {
         <p>${escapeHTML(explanationText)}</p>
       </div>
     </div>
-  `;
+    `;
 
 		reviewErrorReasonInput.value = '';
 		reviewErrorRuleInput.value = '';
@@ -499,6 +503,7 @@ export function initReviews() {
 		setReviewErrorMessage('');
 
 		reviewErrorModal.hidden = false;
+		document.body.style.overflow = 'hidden';
 		reviewErrorReasonInput.focus();
 	}
 
@@ -511,6 +516,7 @@ export function initReviews() {
 		setReviewErrorMessage('');
 
 		reviewErrorModal.hidden = true;
+		document.body.style.overflow = '';
 	}
 
 	function saveCurrentErrorReview() {

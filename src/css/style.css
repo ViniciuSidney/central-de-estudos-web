@@ -593,16 +593,19 @@ button {
 }
 
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
 
-  display: grid;
-  place-items: center;
-  padding: 20px;
+	display: grid;
+	place-items: start center;
+	padding: 24px 20px;
 
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(4px);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+
+	background: rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(4px);
 }
 
 .modal {
@@ -1465,18 +1468,17 @@ button {
 }
 
 .review-error-workspace {
-  display: grid;
-  grid-template-columns: minmax(420px, 560px) minmax(360px, 500px);
-  grid-template-areas:
-    "form meta"
-    "form preview";
-  gap: 22px 28px;
-  align-items: start;
-  justify-content: center;
+	display: grid;
+	grid-template-columns: minmax(420px, 560px) minmax(360px, 500px);
+	grid-template-areas:
+		"form meta"
+		"form preview";
+	gap: 22px 28px;
+	align-items: start;
+	justify-content: center;
 
-  width: min(1220px, calc(100vw - 48px));
-  max-height: calc(100vh - 48px);
-  padding: 8px;
+	width: min(1220px, calc(100vw - 48px));
+	padding: 8px;
 }
 
 .review-error-window {
