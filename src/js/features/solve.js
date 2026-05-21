@@ -165,25 +165,24 @@ export function initSolve() {
 	}
 
 	function renderSolveHistory() {
-		const attempts = getAttempts()
-			.slice()
-			.sort((firstAttempt, secondAttempt) => {
-				return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
-			})
-			.slice(0, 8);
+		const allAttempts = getAttempts().sort((firstAttempt, secondAttempt) => {
+			return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
+		});
+
+		const recentAttempts = allAttempts.slice(0, 3);
 
 		solveHistoryList.innerHTML = '';
 
-		solveHistoryCount.textContent = attempts.length === 1 ? '1 registro' : `${attempts.length} registros`;
+		solveHistoryCount.textContent = allAttempts.length === 1 ? '1 registro' : `${allAttempts.length} registros`;
 
-		if (attempts.length === 0) {
+		if (allAttempts.length === 0) {
 			solveHistoryEmpty.hidden = false;
 			return;
 		}
 
 		solveHistoryEmpty.hidden = true;
 
-		attempts.forEach((attempt) => {
+		recentAttempts.forEach((attempt) => {
 			const subject = getSubjectById(attempt.subjectId);
 			const theme = getThemeById(attempt.themeId);
 			const question = getQuestionById(attempt.questionId);
@@ -192,31 +191,23 @@ export function initSolve() {
 			const themeName = theme ? theme.name : 'Tema removido';
 			const questionNumber = question ? getQuestionIndexWithinTheme(question) : '-';
 
-			const historyCard = document.createElement('article');
+			const attemptCard = document.createElement('article');
 
-			historyCard.classList.add('solve-history-card');
+			attemptCard.classList.add('review-card');
 
-			historyCard.innerHTML = `
-      <div class="solve-history-card__content">
-        <strong>
-          Questão ${escapeHTML(questionNumber)}
-        </strong>
+			attemptCard.innerHTML = `
+				<div class="review-card__content">
+				<strong>Questão ${escapeHTML(questionNumber)}</strong>
+				<span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
+				<span>Resolvida em ${escapeHTML(formatDateTime(attempt.answeredAt))}</span>
+				</div>
 
-        <span>
-          ${escapeHTML(subjectName)} • ${escapeHTML(themeName)}
-        </span>
+				<span class="review-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
+				${attempt.isCorrect ? 'Acertou' : 'Errou'}
+				</span>
+			`;
 
-        <span>
-          Resolvida em ${escapeHTML(formatDateTime(attempt.answeredAt))}
-        </span>
-      </div>
-
-      <span class="solve-history-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
-        ${attempt.isCorrect ? 'Acertou' : 'Errou'}
-      </span>
-    `;
-
-			solveHistoryList.appendChild(historyCard);
+			solveHistoryList.appendChild(attemptCard);
 		});
 	}
 

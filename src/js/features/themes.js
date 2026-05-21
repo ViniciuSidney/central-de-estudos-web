@@ -198,10 +198,6 @@ export function initThemes() {
         </div>
 
         <div class="theme-card__actions">
-          <button class="button button--secondary" type="button" disabled>
-            Questões em breve
-          </button>
-
           <button
             class="button button--danger"
             type="button"
