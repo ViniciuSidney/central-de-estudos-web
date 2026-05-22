@@ -264,39 +264,57 @@ A versão v0.5 foi considerada concluída porque o usuário consegue:
 Criar uma área para acompanhar resoluções anteriores e revisar questões respondidas incorretamente, ajudando o usuário a transformar erros em aprendizado.
 
 ### Status
-Planejada.
+Concluída.
 
 ---
 
 ## Previsto para a v0.6
 
-- Tela de histórico de resoluções
-- Listagem completa das tentativas registradas
-- Exibição da data da resolução
-- Exibição da matéria e do tema relacionados
-- Exibição do status da tentativa: acerto ou erro
-- Filtro por matéria
-- Filtro por tema
-- Filtro por acertos e erros
-- Tela de revisão de erros
-- Listagem de questões erradas
-- Campo para motivo do erro
-- Campo para regra de correção
-- Marcação de erro como revisado
-- Separação entre erros pendentes e erros revisados
+- Tela de histórico de resoluções ✅
+- Listagem completa das tentativas registradas ✅
+- Exibição da data da resolução ✅
+- Exibição da matéria e do tema relacionados ✅
+- Exibição do status da tentativa: acerto ou erro ✅
+- Filtro por matéria ✅
+- Filtro por tema ✅
+- Filtro por acertos e erros ✅
+- Tela de revisão de erros ✅
+- Listagem de questões erradas ✅
+- Separação entre erros pendentes e erros revisados ✅
+- Modal de revisão de erro ✅
+- Identificação da questão no modal ✅
+- Prévia da resolução no modal ✅
+- Exibição da resposta marcada ✅
+- Exibição da resposta correta ✅
+- Exibição da explicação da questão ✅
+- Campo para motivo do erro ✅
+- Campo para regra de correção ✅
+- Campo para observação opcional ✅
+- Marcação de erro como revisado ✅
+- Edição de revisão já registrada ✅
+- Opção para voltar erro revisado para pendente ✅
+- Atualização do Dashboard com a lógica correta de erros pendentes ✅
+- Ajustes visuais nos cards de revisão ✅
+- Botões de ação organizados em coluna vertical ✅
 
 ---
 
 ## Fechamento da v0.6
 
-A versão v0.6 será considerada concluída quando o usuário conseguir:
+A versão v0.6 foi considerada concluída porque o usuário consegue:
 
-- Ver o histórico completo de resoluções
-- Filtrar tentativas por matéria, tema e resultado
-- Identificar questões respondidas incorretamente
-- Registrar o motivo do erro
-- Criar uma regra de correção
-- Marcar erros como revisados
+- Ver o histórico completo de resoluções ✅
+- Filtrar tentativas por matéria, tema e resultado ✅
+- Identificar questões respondidas incorretamente ✅
+- Revisar erros pendentes ✅
+- Registrar o motivo do erro ✅
+- Criar uma regra de correção ✅
+- Adicionar uma observação opcional ✅
+- Mover erros pendentes para erros revisados ✅
+- Editar revisões já salvas ✅
+- Voltar erros revisados para pendentes ✅
+- Ver a prévia da resolução antes de revisar ✅
+- Acompanhar erros pendentes no Dashboard com a mesma lógica da seção Revisões ✅
 
 ---
 
