@@ -4,6 +4,7 @@ const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
 const QUESTIONS_COLLECTION = "questions";
 const ATTEMPTS_COLLECTION = "attempts";
+const ERROR_REVIEWS_COLLECTION = "errorReviews";
 
 export function initDashboard() {
   const dashboardSubjectsCount = document.querySelector(
@@ -66,6 +67,47 @@ export function initDashboard() {
     return getCollection(ATTEMPTS_COLLECTION);
   }
 
+  function getErrorReviews() {
+    return getCollection(ERROR_REVIEWS_COLLECTION);
+  }
+
+  function getLastWrongAttemptsByQuestion() {
+    const wrongAttempts = getAttempts().filter((attempt) => {
+      return !attempt.isCorrect;
+    });
+
+    const lastWrongAttemptByQuestion = new Map();
+
+    wrongAttempts.forEach((attempt) => {
+      const savedAttempt = lastWrongAttemptByQuestion.get(attempt.questionId);
+
+      if (
+        !savedAttempt ||
+        new Date(attempt.answeredAt) > new Date(savedAttempt.answeredAt)
+      ) {
+        lastWrongAttemptByQuestion.set(attempt.questionId, attempt);
+      }
+    });
+
+    return Array.from(lastWrongAttemptByQuestion.values());
+  }
+
+  function getPendingErrorAttempts() {
+    const reviewedAttemptIds = new Set(
+      getErrorReviews()
+        .filter((review) => {
+          return review.isReviewed;
+        })
+        .map((review) => {
+          return review.attemptId;
+        }),
+    );
+
+    return getLastWrongAttemptsByQuestion().filter((attempt) => {
+      return !reviewedAttemptIds.has(attempt.id);
+    });
+  }
+
   function updateDashboard() {
     const subjects = getSubjects();
     const themes = getThemes();
@@ -80,11 +122,7 @@ export function initDashboard() {
       return !attempt.isCorrect;
     });
 
-    const pendingErrorQuestionIds = new Set(
-      wrongAttempts.map((attempt) => {
-        return attempt.questionId;
-      }),
-    );
+    const pendingErrorAttempts = getPendingErrorAttempts();
 
     const accuracyRate =
       attempts.length === 0
@@ -97,7 +135,7 @@ export function initDashboard() {
     dashboardAttemptsCount.textContent = attempts.length;
     dashboardCorrectCount.textContent = correctAttempts.length;
     dashboardWrongCount.textContent = wrongAttempts.length;
-    dashboardErrorsCount.textContent = pendingErrorQuestionIds.size;
+    dashboardErrorsCount.textContent = pendingErrorAttempts.length;
     dashboardAccuracyRate.textContent = `${accuracyRate}%`;
   }
 
@@ -119,6 +157,8 @@ export function initDashboard() {
   document.addEventListener("themes:changed", updateDashboard);
   document.addEventListener("questions:changed", updateDashboard);
   document.addEventListener("attempts:changed", updateDashboard);
+  document.addEventListener("errorReviews:changed", updateDashboard);
+  
   dashboardTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       showDashboardTab(button.dataset.dashboardTab);
