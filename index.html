@@ -28,7 +28,7 @@
           >
             Começar estudos
           </button>
-			 <br>
+          <br />
           <button
             class="button button--secondary"
             type="button"
@@ -45,31 +45,55 @@
       >
         <div class="section-heading">
           <p class="section-heading__tag">🧭 Navegação</p>
-          <h2>Áreas da central</h2>
+          <h2>Escolha o que deseja fazer</h2>
           <p>
-            Escolha uma área para visualizar a função planejada dentro do
-            sistema.
+            Cadastre seus conteúdos ou acesse as ferramentas de estudo.
           </p>
+        </div>
+
+        <div class="nav-tabs">
+          <button
+            class="nav-tab-button is-active"
+            type="button"
+            data-nav-group="management"
+          >
+            Cadastro
+          </button>
+
+          <button class="nav-tab-button" type="button" data-nav-group="study">
+            Estudo
+          </button>
         </div>
 
         <div class="nav-grid">
           <button
-            class="nav-card is-active"
+            class="nav-card"
             type="button"
             data-section-target="dashboard"
+            data-nav-category="management"
           >
             <span>📊</span>
             <strong>Dashboard</strong>
             <small>Visão geral dos estudos</small>
           </button>
 
-          <button class="nav-card" type="button" data-section-target="subjects">
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="subjects"
+            data-nav-category="management"
+          >
             <span>📘</span>
             <strong>Matérias</strong>
             <small>Organize suas disciplinas</small>
           </button>
 
-          <button class="nav-card" type="button" data-section-target="themes">
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="themes"
+            data-nav-category="management"
+          >
             <span>🧩</span>
             <strong>Temas</strong>
             <small>Divida os conteúdos</small>
@@ -79,28 +103,44 @@
             class="nav-card"
             type="button"
             data-section-target="questions"
+            data-nav-category="management"
           >
             <span>📝</span>
             <strong>Questões</strong>
             <small>Cadastre exercícios</small>
           </button>
 
-          <button class="nav-card" type="button" data-section-target="solve">
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="solve"
+            data-nav-category="study"
+          >
             <span>🧠</span>
             <strong>Resolver</strong>
             <small>Pratique questões cadastradas</small>
           </button>
 
-          <button class="nav-card" type="button" data-section-target="notes">
-            <span>📒</span>
-            <strong>Anotações</strong>
-            <small>Registre resumos</small>
-          </button>
-
-          <button class="nav-card" type="button" data-section-target="reviews">
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="reviews"
+            data-nav-category="study"
+          >
             <span>🔁</span>
             <strong>Revisões</strong>
             <small>Revise seus erros</small>
+          </button>
+
+          <button
+            class="nav-card"
+            type="button"
+            data-section-target="notes"
+            data-nav-category="study"
+          >
+            <span>🗒️</span>
+            <strong>Anotações</strong>
+            <small>Registre resumos</small>
           </button>
         </div>
       </section>
@@ -852,7 +892,7 @@
       </section>
     </main>
 
-	 <!-- Confirmar Ação -->
+    <!-- Confirmar Ação -->
     <div
       class="modal-overlay"
       id="app-confirm-modal"
@@ -891,7 +931,7 @@
       </div>
     </div>
 
-	 <!-- Mover Questão -->
+    <!-- Mover Questão -->
     <div
       class="modal-overlay"
       id="move-question-modal"
@@ -947,7 +987,7 @@
       </div>
     </div>
 
-	 <!-- Registrar Revisão de Erro -->
+    <!-- Registrar Revisão de Erro -->
     <div
       class="modal-overlay"
       id="review-error-modal"
@@ -1032,7 +1072,7 @@
       </div>
     </div>
 
-	 <!-- Apagar Tudo -->
+    <!-- Apagar Tudo -->
     <div
       class="modal-overlay"
       id="reset-data-modal"

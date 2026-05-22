@@ -3,10 +3,37 @@ export function initNavigation() {
   const navCards = document.querySelectorAll(".nav-card");
   const appSections = document.querySelectorAll(".app-section");
   const contentPanel = document.querySelector(".content-panel");
+  const navGroupButtons = document.querySelectorAll("[data-nav-group]");
 
   if (!sectionButtons.length || !appSections.length || !contentPanel) {
     return;
   }
+
+  function showNavGroup(groupName) {
+    navGroupButtons.forEach((button) => {
+      const isSelected = button.dataset.navGroup === groupName;
+
+      button.classList.toggle("is-active", isSelected);
+    });
+
+    navCards.forEach((card) => {
+      const cardCategory = card.dataset.navCategory;
+
+      if (!cardCategory) {
+        return;
+      }
+
+      card.classList.toggle("is-hidden-by-group", cardCategory !== groupName);
+    });
+  }
+
+  navGroupButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      showNavGroup(button.dataset.navGroup);
+    });
+  });
+
+  showNavGroup("management");
 
   function showSection(sectionId) {
     appSections.forEach((section) => {
@@ -23,7 +50,7 @@ export function initNavigation() {
 
     contentPanel.scrollIntoView({
       behavior: "smooth",
-      block: "start"
+      block: "start",
     });
   }
 
