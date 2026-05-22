@@ -124,6 +124,42 @@ export function initReviews() {
       .replaceAll("'", "&#039;");
   }
 
+  function reopenErrorReview(reviewId) {
+    const errorReviews = getErrorReviews();
+
+    const updatedReviews = errorReviews.map((review) => {
+      if (review.id !== reviewId) {
+        return review;
+      }
+
+      return {
+        ...review,
+        isReviewed: false,
+        reopenedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveErrorReviews(updatedReviews);
+
+    document.dispatchEvent(new CustomEvent("errorReviews:changed"));
+
+    renderErrors();
+    renderReviewedErrors();
+  }
+
+  function handleReopenErrorReviewClick(event) {
+    const reopenButton = event.target.closest("[data-reopen-error-review]");
+
+    if (!reopenButton) {
+      return;
+    }
+
+    const reviewId = reopenButton.dataset.reopenErrorReview;
+
+    reopenErrorReview(reviewId);
+  }
+
   function showReviewTab(tabName) {
     reviewTabButtons.forEach((button) => {
       const isSelectedTab = button.dataset.reviewTab === tabName;
@@ -765,6 +801,14 @@ export function initReviews() {
         >
           Editar revisão
         </button>
+
+        <button
+          class="button button--secondary"
+          type="button"
+          data-reopen-error-review="${review.id}"
+        >
+          Voltar para pendente
+        </button>
       </div>
     `;
 
@@ -836,6 +880,7 @@ export function initReviews() {
     }
   });
   reviewReviewedList.addEventListener("click", handleEditErrorReviewClick);
+  reviewReviewedList.addEventListener("click", handleReopenErrorReviewClick);
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !reviewErrorModal.hidden) {
