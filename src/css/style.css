@@ -1757,6 +1757,75 @@ button {
   line-height: 1.5;
 }
 
+.danger-reset-button {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 10;
+
+  width: 48px;
+  height: 48px;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  font-size: 1.15rem;
+
+  color: #ffffff;
+  background: #9f3d3d;
+  border: 1px solid #b95252;
+  border-radius: 50%;
+  box-shadow: var(--shadow);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.danger-reset-button:hover {
+  transform: translateY(-2px);
+  background: #7f2f2f;
+}
+
+.modal__tag--danger {
+  color: #d46a6a;
+  background: var(--feedback-inner-error-bg);
+  border: 1px solid var(--feedback-error-border);
+}
+
+.reset-warning {
+  display: grid;
+  gap: 6px;
+
+  padding: 14px;
+  margin-top: 16px;
+
+  background: var(--feedback-inner-error-bg);
+  border: 1px solid var(--feedback-error-border);
+  border-radius: 14px;
+}
+
+.reset-warning span {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.reset-confirm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  margin-top: 16px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.reset-confirm-check input {
+  margin-top: 4px;
+}
+
 /* Media Queries */
 @media (max-width: 980px) {
   .review-error-workspace {
