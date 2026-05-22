@@ -1863,6 +1863,7 @@ button {
 
 .nav-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 18px;
 }

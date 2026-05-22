@@ -11,9 +11,9 @@ export function initNavigation() {
 
   function showNavGroup(groupName) {
     navGroupButtons.forEach((button) => {
-      const isSelected = button.dataset.navGroup === groupName;
+      const isSelectedGroup = button.dataset.navGroup === groupName;
 
-      button.classList.toggle("is-active", isSelected);
+      button.classList.toggle("is-active", isSelectedGroup);
     });
 
     navCards.forEach((card) => {
@@ -33,6 +33,7 @@ export function initNavigation() {
     });
   });
 
+  showNavGroup("summary");
   showNavGroup("management");
 
   function showSection(sectionId) {

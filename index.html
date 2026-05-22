@@ -45,15 +45,13 @@
       >
         <div class="section-heading">
           <p class="section-heading__tag">🧭 Navegação</p>
-          <h2>Escolha o que deseja fazer</h2>
-          <p>
-            Cadastre seus conteúdos ou acesse as ferramentas de estudo.
-          </p>
+          <h2>Escolha uma área da central</h2>
+          <p>Use as abas para alternar entre resumo, cadastro e ferramentas de estudo.</p>
         </div>
 
         <div class="nav-tabs">
           <button
-            class="nav-tab-button is-active"
+            class="nav-tab-button"
             type="button"
             data-nav-group="management"
           >
@@ -63,6 +61,14 @@
           <button class="nav-tab-button" type="button" data-nav-group="study">
             Estudo
           </button>
+
+          <button
+            class="nav-tab-button is-active"
+            type="button"
+            data-nav-group="summary"
+          >
+            Resumo
+          </button>
         </div>
 
         <div class="nav-grid">
@@ -70,7 +76,7 @@
             class="nav-card"
             type="button"
             data-section-target="dashboard"
-            data-nav-category="management"
+            data-nav-category="summary"
           >
             <span>📊</span>
             <strong>Dashboard</strong>
