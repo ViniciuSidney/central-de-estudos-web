@@ -1,37 +1,42 @@
 import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
 const NOTES_COLLECTION = "notes";
 
+const NOTE_TYPE_LABELS = {
+  resumo: "Resumo",
+  erro: "Erro",
+  regra: "Regra",
+  duvida: "Dúvida",
+  exemplo: "Exemplo",
+  insight: "Insight",
+  revisao: "Revisão",
+};
+
 export function initNotes() {
-  const noteWarning = document.querySelector("#note-warning");
-  const noteSelectorPanel = document.querySelector("#note-selector-panel");
+  const noteForm = document.querySelector("#note-form");
+  const noteTitleInput = document.querySelector("#note-title");
+  const noteTypeSelect = document.querySelector("#note-type");
   const noteSubjectSelect = document.querySelector("#note-subject");
   const noteThemeSelect = document.querySelector("#note-theme");
-  const noteForm = document.querySelector("#note-form");
-  const noteSummaryInput = document.querySelector("#note-summary");
-  const noteObservationsInput = document.querySelector("#note-observations");
-  const noteRulesInput = document.querySelector("#note-rules");
+  const noteContentInput = document.querySelector("#note-content");
   const noteMessage = document.querySelector("#note-message");
   const clearNoteFormButton = document.querySelector("#clear-note-form");
-  const notesCurrentTheme = document.querySelector("#notes-current-theme");
   const notesCount = document.querySelector("#notes-count");
   const notesEmpty = document.querySelector("#notes-empty");
   const notesList = document.querySelector("#notes-list");
 
   if (
-    !noteWarning ||
-    !noteSelectorPanel ||
+    !noteForm ||
+    !noteTitleInput ||
+    !noteTypeSelect ||
     !noteSubjectSelect ||
     !noteThemeSelect ||
-    !noteForm ||
-    !noteSummaryInput ||
-    !noteObservationsInput ||
-    !noteRulesInput ||
+    !noteContentInput ||
     !noteMessage ||
     !clearNoteFormButton ||
-    !notesCurrentTheme ||
     !notesCount ||
     !notesEmpty ||
     !notesList
@@ -55,6 +60,10 @@ export function initNotes() {
     saveCollection(NOTES_COLLECTION, notes);
   }
 
+  function notifyNotesChanged() {
+    document.dispatchEvent(new CustomEvent("notes:changed"));
+  }
+
   function escapeHTML(value) {
     return String(value)
       .replaceAll("&", "&amp;")
@@ -64,8 +73,27 @@ export function initNotes() {
       .replaceAll("'", "&#039;");
   }
 
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
+
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  function getShortText(text, maxLength = 180) {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    return `${text.slice(0, maxLength).trim()}...`;
+  }
+
   function setNoteMessage(message, type = "default") {
     noteMessage.textContent = message;
+
     noteMessage.classList.remove("is-error", "is-success");
 
     if (type === "error") {
@@ -77,49 +105,70 @@ export function initNotes() {
     }
   }
 
-  function getSelectedSubject() {
+  function getSubjectById(subjectId) {
     return getSubjects().find((subject) => {
-      return subject.id === noteSubjectSelect.value;
+      return subject.id === subjectId;
     });
   }
 
-  function getSelectedTheme() {
+  function getThemeById(themeId) {
     return getThemes().find((theme) => {
-      return theme.id === noteThemeSelect.value;
+      return theme.id === themeId;
     });
   }
 
-  function getNoteByThemeId(themeId) {
-    return getNotes().find((note) => {
-      return note.themeId === themeId;
-    });
+  function getSubjectNameById(subjectId) {
+    const subject = getSubjectById(subjectId);
+
+    return subject ? subject.name : "Matéria removida";
   }
 
-  function formatDateTime(dateValue) {
-    const date = new Date(dateValue);
+  function getThemeNameById(themeId) {
+    const theme = getThemeById(themeId);
 
-    return date.toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return theme ? theme.name : "Tema removido";
+  }
+
+  function getNoteTypeLabel(type) {
+    return NOTE_TYPE_LABELS[type] || "Tipo não definido";
+  }
+
+  function createNote({ title, content, type, subjectId, themeId }) {
+    return {
+      id: crypto.randomUUID(),
+      title,
+      content,
+      type,
+      subjectId: subjectId || null,
+      themeId: themeId || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  function clearNoteForm() {
+    noteTitleInput.value = "";
+    noteTypeSelect.value = "";
+    noteSubjectSelect.value = "";
+    noteThemeSelect.value = "";
+
+    noteThemeSelect.innerHTML = `
+			<option value="">Nenhum tema</option>
+		`;
+
+    noteThemeSelect.disabled = true;
+    noteContentInput.value = "";
+
+    setNoteMessage("");
   }
 
   function renderSubjectOptions() {
     const subjects = getSubjects();
-    const themes = getThemes();
-
-    const hasSubjectsAndThemes = subjects.length > 0 && themes.length > 0;
-
-    noteWarning.hidden = hasSubjectsAndThemes;
-    noteSelectorPanel.hidden = !hasSubjectsAndThemes;
-    noteForm.hidden = !hasSubjectsAndThemes;
+    const previousSubjectId = noteSubjectSelect.value;
 
     noteSubjectSelect.innerHTML = `
-      <option value="">Selecione uma matéria</option>
-    `;
+			<option value="">Nenhuma matéria</option>
+		`;
 
     subjects.forEach((subject) => {
       const option = document.createElement("option");
@@ -130,23 +179,31 @@ export function initNotes() {
       noteSubjectSelect.appendChild(option);
     });
 
+    const subjectStillExists = subjects.some((subject) => {
+      return subject.id === previousSubjectId;
+    });
+
+    noteSubjectSelect.value = subjectStillExists ? previousSubjectId : "";
+
     renderThemeOptions();
-    renderSelectedNote();
   }
 
   function renderThemeOptions() {
-    const selectedSubject = getSelectedSubject();
+    const selectedSubjectId = noteSubjectSelect.value;
+    const previousThemeId = noteThemeSelect.value;
 
     noteThemeSelect.innerHTML = `
-      <option value="">Selecione um tema</option>
-    `;
+			<option value="">Nenhum tema</option>
+		`;
 
-    if (!selectedSubject) {
+    if (!selectedSubjectId) {
+      noteThemeSelect.disabled = true;
+      noteThemeSelect.value = "";
       return;
     }
 
     const themesFromSubject = getThemes().filter((theme) => {
-      return theme.subjectId === selectedSubject.id;
+      return theme.subjectId === selectedSubjectId;
     });
 
     themesFromSubject.forEach((theme) => {
@@ -157,170 +214,202 @@ export function initNotes() {
 
       noteThemeSelect.appendChild(option);
     });
+
+    noteThemeSelect.disabled = themesFromSubject.length === 0;
+
+    const themeStillExists = themesFromSubject.some((theme) => {
+      return theme.id === previousThemeId;
+    });
+
+    noteThemeSelect.value = themeStillExists ? previousThemeId : "";
   }
 
-  function clearFormFields() {
-    noteSummaryInput.value = "";
-    noteObservationsInput.value = "";
-    noteRulesInput.value = "";
-    setNoteMessage("");
-  }
-
-  function fillFormWithNote(note) {
-    noteSummaryInput.value = note?.summary || "";
-    noteObservationsInput.value = note?.observations || "";
-    noteRulesInput.value = note?.rules || "";
-  }
-
-  function createNote({ subjectId, themeId, summary, observations, rules }) {
-    return {
-      id: crypto.randomUUID(),
-      subjectId,
-      themeId,
-      summary,
-      observations,
-      rules,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  }
-
-  function renderSelectedNote() {
-    const selectedSubject = getSelectedSubject();
-    const selectedTheme = getSelectedTheme();
+  function renderNotes() {
+    const notes = getNotes()
+      .slice()
+      .sort((firstNote, secondNote) => {
+        return new Date(secondNote.createdAt) - new Date(firstNote.createdAt);
+      });
 
     notesList.innerHTML = "";
 
-    if (!selectedSubject || !selectedTheme) {
-      notesCurrentTheme.textContent = "Selecione um tema para visualizar a anotação.";
-      notesCount.textContent = "0 anotações";
-      notesEmpty.hidden = false;
-      clearFormFields();
-      return;
-    }
+    notesCount.textContent =
+      notes.length === 1 ? "1 anotação" : `${notes.length} anotações`;
 
-    const note = getNoteByThemeId(selectedTheme.id);
-
-    notesCurrentTheme.innerHTML = `
-      Anotação de <span class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</span>
-    `;
-
-    fillFormWithNote(note);
-
-    if (!note) {
-      notesCount.textContent = "0 anotações";
+    if (notes.length === 0) {
       notesEmpty.hidden = false;
       return;
     }
 
-    notesCount.textContent = "1 anotação";
     notesEmpty.hidden = true;
 
-    const noteCard = document.createElement("article");
+    notes.forEach((note) => {
+      const noteCard = document.createElement("article");
 
-    noteCard.classList.add("note-card");
+      const subjectName = note.subjectId
+        ? getSubjectNameById(note.subjectId)
+        : "Livre";
 
-    noteCard.innerHTML = `
-      <div class="note-card__section">
-        <small>Resumo</small>
-        <p>${escapeHTML(note.summary || "Nenhum resumo registrado.")}</p>
-      </div>
+      const themeName = note.themeId
+        ? getThemeNameById(note.themeId)
+        : "Sem tema";
 
-      <div class="note-card__section">
-        <small>Observações</small>
-        <p>${escapeHTML(note.observations || "Nenhuma observação registrada.")}</p>
-      </div>
+      noteCard.classList.add("note-card");
+      noteCard.dataset.noteId = note.id;
 
-      <div class="note-card__section">
-        <small>Regras importantes</small>
-        <p>${escapeHTML(note.rules || "Nenhuma regra registrada.")}</p>
-      </div>
+      noteCard.innerHTML = `
+				<div class="note-card__content">
+					<div class="note-card__top">
+						<h3>${escapeHTML(note.title)}</h3>
 
-      <span class="note-card__meta">
-        Última edição em ${escapeHTML(formatDateTime(note.updatedAt))}
-      </span>
-    `;
+						<span class="note-card__type">
+							${escapeHTML(getNoteTypeLabel(note.type))}
+						</span>
+					</div>
 
-    notesList.appendChild(noteCard);
+					<p class="note-card__preview">
+						${escapeHTML(getShortText(note.content))}
+					</p>
+
+					<div class="note-card__meta">
+						<span>Matéria: ${escapeHTML(subjectName)}</span>
+						<span>Tema: ${escapeHTML(themeName)}</span>
+						<span>Criada em ${escapeHTML(formatDate(note.createdAt))}</span>
+					</div>
+				</div>
+
+				<div class="note-card__actions">
+					<button
+						class="button button--danger"
+						type="button"
+						data-delete-note="${note.id}"
+					>
+						Excluir
+					</button>
+				</div>
+			`;
+
+      notesList.appendChild(noteCard);
+    });
   }
 
-  function saveCurrentNote(event) {
+  function handleNoteSubmit(event) {
     event.preventDefault();
 
-    const selectedSubject = getSelectedSubject();
-    const selectedTheme = getSelectedTheme();
+    const title = noteTitleInput.value.trim();
+    const type = noteTypeSelect.value;
+    const subjectId = noteSubjectSelect.value;
+    const themeId = noteThemeSelect.value;
+    const content = noteContentInput.value.trim();
 
-    if (!selectedSubject) {
-      setNoteMessage("Selecione uma matéria antes de salvar.", "error");
+    if (!title) {
+      setNoteMessage("Informe um título para a anotação.", "error");
+      noteTitleInput.focus();
       return;
     }
 
-    if (!selectedTheme) {
-      setNoteMessage("Selecione um tema antes de salvar.", "error");
+    if (!type) {
+      setNoteMessage("Selecione o tipo da anotação.", "error");
+      noteTypeSelect.focus();
       return;
     }
 
-    const summary = noteSummaryInput.value.trim();
-    const observations = noteObservationsInput.value.trim();
-    const rules = noteRulesInput.value.trim();
+    if (!content) {
+      setNoteMessage("Escreva o conteúdo da anotação.", "error");
+      noteContentInput.focus();
+      return;
+    }
 
-    if (!summary && !observations && !rules) {
-      setNoteMessage("Preencha pelo menos um campo da anotação.", "error");
+    if (themeId && !subjectId) {
+      setNoteMessage(
+        "Para vincular um tema, selecione uma matéria primeiro.",
+        "error",
+      );
+      noteSubjectSelect.focus();
       return;
     }
 
     const notes = getNotes();
 
-    const existingNoteIndex = notes.findIndex((note) => {
-      return note.themeId === selectedTheme.id;
+    const newNote = createNote({
+      title,
+      content,
+      type,
+      subjectId,
+      themeId,
     });
 
-    if (existingNoteIndex !== -1) {
-      notes[existingNoteIndex] = {
-        ...notes[existingNoteIndex],
-        summary,
-        observations,
-        rules,
-        updatedAt: new Date().toISOString(),
-      };
-    } else {
-      notes.push(
-        createNote({
-          subjectId: selectedSubject.id,
-          themeId: selectedTheme.id,
-          summary,
-          observations,
-          rules,
-        }),
-      );
-    }
+    notes.push(newNote);
 
     saveNotes(notes);
-    document.dispatchEvent(new CustomEvent("notes:changed"));
+    notifyNotesChanged();
 
-    setNoteMessage("Anotação salva com sucesso.", "success");
-    renderSelectedNote();
+    setNoteMessage("Anotação criada com sucesso.", "success");
+    clearNoteForm();
+    renderNotes();
   }
+
+  function deleteNote(noteId) {
+    const updatedNotes = getNotes().filter((note) => {
+      return note.id !== noteId;
+    });
+
+    saveNotes(updatedNotes);
+    notifyNotesChanged();
+
+    renderNotes();
+    setNoteMessage("Anotação excluída com sucesso.", "success");
+  }
+
+  function requestNoteDeletion(note) {
+    openConfirmModal({
+      title: "Excluir anotação?",
+      message: `A anotação "${note.title}" será removida permanentemente.`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteNote(note.id);
+      },
+    });
+  }
+
+  function handleNoteDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-note]");
+
+    if (!deleteButton) {
+      return;
+    }
+
+    const noteId = deleteButton.dataset.deleteNote;
+
+    const note = getNotes().find((currentNote) => {
+      return currentNote.id === noteId;
+    });
+
+    if (!note) {
+      return;
+    }
+
+    requestNoteDeletion(note);
+  }
+
+  noteForm.addEventListener("submit", handleNoteSubmit);
+
+  clearNoteFormButton.addEventListener("click", clearNoteForm);
 
   noteSubjectSelect.addEventListener("change", () => {
     noteThemeSelect.value = "";
     renderThemeOptions();
-    renderSelectedNote();
   });
 
-  noteThemeSelect.addEventListener("change", renderSelectedNote);
-
-  noteForm.addEventListener("submit", saveCurrentNote);
-
-  clearNoteFormButton.addEventListener("click", () => {
-    clearFormFields();
-  });
+  notesList.addEventListener("click", handleNoteDelete);
 
   document.addEventListener("subjects:changed", renderSubjectOptions);
-  document.addEventListener("themes:changed", renderSubjectOptions);
-  document.addEventListener("notes:changed", renderSelectedNote);
+  document.addEventListener("themes:changed", renderThemeOptions);
+  document.addEventListener("notes:changed", renderNotes);
 
   renderSubjectOptions();
+  renderNotes();
 
   console.log("Sistema de anotações carregado.");
 }

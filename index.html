@@ -738,64 +738,62 @@
         <article class="app-section" id="notes">
           <p class="app-section__tag">🗒️ Anotações</p>
 
-          <h2>Anotações de estudo</h2>
+          <h2>Anotações independentes</h2>
 
           <p>
-            Registre resumos, observações e regras importantes dentro de cada
-            tema estudado.
+            Registre resumos, dúvidas, regras, erros e ideias importantes com ou
+            sem vínculo com matérias e temas.
           </p>
 
-          <div class="note-warning" id="note-warning" hidden>
-            <strong>Cadastre uma matéria e um tema primeiro.</strong>
-            <span>
-              Para criar anotações, é necessário ter pelo menos uma matéria com
-              tema cadastrado.
-            </span>
-          </div>
+          <form class="note-form" id="note-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="note-title">Título da anotação</label>
+                <input
+                  id="note-title"
+                  type="text"
+                  placeholder="Ex: Diferença entre totalitarismo e autoritarismo"
+                  autocomplete="off"
+                />
+              </div>
 
-          <div class="note-selector-panel" id="note-selector-panel">
+              <div class="form-group">
+                <label for="note-type">Tipo da anotação</label>
+                <select id="note-type">
+                  <option value="">Selecione um tipo</option>
+                  <option value="resumo">Resumo</option>
+                  <option value="erro">Erro</option>
+                  <option value="regra">Regra</option>
+                  <option value="duvida">Dúvida</option>
+                  <option value="exemplo">Exemplo</option>
+                  <option value="insight">Insight</option>
+                  <option value="revisao">Revisão</option>
+                </select>
+              </div>
+            </div>
+
             <div class="form-grid">
               <div class="form-group">
                 <label for="note-subject">Matéria relacionada</label>
                 <select id="note-subject">
-                  <option value="">Selecione uma matéria</option>
+                  <option value="">Nenhuma matéria</option>
                 </select>
               </div>
 
               <div class="form-group">
                 <label for="note-theme">Tema relacionado</label>
-                <select id="note-theme">
-                  <option value="">Selecione um tema</option>
+                <select id="note-theme" disabled>
+                  <option value="">Nenhum tema</option>
                 </select>
               </div>
             </div>
-          </div>
-
-          <form class="note-form" id="note-form">
-            <div class="form-group">
-              <label for="note-summary">Resumo do conteúdo</label>
-              <textarea
-                id="note-summary"
-                rows="4"
-                placeholder="Ex: Explique o conteúdo com suas próprias palavras."
-              ></textarea>
-            </div>
 
             <div class="form-group">
-              <label for="note-observations">Observações pessoais</label>
+              <label for="note-content">Conteúdo da anotação</label>
               <textarea
-                id="note-observations"
-                rows="3"
-                placeholder="Ex: Pontos que achei importantes, dúvidas ou detalhes da aula."
-              ></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="note-rules">Regras importantes</label>
-              <textarea
-                id="note-rules"
-                rows="3"
-                placeholder="Ex: Regra, fórmula, exceção ou ideia que não posso esquecer."
+                id="note-content"
+                rows="5"
+                placeholder="Escreva sua anotação principal aqui..."
               ></textarea>
             </div>
 
@@ -819,10 +817,8 @@
           <section class="notes-area">
             <div class="notes-header">
               <div>
-                <h3>Anotação do tema</h3>
-                <p id="notes-current-theme">
-                  Selecione um tema para visualizar a anotação.
-                </p>
+                <h3>Minhas anotações</h3>
+                <p>As anotações livres e vinculadas aparecerão aqui.</p>
               </div>
 
               <span id="notes-count">0 anotações</span>
@@ -831,8 +827,8 @@
             <div class="empty-state" id="notes-empty">
               <strong>Nenhuma anotação cadastrada ainda.</strong>
               <span
-                >Selecione uma matéria e um tema para criar sua primeira
-                anotação.</span
+                >Crie sua primeira anotação para começar a organizar seus
+                estudos.</span
               >
             </div>
 

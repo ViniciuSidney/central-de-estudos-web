@@ -1928,6 +1928,18 @@ button {
   line-height: 1.5;
 }
 
+.note-form {
+  display: grid;
+  gap: 16px;
+
+  padding: 20px;
+  margin-top: 16px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
 .notes-area {
   display: grid;
   gap: 14px;
@@ -1958,8 +1970,10 @@ button {
 }
 
 .note-card {
-  display: grid;
-  gap: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
 
   padding: 18px;
   background: var(--bg);
@@ -1967,32 +1981,74 @@ button {
   border-radius: 16px;
 }
 
-.note-card__section {
+.note-card__content {
   display: grid;
-  gap: 6px;
-
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  flex: 1;
+  gap: 10px;
+  min-width: 0;
 }
 
-.note-card__section small {
-  color: var(--muted);
-  font-size: 0.78rem;
+.note-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.note-card__top h3 {
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.note-card__type {
+  width: fit-content;
+  padding: 6px 10px;
+
+  color: var(--accent);
+  font-size: 0.82rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
 }
 
-.note-card__section p {
-  color: var(--text);
+.note-card__preview {
+  color: var(--muted);
+  font-size: 0.95rem;
   line-height: 1.6;
 }
 
 .note-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+}
+
+.note-card__meta span {
+  padding: 5px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.note-card__actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  align-content: start;
+
+  width: 140px;
+  min-width: 140px;
+}
+
+.note-card__actions .button {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
 }
 
 /* Media Queries --------------------------------*/
@@ -2222,5 +2278,19 @@ button {
 
   .nav-tab-button {
     width: 100%;
+  }
+
+  .note-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note-card__top {
+    flex-direction: column;
+  }
+
+  .note-card__actions {
+    width: 100%;
+    min-width: 0;
   }
 }
