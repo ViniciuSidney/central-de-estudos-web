@@ -6,6 +6,7 @@ const COLLECTIONS_TO_RESET = [
   "questions",
   "attempts",
   "errorReviews",
+  "notes",
 ];
 
 export function initResetData() {
@@ -75,7 +76,10 @@ export function initResetData() {
     confirmResetButton.disabled = !(firstConfirmed && finalConfirmed);
 
     if (firstConfirmed && !finalConfirmed) {
-      setResetMessage("Digite APAGAR para liberar a exclusão definitiva.", "error");
+      setResetMessage(
+        "Digite APAGAR para liberar a exclusão definitiva.",
+        "error",
+      );
     } else {
       setResetMessage("");
     }
@@ -87,6 +91,7 @@ export function initResetData() {
     document.dispatchEvent(new CustomEvent("questions:changed"));
     document.dispatchEvent(new CustomEvent("attempts:changed"));
     document.dispatchEvent(new CustomEvent("errorReviews:changed"));
+    document.dispatchEvent(new CustomEvent("notes:changed"));
   }
 
   function resetAllData() {

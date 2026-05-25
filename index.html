@@ -46,7 +46,10 @@
         <div class="section-heading">
           <p class="section-heading__tag">🧭 Navegação</p>
           <h2>Escolha uma área da central</h2>
-          <p>Use as abas para alternar entre resumo, cadastro e ferramentas de estudo.</p>
+          <p>
+            Use as abas para alternar entre resumo, cadastro e ferramentas de
+            estudo.
+          </p>
         </div>
 
         <div class="nav-tabs">
@@ -733,17 +736,108 @@
         </article>
 
         <article class="app-section" id="notes">
-          <p class="app-section__tag">📒 Anotações</p>
+          <p class="app-section__tag">🗒️ Anotações</p>
+
           <h2>Anotações de estudo</h2>
+
           <p>
-            Esta área será usada para guardar resumos, observações pessoais,
-            regras de correção e ideias importantes sobre os temas estudados.
+            Registre resumos, observações e regras importantes dentro de cada
+            tema estudado.
           </p>
 
-          <div class="empty-state">
-            <strong>Nenhuma anotação criada ainda.</strong>
-            <span>As anotações serão organizadas por tema.</span>
+          <div class="note-warning" id="note-warning" hidden>
+            <strong>Cadastre uma matéria e um tema primeiro.</strong>
+            <span>
+              Para criar anotações, é necessário ter pelo menos uma matéria com
+              tema cadastrado.
+            </span>
           </div>
+
+          <div class="note-selector-panel" id="note-selector-panel">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="note-subject">Matéria relacionada</label>
+                <select id="note-subject">
+                  <option value="">Selecione uma matéria</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="note-theme">Tema relacionado</label>
+                <select id="note-theme">
+                  <option value="">Selecione um tema</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <form class="note-form" id="note-form">
+            <div class="form-group">
+              <label for="note-summary">Resumo do conteúdo</label>
+              <textarea
+                id="note-summary"
+                rows="4"
+                placeholder="Ex: Explique o conteúdo com suas próprias palavras."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="note-observations">Observações pessoais</label>
+              <textarea
+                id="note-observations"
+                rows="3"
+                placeholder="Ex: Pontos que achei importantes, dúvidas ou detalhes da aula."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="note-rules">Regras importantes</label>
+              <textarea
+                id="note-rules"
+                rows="3"
+                placeholder="Ex: Regra, fórmula, exceção ou ideia que não posso esquecer."
+              ></textarea>
+            </div>
+
+            <p class="form-message" id="note-message" aria-live="polite"></p>
+
+            <div class="form-actions">
+              <button class="button button--primary" type="submit">
+                Salvar anotação
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="clear-note-form"
+              >
+                Limpar
+              </button>
+            </div>
+          </form>
+
+          <section class="notes-area">
+            <div class="notes-header">
+              <div>
+                <h3>Anotação do tema</h3>
+                <p id="notes-current-theme">
+                  Selecione um tema para visualizar a anotação.
+                </p>
+              </div>
+
+              <span id="notes-count">0 anotações</span>
+            </div>
+
+            <div class="empty-state" id="notes-empty">
+              <strong>Nenhuma anotação cadastrada ainda.</strong>
+              <span
+                >Selecione uma matéria e um tema para criar sua primeira
+                anotação.</span
+              >
+            </div>
+
+            <div class="notes-list" id="notes-list"></div>
+          </section>
         </article>
 
         <article class="app-section" id="reviews">
