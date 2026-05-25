@@ -2166,7 +2166,19 @@ button {
   opacity: 0.72;
 }
 
-/* Media Queries --------------------------------*/
+.note-filters {
+  display: grid;
+  gap: 14px;
+
+  padding: 18px;
+  margin-top: 18px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+/* Media Queries -----------------------------------------------------------------------------*/
 @media (max-width: 980px) {
   .review-error-workspace {
     grid-template-columns: 1fr;
