@@ -27,8 +27,12 @@ export function initNotes() {
   const notesCount = document.querySelector("#notes-count");
   const notesEmpty = document.querySelector("#notes-empty");
   const notesList = document.querySelector("#notes-list");
+  const saveNoteButton = document.querySelector("#save-note-button");
+  const cancelNoteEditButton = document.querySelector("#cancel-note-edit");
 
   if (
+    !saveNoteButton ||
+    !cancelNoteEditButton ||
     !noteForm ||
     !noteTitleInput ||
     !noteTypeSelect ||
@@ -43,6 +47,8 @@ export function initNotes() {
   ) {
     return;
   }
+
+  let editingNoteId = null;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -131,6 +137,65 @@ export function initNotes() {
 
   function getNoteTypeLabel(type) {
     return NOTE_TYPE_LABELS[type] || "Tipo não definido";
+  }
+
+  function enterEditMode(note) {
+    editingNoteId = note.id;
+
+    noteTitleInput.value = note.title;
+    noteTypeSelect.value = note.type;
+    noteSubjectSelect.value = note.subjectId || "";
+
+    renderThemeOptions();
+
+    noteThemeSelect.value = note.themeId || "";
+    noteContentInput.value = note.content;
+
+    saveNoteButton.textContent = "Salvar alterações";
+    cancelNoteEditButton.hidden = false;
+
+    setNoteMessage(`Editando a anotação "${note.title}".`, "success");
+
+    noteTitleInput.focus();
+  }
+
+  function exitEditMode() {
+    editingNoteId = null;
+
+    saveNoteButton.textContent = "Salvar anotação";
+    cancelNoteEditButton.hidden = true;
+
+    clearNoteForm();
+  }
+
+  function updateNote({ noteId, title, content, type, subjectId, themeId }) {
+    const updatedNotes = getNotes().map((note) => {
+      if (note.id !== noteId) {
+        return note;
+      }
+
+      return {
+        ...note,
+        title,
+        content,
+        type,
+        subjectId: subjectId || null,
+        themeId: themeId || null,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveNotes(updatedNotes);
+    notifyNotesChanged();
+
+    setNoteMessage("Anotação atualizada com sucesso.", "success");
+
+    editingNoteId = null;
+    saveNoteButton.textContent = "Salvar anotação";
+    cancelNoteEditButton.hidden = true;
+
+    clearNoteForm();
+    renderNotes();
   }
 
   function createNote({ title, content, type, subjectId, themeId }) {
@@ -275,18 +340,27 @@ export function initNotes() {
 						<span>Matéria: ${escapeHTML(subjectName)}</span>
 						<span>Tema: ${escapeHTML(themeName)}</span>
 						<span>Criada em ${escapeHTML(formatDate(note.createdAt))}</span>
+            <span>Editada em ${escapeHTML(formatDate(note.updatedAt))}</span>
 					</div>
 				</div>
 
-				<div class="note-card__actions">
-					<button
-						class="button button--danger"
-						type="button"
-						data-delete-note="${note.id}"
-					>
-						Excluir
-					</button>
-				</div>
+        <div class="note-card__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            data-edit-note="${note.id}"
+          >
+            Editar
+          </button>
+
+          <button
+            class="button button--danger"
+            type="button"
+            data-delete-note="${note.id}"
+          >
+            Excluir
+          </button>
+        </div>
 			`;
 
       notesList.appendChild(noteCard);
@@ -329,6 +403,19 @@ export function initNotes() {
       return;
     }
 
+    if (editingNoteId) {
+      updateNote({
+        noteId: editingNoteId,
+        title,
+        content,
+        type,
+        subjectId,
+        themeId,
+      });
+
+      return;
+    }
+
     const notes = getNotes();
 
     const newNote = createNote({
@@ -347,6 +434,26 @@ export function initNotes() {
     setNoteMessage("Anotação criada com sucesso.", "success");
     clearNoteForm();
     renderNotes();
+  }
+
+  function handleNoteEdit(event) {
+    const editButton = event.target.closest("[data-edit-note]");
+
+    if (!editButton) {
+      return;
+    }
+
+    const noteId = editButton.dataset.editNote;
+
+    const note = getNotes().find((currentNote) => {
+      return currentNote.id === noteId;
+    });
+
+    if (!note) {
+      return;
+    }
+
+    enterEditMode(note);
   }
 
   function deleteNote(noteId) {
@@ -393,6 +500,62 @@ export function initNotes() {
     requestNoteDeletion(note);
   }
 
+  function cleanupBrokenNoteLinks() {
+    const subjects = getSubjects();
+    const themes = getThemes();
+    const notes = getNotes();
+
+    const subjectIds = new Set(
+      subjects.map((subject) => {
+        return subject.id;
+      }),
+    );
+
+    const themeIds = new Set(
+      themes.map((theme) => {
+        return theme.id;
+      }),
+    );
+
+    let hasChanges = false;
+
+    const updatedNotes = notes.map((note) => {
+      const subjectWasRemoved =
+        note.subjectId && !subjectIds.has(note.subjectId);
+      const themeWasRemoved = note.themeId && !themeIds.has(note.themeId);
+
+      if (subjectWasRemoved) {
+        hasChanges = true;
+
+        return {
+          ...note,
+          subjectId: null,
+          themeId: null,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
+      if (themeWasRemoved) {
+        hasChanges = true;
+
+        return {
+          ...note,
+          themeId: null,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+
+      return note;
+    });
+
+    if (!hasChanges) {
+      return;
+    }
+
+    saveNotes(updatedNotes);
+    notifyNotesChanged();
+  }
+
   noteForm.addEventListener("submit", handleNoteSubmit);
 
   clearNoteFormButton.addEventListener("click", clearNoteForm);
@@ -400,12 +563,29 @@ export function initNotes() {
   noteSubjectSelect.addEventListener("change", () => {
     noteThemeSelect.value = "";
     renderThemeOptions();
+
+    if (!noteSubjectSelect.value) {
+      noteThemeSelect.value = "";
+      noteThemeSelect.disabled = true;
+    }
   });
 
   notesList.addEventListener("click", handleNoteDelete);
+  notesList.addEventListener("click", handleNoteEdit);
+  cancelNoteEditButton.addEventListener("click", exitEditMode);
 
-  document.addEventListener("subjects:changed", renderSubjectOptions);
-  document.addEventListener("themes:changed", renderThemeOptions);
+  document.addEventListener("subjects:changed", () => {
+    cleanupBrokenNoteLinks();
+    renderSubjectOptions();
+    renderNotes();
+  });
+
+  document.addEventListener("themes:changed", () => {
+    cleanupBrokenNoteLinks();
+    renderThemeOptions();
+    renderNotes();
+  });
+
   document.addEventListener("notes:changed", renderNotes);
 
   renderSubjectOptions();

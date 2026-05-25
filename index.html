@@ -800,7 +800,11 @@
             <p class="form-message" id="note-message" aria-live="polite"></p>
 
             <div class="form-actions">
-              <button class="button button--primary" type="submit">
+              <button
+                class="button button--primary"
+                type="submit"
+                id="save-note-button"
+              >
                 Salvar anotação
               </button>
 
@@ -810,6 +814,15 @@
                 id="clear-note-form"
               >
                 Limpar
+              </button>
+
+              <button
+                class="button button--secondary"
+                type="button"
+                id="cancel-note-edit"
+                hidden
+              >
+                Cancelar edição
               </button>
             </div>
           </form>
