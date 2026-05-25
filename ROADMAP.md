@@ -318,10 +318,10 @@ A versão v0.6 foi considerada concluída porque o usuário consegue:
 
 ---
 
-# v0.7 — Anotações de estudo
+# v0.7 — Sistema base de anotações independentes
 
 ### Objetivo
-Adicionar um espaço para anotações dentro de cada tema, permitindo registrar resumos, observações e ideias importantes relacionadas ao estudo.
+Permitir criar, listar, editar, excluir e organizar anotações independentes, com vínculos opcionais a matérias e temas, sem obrigar que toda anotação esteja presa a um conteúdo específico.
 
 ### Status
 Planejada.
@@ -330,18 +330,52 @@ Planejada.
 
 ## Previsto para a v0.7
 
-- Tela de anotações por matéria e tema
-- Seleção de matéria
-- Seleção de tema
-- Campo para resumo do conteúdo
-- Campo para observações pessoais
-- Campo para regras importantes
-- Edição das anotações
-- Salvamento manual no `localStorage`
+- Tela de anotações independentes
+- Formulário de criação de anotação
+- Campo de título da anotação
+- Campo de conteúdo principal
+- Seleção de tipo da anotação
+- Seleção opcional de matéria
+- Seleção opcional de tema
+- Campo de tags/palavras-chave
+- Marcação de anotação como favorita
+- Salvamento das anotações no `localStorage`
+- Listagem das anotações em cards
+- Exibição de prévia curta do conteúdo
+- Exibição do tipo da anotação
+- Exibição da matéria vinculada, quando existir
+- Exibição do tema vinculado, quando existir
+- Exibição das tags, quando existirem
 - Exibição da data de criação
 - Exibição da data da última edição
+- Edição de anotações já criadas
+- Exclusão de anotações com confirmação
 - Estado vazio quando não houver anotações
-- Organização das anotações junto ao tema estudado
+- Permitir anotações livres, sem matéria e sem tema
+- Impedir seleção de tema sem matéria relacionada
+- Remover vínculos de anotações ao excluir matéria ou tema, sem apagar a anotação
+
+---
+
+## Tipos iniciais de anotação
+
+- Resumo
+- Erro
+- Regra
+- Dúvida
+- Exemplo
+- Insight
+- Revisão
+
+---
+
+## Status iniciais de anotação
+
+- Rascunho
+- Finalizada
+- Revisar
+- Flashcard
+- Importante
 
 ---
 
@@ -349,11 +383,21 @@ Planejada.
 
 A versão v0.7 será considerada concluída quando o usuário conseguir:
 
-- Criar anotações dentro de um tema
-- Editar anotações já criadas
-- Salvar o conteúdo no navegador
+- Criar uma anotação independente
+- Criar uma anotação sem matéria e sem tema
+- Criar uma anotação vinculada apenas a uma matéria
+- Criar uma anotação vinculada a uma matéria e tema
+- Selecionar um tipo para a anotação
+- Selecionar um status para a anotação
+- Adicionar tags à anotação
+- Marcar uma anotação como favorita
+- Editar uma anotação já criada
+- Excluir uma anotação com confirmação
+- Listar anotações em cards
+- Ver uma prévia do conteúdo da anotação
 - Fechar e abrir o sistema sem perder as anotações
-- Consultar anotações por matéria e tema
+- Excluir uma matéria sem apagar as anotações vinculadas a ela
+- Excluir um tema sem apagar as anotações vinculadas a ele
 
 ---
 
