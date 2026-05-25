@@ -354,6 +354,11 @@ Planejada.
 - Permitir anotações livres, sem matéria e sem tema
 - Impedir seleção de tema sem matéria relacionada
 - Remover vínculos de anotações ao excluir matéria ou tema, sem apagar a anotação
+- Visualização completa da anotação em modal
+- Exibição destacada de título, tipo, matéria e tema no modal
+- Exibição completa do conteúdo da anotação
+- Edição rápida do conteúdo pelo modal
+- Atualização de `updatedAt` ao editar rapidamente
 
 ---
 
@@ -398,6 +403,8 @@ A versão v0.7 será considerada concluída quando o usuário conseguir:
 - Fechar e abrir o sistema sem perder as anotações
 - Excluir uma matéria sem apagar as anotações vinculadas a ela
 - Excluir um tema sem apagar as anotações vinculadas a ele
+- Visualizar uma anotação completa em modal
+- Editar rapidamente o conteúdo de uma anotação pelo modal
 
 ---
 

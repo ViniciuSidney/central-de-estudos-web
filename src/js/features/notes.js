@@ -29,8 +29,28 @@ export function initNotes() {
   const notesList = document.querySelector("#notes-list");
   const saveNoteButton = document.querySelector("#save-note-button");
   const cancelNoteEditButton = document.querySelector("#cancel-note-edit");
+  const viewNoteModal = document.querySelector("#view-note-modal");
+  const viewNoteTitle = document.querySelector("#view-note-title");
+  const viewNoteDescription = document.querySelector("#view-note-description");
+  const viewNoteType = document.querySelector("#view-note-type");
+  const viewNoteMeta = document.querySelector("#view-note-meta");
+  const viewNoteContent = document.querySelector("#view-note-content");
+  const viewNoteContentEdit = document.querySelector("#view-note-content-edit");
+  const viewNoteMessage = document.querySelector("#view-note-message");
+  const closeViewNoteButton = document.querySelector("#close-view-note");
+  const quickEditNoteButton = document.querySelector("#quick-edit-note");
 
   if (
+    !viewNoteModal ||
+    !viewNoteTitle ||
+    !viewNoteDescription ||
+    !viewNoteType ||
+    !viewNoteMeta ||
+    !viewNoteContent ||
+    !viewNoteContentEdit ||
+    !viewNoteMessage ||
+    !closeViewNoteButton ||
+    !quickEditNoteButton ||
     !saveNoteButton ||
     !cancelNoteEditButton ||
     !noteForm ||
@@ -49,6 +69,8 @@ export function initNotes() {
   }
 
   let editingNoteId = null;
+  let viewingNoteId = null;
+  let isQuickEditingNote = false;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -348,6 +370,14 @@ export function initNotes() {
           <button
             class="button button--secondary"
             type="button"
+            data-view-note="${note.id}"
+          >
+            Visualizar
+          </button>
+
+          <button
+            class="button button--secondary"
+            type="button"
             data-edit-note="${note.id}"
           >
             Editar
@@ -556,9 +586,210 @@ export function initNotes() {
     notifyNotesChanged();
   }
 
-  noteForm.addEventListener("submit", handleNoteSubmit);
+  function enterQuickEditMode() {
+    if (!viewingNoteId) {
+      return;
+    }
 
-  clearNoteFormButton.addEventListener("click", clearNoteForm);
+    isQuickEditingNote = true;
+
+    viewNoteContent.hidden = true;
+    viewNoteContentEdit.hidden = false;
+
+    closeViewNoteButton.textContent = "Cancelar";
+    quickEditNoteButton.textContent = "Confirmar edição";
+
+    setViewNoteMessage("Editando apenas o conteúdo da anotação.", "success");
+
+    viewNoteContentEdit.focus();
+  }
+
+  function cancelQuickEditMode() {
+    const note = getNoteById(viewingNoteId);
+
+    if (!note) {
+      closeViewNoteModal();
+      return;
+    }
+
+    renderViewNoteModal(note);
+  }
+
+  function confirmQuickEdit() {
+    const note = getNoteById(viewingNoteId);
+
+    if (!note) {
+      closeViewNoteModal();
+      return;
+    }
+
+    const newContent = viewNoteContentEdit.value.trim();
+
+    if (!newContent) {
+      setViewNoteMessage(
+        "O conteúdo da anotação não pode ficar vazio.",
+        "error",
+      );
+      viewNoteContentEdit.focus();
+      return;
+    }
+
+    const updatedNotes = getNotes().map((currentNote) => {
+      if (currentNote.id !== note.id) {
+        return currentNote;
+      }
+
+      return {
+        ...currentNote,
+        content: newContent,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveNotes(updatedNotes);
+    notifyNotesChanged();
+
+    const updatedNote = updatedNotes.find((currentNote) => {
+      return currentNote.id === note.id;
+    });
+
+    renderViewNoteModal(updatedNote);
+    renderNotes();
+
+    setViewNoteMessage("Conteúdo atualizado com sucesso.", "success");
+  }
+
+  function getNoteById(noteId) {
+    return getNotes().find((note) => {
+      return note.id === noteId;
+    });
+  }
+
+  function formatDateTime(dateValue) {
+    const date = new Date(dateValue);
+
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function setViewNoteMessage(message, type = "default") {
+    viewNoteMessage.textContent = message;
+
+    viewNoteMessage.classList.remove("is-error", "is-success");
+
+    if (type === "error") {
+      viewNoteMessage.classList.add("is-error");
+    }
+
+    if (type === "success") {
+      viewNoteMessage.classList.add("is-success");
+    }
+  }
+
+  function getNoteSubjectLabel(note) {
+    if (!note.subjectId) {
+      return "Matéria: Livre";
+    }
+
+    return `Matéria: ${getSubjectNameById(note.subjectId)}`;
+  }
+
+  function getNoteThemeLabel(note) {
+    if (!note.themeId) {
+      return "Tema: Sem tema";
+    }
+
+    return `Tema: ${getThemeNameById(note.themeId)}`;
+  }
+
+  function renderViewNoteModal(note) {
+    viewNoteTitle.textContent = note.title;
+    viewNoteDescription.textContent =
+      "Consulte o conteúdo completo da anotação.";
+    viewNoteType.textContent = getNoteTypeLabel(note.type);
+
+    viewNoteMeta.innerHTML = `
+    <span>${escapeHTML(getNoteSubjectLabel(note))}</span>
+    <span>${escapeHTML(getNoteThemeLabel(note))}</span>
+    <span>Criada em ${escapeHTML(formatDateTime(note.createdAt))}</span>
+    <span>Editada em ${escapeHTML(formatDateTime(note.updatedAt))}</span>
+  `;
+
+    viewNoteContent.textContent = note.content;
+    viewNoteContentEdit.value = note.content;
+
+    viewNoteContent.hidden = false;
+    viewNoteContentEdit.hidden = true;
+
+    closeViewNoteButton.textContent = "Fechar";
+    quickEditNoteButton.textContent = "Editar conteúdo";
+
+    isQuickEditingNote = false;
+    setViewNoteMessage("");
+  }
+
+  function openViewNoteModal(note) {
+    viewingNoteId = note.id;
+
+    renderViewNoteModal(note);
+
+    viewNoteModal.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeViewNoteModal() {
+    viewingNoteId = null;
+    isQuickEditingNote = false;
+
+    viewNoteContentEdit.value = "";
+    setViewNoteMessage("");
+
+    viewNoteModal.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  function handleNoteView(event) {
+    const viewButton = event.target.closest("[data-view-note]");
+
+    if (!viewButton) {
+      return;
+    }
+
+    const noteId = viewButton.dataset.viewNote;
+
+    const note = getNoteById(noteId);
+
+    if (!note) {
+      return;
+    }
+
+    openViewNoteModal(note);
+  }
+
+  function handleQuickEditButtonClick() {
+    if (!isQuickEditingNote) {
+      enterQuickEditMode();
+      return;
+    }
+
+    confirmQuickEdit();
+  }
+
+  function handleCloseViewNoteButtonClick() {
+    if (isQuickEditingNote) {
+      cancelQuickEditMode();
+      return;
+    }
+
+    closeViewNoteModal();
+  }
+
+  noteForm.addEventListener("submit", handleNoteSubmit);
 
   noteSubjectSelect.addEventListener("change", () => {
     noteThemeSelect.value = "";
@@ -573,6 +804,27 @@ export function initNotes() {
   notesList.addEventListener("click", handleNoteDelete);
   notesList.addEventListener("click", handleNoteEdit);
   cancelNoteEditButton.addEventListener("click", exitEditMode);
+  notesList.addEventListener("click", handleNoteView);
+  clearNoteFormButton.addEventListener("click", clearNoteForm);
+  quickEditNoteButton.addEventListener("click", handleQuickEditButtonClick);
+  closeViewNoteButton.addEventListener("click", handleCloseViewNoteButtonClick);
+
+  viewNoteModal.addEventListener("click", (event) => {
+    if (event.target === viewNoteModal && !isQuickEditingNote) {
+      closeViewNoteModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !viewNoteModal.hidden) {
+      if (isQuickEditingNote) {
+        cancelQuickEditMode();
+        return;
+      }
+
+      closeViewNoteModal();
+    }
+  });
 
   document.addEventListener("subjects:changed", () => {
     cleanupBrokenNoteLinks();
@@ -586,7 +838,24 @@ export function initNotes() {
     renderNotes();
   });
 
-  document.addEventListener("notes:changed", renderNotes);
+  document.addEventListener("notes:changed", () => {
+    renderNotes();
+
+    if (!viewingNoteId || viewNoteModal.hidden) {
+      return;
+    }
+
+    const note = getNoteById(viewingNoteId);
+
+    if (!note) {
+      closeViewNoteModal();
+      return;
+    }
+
+    if (!isQuickEditingNote) {
+      renderViewNoteModal(note);
+    }
+  });
 
   renderSubjectOptions();
   renderNotes();

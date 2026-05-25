@@ -2051,6 +2051,73 @@ button {
   justify-content: center;
 }
 
+.note-view-modal {
+  width: min(760px, 100%);
+}
+
+.note-view-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.note-view-modal__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+.note-view-modal__meta span {
+  padding: 6px 10px;
+
+  color: var(--muted);
+  font-size: 0.85rem;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.note-view-modal__content {
+  margin-top: 18px;
+  padding: 18px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.note-view-modal__content p {
+  max-width: none;
+  color: var(--text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.note-view-modal__content textarea {
+  width: 100%;
+  min-height: 260px;
+  padding: 14px;
+
+  color: var(--text);
+  font: inherit;
+  line-height: 1.65;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+}
+
+.note-view-modal__content textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
+}
+
 /* Media Queries --------------------------------*/
 @media (max-width: 980px) {
   .review-error-workspace {
@@ -2292,5 +2359,17 @@ button {
   .note-card__actions {
     width: 100%;
     min-width: 0;
+  }
+
+  .note-view-modal__header {
+    flex-direction: column;
+  }
+
+  .note-view-modal .modal__actions {
+    flex-direction: column;
+  }
+
+  .note-view-modal .modal__actions .button {
+    width: 100%;
   }
 }

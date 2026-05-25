@@ -1181,6 +1181,63 @@
       </div>
     </div>
 
+    <!-- Visualizar Anotação -->
+    <div
+      class="modal-overlay"
+      id="view-note-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="view-note-title"
+      aria-describedby="view-note-description"
+      hidden
+    >
+      <div class="modal note-view-modal">
+        <div class="note-view-modal__header">
+          <div>
+            <p class="modal__tag">🗒️ Anotação</p>
+
+            <h3 class="modal__title" id="view-note-title">
+              Visualizar anotação
+            </h3>
+
+            <p class="modal__description" id="view-note-description">
+              Consulte o conteúdo completo da anotação selecionada.
+            </p>
+          </div>
+
+          <span class="note-card__type" id="view-note-type"> Tipo </span>
+        </div>
+
+        <div class="note-view-modal__meta" id="view-note-meta"></div>
+
+        <div class="note-view-modal__content" id="view-note-content-panel">
+          <p id="view-note-content"></p>
+
+          <textarea id="view-note-content-edit" rows="10" hidden></textarea>
+        </div>
+
+        <p class="form-message" id="view-note-message" aria-live="polite"></p>
+
+        <div class="modal__actions">
+          <button
+            class="button button--secondary"
+            type="button"
+            id="close-view-note"
+          >
+            Fechar
+          </button>
+
+          <button
+            class="button button--primary"
+            type="button"
+            id="quick-edit-note"
+          >
+            Editar conteúdo
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Apagar Tudo -->
     <div
       class="modal-overlay"
