@@ -359,6 +359,13 @@ Planejada.
 - Exibição completa do conteúdo da anotação
 - Edição rápida do conteúdo pelo modal
 - Atualização de `updatedAt` ao editar rapidamente
+- Seleção de status da anotação
+- Campo de tags/palavras-chave
+- Marcação de anotação como favorita
+- Marcação de anotação como fixada
+- Arquivamento de anotações
+- Busca por texto
+- Filtros por matéria, tema, tipo, status, favoritas, fixadas, arquivadas e tag
 
 ---
 
@@ -405,6 +412,11 @@ A versão v0.7 será considerada concluída quando o usuário conseguir:
 - Excluir um tema sem apagar as anotações vinculadas a ele
 - Visualizar uma anotação completa em modal
 - Editar rapidamente o conteúdo de uma anotação pelo modal
+- Marcar anotações como favoritas
+- Fixar anotações importantes no topo
+- Arquivar anotações sem excluí-las
+- Buscar anotações por texto
+- Filtrar anotações por vínculo, tipo, status e marcações
 
 ---
 

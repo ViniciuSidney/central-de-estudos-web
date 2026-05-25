@@ -774,6 +774,29 @@
 
             <div class="form-grid">
               <div class="form-group">
+                <label for="note-status">Status da anotação</label>
+                <select id="note-status">
+                  <option value="rascunho">Rascunho</option>
+                  <option value="finalizada">Finalizada</option>
+                  <option value="revisar">Revisar depois</option>
+                  <option value="flashcard">Virar flashcard</option>
+                  <option value="importante">Importante</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="note-tags">Tags</label>
+                <input
+                  id="note-tags"
+                  type="text"
+                  placeholder="Ex: enem, política, prova"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
                 <label for="note-subject">Matéria relacionada</label>
                 <select id="note-subject">
                   <option value="">Nenhuma matéria</option>

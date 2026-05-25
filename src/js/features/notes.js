@@ -15,6 +15,14 @@ const NOTE_TYPE_LABELS = {
   revisao: "Revisão",
 };
 
+const NOTE_STATUS_LABELS = {
+  rascunho: "Rascunho",
+  finalizada: "Finalizada",
+  revisar: "Revisar depois",
+  flashcard: "Virar flashcard",
+  importante: "Importante",
+};
+
 export function initNotes() {
   const noteForm = document.querySelector("#note-form");
   const noteTitleInput = document.querySelector("#note-title");
@@ -39,8 +47,12 @@ export function initNotes() {
   const viewNoteMessage = document.querySelector("#view-note-message");
   const closeViewNoteButton = document.querySelector("#close-view-note");
   const quickEditNoteButton = document.querySelector("#quick-edit-note");
+  const noteStatusSelect = document.querySelector("#note-status");
+  const noteTagsInput = document.querySelector("#note-tags");
 
   if (
+    !noteStatusSelect ||
+    !noteTagsInput ||
     !viewNoteModal ||
     !viewNoteTitle ||
     !viewNoteDescription ||
@@ -82,6 +94,10 @@ export function initNotes() {
 
   function getNotes() {
     return getCollection(NOTES_COLLECTION);
+  }
+
+  function getNoteStatusLabel(status) {
+    return NOTE_STATUS_LABELS[status] || "Rascunho";
   }
 
   function saveNotes(notes) {
@@ -173,6 +189,9 @@ export function initNotes() {
     noteThemeSelect.value = note.themeId || "";
     noteContentInput.value = note.content;
 
+    noteStatusSelect.value = note.status || "rascunho";
+    noteTagsInput.value = formatTags(note.tags || []);
+
     saveNoteButton.textContent = "Salvar alterações";
     cancelNoteEditButton.hidden = false;
 
@@ -190,7 +209,16 @@ export function initNotes() {
     clearNoteForm();
   }
 
-  function updateNote({ noteId, title, content, type, subjectId, themeId }) {
+  function updateNote({
+    noteId,
+    title,
+    content,
+    type,
+    status,
+    tags,
+    subjectId,
+    themeId,
+  }) {
     const updatedNotes = getNotes().map((note) => {
       if (note.id !== noteId) {
         return note;
@@ -201,6 +229,8 @@ export function initNotes() {
         title,
         content,
         type,
+        status: status || "rascunho",
+        tags,
         subjectId: subjectId || null,
         themeId: themeId || null,
         updatedAt: new Date().toISOString(),
@@ -220,14 +250,27 @@ export function initNotes() {
     renderNotes();
   }
 
-  function createNote({ title, content, type, subjectId, themeId }) {
+  function createNote({
+    title,
+    content,
+    type,
+    status,
+    tags,
+    subjectId,
+    themeId,
+  }) {
     return {
       id: crypto.randomUUID(),
       title,
       content,
       type,
+      status: status || "rascunho",
+      tags,
       subjectId: subjectId || null,
       themeId: themeId || null,
+      isFavorite: false,
+      isPinned: false,
+      isArchived: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -236,12 +279,14 @@ export function initNotes() {
   function clearNoteForm() {
     noteTitleInput.value = "";
     noteTypeSelect.value = "";
+    noteStatusSelect.value = "rascunho";
+    noteTagsInput.value = "";
     noteSubjectSelect.value = "";
     noteThemeSelect.value = "";
 
     noteThemeSelect.innerHTML = `
-			<option value="">Nenhum tema</option>
-		`;
+    <option value="">Nenhum tema</option>
+  `;
 
     noteThemeSelect.disabled = true;
     noteContentInput.value = "";
@@ -315,7 +360,14 @@ export function initNotes() {
     const notes = getNotes()
       .slice()
       .sort((firstNote, secondNote) => {
-        return new Date(secondNote.createdAt) - new Date(firstNote.createdAt);
+        const firstPinnedValue = firstNote.isPinned ? 1 : 0;
+        const secondPinnedValue = secondNote.isPinned ? 1 : 0;
+
+        if (firstPinnedValue !== secondPinnedValue) {
+          return secondPinnedValue - firstPinnedValue;
+        }
+
+        return new Date(secondNote.updatedAt) - new Date(firstNote.updatedAt);
       });
 
     notesList.innerHTML = "";
@@ -342,29 +394,60 @@ export function initNotes() {
         : "Sem tema";
 
       noteCard.classList.add("note-card");
+      if (note.isArchived) {
+        noteCard.classList.add("is-archived");
+      }
       noteCard.dataset.noteId = note.id;
 
       noteCard.innerHTML = `
-				<div class="note-card__content">
-					<div class="note-card__top">
-						<h3>${escapeHTML(note.title)}</h3>
+        <div class="note-card__content">
+          <div class="note-card__top">
+            <h3>
+              ${note.isPinned ? "📌 " : ""}${note.isFavorite ? "⭐ " : ""}${escapeHTML(note.title)}
+            </h3>
 
-						<span class="note-card__type">
-							${escapeHTML(getNoteTypeLabel(note.type))}
-						</span>
-					</div>
+            <div class="note-card__badges">
+              <span class="note-card__type">
+                ${escapeHTML(getNoteTypeLabel(note.type))}
+              </span>
 
-					<p class="note-card__preview">
-						${escapeHTML(getShortText(note.content))}
-					</p>
+              <span class="note-card__status">
+                ${escapeHTML(getNoteStatusLabel(note.status))}
+              </span>
 
-					<div class="note-card__meta">
-						<span>Matéria: ${escapeHTML(subjectName)}</span>
-						<span>Tema: ${escapeHTML(themeName)}</span>
-						<span>Criada em ${escapeHTML(formatDate(note.createdAt))}</span>
+              ${
+                note.isArchived
+                  ? `<span class="note-card__status is-archived">Arquivada</span>`
+                  : ""
+              }
+            </div>
+          </div>
+
+          <p class="note-card__preview">
+            ${escapeHTML(getShortText(note.content))}
+          </p>
+
+          <div class="note-card__meta">
+            <span>Matéria: ${escapeHTML(subjectName)}</span>
+            <span>Tema: ${escapeHTML(themeName)}</span>
+            <span>Criada em ${escapeHTML(formatDate(note.createdAt))}</span>
             <span>Editada em ${escapeHTML(formatDate(note.updatedAt))}</span>
-					</div>
-				</div>
+          </div>
+
+          ${
+            Array.isArray(note.tags) && note.tags.length > 0
+              ? `
+                <div class="note-card__tags">
+                  ${note.tags
+                    .map((tag) => {
+                      return `<span>#${escapeHTML(tag)}</span>`;
+                    })
+                    .join("")}
+                </div>
+              `
+              : ""
+          }
+        </div>
 
         <div class="note-card__actions">
           <button
@@ -384,6 +467,30 @@ export function initNotes() {
           </button>
 
           <button
+            class="button button--secondary"
+            type="button"
+            data-toggle-favorite-note="${note.id}"
+          >
+            ${note.isFavorite ? "Desfavoritar" : "Favoritar"}
+          </button>
+
+          <button
+            class="button button--secondary"
+            type="button"
+            data-toggle-pin-note="${note.id}"
+          >
+            ${note.isPinned ? "Desfixar" : "Fixar"}
+          </button>
+
+          <button
+            class="button button--secondary"
+            type="button"
+            data-toggle-archive-note="${note.id}"
+          >
+            ${note.isArchived ? "Restaurar" : "Arquivar"}
+          </button>
+
+          <button
             class="button button--danger"
             type="button"
             data-delete-note="${note.id}"
@@ -391,7 +498,7 @@ export function initNotes() {
             Excluir
           </button>
         </div>
-			`;
+      `;
 
       notesList.appendChild(noteCard);
     });
@@ -402,8 +509,10 @@ export function initNotes() {
 
     const title = noteTitleInput.value.trim();
     const type = noteTypeSelect.value;
+    const status = noteStatusSelect.value;
     const subjectId = noteSubjectSelect.value;
     const themeId = noteThemeSelect.value;
+    const tags = parseTags(noteTagsInput.value);
     const content = noteContentInput.value.trim();
 
     if (!title) {
@@ -439,6 +548,8 @@ export function initNotes() {
         title,
         content,
         type,
+        status,
+        tags,
         subjectId,
         themeId,
       });
@@ -452,6 +563,8 @@ export function initNotes() {
       title,
       content,
       type,
+      status,
+      tags,
       subjectId,
       themeId,
     });
@@ -714,11 +827,20 @@ export function initNotes() {
     viewNoteType.textContent = getNoteTypeLabel(note.type);
 
     viewNoteMeta.innerHTML = `
-    <span>${escapeHTML(getNoteSubjectLabel(note))}</span>
-    <span>${escapeHTML(getNoteThemeLabel(note))}</span>
-    <span>Criada em ${escapeHTML(formatDateTime(note.createdAt))}</span>
-    <span>Editada em ${escapeHTML(formatDateTime(note.updatedAt))}</span>
-  `;
+      <span>${escapeHTML(getNoteSubjectLabel(note))}</span>
+      <span>${escapeHTML(getNoteThemeLabel(note))}</span>
+      <span>Status: ${escapeHTML(getNoteStatusLabel(note.status))}</span>
+      ${note.isFavorite ? "<span>⭐ Favorita</span>" : ""}
+      ${note.isPinned ? "<span>📌 Fixada</span>" : ""}
+      ${note.isArchived ? "<span>Arquivada</span>" : ""}
+      <span>Criada em ${escapeHTML(formatDateTime(note.createdAt))}</span>
+      <span>Editada em ${escapeHTML(formatDateTime(note.updatedAt))}</span>
+      ${
+        Array.isArray(note.tags) && note.tags.length > 0
+          ? `<span>Tags: ${escapeHTML(formatTags(note.tags))}</span>`
+          : ""
+      }
+    `;
 
     viewNoteContent.textContent = note.content;
     viewNoteContentEdit.value = note.content;
@@ -789,6 +911,63 @@ export function initNotes() {
     closeViewNoteModal();
   }
 
+  function parseTags(tagsText) {
+    return tagsText
+      .split(",")
+      .map((tag) => {
+        return tag.trim().toLowerCase();
+      })
+      .filter((tag) => {
+        return tag !== "";
+      });
+  }
+
+  function formatTags(tags) {
+    if (!Array.isArray(tags)) {
+      return "";
+    }
+
+    return tags.join(", ");
+  }
+
+  function updateNoteFlag(noteId, flagName) {
+    const updatedNotes = getNotes().map((note) => {
+      if (note.id !== noteId) {
+        return note;
+      }
+
+      return {
+        ...note,
+        [flagName]: !note[flagName],
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveNotes(updatedNotes);
+    notifyNotesChanged();
+    renderNotes();
+  }
+
+  function handleNoteMetadataActions(event) {
+    const favoriteButton = event.target.closest("[data-toggle-favorite-note]");
+    const pinButton = event.target.closest("[data-toggle-pin-note]");
+    const archiveButton = event.target.closest("[data-toggle-archive-note]");
+
+    if (favoriteButton) {
+      updateNoteFlag(favoriteButton.dataset.toggleFavoriteNote, "isFavorite");
+      return;
+    }
+
+    if (pinButton) {
+      updateNoteFlag(pinButton.dataset.togglePinNote, "isPinned");
+      return;
+    }
+
+    if (archiveButton) {
+      updateNoteFlag(archiveButton.dataset.toggleArchiveNote, "isArchived");
+    }
+  }
+
   noteForm.addEventListener("submit", handleNoteSubmit);
 
   noteSubjectSelect.addEventListener("change", () => {
@@ -808,6 +987,7 @@ export function initNotes() {
   clearNoteFormButton.addEventListener("click", clearNoteForm);
   quickEditNoteButton.addEventListener("click", handleQuickEditButtonClick);
   closeViewNoteButton.addEventListener("click", handleCloseViewNoteButtonClick);
+  notesList.addEventListener("click", handleNoteMetadataActions);
 
   viewNoteModal.addEventListener("click", (event) => {
     if (event.target === viewNoteModal && !isQuickEditingNote) {

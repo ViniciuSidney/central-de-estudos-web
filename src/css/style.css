@@ -2118,6 +2118,54 @@ button {
   box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
 }
 
+.note-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.note-card__status {
+  width: fit-content;
+  padding: 6px 10px;
+
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.note-card__status.is-archived {
+  color: var(--feedback-error-border);
+  background: var(--feedback-inner-error-bg);
+  border-color: var(--feedback-error-border);
+}
+
+.note-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.note-card__tags span {
+  padding: 5px 8px;
+
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+}
+
+.note-card.is-archived {
+  opacity: 0.72;
+}
+
 /* Media Queries --------------------------------*/
 @media (max-width: 980px) {
   .review-error-workspace {
