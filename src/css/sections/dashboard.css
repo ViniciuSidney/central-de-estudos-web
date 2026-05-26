@@ -1,0 +1,27 @@
+.dashboard-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.dashboard-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.dashboard-tab-panel {
+  margin-top: 16px;
+  padding: 20px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.dashboard-tab-content {
+  display: none;
+}
+
+.dashboard-tab-content.is-active {
+  display: block;
+}

@@ -1,0 +1,30 @@
+.reset-warning {
+  display: grid;
+  gap: 6px;
+
+  padding: 14px;
+  margin-top: 16px;
+
+  background: var(--feedback-inner-error-bg);
+  border: 1px solid var(--feedback-error-border);
+  border-radius: 14px;
+}
+
+.reset-warning span {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.reset-confirm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  margin-top: 16px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.reset-confirm-check input {
+  margin-top: 4px;
+}

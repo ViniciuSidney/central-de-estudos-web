@@ -1,0 +1,42 @@
+.app {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.hero,
+.navigation-panel,
+.content-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.content-panel {
+  padding: 32px;
+}
+
+.app-section {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.app-section.is-visible {
+  display: flex;
+}
+
+
+.section-heading p,
+.app-section p {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.app-section h2 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: -0.04em;
+}

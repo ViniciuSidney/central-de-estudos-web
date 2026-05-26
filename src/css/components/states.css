@@ -1,0 +1,38 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.placeholder-card,
+.empty-state {
+  padding: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.placeholder-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.placeholder-card strong {
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.placeholder-card span,
+.empty-state span {
+  color: var(--muted);
+  line-height: 1.5;
+}

@@ -1,0 +1,25 @@
+.hero__tag,
+.section-heading__tag,
+.app-section__tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 8px 12px;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: var(--success-soft);
+  border-radius: 999px;
+}
+
+.highlighted-subject-name {
+  color: var(--accent);
+  font-size: 1.05em;
+  font-weight: 800;
+}
+
+.highlighted-theme-name {
+  color: var(--accent);
+  font-size: 1.02em;
+  font-weight: 800;
+}
