@@ -1997,7 +1997,8 @@ button {
 
 .note-card__cover {
   display: grid;
-  gap: 12px;
+  align-content: start;
+  gap: 14px;
 
   width: 100%;
   min-height: 150px;
@@ -2016,11 +2017,13 @@ button {
   border-radius: 12px;
 }
 
-.note-card__title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+.note-card__heading {
+  display: grid;
   gap: 10px;
+}
+
+.note-card__title-row {
+  display: block;
 }
 
 .note-card__title-row h3 {
@@ -2028,11 +2031,11 @@ button {
   line-height: 1.35;
 }
 
-.note-card__markers {
-  display: inline-flex;
-  flex-shrink: 0;
-  gap: 4px;
-  font-size: 0.95rem;
+.note-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
 }
 
 .note-card__meta {
@@ -2197,13 +2200,6 @@ button {
 .note-view-modal__content textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
-}
-
-.note-card__badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
 }
 
 .note-card__status {

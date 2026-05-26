@@ -424,13 +424,11 @@ export function initNotes() {
           data-view-note="${note.id}"
           aria-label="Visualizar anotação ${escapeHTML(note.title)}"
         >
+          <div class="note-card__heading">
           <div class="note-card__title-row">
-            <h3>${escapeHTML(note.title)}</h3>
-
-            <span class="note-card__markers">
-              ${note.isPinned ? '📌' : ''}
-              ${note.isFavorite ? '⭐' : ''}
-            </span>
+            <h3>
+              ${note.isPinned ? '📌 ' : ''}${note.isFavorite ? '⭐ ' : ''}${escapeHTML(note.title)}
+            </h3>
           </div>
 
           <div class="note-card__badges">
@@ -444,6 +442,7 @@ export function initNotes() {
 
             ${note.isArchived ? `<span class="note-card__status is-archived">Arquivada</span>` : ''}
           </div>
+        </div>
 
           <div class="note-card__meta">
             <span>Matéria: ${escapeHTML(subjectName)}</span>
@@ -1139,7 +1138,7 @@ export function initNotes() {
 		toggleNoteFiltersButton.setAttribute('aria-expanded', String(filtersAreHidden));
 	}
 
-  function clearNoteFilters() {
+	function clearNoteFilters() {
 		noteSearchInput.value = '';
 		noteFilterSubjectSelect.value = '';
 		noteFilterThemeSelect.value = '';
@@ -1150,7 +1149,7 @@ export function initNotes() {
 
 		renderFilterThemeOptions();
 		renderNotes();
-  }
+	}
 
 	function renderNoteFilterOptions() {
 		renderFilterSubjectOptions();
