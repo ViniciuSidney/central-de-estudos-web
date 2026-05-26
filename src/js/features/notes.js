@@ -71,8 +71,23 @@ export function initNotes() {
     "#toggle-note-filters",
   );
   const noteFiltersAdvanced = document.querySelector("#note-filters-advanced");
+  const noteTabButtons = document.querySelectorAll("[data-note-tab]");
+  const noteGalleryTab = document.querySelector("#note-gallery-tab");
+  const noteFormTab = document.querySelector("#note-form-tab");
+  const newNoteButton = document.querySelector("#new-note-button");
+  const backToNotesGalleryButton = document.querySelector(
+    "#back-to-notes-gallery",
+  );
+  const noteFormTitle = document.querySelector("#note-form-title");
+  const noteFormDescription = document.querySelector("#note-form-description");
 
   if (
+    !noteGalleryTab ||
+    !noteFormTab ||
+    !newNoteButton ||
+    !backToNotesGalleryButton ||
+    !noteFormTitle ||
+    !noteFormDescription ||
     !toggleNoteFiltersButton ||
     !noteFiltersAdvanced ||
     !noteSearchInput ||
@@ -242,6 +257,10 @@ export function initNotes() {
     saveNoteButton.textContent = "Salvar anotação";
     cancelNoteEditButton.hidden = true;
 
+    noteFormTitle.textContent = "Cadastrar anotação";
+    noteFormDescription.textContent =
+      "Crie uma anotação independente com ou sem vínculo com matérias e temas.";
+
     clearNoteForm();
   }
 
@@ -284,6 +303,7 @@ export function initNotes() {
 
     clearNoteForm();
     renderNotes();
+    showNoteTab("gallery");
   }
 
   function createNote({
@@ -489,26 +509,26 @@ export function initNotes() {
 						</span>
 
 						${
-              			note.isArchived
-                			? `<span class="note-card__status is-archived">Arquivada</span>`
-                			: ""
-            		}
+              note.isArchived
+                ? `<span class="note-card__status is-archived">Arquivada</span>`
+                : ""
+            }
 						</div>
 					</div>
 
 				${
-				visibleMetadata.length > 0
-					? `
+          visibleMetadata.length > 0
+            ? `
 						<div class="note-card__meta">
 						${visibleMetadata
-							.map((metadata) => {
-								return `<span>${escapeHTML(metadata)}</span>`;
-							})
-							.join("")}
+              .map((metadata) => {
+                return `<span>${escapeHTML(metadata)}</span>`;
+              })
+              .join("")}
 						</div>
 					`
-					: ""
-				}
+            : ""
+        }
 
 					${
             visibleTags.length > 0
@@ -663,6 +683,7 @@ export function initNotes() {
     setNoteMessage("Anotação criada com sucesso.", "success");
     clearNoteForm();
     renderNotes();
+    showNoteTab("gallery");
   }
 
   function handleNoteEdit(event) {
@@ -684,7 +705,7 @@ export function initNotes() {
       return;
     }
 
-    enterEditMode(note);
+    prepareEditNoteMode(note);
   }
 
   function deleteNote(noteId) {
@@ -1282,6 +1303,50 @@ export function initNotes() {
     return metadata;
   }
 
+  function showNoteTab(tabName) {
+    noteTabButtons.forEach((button) => {
+      const isSelectedTab = button.dataset.noteTab === tabName;
+
+      button.classList.toggle("is-active", isSelectedTab);
+    });
+
+    noteGalleryTab.classList.toggle("is-active", tabName === "gallery");
+    noteFormTab.classList.toggle("is-active", tabName === "form");
+  }
+
+  function prepareCreateNoteMode() {
+    editingNoteId = null;
+
+    saveNoteButton.textContent = "Salvar anotação";
+    cancelNoteEditButton.hidden = true;
+
+    noteFormTitle.textContent = "Cadastrar anotação";
+    noteFormDescription.textContent =
+      "Crie uma anotação independente com ou sem vínculo com matérias e temas.";
+
+    clearNoteForm();
+    showNoteTab("form");
+
+    noteTitleInput.focus();
+  }
+
+  function prepareEditNoteMode(note) {
+    enterEditMode(note);
+
+    noteFormTitle.textContent = "Editar anotação";
+    noteFormDescription.textContent =
+      "Atualize os dados principais, vínculos e metadados da anotação.";
+
+    showNoteTab("form");
+
+    noteTitleInput.focus();
+  }
+
+  function returnToNotesGallery() {
+    exitEditMode();
+    showNoteTab("gallery");
+  }
+
   function renderNoteFilterOptions() {
     renderFilterSubjectOptions();
     renderFilterTagOptions();
@@ -1301,13 +1366,36 @@ export function initNotes() {
 
   notesList.addEventListener("click", handleNoteDelete);
   notesList.addEventListener("click", handleNoteEdit);
-  cancelNoteEditButton.addEventListener("click", exitEditMode);
   notesList.addEventListener("click", handleNoteView);
   clearNoteFormButton.addEventListener("click", clearNoteForm);
   quickEditNoteButton.addEventListener("click", handleQuickEditButtonClick);
   closeViewNoteButton.addEventListener("click", handleCloseViewNoteButtonClick);
   notesList.addEventListener("click", handleNoteMetadataActions);
   toggleNoteFiltersButton.addEventListener("click", toggleAdvancedNoteFilters);
+  newNoteButton.addEventListener("click", prepareCreateNoteMode);
+  backToNotesGalleryButton.addEventListener("click", returnToNotesGallery);
+  cancelNoteEditButton.addEventListener("click", () => {
+    exitEditMode();
+    showNoteTab("gallery");
+  });
+
+  noteTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const tabName = button.dataset.noteTab;
+
+      if (tabName === "form" && !editingNoteId) {
+        prepareCreateNoteMode();
+        return;
+      }
+
+      if (tabName === "gallery") {
+        showNoteTab("gallery");
+        return;
+      }
+
+      showNoteTab(tabName);
+    });
+  });
 
   viewNoteModal.addEventListener("click", (event) => {
     if (event.target === viewNoteModal && !isQuickEditingNote) {

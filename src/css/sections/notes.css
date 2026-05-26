@@ -473,3 +473,73 @@
 .note-filters .notes-header {
   margin-bottom: 0;
 }
+
+.note-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.note-tab-button {
+  cursor: pointer;
+  padding: 12px 18px;
+
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.note-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.note-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.note-tab-content {
+  display: none;
+}
+
+.note-tab-content.is-active {
+  display: block;
+}
+
+.note-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 18px;
+  margin-top: 16px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.note-form-header h3 {
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+.note-form-header p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

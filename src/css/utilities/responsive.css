@@ -260,4 +260,30 @@
   .note-view-modal .modal__actions .button {
     width: 100%;
   }
+
+  .note-tabs {
+    flex-direction: column;
+  }
+
+  .note-tab-button {
+    width: 100%;
+  }
+
+  .note-form-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note-form-header .button {
+    width: 100%;
+  }
+
+  .note-filters .notes-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note-filters .notes-header .button {
+    width: 100%;
+  }
 }
