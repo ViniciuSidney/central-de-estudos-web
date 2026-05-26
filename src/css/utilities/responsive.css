@@ -237,7 +237,16 @@
 
   .note-card__actions {
     width: 100%;
-    min-width: 0;
+  }
+
+  .note-card__more {
+    margin-left: auto;
+  }
+
+  .note-card__more-menu {
+    right: 0;
+    bottom: auto;
+    top: calc(100% + 8px);
   }
 
   .note-view-modal__header {
