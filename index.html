@@ -543,6 +543,8 @@
 								<h3>Filtros e busca</h3>
 								<p>Encontre anotações por texto, vínculo, tipo, status ou marcações.</p>
 							</div>
+
+							<button class="button button--secondary" type="button" id="toggle-note-filters" aria-expanded="false">Mostrar filtros</button>
 						</div>
 
 						<div class="form-group">
@@ -550,72 +552,74 @@
 							<input id="note-search" type="text" placeholder="Buscar por título, conteúdo, tag, matéria, tema..." autocomplete="off" />
 						</div>
 
-						<div class="form-grid">
-							<div class="form-group">
-								<label for="note-filter-subject">Filtrar por matéria</label>
-								<select id="note-filter-subject">
-									<option value="">Todas as matérias</option>
-								</select>
+						<div class="note-filters__advanced" id="note-filters-advanced" hidden>
+							<div class="form-grid">
+								<div class="form-group">
+									<label for="note-filter-subject">Filtrar por matéria</label>
+									<select id="note-filter-subject">
+										<option value="">Todas as matérias</option>
+									</select>
+								</div>
+
+								<div class="form-group">
+									<label for="note-filter-theme">Filtrar por tema</label>
+									<select id="note-filter-theme">
+										<option value="">Todos os temas</option>
+									</select>
+								</div>
 							</div>
 
-							<div class="form-group">
-								<label for="note-filter-theme">Filtrar por tema</label>
-								<select id="note-filter-theme">
-									<option value="">Todos os temas</option>
-								</select>
-							</div>
-						</div>
+							<div class="form-grid">
+								<div class="form-group">
+									<label for="note-filter-type">Filtrar por tipo</label>
+									<select id="note-filter-type">
+										<option value="">Todos os tipos</option>
+										<option value="resumo">Resumo</option>
+										<option value="erro">Erro</option>
+										<option value="regra">Regra</option>
+										<option value="duvida">Dúvida</option>
+										<option value="exemplo">Exemplo</option>
+										<option value="insight">Insight</option>
+										<option value="revisao">Revisão</option>
+									</select>
+								</div>
 
-						<div class="form-grid">
-							<div class="form-group">
-								<label for="note-filter-type">Filtrar por tipo</label>
-								<select id="note-filter-type">
-									<option value="">Todos os tipos</option>
-									<option value="resumo">Resumo</option>
-									<option value="erro">Erro</option>
-									<option value="regra">Regra</option>
-									<option value="duvida">Dúvida</option>
-									<option value="exemplo">Exemplo</option>
-									<option value="insight">Insight</option>
-									<option value="revisao">Revisão</option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="note-filter-status">Filtrar por status</label>
-								<select id="note-filter-status">
-									<option value="">Todos os status</option>
-									<option value="rascunho">Rascunho</option>
-									<option value="finalizada">Finalizada</option>
-									<option value="revisar">Revisar depois</option>
-									<option value="flashcard">Virar flashcard</option>
-									<option value="importante">Importante</option>
-								</select>
-							</div>
-						</div>
-
-						<div class="form-grid">
-							<div class="form-group">
-								<label for="note-filter-tag">Filtrar por tag</label>
-								<select id="note-filter-tag">
-									<option value="">Todas as tags</option>
-								</select>
+								<div class="form-group">
+									<label for="note-filter-status">Filtrar por status</label>
+									<select id="note-filter-status">
+										<option value="">Todos os status</option>
+										<option value="rascunho">Rascunho</option>
+										<option value="finalizada">Finalizada</option>
+										<option value="revisar">Revisar depois</option>
+										<option value="flashcard">Virar flashcard</option>
+										<option value="importante">Importante</option>
+									</select>
+								</div>
 							</div>
 
-							<div class="form-group">
-								<label for="note-filter-flag">Filtrar por marcação</label>
-								<select id="note-filter-flag">
-									<option value="active">Não arquivadas</option>
-									<option value="all">Todas</option>
-									<option value="favorites">Favoritas</option>
-									<option value="pinned">Fixadas</option>
-									<option value="archived">Arquivadas</option>
-								</select>
-							</div>
-						</div>
+							<div class="form-grid">
+								<div class="form-group">
+									<label for="note-filter-tag">Filtrar por tag</label>
+									<select id="note-filter-tag">
+										<option value="">Todas as tags</option>
+									</select>
+								</div>
 
-						<div class="form-actions">
-							<button class="button button--secondary" type="button" id="clear-note-filters">Limpar filtros</button>
+								<div class="form-group">
+									<label for="note-filter-flag">Filtrar por marcação</label>
+									<select id="note-filter-flag">
+										<option value="active">Não arquivadas</option>
+										<option value="all">Todas</option>
+										<option value="favorites">Favoritas</option>
+										<option value="pinned">Fixadas</option>
+										<option value="archived">Arquivadas</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="form-actions">
+								<button class="button button--secondary" type="button" id="clear-note-filters">Limpar filtros</button>
+							</div>
 						</div>
 					</section>
 

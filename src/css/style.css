@@ -1966,19 +1966,132 @@ button {
 
 .notes-list {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
 }
 
 .note-card {
+  min-height: 250px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+  border-color: var(--accent);
+}
+
+.note-card__cover {
+  display: grid;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 150px;
+
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+
+  background: transparent;
+  border: 0;
+}
+
+.note-card__cover:focus-visible {
+  outline: 3px solid rgba(143, 199, 168, 0.35);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.note-card__title-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
+  gap: 10px;
+}
 
-  padding: 18px;
-  background: var(--bg);
+.note-card__title-row h3 {
+  font-size: 1.08rem;
+  line-height: 1.35;
+}
+
+.note-card__markers {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 4px;
+  font-size: 0.95rem;
+}
+
+.note-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.note-card__meta span {
+  padding: 5px 8px;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 999px;
+}
+
+.note-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.note-card__tags span {
+  padding: 5px 8px;
+
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+}
+
+.note-card__more-tags {
+  color: var(--muted);
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+}
+
+.note-card__actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.note-card__actions .button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+.note-card.is-archived {
+  opacity: 0.72;
 }
 
 .note-card__content {
@@ -2017,38 +2130,6 @@ button {
   color: var(--muted);
   font-size: 0.95rem;
   line-height: 1.6;
-}
-
-.note-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-.note-card__meta span {
-  padding: 5px 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-}
-
-.note-card__actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  align-content: start;
-
-  width: 140px;
-  min-width: 140px;
-}
-
-.note-card__actions .button {
-  width: 100%;
-  text-align: center;
-  justify-content: center;
 }
 
 .note-view-modal {
@@ -2144,28 +2225,6 @@ button {
   border-color: var(--feedback-error-border);
 }
 
-.note-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.note-card__tags span {
-  padding: 5px 8px;
-
-  color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 700;
-
-  background: var(--success-soft);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-}
-
-.note-card.is-archived {
-  opacity: 0.72;
-}
-
 .note-filters {
   display: grid;
   gap: 14px;
@@ -2176,6 +2235,16 @@ button {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 16px;
+}
+
+.note-filters__advanced {
+  display: grid;
+  gap: 14px;
+  padding-top: 4px;
+}
+
+.note-filters .notes-header {
+  margin-bottom: 0;
 }
 
 /* Media Queries -----------------------------------------------------------------------------*/

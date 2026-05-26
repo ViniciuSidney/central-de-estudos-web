@@ -57,8 +57,12 @@ export function initNotes() {
 	const noteFilterTagSelect = document.querySelector('#note-filter-tag');
 	const noteFilterFlagSelect = document.querySelector('#note-filter-flag');
 	const clearNoteFiltersButton = document.querySelector('#clear-note-filters');
+	const toggleNoteFiltersButton = document.querySelector('#toggle-note-filters');
+	const noteFiltersAdvanced = document.querySelector('#note-filters-advanced');
 
 	if (
+		!toggleNoteFiltersButton ||
+		!noteFiltersAdvanced ||
 		!noteSearchInput ||
 		!noteFilterSubjectSelect ||
 		!noteFilterThemeSelect ||
@@ -410,61 +414,60 @@ export function initNotes() {
 			}
 			noteCard.dataset.noteId = note.id;
 
+			const visibleTags = Array.isArray(note.tags) ? note.tags.slice(0, 2) : [];
+			const hiddenTagsCount = Array.isArray(note.tags) ? Math.max(note.tags.length - visibleTags.length, 0) : 0;
+
 			noteCard.innerHTML = `
-        <div class="note-card__content">
-          <div class="note-card__top">
-            <h3>
-              ${note.isPinned ? '📌 ' : ''}${note.isFavorite ? '⭐ ' : ''}${escapeHTML(note.title)}
-            </h3>
+        <button
+          class="note-card__cover"
+          type="button"
+          data-view-note="${note.id}"
+          aria-label="Visualizar anotação ${escapeHTML(note.title)}"
+        >
+          <div class="note-card__title-row">
+            <h3>${escapeHTML(note.title)}</h3>
 
-            <div class="note-card__badges">
-              <span class="note-card__type">
-                ${escapeHTML(getNoteTypeLabel(note.type))}
-              </span>
-
-              <span class="note-card__status">
-                ${escapeHTML(getNoteStatusLabel(note.status))}
-              </span>
-
-              ${note.isArchived ? `<span class="note-card__status is-archived">Arquivada</span>` : ''}
-            </div>
+            <span class="note-card__markers">
+              ${note.isPinned ? '📌' : ''}
+              ${note.isFavorite ? '⭐' : ''}
+            </span>
           </div>
 
-          <p class="note-card__preview">
-            ${escapeHTML(getShortText(note.content))}
-          </p>
+          <div class="note-card__badges">
+            <span class="note-card__type">
+              ${escapeHTML(getNoteTypeLabel(note.type))}
+            </span>
+
+            <span class="note-card__status">
+              ${escapeHTML(getNoteStatusLabel(note.status))}
+            </span>
+
+            ${note.isArchived ? `<span class="note-card__status is-archived">Arquivada</span>` : ''}
+          </div>
 
           <div class="note-card__meta">
             <span>Matéria: ${escapeHTML(subjectName)}</span>
             <span>Tema: ${escapeHTML(themeName)}</span>
-            <span>Criada em ${escapeHTML(formatDate(note.createdAt))}</span>
-            <span>Editada em ${escapeHTML(formatDate(note.updatedAt))}</span>
           </div>
 
           ${
-					Array.isArray(note.tags) && note.tags.length > 0
+					visibleTags.length > 0
 						? `
                 <div class="note-card__tags">
-                  ${note.tags
+                  ${visibleTags
 							.map((tag) => {
 								return `<span>#${escapeHTML(tag)}</span>`;
 							})
 							.join('')}
+
+                  ${hiddenTagsCount > 0 ? `<span class="note-card__more-tags">+${hiddenTagsCount}</span>` : ''}
                 </div>
               `
 						: ''
 				}
-        </div>
+        </button>
 
         <div class="note-card__actions">
-          <button
-            class="button button--secondary"
-            type="button"
-            data-view-note="${note.id}"
-          >
-            Visualizar
-          </button>
-
           <button
             class="button button--secondary"
             type="button"
@@ -878,7 +881,6 @@ export function initNotes() {
 		}
 
 		const noteId = viewButton.dataset.viewNote;
-
 		const note = getNoteById(noteId);
 
 		if (!note) {
@@ -1127,6 +1129,29 @@ export function initNotes() {
 		noteFilterTagSelect.value = tagStillExists ? previousTag : '';
 	}
 
+	function toggleAdvancedNoteFilters() {
+		const filtersAreHidden = noteFiltersAdvanced.hidden;
+
+		noteFiltersAdvanced.hidden = !filtersAreHidden;
+
+		toggleNoteFiltersButton.textContent = filtersAreHidden ? 'Ocultar filtros' : 'Mostrar filtros';
+
+		toggleNoteFiltersButton.setAttribute('aria-expanded', String(filtersAreHidden));
+	}
+
+  function clearNoteFilters() {
+		noteSearchInput.value = '';
+		noteFilterSubjectSelect.value = '';
+		noteFilterThemeSelect.value = '';
+		noteFilterTypeSelect.value = '';
+		noteFilterStatusSelect.value = '';
+		noteFilterTagSelect.value = '';
+		noteFilterFlagSelect.value = 'active';
+
+		renderFilterThemeOptions();
+		renderNotes();
+  }
+
 	function renderNoteFilterOptions() {
 		renderFilterSubjectOptions();
 		renderFilterTagOptions();
@@ -1152,6 +1177,7 @@ export function initNotes() {
 	quickEditNoteButton.addEventListener('click', handleQuickEditButtonClick);
 	closeViewNoteButton.addEventListener('click', handleCloseViewNoteButtonClick);
 	notesList.addEventListener('click', handleNoteMetadataActions);
+	toggleNoteFiltersButton.addEventListener('click', toggleAdvancedNoteFilters);
 
 	viewNoteModal.addEventListener('click', (event) => {
 		if (event.target === viewNoteModal && !isQuickEditingNote) {
