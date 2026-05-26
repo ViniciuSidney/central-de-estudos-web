@@ -6,9 +6,8 @@
 @import url("./components/forms.css");
 @import url("./components/modals.css");
 @import url("./components/tabs.css");
-@import url("./components/cards.css");
-@import url("./components/states.css");
 @import url("./components/tags.css");
+@import url("./components/states.css");
 
 @import url("./sections/hero.css");
 @import url("./sections/navigation.css");

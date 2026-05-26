@@ -81,14 +81,3 @@
 .nav-card.is-hidden-by-group {
   display: none;
 }
-
-.nav-tab-button:hover {
-  transform: translateY(-2px);
-  background: var(--surface-soft);
-}
-
-.nav-tab-button.is-active {
-  color: #ffffff;
-  background: var(--accent);
-  border-color: var(--accent);
-}
