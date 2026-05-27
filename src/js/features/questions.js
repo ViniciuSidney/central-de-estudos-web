@@ -37,9 +37,7 @@ export function initQuestions() {
   const questionsCount = document.querySelector("#questions-count");
   const questionsEmptyState = document.querySelector("#questions-empty-state");
   const questionsList = document.querySelector("#questions-list");
-  const dashboardQuestionsCount = document.querySelector(
-    "#dashboard-questions-count",
-  );
+
   const questionTabButtons = document.querySelectorAll("[data-question-tab]");
   const questionListTab = document.querySelector("#question-list-tab");
   const questionFormTab = document.querySelector("#question-form-tab");
@@ -94,8 +92,7 @@ export function initQuestions() {
     !questionsCurrentTheme ||
     !questionsCount ||
     !questionsEmptyState ||
-    !questionsList ||
-    !dashboardQuestionsCount
+    !questionsList
   ) {
     return;
   }
@@ -293,10 +290,6 @@ export function initQuestions() {
     if (type === "success") {
       questionFormMessage.classList.add("is-success");
     }
-  }
-
-  function updateDashboardQuestionsCount() {
-    dashboardQuestionsCount.textContent = getQuestions().length;
   }
 
   function updateQuestionsCount(questions) {
@@ -623,7 +616,6 @@ export function initQuestions() {
         "Cadastre uma matéria antes de criar questões.";
 
       updateQuestionsCount([]);
-      updateDashboardQuestionsCount();
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
@@ -705,7 +697,6 @@ export function initQuestions() {
 
     questionsList.innerHTML = "";
 
-    updateDashboardQuestionsCount();
     updateQuestionsCount(questionsFromContext);
 
     if (!selectedSubject) {
@@ -1067,7 +1058,6 @@ export function initQuestions() {
   document.addEventListener("themes:changed", renderThemeOptions);
 
   renderSubjectOptions();
-  updateDashboardQuestionsCount();
 
   console.log("Sistema de questões carregado.");
 }
