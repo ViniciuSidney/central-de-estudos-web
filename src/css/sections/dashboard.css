@@ -12,5 +12,126 @@
 }
 
 .dashboard-tab-content.is-active {
-  display: block;
+  display: grid;
+  gap: 20px;
+}
+
+.dashboard-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-section-header h3 {
+  font-size: 1.15rem;
+}
+
+.dashboard-section-header p,
+.dashboard-section-header span {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.dashboard-card {
+  display: grid;
+  gap: 8px;
+
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.dashboard-card strong {
+  color: var(--accent);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.dashboard-card span {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.dashboard-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dashboard-list-panel {
+  display: grid;
+  gap: 14px;
+
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.dashboard-list {
+  display: grid;
+  gap: 10px;
+}
+
+.dashboard-list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.dashboard-list-item div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.dashboard-list-item strong {
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.dashboard-list-item span,
+.dashboard-list-item small {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.dashboard-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  min-width: max-content;
+  padding: 6px 10px;
+
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 800;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+}
+
+.dashboard-chip.is-danger {
+  color: var(--feedback-error-border);
+  background: var(--feedback-inner-error-bg);
+  border-color: var(--feedback-error-border);
 }

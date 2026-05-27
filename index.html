@@ -157,11 +157,12 @@
       <section class="content-panel">
         <article class="app-section is-visible" id="dashboard">
           <p class="app-section__tag">📊 Dashboard</p>
+
           <h2>Visão geral dos estudos</h2>
+
           <p>
-            Esta área será usada para mostrar um resumo geral do progresso,
-            incluindo matérias, temas, questões respondidas, acertos, erros e
-            revisões pendentes.
+            Acompanhe sua organização, desempenho, revisões pendentes e
+            conteúdos cadastrados.
           </p>
 
           <div class="dashboard-tabs">
@@ -180,60 +181,132 @@
             >
               Desempenho
             </button>
+
+            <button
+              class="dashboard-tab-button"
+              type="button"
+              data-dashboard-tab="reviews"
+            >
+              Revisão
+            </button>
+
+            <button
+              class="dashboard-tab-button"
+              type="button"
+              data-dashboard-tab="contents"
+            >
+              Conteúdos
+            </button>
           </div>
 
-          <div class="dashboard-tab-panel">
+          <section class="dashboard-tab-panel">
             <div
               class="dashboard-tab-content is-active"
               id="dashboard-summary-tab"
             >
-              <div class="placeholder-grid">
-                <div class="placeholder-card">
-                  <strong id="dashboard-subjects-count">0</strong>
-                  <span>Matérias</span>
+              <div class="dashboard-section-header">
+                <div>
+                  <h3>Resumo geral</h3>
+                  <p>Veja os principais números da sua central de estudos.</p>
+                </div>
+              </div>
+
+              <div class="dashboard-grid" id="dashboard-summary-cards"></div>
+
+              <div class="dashboard-list-panel">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Últimas atividades</h3>
+                    <p>Registros recentes de resolução e revisão.</p>
+                  </div>
                 </div>
 
-                <div class="placeholder-card">
-                  <strong id="dashboard-themes-count">0</strong>
-                  <span>Temas</span>
-                </div>
-
-                <div class="placeholder-card">
-                  <strong id="dashboard-questions-count">0</strong>
-                  <span>Questões</span>
-                </div>
-
-                <div class="placeholder-card">
-                  <strong id="dashboard-attempts-count">0</strong>
-                  <span>Tentativas</span>
-                </div>
+                <div
+                  class="dashboard-list"
+                  id="dashboard-recent-activity"
+                ></div>
               </div>
             </div>
 
             <div class="dashboard-tab-content" id="dashboard-performance-tab">
-              <div class="placeholder-grid">
-                <div class="placeholder-card">
-                  <strong id="dashboard-correct-count">0</strong>
-                  <span>Acertos</span>
-                </div>
-
-                <div class="placeholder-card">
-                  <strong id="dashboard-wrong-count">0</strong>
-                  <span>Erros totais</span>
-                </div>
-
-                <div class="placeholder-card">
-                  <strong id="dashboard-errors-count">0</strong>
-                  <span>Erros pendentes</span>
-                </div>
-
-                <div class="placeholder-card">
-                  <strong id="dashboard-accuracy-rate">0%</strong>
-                  <span>Taxa de acerto</span>
+              <div class="dashboard-section-header">
+                <div>
+                  <h3>Desempenho</h3>
+                  <p>Analise acertos, erros e taxa de aproveitamento.</p>
                 </div>
               </div>
+
+              <div
+                class="dashboard-grid"
+                id="dashboard-performance-cards"
+              ></div>
+
+              <div class="dashboard-list-panel">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Desempenho por matéria</h3>
+                    <p>
+                      Compare resultados registrados nas questões resolvidas.
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  class="dashboard-list"
+                  id="dashboard-subject-performance"
+                ></div>
+              </div>
             </div>
-          </div>
+
+            <div class="dashboard-tab-content" id="dashboard-reviews-tab">
+              <div class="dashboard-section-header">
+                <div>
+                  <h3>Revisão</h3>
+                  <p>Acompanhe erros pendentes e revisões registradas.</p>
+                </div>
+              </div>
+
+              <div class="dashboard-grid" id="dashboard-review-cards"></div>
+
+              <div class="dashboard-list-panel">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Erros pendentes</h3>
+                    <p>Questões que ainda precisam de análise.</p>
+                  </div>
+                </div>
+
+                <div class="dashboard-list" id="dashboard-pending-errors"></div>
+              </div>
+            </div>
+
+            <div class="dashboard-tab-content" id="dashboard-contents-tab">
+              <div class="dashboard-section-header">
+                <div>
+                  <h3>Conteúdos</h3>
+                  <p>
+                    Veja como sua base de matérias, temas, questões e anotações
+                    está organizada.
+                  </p>
+                </div>
+              </div>
+
+              <div class="dashboard-grid" id="dashboard-content-cards"></div>
+
+              <div class="dashboard-list-panel">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Pontos de atenção</h3>
+                    <p>
+                      Conteúdos cadastrados que ainda precisam ser completados.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="dashboard-list" id="dashboard-content-alerts"></div>
+              </div>
+            </div>
+          </section>
         </article>
 
         <article class="app-section" id="subjects">
@@ -1184,7 +1257,10 @@
           <div class="empty-state">
             <strong>Versão atual: v0.7</strong>
             <span
-              >Permitir criar, listar, visualizar, editar, excluir e organizar anotações independentes, com vínculos opcionais a matérias e temas, oferecendo recursos de classificação, busca, filtros, marcações e formatação básica em Markdown.</span
+              >Permitir criar, listar, visualizar, editar, excluir e organizar
+              anotações independentes, com vínculos opcionais a matérias e
+              temas, oferecendo recursos de classificação, busca, filtros,
+              marcações e formatação básica em Markdown.</span
             >
           </div>
         </article>

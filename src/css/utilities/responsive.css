@@ -294,4 +294,13 @@
   .note-content-actions .button {
     width: 100%;
   }
+
+  .dashboard-section-header,
+  .dashboard-list-item {
+    flex-direction: column;
+  }
+
+  .dashboard-chip {
+    width: fit-content;
+  }
 }
