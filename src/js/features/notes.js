@@ -257,9 +257,9 @@ export function initNotes() {
     saveNoteButton.textContent = "Salvar anotação";
     cancelNoteEditButton.hidden = true;
 
-    noteFormTitle.textContent = "Cadastrar anotação";
+    noteFormTitle.textContent = "Nova anotação";
     noteFormDescription.textContent =
-      "Crie uma anotação independente com ou sem vínculo com matérias e temas.";
+      "Registre uma anotação livre ou vincule-a a uma matéria e tema.";
 
     clearNoteForm();
   }
@@ -577,31 +577,31 @@ export function initNotes() {
 						Mais
 						</summary>
 
-						<div class="note-card__more-menu">
-						<button
-							class="note-card__more-item"
-							type="button"
-							data-edit-note="${note.id}"
-						>
-							Editar
-						</button>
+            <div class="note-card__more-menu">
+              <button
+                class="note-card__more-item"
+                type="button"
+                data-edit-note="${note.id}"
+              >
+                Editar anotação
+              </button>
 
-						<button
-							class="note-card__more-item"
-							type="button"
-							data-toggle-archive-note="${note.id}"
-						>
-							${note.isArchived ? "Restaurar" : "Arquivar"}
-						</button>
+              <button
+                class="note-card__more-item"
+                type="button"
+                data-toggle-archive-note="${note.id}"
+              >
+                ${note.isArchived ? "Restaurar anotação" : "Arquivar anotação"}
+              </button>
 
-						<button
-							class="note-card__more-item is-danger"
-							type="button"
-							data-delete-note="${note.id}"
-						>
-							Excluir
-						</button>
-						</div>
+              <button
+                class="note-card__more-item is-danger"
+                type="button"
+                data-delete-note="${note.id}"
+              >
+                Excluir anotação
+              </button>
+            </div>
 					</details>
 				</div>
 			`;
@@ -1320,9 +1320,9 @@ export function initNotes() {
     saveNoteButton.textContent = "Salvar anotação";
     cancelNoteEditButton.hidden = true;
 
-    noteFormTitle.textContent = "Cadastrar anotação";
+    noteFormTitle.textContent = "Nova anotação";
     noteFormDescription.textContent =
-      "Crie uma anotação independente com ou sem vínculo com matérias e temas.";
+      "Registre uma anotação livre ou vincule-a a uma matéria e tema.";
 
     clearNoteForm();
     showNoteTab("form");
@@ -1335,7 +1335,7 @@ export function initNotes() {
 
     noteFormTitle.textContent = "Editar anotação";
     noteFormDescription.textContent =
-      "Atualize os dados principais, vínculos e metadados da anotação.";
+      "Atualize o conteúdo, os vínculos e os metadados desta anotação.";
 
     showNoteTab("form");
 
