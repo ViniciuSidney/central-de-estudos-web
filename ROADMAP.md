@@ -321,116 +321,101 @@ A versão v0.6 foi considerada concluída porque o usuário consegue:
 # v0.7 — Sistema base de anotações independentes
 
 ### Objetivo
-Permitir criar, listar, editar, excluir e organizar anotações independentes, com vínculos opcionais a matérias e temas, sem obrigar que toda anotação esteja presa a um conteúdo específico.
+Permitir criar, listar, visualizar, editar, excluir e organizar anotações independentes, com vínculos opcionais a matérias e temas, oferecendo recursos de classificação, busca, filtros, marcações e formatação básica em Markdown.
 
 ### Status
-Planejada.
+Concluída.
 
 ---
 
-## Previsto para a v0.7
+## Implementado na v0.7
 
-- Tela de anotações independentes
-- Formulário de criação de anotação
-- Campo de título da anotação
-- Campo de conteúdo principal
-- Seleção de tipo da anotação
-- Seleção opcional de matéria
-- Seleção opcional de tema
-- Campo de tags/palavras-chave
-- Marcação de anotação como favorita
-- Salvamento das anotações no `localStorage`
-- Listagem das anotações em cards
-- Exibição de prévia curta do conteúdo
-- Exibição do tipo da anotação
-- Exibição da matéria vinculada, quando existir
-- Exibição do tema vinculado, quando existir
-- Exibição das tags, quando existirem
-- Exibição da data de criação
-- Exibição da data da última edição
-- Edição de anotações já criadas
-- Exclusão de anotações com confirmação
-- Estado vazio quando não houver anotações
-- Permitir anotações livres, sem matéria e sem tema
-- Impedir seleção de tema sem matéria relacionada
-- Remover vínculos de anotações ao excluir matéria ou tema, sem apagar a anotação
-- Visualização completa da anotação em modal
-- Exibição destacada de título, tipo, matéria e tema no modal
-- Exibição completa do conteúdo da anotação
-- Edição rápida do conteúdo pelo modal
-- Atualização de `updatedAt` ao editar rapidamente
-- Seleção de status da anotação
-- Campo de tags/palavras-chave
-- Marcação de anotação como favorita
-- Marcação de anotação como fixada
-- Arquivamento de anotações
-- Busca por texto
-- Filtros por matéria, tema, tipo, status, favoritas, fixadas, arquivadas e tag
-
----
-
-## Tipos iniciais de anotação
-
-- Resumo
-- Erro
-- Regra
-- Dúvida
-- Exemplo
-- Insight
-- Revisão
-
----
-
-## Status iniciais de anotação
-
-- Rascunho
-- Finalizada
-- Revisar
-- Flashcard
-- Importante
-
----
-
-## Refinamento extra — Formatação Markdown nas anotações
-
-- Renderização básica de Markdown no modal de visualização
-- Suporte a títulos simples
-- Suporte a negrito
-- Suporte a itálico
-- Suporte a código inline
-- Suporte a citação
-- Suporte a listas simples
-- Botão de ajuda Markdown no formulário
-- Edição rápida mantendo o conteúdo em Markdown bruto
+- Criação de anotações independentes ✅
+- Título obrigatório ✅
+- Conteúdo obrigatório ✅
+- Tipo obrigatório ✅
+- Status da anotação ✅
+- Tags/palavras-chave ✅
+- Matéria opcional ✅
+- Tema opcional ✅
+- Anotação livre, sem matéria e sem tema ✅
+- Salvamento das anotações no `localStorage` ✅
+- Listagem das anotações em cards no formato de galeria ✅
+- Cards clicáveis para visualização completa ✅
+- Visualização completa da anotação em modal ✅
+- Exibição de título, tipo, status, matéria, tema, tags e datas no modal ✅
+- Edição rápida do conteúdo pelo modal de visualização ✅
+- Edição completa pelo formulário de anotações ✅
+- Organização da seção em abas: Galeria e Nova anotação ✅
+- Botão de Nova anotação para criação rápida ✅
+- Botão de voltar para a galeria ✅
+- Exclusão de anotações com confirmação ✅
+- Marcação de anotação como favorita ✅
+- Marcação de anotação como fixada ✅
+- Arquivamento e restauração de anotações ✅
+- Ordenação com anotações fixadas no topo ✅
+- Busca por texto ✅
+- Filtro por matéria ✅
+- Filtro por tema ✅
+- Filtro por tipo ✅
+- Filtro por status ✅
+- Filtro por tag ✅
+- Filtro por marcação ✅
+- Filtro para anotações favoritas ✅
+- Filtro para anotações fixadas ✅
+- Filtro para anotações arquivadas ✅
+- Filtros avançados recolhíveis ✅
+- Remoção de vínculo com matéria ao excluir matéria, sem apagar a anotação ✅
+- Remoção de vínculo com tema ao excluir tema, sem apagar a anotação ✅
+- Integração das anotações com o botão Apagar tudo ✅
+- Atualização de `createdAt` e `updatedAt` ✅
+- Renderização básica de Markdown nas anotações ✅
+- Suporte a títulos com `#`, `##` e `###` ✅
+- Suporte a negrito com `**texto**` ✅
+- Suporte a itálico com `*texto*` ✅
+- Suporte a código inline com crases ✅
+- Suporte a citações com `>` ✅
+- Suporte a listas simples com `- item` ✅
+- Modal de ajuda Markdown ✅
+- Editor focado para conteúdo da anotação ✅
 
 ---
 
 ## Fechamento da v0.7
 
-A versão v0.7 será considerada concluída quando o usuário conseguir:
+A versão v0.7 foi considerada concluída porque o usuário consegue:
 
-- Criar uma anotação independente
-- Criar uma anotação sem matéria e sem tema
-- Criar uma anotação vinculada apenas a uma matéria
-- Criar uma anotação vinculada a uma matéria e tema
-- Selecionar um tipo para a anotação
-- Selecionar um status para a anotação
-- Adicionar tags à anotação
-- Marcar uma anotação como favorita
-- Editar uma anotação já criada
-- Excluir uma anotação com confirmação
-- Listar anotações em cards
-- Ver uma prévia do conteúdo da anotação
-- Fechar e abrir o sistema sem perder as anotações
-- Excluir uma matéria sem apagar as anotações vinculadas a ela
-- Excluir um tema sem apagar as anotações vinculadas a ele
-- Visualizar uma anotação completa em modal
-- Editar rapidamente o conteúdo de uma anotação pelo modal
-- Marcar anotações como favoritas
-- Fixar anotações importantes no topo
+- Criar anotações livres
+- Criar anotações vinculadas apenas a uma matéria
+- Criar anotações vinculadas a uma matéria e tema
+- Classificar anotações por tipo
+- Classificar anotações por status
+- Adicionar tags às anotações
+- Visualizar anotações completas em modal
+- Editar rapidamente o conteúdo de uma anotação
+- Editar completamente uma anotação pelo formulário
+- Escrever anotações com formatação Markdown básica
+- Visualizar o conteúdo formatado no modal
+- Usar um editor focado para escrever ou ajustar o conteúdo
+- Favoritar anotações importantes
+- Fixar anotações no topo da galeria
 - Arquivar anotações sem excluí-las
+- Restaurar anotações arquivadas
 - Buscar anotações por texto
-- Filtrar anotações por vínculo, tipo, status e marcações
+- Filtrar anotações por matéria, tema, tipo, status, tag e marcações
+- Excluir anotações com segurança
+- Fechar e abrir o sistema sem perder as anotações
+- Apagar todos os dados da aplicação, incluindo as anotações
+
+---
+
+## Observações da v0.7
+
+A seção de anotações passou a funcionar como uma biblioteca pessoal de estudos, permitindo registrar conteúdos de forma livre ou vinculada à estrutura de matérias e temas.
+
+A implementação de Markdown foi feita de forma manual e básica, sem biblioteca externa, mantendo o projeto simples e controlado.
+
+Recursos mais avançados, como toolbar de formatação, preview lado a lado, exportação de anotações e integração com flashcards, poderão ser considerados em versões futuras.
 
 ---
 
