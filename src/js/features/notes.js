@@ -80,8 +80,20 @@ export function initNotes() {
   );
   const noteFormTitle = document.querySelector("#note-form-title");
   const noteFormDescription = document.querySelector("#note-form-description");
+  const openMarkdownHelpButton = document.querySelector("#open-markdown-help");
+  const markdownHelpModal = document.querySelector("#markdown-help-modal");
+  const closeMarkdownHelpButton = document.querySelector(
+    "#close-markdown-help",
+  );
+  const openFocusedEditorButton = document.querySelector(
+    "#open-focused-editor",
+  );
 
   if (
+    !openFocusedEditorButton ||
+    !openMarkdownHelpButton ||
+    !markdownHelpModal ||
+    !closeMarkdownHelpButton ||
     !noteGalleryTab ||
     !noteFormTab ||
     !newNoteButton ||
@@ -130,6 +142,7 @@ export function initNotes() {
   let editingNoteId = null;
   let viewingNoteId = null;
   let isQuickEditingNote = false;
+  let isFocusedEditorFromForm = false;
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -829,6 +842,11 @@ export function initNotes() {
   }
 
   function cancelQuickEditMode() {
+    if (isFocusedEditorFromForm) {
+      closeViewNoteModal();
+      return;
+    }
+
     const note = getNoteById(viewingNoteId);
 
     if (!note) {
@@ -840,13 +858,6 @@ export function initNotes() {
   }
 
   function confirmQuickEdit() {
-    const note = getNoteById(viewingNoteId);
-
-    if (!note) {
-      closeViewNoteModal();
-      return;
-    }
-
     const newContent = viewNoteContentEdit.value.trim();
 
     if (!newContent) {
@@ -855,6 +866,20 @@ export function initNotes() {
         "error",
       );
       viewNoteContentEdit.focus();
+      return;
+    }
+
+    if (isFocusedEditorFromForm) {
+      noteContentInput.value = newContent;
+      closeViewNoteModal();
+      setNoteMessage("Conteúdo atualizado no formulário.", "success");
+      return;
+    }
+
+    const note = getNoteById(viewingNoteId);
+
+    if (!note) {
+      closeViewNoteModal();
       return;
     }
 
@@ -949,7 +974,7 @@ export function initNotes() {
       ${Array.isArray(note.tags) && note.tags.length > 0 ? `<span>Tags: ${escapeHTML(formatTags(note.tags))}</span>` : ""}
     `;
 
-    viewNoteContent.textContent = note.content;
+    viewNoteContent.innerHTML = renderMarkdown(note.content);
     viewNoteContentEdit.value = note.content;
 
     viewNoteContent.hidden = false;
@@ -974,6 +999,7 @@ export function initNotes() {
   function closeViewNoteModal() {
     viewingNoteId = null;
     isQuickEditingNote = false;
+    isFocusedEditorFromForm = false;
 
     viewNoteContentEdit.value = "";
     setViewNoteMessage("");
@@ -1347,10 +1373,129 @@ export function initNotes() {
     showNoteTab("gallery");
   }
 
+  function renderMarkdown(text) {
+    const lines = String(text).split("\n");
+    const htmlLines = [];
+
+    let isInsideList = false;
+
+    lines.forEach((line) => {
+      const trimmedLine = line.trim();
+
+      if (trimmedLine.startsWith("- ")) {
+        if (!isInsideList) {
+          htmlLines.push("<ul>");
+          isInsideList = true;
+        }
+
+        htmlLines.push(
+          `<li>${formatInlineMarkdown(trimmedLine.slice(2))}</li>`,
+        );
+        return;
+      }
+
+      if (isInsideList) {
+        htmlLines.push("</ul>");
+        isInsideList = false;
+      }
+
+      if (trimmedLine.startsWith("### ")) {
+        htmlLines.push(
+          `<h4>${formatInlineMarkdown(trimmedLine.slice(4))}</h4>`,
+        );
+        return;
+      }
+
+      if (trimmedLine.startsWith("## ")) {
+        htmlLines.push(
+          `<h3>${formatInlineMarkdown(trimmedLine.slice(3))}</h3>`,
+        );
+        return;
+      }
+
+      if (trimmedLine.startsWith("# ")) {
+        htmlLines.push(
+          `<h2>${formatInlineMarkdown(trimmedLine.slice(2))}</h2>`,
+        );
+        return;
+      }
+
+      if (trimmedLine.startsWith("> ")) {
+        htmlLines.push(
+          `<blockquote>${formatInlineMarkdown(trimmedLine.slice(2))}</blockquote>`,
+        );
+        return;
+      }
+
+      if (!trimmedLine) {
+        htmlLines.push("<br>");
+        return;
+      }
+
+      htmlLines.push(`<p>${formatInlineMarkdown(trimmedLine)}</p>`);
+    });
+
+    if (isInsideList) {
+      htmlLines.push("</ul>");
+    }
+
+    return htmlLines.join("");
+  }
+
+  function formatInlineMarkdown(text) {
+    const escapedText = escapeHTML(text);
+
+    return escapedText
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/`(.*?)`/g, "<code>$1</code>");
+  }
+
   function renderNoteFilterOptions() {
     renderFilterSubjectOptions();
     renderFilterTagOptions();
   }
+
+  function openMarkdownHelpModal() {
+    markdownHelpModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    closeMarkdownHelpButton.focus();
+  }
+
+  function closeMarkdownHelpModal() {
+    markdownHelpModal.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  function openFocusedEditorFromForm() {
+    const title = noteTitleInput.value.trim() || "Anotação sem título";
+    const type = noteTypeSelect.value || "resumo";
+    const status = noteStatusSelect.value || "rascunho";
+    const content = noteContentInput.value;
+
+    isFocusedEditorFromForm = true;
+
+    const temporaryNote = {
+      id: "focused-editor-note",
+      title,
+      content,
+      type,
+      status,
+      tags: parseTags(noteTagsInput.value),
+      subjectId: noteSubjectSelect.value || null,
+      themeId: noteThemeSelect.value || null,
+      isFavorite: false,
+      isPinned: false,
+      isArchived: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    openViewNoteModal(temporaryNote);
+    enterQuickEditMode();
+  }
+
+  //-------------------------------------
 
   noteForm.addEventListener("submit", handleNoteSubmit);
 
@@ -1377,6 +1522,15 @@ export function initNotes() {
   cancelNoteEditButton.addEventListener("click", () => {
     exitEditMode();
     showNoteTab("gallery");
+  });
+  openMarkdownHelpButton.addEventListener("click", openMarkdownHelpModal);
+  closeMarkdownHelpButton.addEventListener("click", closeMarkdownHelpModal);
+  openFocusedEditorButton.addEventListener("click", openFocusedEditorFromForm);
+
+  markdownHelpModal.addEventListener("click", (event) => {
+    if (event.target === markdownHelpModal) {
+      closeMarkdownHelpModal();
+    }
   });
 
   noteTabButtons.forEach((button) => {
@@ -1414,7 +1568,16 @@ export function initNotes() {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !viewNoteModal.hidden) {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    if (!markdownHelpModal.hidden) {
+      closeMarkdownHelpModal();
+      return;
+    }
+
+    if (!viewNoteModal.hidden) {
       if (isQuickEditingNote) {
         cancelQuickEditMode();
         return;

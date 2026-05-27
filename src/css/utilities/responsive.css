@@ -286,4 +286,12 @@
   .note-filters .notes-header .button {
     width: 100%;
   }
+
+  .note-content-actions {
+    width: 100%;
+  }
+
+  .note-content-actions .button {
+    width: 100%;
+  }
 }

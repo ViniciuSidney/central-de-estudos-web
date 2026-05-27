@@ -391,6 +391,20 @@ Planejada.
 
 ---
 
+## Refinamento extra — Formatação Markdown nas anotações
+
+- Renderização básica de Markdown no modal de visualização
+- Suporte a títulos simples
+- Suporte a negrito
+- Suporte a itálico
+- Suporte a código inline
+- Suporte a citação
+- Suporte a listas simples
+- Botão de ajuda Markdown no formulário
+- Edição rápida mantendo o conteúdo em Markdown bruto
+
+---
+
 ## Fechamento da v0.7
 
 A versão v0.7 será considerada concluída quando o usuário conseguir:
