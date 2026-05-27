@@ -135,3 +135,54 @@
   background: var(--feedback-inner-error-bg);
   border-color: var(--feedback-error-border);
 }
+
+.dashboard-insight-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.dashboard-rank-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.dashboard-rank-position {
+  display: inline-grid;
+  place-items: center;
+
+  width: 34px;
+  height: 34px;
+
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+}
+
+.dashboard-rank-item div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.dashboard-rank-item strong {
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.dashboard-rank-item span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}

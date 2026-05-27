@@ -11,18 +11,30 @@ export function initDashboard() {
   const dashboardTabButtons = document.querySelectorAll("[data-dashboard-tab]");
 
   const summaryCards = document.querySelector("#dashboard-summary-cards");
-  const performanceCards = document.querySelector("#dashboard-performance-cards");
+  const performanceCards = document.querySelector(
+    "#dashboard-performance-cards",
+  );
   const reviewCards = document.querySelector("#dashboard-review-cards");
   const contentCards = document.querySelector("#dashboard-content-cards");
 
-  const recentActivityList = document.querySelector("#dashboard-recent-activity");
+  const recentActivityList = document.querySelector(
+    "#dashboard-recent-activity",
+  );
   const subjectPerformanceList = document.querySelector(
     "#dashboard-subject-performance",
   );
   const pendingErrorsList = document.querySelector("#dashboard-pending-errors");
   const contentAlertsList = document.querySelector("#dashboard-content-alerts");
+  const topErrorSubjectsList = document.querySelector(
+    "#dashboard-top-error-subjects",
+  );
 
+  const topErrorThemesList = document.querySelector(
+    "#dashboard-top-error-themes",
+  );
   if (
+    !topErrorSubjectsList ||
+    !topErrorThemesList ||
     !summaryCards ||
     !performanceCards ||
     !reviewCards ||
@@ -205,7 +217,9 @@ export function initDashboard() {
   }
 
   function getReviewQuestionId(review) {
-    return review.questionId || review.sourceQuestionId || review.idQuestion || null;
+    return (
+      review.questionId || review.sourceQuestionId || review.idQuestion || null
+    );
   }
 
   function getGeneralStats() {
@@ -230,7 +244,9 @@ export function initDashboard() {
     });
 
     const accuracy =
-      attempts.length > 0 ? (correctAttempts.length / attempts.length) * 100 : 0;
+      attempts.length > 0
+        ? (correctAttempts.length / attempts.length) * 100
+        : 0;
 
     return {
       subjects,
@@ -670,19 +686,6 @@ export function initDashboard() {
       .join("");
   }
 
-  function renderDashboard() {
-    const stats = getGeneralStats();
-
-    renderSummaryCards(stats);
-    renderPerformanceCards(stats);
-    renderReviewCards(stats);
-    renderContentCards(stats);
-    renderRecentActivity(stats);
-    renderSubjectPerformance();
-    renderPendingErrors(stats);
-    renderContentAlerts();
-  }
-
   function showDashboardTab(tabName) {
     dashboardTabButtons.forEach((button) => {
       const isSelectedTab = button.dataset.dashboardTab === tabName;
@@ -705,6 +708,166 @@ export function initDashboard() {
     document
       .querySelector("#dashboard-contents-tab")
       ?.classList.toggle("is-active", tabName === "contents");
+  }
+
+  function getTopErrorSubjects() {
+    const subjectPerformance = getSubjectPerformance();
+
+    return subjectPerformance
+      .filter((item) => {
+        return item.wrong > 0;
+      })
+      .sort((firstItem, secondItem) => {
+        return secondItem.wrong - firstItem.wrong;
+      })
+      .slice(0, 5);
+  }
+
+  function getThemePerformance() {
+    const themes = getThemes();
+    const questions = getQuestions();
+    const attempts = getAttempts();
+
+    return themes
+      .map((theme) => {
+        const questionIdsFromTheme = questions
+          .filter((question) => {
+            return question.themeId === theme.id;
+          })
+          .map((question) => {
+            return question.id;
+          });
+
+        const attemptsFromTheme = attempts.filter((attempt) => {
+          return questionIdsFromTheme.includes(attempt.questionId);
+        });
+
+        const correctAttempts = attemptsFromTheme.filter((attempt) => {
+          return getAttemptResult(attempt) === "correct";
+        });
+
+        const wrongAttempts = attemptsFromTheme.filter((attempt) => {
+          return getAttemptResult(attempt) === "wrong";
+        });
+
+        const accuracy =
+          attemptsFromTheme.length > 0
+            ? (correctAttempts.length / attemptsFromTheme.length) * 100
+            : 0;
+
+        return {
+          theme,
+          attempts: attemptsFromTheme.length,
+          correct: correctAttempts.length,
+          wrong: wrongAttempts.length,
+          accuracy,
+        };
+      })
+      .sort((firstItem, secondItem) => {
+        return secondItem.wrong - firstItem.wrong;
+      });
+  }
+
+  function getTopErrorThemes() {
+    const themePerformance = getThemePerformance();
+
+    return themePerformance
+      .filter((item) => {
+        return item.wrong > 0;
+      })
+      .sort((firstItem, secondItem) => {
+        return secondItem.wrong - firstItem.wrong;
+      })
+      .slice(0, 5);
+  }
+
+  function renderTopErrorSubjects() {
+    const topErrorSubjects = getTopErrorSubjects();
+
+    if (topErrorSubjects.length === 0) {
+      renderEmptyState(
+        topErrorSubjectsList,
+        "Nenhuma matéria com erro registrada.",
+        "Quando houver respostas incorretas, as matérias com mais erros aparecerão aqui.",
+      );
+      return;
+    }
+
+    topErrorSubjectsList.innerHTML = topErrorSubjects
+      .map((item, index) => {
+        return `
+        <article class="dashboard-rank-item">
+          <span class="dashboard-rank-position">
+            ${String(index + 1).padStart(2, "0")}
+          </span>
+
+          <div>
+            <strong>${escapeHTML(item.subject.name)}</strong>
+            <span>
+              ${item.wrong} erros • ${item.correct} acertos • ${item.attempts} tentativas
+            </span>
+          </div>
+
+          <span class="dashboard-chip is-danger">
+            ${item.wrong} erros
+          </span>
+        </article>
+      `;
+      })
+      .join("");
+  }
+
+  function renderTopErrorThemes() {
+    const topErrorThemes = getTopErrorThemes();
+
+    if (topErrorThemes.length === 0) {
+      renderEmptyState(
+        topErrorThemesList,
+        "Nenhum tema com erro registrado.",
+        "Quando houver respostas incorretas, os temas com mais erros aparecerão aqui.",
+      );
+      return;
+    }
+
+    topErrorThemesList.innerHTML = topErrorThemes
+      .map((item, index) => {
+        return `
+        <article class="dashboard-rank-item">
+          <span class="dashboard-rank-position">
+            ${String(index + 1).padStart(2, "0")}
+          </span>
+
+          <div>
+            <strong>${escapeHTML(item.theme.name)}</strong>
+            <span>
+              ${escapeHTML(getSubjectName(item.theme.subjectId))} •
+              ${item.wrong} erros •
+              ${item.correct} acertos
+            </span>
+          </div>
+
+          <span class="dashboard-chip is-danger">
+            ${item.wrong} erros
+          </span>
+        </article>
+      `;
+      })
+      .join("");
+  }
+
+  //------------------------------------------------------
+
+  function renderDashboard() {
+    const stats = getGeneralStats();
+
+    renderSummaryCards(stats);
+    renderPerformanceCards(stats);
+    renderReviewCards(stats);
+    renderContentCards(stats);
+    renderRecentActivity(stats);
+    renderSubjectPerformance();
+    renderPendingErrors(stats);
+    renderContentAlerts();
   }
 
   dashboardTabButtons.forEach((button) => {
