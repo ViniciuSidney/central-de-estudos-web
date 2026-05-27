@@ -419,10 +419,10 @@ Recursos mais avançados, como toolbar de formatação, preview lado a lado, exp
 
 ---
 
-# v0.8 — Dashboard avançado e indicadores
+# v0.8 — Dashboard inteligente e indicadores de estudo
 
 ### Objetivo
-Melhorar o Dashboard para exibir indicadores mais úteis sobre organização, desempenho e evolução nos estudos.
+Transformar o Dashboard em uma central de acompanhamento dos estudos, exibindo indicadores sobre organização, desempenho, revisões, anotações e prioridades de estudo.
 
 ### Status
 Planejada.
@@ -431,23 +431,86 @@ Planejada.
 
 ## Previsto para a v0.8
 
+### Organização do Dashboard
+
 - Organização do Dashboard por abas
 - Aba de resumo geral
 - Aba de desempenho
 - Aba de revisão
+- Aba de conteúdos
+- Cards principais de indicadores
+- Listas resumidas com dados importantes
+- Estados vazios quando ainda não houver dados suficientes
+
+---
+
+### Aba de Resumo Geral
+
 - Quantidade de matérias cadastradas
 - Quantidade de temas cadastrados
 - Quantidade de questões cadastradas
+- Quantidade de anotações cadastradas
 - Quantidade de tentativas registradas
-- Quantidade de acertos
-- Quantidade de erros totais
+- Quantidade de revisões registradas
 - Quantidade de erros pendentes
 - Taxa geral de acerto
-- Lista de últimos estudos
-- Lista de erros pendentes
-- Indicadores por matéria
-- Indicadores por tema
-- Cards simples de progresso
+- Cards simples de progresso geral
+- Lista de últimos estudos ou últimas ações registradas
+
+---
+
+### Aba de Desempenho
+
+- Quantidade total de acertos
+- Quantidade total de erros
+- Taxa geral de acerto
+- Indicadores de desempenho por matéria
+- Indicadores de desempenho por tema
+- Matérias com maior quantidade de erros
+- Temas com maior quantidade de erros
+- Matérias com melhor taxa de acerto
+- Temas com melhor taxa de acerto
+- Lista de questões respondidas recentemente
+
+---
+
+### Aba de Revisão
+
+- Quantidade de erros pendentes
+- Lista resumida de erros pendentes
+- Quantidade de erros revisados
+- Lista resumida de revisões recentes
+- Identificação de matérias com mais erros pendentes
+- Identificação de temas com mais erros pendentes
+- Atalhos para acessar a seção de Revisões
+
+---
+
+### Aba de Conteúdos
+
+- Quantidade de matérias cadastradas
+- Quantidade de temas por matéria
+- Quantidade de questões por matéria
+- Quantidade de questões por tema
+- Quantidade de anotações por matéria
+- Quantidade de anotações livres
+- Quantidade de anotações fixadas
+- Quantidade de anotações arquivadas
+- Lista de matérias com poucos temas ou poucas questões
+- Lista de temas sem questões cadastradas
+- Lista de temas sem anotações cadastradas
+
+---
+
+### Indicadores inteligentes
+
+- Destaque para conteúdos com mais erros
+- Destaque para conteúdos sem prática registrada
+- Destaque para erros pendentes de revisão
+- Destaque para temas com questões cadastradas, mas sem tentativas
+- Destaque para matérias cadastradas sem temas
+- Destaque para temas cadastrados sem questões
+- Destaque para anotações marcadas como importantes ou revisar depois
 
 ---
 
@@ -456,10 +519,15 @@ Planejada.
 A versão v0.8 será considerada concluída quando o usuário conseguir:
 
 - Abrir o sistema e ver um resumo geral dos estudos
-- Acompanhar quantidade de conteúdos cadastrados
-- Ver seus acertos e erros
+- Acompanhar a quantidade de matérias, temas, questões e anotações cadastradas
+- Ver seus acertos, erros e taxa geral de acerto
 - Identificar pendências de revisão
 - Visualizar indicadores básicos por matéria e tema
+- Identificar conteúdos com maior quantidade de erros
+- Identificar conteúdos ainda pouco praticados
+- Ver listas resumidas de erros pendentes e estudos recentes
+- Consultar indicadores relacionados às anotações
+- Usar o Dashboard para decidir o próximo passo de estudo
 
 ---
 
