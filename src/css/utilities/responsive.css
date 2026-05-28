@@ -317,7 +317,8 @@
     padding: 6px 10px;
   }
 
-  .dashboard-note-priority-item {
+  .dashboard-note-priority-item,
+  .dashboard-content-alert-item {
     align-items: stretch;
   }
 

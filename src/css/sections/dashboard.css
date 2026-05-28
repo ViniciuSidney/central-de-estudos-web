@@ -187,32 +187,37 @@
   line-height: 1.45;
 }
 
-.dashboard-missing-highlight {
-  color: var(--accent);
-  font-weight: 900;
-}
-
 .dashboard-note-priority-item {
   align-items: center;
 }
 
-.dashboard-note-tags {
+.dashboard-list-item .dashboard-note-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
+  align-items: center;
   gap: 6px;
 
-  color: var(--accent);
+  margin-top: 2px;
+
+  color: var(--muted);
   font-size: 0.85rem;
   font-weight: 700;
   line-height: 1.4;
 }
 
-.dashboard-note-tags span {
-  width: fit-content;
+.dashboard-list-item .dashboard-note-tags span {
+  display: inline-flex;
+  width: auto;
 
   color: var(--accent);
   font-size: inherit;
   font-weight: inherit;
+  line-height: inherit;
+}
+
+.dashboard-content-alert-item,
+.dashboard-note-priority-item {
+  align-items: center;
 }
 
 .dashboard-link-button {
@@ -241,4 +246,9 @@
   transform: translateY(-2px);
   background: var(--surface-soft);
   border-color: var(--accent);
+}
+
+.dashboard-entity-highlight {
+  color: var(--accent);
+  font-weight: 900;
 }

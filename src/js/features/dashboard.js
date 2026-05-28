@@ -114,6 +114,18 @@ export function initDashboard() {
     importante: "Importante",
   };
 
+  const NOTE_STATUS_ICONS = {
+    rascunho: "✏️",
+    finalizada: "✅",
+    revisar: "🔁",
+    flashcard: "🃏",
+    importante: "⚠️",
+  };
+
+  function getNoteStatusIcon(status) {
+    return NOTE_STATUS_ICONS[status] || "✏️";
+  }
+
   function getNoteStatusLabel(status) {
     return NOTE_STATUS_LABELS[status] || "Rascunho";
   }
@@ -710,10 +722,11 @@ export function initDashboard() {
       if (subjectThemes.length === 0) {
         alerts.push({
           title: subject.name,
-          prefix: "Matéria sem ",
+          entityLabel: "Matéria",
+          middleText: " sem ",
           missing: "themes",
           suffix: " cadastrados.",
-          type: "Matéria",
+          targetSection: "themes",
           priority: 1,
         });
       }
@@ -731,10 +744,11 @@ export function initDashboard() {
       if (themeQuestions.length === 0) {
         alerts.push({
           title: theme.name,
-          prefix: `Tema de ${getSubjectName(theme.subjectId)} sem `,
+          entityLabel: "Tema",
+          middleText: ` de ${getSubjectName(theme.subjectId)} sem `,
           missing: "questions",
           suffix: ".",
-          type: "Tema",
+          targetSection: "questions",
           priority: 2,
         });
       }
@@ -742,10 +756,11 @@ export function initDashboard() {
       if (themeNotes.length === 0) {
         alerts.push({
           title: theme.name,
-          prefix: `Tema de ${getSubjectName(theme.subjectId)} sem `,
+          entityLabel: "Tema",
+          middleText: ` de ${getSubjectName(theme.subjectId)} sem `,
           missing: "notes",
           suffix: ".",
-          type: "Tema",
+          targetSection: "notes",
           priority: 3,
         });
       }
@@ -817,6 +832,7 @@ export function initDashboard() {
             <strong>${escapeHTML(note.title)}</strong>
 
             <span>
+              ${getNoteStatusIcon(note.status)}
               ${escapeHTML(getNoteStatusLabel(note.status))}
               ${
                 markers.length > 0 ? `• ${escapeHTML(markers.join(" • "))}` : ""
@@ -884,13 +900,21 @@ export function initDashboard() {
     contentAlertsList.innerHTML = alerts
       .map((alert) => {
         return `
-        <article class="dashboard-list-item">
+        <article class="dashboard-list-item dashboard-content-alert-item">
           <div>
             <strong>${escapeHTML(alert.title)}</strong>
             <span>${getContentAlertMessage(alert)}</span>
           </div>
 
-          <span class="dashboard-chip">${escapeHTML(alert.type)}</span>
+          <button
+            class="dashboard-link-button"
+            type="button"
+            data-open-dashboard-section="${escapeHTML(alert.targetSection)}"
+            aria-label="Ir para a seção relacionada"
+            title="Ir para seção"
+          >
+            🔗
+          </button>
         </article>
       `;
       })
@@ -1219,8 +1243,13 @@ export function initDashboard() {
     };
 
     return `
-    ${escapeHTML(alert.prefix)}
-    <strong class="dashboard-missing-highlight">${escapeHTML(missingLabel[alert.missing] || "conteúdos")}</strong>
+    <strong class="dashboard-entity-highlight">
+      ${escapeHTML(alert.entityLabel)}
+    </strong>
+    ${escapeHTML(alert.middleText)}
+    <strong>
+      ${escapeHTML(missingLabel[alert.missing] || "conteúdos")}
+    </strong>
     ${escapeHTML(alert.suffix)}
   `;
   }
@@ -1248,6 +1277,18 @@ export function initDashboard() {
       behavior: "smooth",
       block: "start",
     });
+  }
+
+  function handleDashboardSectionOpen(event) {
+    const openButton = event.target.closest("[data-open-dashboard-section]");
+
+    if (!openButton) {
+      return;
+    }
+
+    const sectionId = openButton.dataset.openDashboardSection;
+
+    showAppSection(sectionId);
   }
 
   function handleDashboardNoteOpen(event) {
@@ -1306,6 +1347,7 @@ export function initDashboard() {
   document.addEventListener("errorReviews:changed", renderDashboard);
   document.addEventListener("notes:changed", renderDashboard);
   priorityNotesList.addEventListener("click", handleDashboardNoteOpen);
+  contentAlertsList.addEventListener("click", handleDashboardSectionOpen);
 
   renderDashboard();
 
