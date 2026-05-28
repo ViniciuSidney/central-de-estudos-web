@@ -38,8 +38,10 @@ export function initDashboard() {
   const topPendingThemesList = document.querySelector(
     "#dashboard-top-pending-themes",
   );
+  const priorityNotesList = document.querySelector("#dashboard-priority-notes");
 
   if (
+    !priorityNotesList ||
     !topPendingSubjectsList ||
     !topPendingThemesList ||
     !topErrorSubjectsList ||
@@ -78,6 +80,18 @@ export function initDashboard() {
 
   function getNotes() {
     return getCollection(NOTES_COLLECTION);
+  }
+
+  const NOTE_STATUS_LABELS = {
+    rascunho: "Rascunho",
+    finalizada: "Finalizada",
+    revisar: "Revisar depois",
+    flashcard: "Virar flashcard",
+    importante: "Importante",
+  };
+
+  function getNoteStatusLabel(status) {
+    return NOTE_STATUS_LABELS[status] || "Rascunho";
   }
 
   function escapeHTML(value) {
@@ -394,19 +408,19 @@ export function initDashboard() {
   function renderReviewCards(stats) {
     reviewCards.innerHTML = [
       createCard({
-        title: "Erros pendentes",
+        title: "Questões pendentes",
         value: stats.pendingErrors.length,
-        description: "Erros que ainda precisam de revisão.",
+        description: "Questões erradas que ainda precisam de revisão.",
       }),
       createCard({
-        title: "Erros revisados",
+        title: "Revisões feitas",
         value: stats.reviewedErrors.length,
-        description: "Erros já transformados em regra.",
+        description: "Erros já transformados em regra de correção.",
       }),
       createCard({
-        title: "Erros totais",
+        title: "Tentativas erradas",
         value: stats.wrongAttempts.length,
-        description: "Registro total de erros acompanhados.",
+        description: "Total de respostas incorretas registradas.",
       }),
       createCard({
         title: "Taxa de revisão",
@@ -674,6 +688,7 @@ export function initDashboard() {
           title: subject.name,
           description: "Matéria sem temas cadastrados.",
           type: "Matéria",
+          priority: 1,
         });
       }
     });
@@ -684,7 +699,7 @@ export function initDashboard() {
       });
 
       const themeNotes = notes.filter((note) => {
-        return note.themeId === theme.id;
+        return note.themeId === theme.id && !note.isArchived;
       });
 
       if (themeQuestions.length === 0) {
@@ -692,6 +707,7 @@ export function initDashboard() {
           title: theme.name,
           description: `Tema de ${getSubjectName(theme.subjectId)} sem questões.`,
           type: "Tema",
+          priority: 2,
         });
       }
 
@@ -700,11 +716,88 @@ export function initDashboard() {
           title: theme.name,
           description: `Tema de ${getSubjectName(theme.subjectId)} sem anotações.`,
           type: "Tema",
+          priority: 3,
         });
       }
     });
 
-    return alerts.slice(0, 8);
+    return alerts
+      .sort((firstAlert, secondAlert) => {
+        return firstAlert.priority - secondAlert.priority;
+      })
+      .slice(0, 5);
+  }
+
+  function getPriorityNotes() {
+    return getNotes()
+      .filter((note) => {
+        if (note.isArchived) {
+          return false;
+        }
+
+        return (
+          note.status === "revisar" ||
+          note.status === "importante" ||
+          note.isPinned ||
+          note.isFavorite
+        );
+      })
+      .sort((firstNote, secondNote) => {
+        const firstPinnedValue = firstNote.isPinned ? 1 : 0;
+        const secondPinnedValue = secondNote.isPinned ? 1 : 0;
+
+        if (firstPinnedValue !== secondPinnedValue) {
+          return secondPinnedValue - firstPinnedValue;
+        }
+
+        return new Date(secondNote.updatedAt) - new Date(firstNote.updatedAt);
+      })
+      .slice(0, 5);
+  }
+
+  function renderPriorityNotes() {
+    const priorityNotes = getPriorityNotes();
+
+    if (priorityNotes.length === 0) {
+      renderEmptyState(
+        priorityNotesList,
+        "Nenhuma anotação prioritária.",
+        "Anotações fixadas, favoritas, importantes ou para revisar aparecerão aqui.",
+      );
+      return;
+    }
+
+    priorityNotesList.innerHTML = priorityNotes
+      .map((note) => {
+        const markers = [
+          note.isPinned ? "📌 Fixada" : "",
+          note.isFavorite ? "⭐ Favorita" : "",
+          note.status === "importante" ? "Importante" : "",
+          note.status === "revisar" ? "Revisar" : "",
+        ].filter(Boolean);
+
+        return `
+        <article class="dashboard-list-item">
+          <div>
+            <strong>${escapeHTML(note.title)}</strong>
+            <span>
+              ${escapeHTML(getNoteStatusLabel(note.status))}
+              ${
+                markers.length > 0 ? `• ${escapeHTML(markers.join(" • "))}` : ""
+              }
+            </span>
+            <small>
+              Editada em ${escapeHTML(formatDateTime(note.updatedAt))}
+            </small>
+          </div>
+
+          <span class="dashboard-chip">
+            Anotação
+          </span>
+        </article>
+      `;
+      })
+      .join("");
   }
 
   function renderContentAlerts() {
@@ -1068,6 +1161,8 @@ export function initDashboard() {
 
     renderTopPendingSubjects();
     renderTopPendingThemes();
+
+    renderPriorityNotes();
   }
 
   dashboardTabButtons.forEach((button) => {
