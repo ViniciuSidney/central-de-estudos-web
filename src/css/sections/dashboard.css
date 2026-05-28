@@ -200,19 +200,19 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
 .dashboard-note-tags span {
   width: fit-content;
-  padding: 4px 8px;
 
   color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 800;
-
-  background: var(--success-soft);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .dashboard-link-button {
