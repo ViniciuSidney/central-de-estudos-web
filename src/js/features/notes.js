@@ -564,59 +564,57 @@ export function initNotes() {
           }
 				</button>
 
-				<div class="note-card__actions">
-					<button
-						class="note-card__quick-action ${note.isFavorite ? "is-active" : ""}"
-						type="button"
-						data-toggle-favorite-note="${note.id}"
-						aria-label="${note.isFavorite ? "Remover dos favoritos" : "Marcar como favorita"}"
-						title="${note.isFavorite ? "Desfavoritar" : "Favoritar"}"
-					>
-						${note.isFavorite ? "⭐" : "☆"}
-					</button>
+        <div class="note-card__actions note-card__actions--compact">
+          <button
+            class="note-card__action-button ${note.isFavorite ? "is-active" : ""}"
+            type="button"
+            data-toggle-favorite-note="${note.id}"
+            aria-label="${note.isFavorite ? "Remover dos favoritos" : "Favoritar anotação"}"
+            title="${note.isFavorite ? "Remover dos favoritos" : "Favoritar"}"
+          >
+            ⭐
+          </button>
 
-					<button
-						class="note-card__quick-action ${note.isPinned ? "is-active" : ""}"
-						type="button"
-						data-toggle-pin-note="${note.id}"
-						aria-label="${note.isPinned ? "Desfixar anotação" : "Fixar anotação"}"
-						title="${note.isPinned ? "Desfixar" : "Fixar"}"
-					>
-						📌
-					</button>
+          <button
+            class="note-card__action-button ${note.isPinned ? "is-active" : ""}"
+            type="button"
+            data-toggle-pin-note="${note.id}"
+            aria-label="${note.isPinned ? "Desfixar anotação" : "Fixar anotação"}"
+            title="${note.isPinned ? "Desfixar" : "Fixar"}"
+          >
+            📌
+          </button>
 
-					<details class="note-card__more">
-						<summary class="note-card__more-button">
-						Mais
-						</summary>
+          <button
+            class="note-card__action-button ${note.isArchived ? "is-active" : ""}"
+            type="button"
+            data-toggle-archive-note="${note.id}"
+            aria-label="${note.isArchived ? "Restaurar anotação" : "Arquivar anotação"}"
+            title="${note.isArchived ? "Restaurar" : "Arquivar"}"
+          >
+            📁
+          </button>
 
-            <div class="note-card__more-menu">
-              <button
-                class="note-card__more-item"
-                type="button"
-                data-edit-note="${note.id}"
-              >
-                Editar anotação
-              </button>
+          <button
+            class="note-card__action-button"
+            type="button"
+            data-edit-note="${note.id}"
+            aria-label="Editar anotação"
+            title="Editar"
+          >
+            ✏️
+          </button>
 
-              <button
-                class="note-card__more-item"
-                type="button"
-                data-toggle-archive-note="${note.id}"
-              >
-                ${note.isArchived ? "Restaurar anotação" : "Arquivar anotação"}
-              </button>
-
-              <button
-                class="note-card__more-item is-danger"
-                type="button"
-                data-delete-note="${note.id}"
-              >
-                Excluir anotação
-              </button>
-            </div>
-					</details>
-				</div>
+          <button
+            class="note-card__action-button note-card__action-button--danger"
+            type="button"
+            data-delete-note="${note.id}"
+            aria-label="Excluir anotação"
+            title="Excluir"
+          >
+            🗑️
+          </button>
+        </div>
 			`;
 
       notesList.appendChild(noteCard);
@@ -1549,10 +1547,11 @@ export function initNotes() {
   notesList.addEventListener("click", handleNoteDelete);
   notesList.addEventListener("click", handleNoteEdit);
   notesList.addEventListener("click", handleNoteView);
+  notesList.addEventListener("click", handleNoteMetadataActions);
+
   clearNoteFormButton.addEventListener("click", clearNoteForm);
   quickEditNoteButton.addEventListener("click", handleQuickEditButtonClick);
   closeViewNoteButton.addEventListener("click", handleCloseViewNoteButtonClick);
-  notesList.addEventListener("click", handleNoteMetadataActions);
   toggleNoteFiltersButton.addEventListener("click", toggleAdvancedNoteFilters);
   newNoteButton.addEventListener("click", prepareCreateNoteMode);
   backToNotesGalleryButton.addEventListener("click", returnToNotesGallery);
