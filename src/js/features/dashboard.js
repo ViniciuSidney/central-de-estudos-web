@@ -28,11 +28,20 @@ export function initDashboard() {
   const topErrorSubjectsList = document.querySelector(
     "#dashboard-top-error-subjects",
   );
-
   const topErrorThemesList = document.querySelector(
     "#dashboard-top-error-themes",
   );
+  const topPendingSubjectsList = document.querySelector(
+    "#dashboard-top-pending-subjects",
+  );
+
+  const topPendingThemesList = document.querySelector(
+    "#dashboard-top-pending-themes",
+  );
+
   if (
+    !topPendingSubjectsList ||
+    !topPendingThemesList ||
     !topErrorSubjectsList ||
     !topErrorThemesList ||
     !summaryCards ||
@@ -191,6 +200,7 @@ export function initDashboard() {
       review.reviewedAt ||
       review.createdAt ||
       review.updatedAt ||
+      review.answeredAt ||
       review.date ||
       null
     );
@@ -222,6 +232,47 @@ export function initDashboard() {
     );
   }
 
+  function getPendingErrorAttempts() {
+    const reviewedAttemptIds = new Set(
+      getErrorReviews().map((review) => {
+        return review.attemptId;
+      }),
+    );
+
+    const wrongAttempts = getAttempts().filter((attempt) => {
+      return getAttemptResult(attempt) === "wrong";
+    });
+
+    const lastWrongAttemptByQuestion = new Map();
+
+    wrongAttempts.forEach((attempt) => {
+      if (reviewedAttemptIds.has(attempt.id)) {
+        return;
+      }
+
+      const currentSavedAttempt = lastWrongAttemptByQuestion.get(
+        attempt.questionId,
+      );
+
+      if (
+        !currentSavedAttempt ||
+        new Date(getAttemptDate(attempt)) >
+          new Date(getAttemptDate(currentSavedAttempt))
+      ) {
+        lastWrongAttemptByQuestion.set(attempt.questionId, attempt);
+      }
+    });
+
+    return Array.from(lastWrongAttemptByQuestion.values()).sort(
+      (firstAttempt, secondAttempt) => {
+        return (
+          new Date(getAttemptDate(secondAttempt)) -
+          new Date(getAttemptDate(firstAttempt))
+        );
+      },
+    );
+  }
+
   function getGeneralStats() {
     const subjects = getSubjects();
     const themes = getThemes();
@@ -238,10 +289,8 @@ export function initDashboard() {
       return getAttemptResult(attempt) === "wrong";
     });
 
-    const pendingErrors = errorReviews.filter(isReviewPending);
-    const reviewedErrors = errorReviews.filter((review) => {
-      return !isReviewPending(review);
-    });
+    const pendingErrors = getPendingErrorAttempts();
+    const reviewedErrors = errorReviews;
 
     const accuracy =
       attempts.length > 0
@@ -356,14 +405,14 @@ export function initDashboard() {
       }),
       createCard({
         title: "Erros totais",
-        value: stats.errorReviews.length,
+        value: stats.wrongAttempts.length,
         description: "Registro total de erros acompanhados.",
       }),
       createCard({
         title: "Taxa de revisão",
         value: formatPercent(
-          stats.errorReviews.length > 0
-            ? (stats.reviewedErrors.length / stats.errorReviews.length) * 100
+          stats.wrongAttempts.length > 0
+            ? (stats.reviewedErrors.length / stats.wrongAttempts.length) * 100
             : 0,
         ),
         description: "Proporção de erros já revisados.",
@@ -855,6 +904,151 @@ export function initDashboard() {
       .join("");
   }
 
+  function sortRankingByCount(firstItem, secondItem) {
+    return secondItem.count - firstItem.count;
+  }
+
+  function getTopPendingSubjects() {
+    const stats = getGeneralStats();
+    const pendingErrors = stats.pendingErrors;
+
+    const pendingBySubject = new Map();
+
+    pendingErrors.forEach((review) => {
+      const questionId = getReviewQuestionId(review);
+      const question = questionId ? getQuestionById(questionId) : null;
+
+      if (!question || !question.subjectId) {
+        return;
+      }
+
+      const subjectName = getSubjectName(question.subjectId);
+      const currentItem = pendingBySubject.get(question.subjectId) || {
+        id: question.subjectId,
+        name: subjectName,
+        count: 0,
+      };
+
+      currentItem.count += 1;
+
+      pendingBySubject.set(question.subjectId, currentItem);
+    });
+
+    return Array.from(pendingBySubject.values())
+      .sort(sortRankingByCount)
+      .slice(0, 5);
+  }
+
+  function getTopPendingThemes() {
+    const stats = getGeneralStats();
+    const pendingErrors = stats.pendingErrors;
+
+    const pendingByTheme = new Map();
+
+    pendingErrors.forEach((review) => {
+      const questionId = getReviewQuestionId(review);
+      const question = questionId ? getQuestionById(questionId) : null;
+
+      if (!question || !question.themeId) {
+        return;
+      }
+
+      const theme = getThemeById(question.themeId);
+      const themeName = theme ? theme.name : "Tema removido";
+      const subjectName = question.subjectId
+        ? getSubjectName(question.subjectId)
+        : "Matéria removida";
+
+      const currentItem = pendingByTheme.get(question.themeId) || {
+        id: question.themeId,
+        name: themeName,
+        subjectName,
+        count: 0,
+      };
+
+      currentItem.count += 1;
+
+      pendingByTheme.set(question.themeId, currentItem);
+    });
+
+    return Array.from(pendingByTheme.values())
+      .sort(sortRankingByCount)
+      .slice(0, 5);
+  }
+
+  function renderTopPendingSubjects() {
+    const topPendingSubjects = getTopPendingSubjects();
+
+    if (topPendingSubjects.length === 0) {
+      renderEmptyState(
+        topPendingSubjectsList,
+        "Nenhuma matéria com pendência.",
+        "Quando houver erros pendentes, as matérias mais recorrentes aparecerão aqui.",
+      );
+      return;
+    }
+
+    topPendingSubjectsList.innerHTML = topPendingSubjects
+      .map((item, index) => {
+        return `
+        <article class="dashboard-rank-item">
+          <span class="dashboard-rank-position">
+            ${String(index + 1).padStart(2, "0")}
+          </span>
+
+          <div>
+            <strong>${escapeHTML(item.name)}</strong>
+            <span>
+              ${item.count} ${item.count === 1 ? "erro pendente" : "erros pendentes"}
+            </span>
+          </div>
+
+          <span class="dashboard-chip is-danger">
+            ${item.count}
+          </span>
+        </article>
+      `;
+      })
+      .join("");
+  }
+
+  function renderTopPendingThemes() {
+    const topPendingThemes = getTopPendingThemes();
+
+    if (topPendingThemes.length === 0) {
+      renderEmptyState(
+        topPendingThemesList,
+        "Nenhum tema com pendência.",
+        "Quando houver erros pendentes, os temas mais recorrentes aparecerão aqui.",
+      );
+      return;
+    }
+
+    topPendingThemesList.innerHTML = topPendingThemes
+      .map((item, index) => {
+        return `
+        <article class="dashboard-rank-item">
+          <span class="dashboard-rank-position">
+            ${String(index + 1).padStart(2, "0")}
+          </span>
+
+          <div>
+            <strong>${escapeHTML(item.name)}</strong>
+            <span>
+              ${escapeHTML(item.subjectName)} •
+              ${item.count} ${item.count === 1 ? "erro pendente" : "erros pendentes"}
+            </span>
+          </div>
+
+          <span class="dashboard-chip is-danger">
+            ${item.count}
+          </span>
+        </article>
+      `;
+      })
+      .join("");
+  }
+
   //------------------------------------------------------
 
   function renderDashboard() {
@@ -868,6 +1062,12 @@ export function initDashboard() {
     renderSubjectPerformance();
     renderPendingErrors(stats);
     renderContentAlerts();
+
+    renderTopErrorSubjects();
+    renderTopErrorThemes();
+
+    renderTopPendingSubjects();
+    renderTopPendingThemes();
   }
 
   dashboardTabButtons.forEach((button) => {
