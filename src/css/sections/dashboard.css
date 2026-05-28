@@ -248,7 +248,12 @@
   border-color: var(--accent);
 }
 
-.dashboard-entity-highlight {
+.dashboard-list-item .dashboard-entity-highlight {
   color: var(--accent);
+  font-weight: 900;
+}
+
+.dashboard-list-item .dashboard-missing-word {
+  color: var(--text);
   font-weight: 900;
 }

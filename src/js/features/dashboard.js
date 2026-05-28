@@ -1247,7 +1247,7 @@ export function initDashboard() {
       ${escapeHTML(alert.entityLabel)}
     </strong>
     ${escapeHTML(alert.middleText)}
-    <strong>
+    <strong class="dashboard-missing-word">
       ${escapeHTML(missingLabel[alert.missing] || "conteúdos")}
     </strong>
     ${escapeHTML(alert.suffix)}
