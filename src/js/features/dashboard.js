@@ -198,9 +198,18 @@ export function initDashboard() {
   }
 
   function getQuestionTitle(questionId) {
-    const questions = getQuestions();
-    const questionIndex = questions.findIndex((question) => {
-      return question.id === questionId;
+    const question = getQuestionById(questionId);
+
+    if (!question) {
+      return "Questão removida";
+    }
+
+    const questionsFromTheme = getQuestions().filter((currentQuestion) => {
+      return currentQuestion.themeId === question.themeId;
+    });
+
+    const questionIndex = questionsFromTheme.findIndex((currentQuestion) => {
+      return currentQuestion.id === question.id;
     });
 
     if (questionIndex === -1) {
@@ -283,12 +292,6 @@ export function initDashboard() {
   }
 
   function getPendingErrorAttempts() {
-    const reviewedAttemptIds = new Set(
-      getErrorReviews().map((review) => {
-        return review.attemptId;
-      }),
-    );
-
     const wrongAttempts = getAttempts().filter((attempt) => {
       return getAttemptResult(attempt) === "wrong";
     });
@@ -296,31 +299,37 @@ export function initDashboard() {
     const lastWrongAttemptByQuestion = new Map();
 
     wrongAttempts.forEach((attempt) => {
-      if (reviewedAttemptIds.has(attempt.id)) {
-        return;
-      }
-
-      const currentSavedAttempt = lastWrongAttemptByQuestion.get(
-        attempt.questionId,
-      );
+      const savedAttempt = lastWrongAttemptByQuestion.get(attempt.questionId);
 
       if (
-        !currentSavedAttempt ||
+        !savedAttempt ||
         new Date(getAttemptDate(attempt)) >
-          new Date(getAttemptDate(currentSavedAttempt))
+          new Date(getAttemptDate(savedAttempt))
       ) {
         lastWrongAttemptByQuestion.set(attempt.questionId, attempt);
       }
     });
 
-    return Array.from(lastWrongAttemptByQuestion.values()).sort(
-      (firstAttempt, secondAttempt) => {
+    const reviewedAttemptIds = new Set(
+      getErrorReviews()
+        .filter((review) => {
+          return review.isReviewed;
+        })
+        .map((review) => {
+          return review.attemptId;
+        }),
+    );
+
+    return Array.from(lastWrongAttemptByQuestion.values())
+      .filter((attempt) => {
+        return !reviewedAttemptIds.has(attempt.id);
+      })
+      .sort((firstAttempt, secondAttempt) => {
         return (
           new Date(getAttemptDate(secondAttempt)) -
           new Date(getAttemptDate(firstAttempt))
         );
-      },
-    );
+      });
   }
 
   function getGeneralStats() {
@@ -340,7 +349,10 @@ export function initDashboard() {
     });
 
     const pendingErrors = getPendingErrorAttempts();
-    const reviewedErrors = errorReviews;
+
+    const reviewedErrors = errorReviews.filter((review) => {
+      return review.isReviewed;
+    });
 
     const accuracy =
       attempts.length > 0
@@ -1399,10 +1411,10 @@ export function initDashboard() {
   document.addEventListener("attempts:changed", renderDashboard);
   document.addEventListener("errorReviews:changed", renderDashboard);
   document.addEventListener("notes:changed", renderDashboard);
-  
+
   priorityNotesList.addEventListener("click", handleDashboardNoteOpen);
   contentAlertsList.addEventListener("click", handleDashboardSectionOpen);
-pendingErrorsList.addEventListener("click", handleDashboardReviewErrorOpen);
+  pendingErrorsList.addEventListener("click", handleDashboardReviewErrorOpen);
   renderDashboard();
 
   console.log("Dashboard inteligente carregado.");
