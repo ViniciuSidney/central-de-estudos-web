@@ -1512,6 +1512,24 @@ export function initNotes() {
     openViewNoteModal(note);
   }
 
+  function handleExternalNoteCreate(event) {
+    const subjectId = event.detail?.subjectId || "";
+    const themeId = event.detail?.themeId || "";
+
+    exitEditMode();
+
+    noteSubjectSelect.value = subjectId;
+    renderThemeOptions();
+
+    noteThemeSelect.value = themeId;
+
+    showNoteTab("form");
+
+    noteTitleInput.focus();
+
+    setNoteMessage("Crie uma anotação para completar este tema.", "success");
+  }
+
   //-------------------------------------
 
   document.addEventListener("notes:open-note", handleExternalNoteOpen);
@@ -1551,6 +1569,8 @@ export function initNotes() {
       closeMarkdownHelpModal();
     }
   });
+
+  document.addEventListener("notes:prepare-create", handleExternalNoteCreate);
 
   noteTabButtons.forEach((button) => {
     button.addEventListener("click", () => {

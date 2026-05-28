@@ -1029,6 +1029,48 @@ export function initQuestions() {
     renderQuestions();
   }
 
+  function handleExternalQuestionCreate(event) {
+    const subjectId = event.detail?.subjectId;
+    const themeId = event.detail?.themeId;
+
+    if (!subjectId || !themeId) {
+      return;
+    }
+
+    const subjectExists = getSubjects().some((subject) => {
+      return subject.id === subjectId;
+    });
+
+    const themeExists = getThemes().some((theme) => {
+      return theme.id === themeId && theme.subjectId === subjectId;
+    });
+
+    if (!subjectExists || !themeExists) {
+      return;
+    }
+
+    if (editingQuestionId) {
+      exitEditMode();
+    }
+
+    questionSubjectSelect.value = subjectId;
+    renderThemeOptions();
+
+    questionThemeSelect.value = themeId;
+    setQuestionFormTabEnabled(true);
+    showQuestionTab("form");
+    renderQuestions();
+
+    questionStatementInput.focus();
+
+    setQuestionFormMessage(
+      "Cadastre uma questão para completar este tema.",
+      "success",
+    );
+  }
+
+  //-----------------------------------------------------
+
   questionForm.addEventListener("submit", handleQuestionSubmit);
   questionSubjectSelect.addEventListener("change", handleSubjectChange);
   questionThemeSelect.addEventListener("change", handleThemeChange);
@@ -1043,6 +1085,10 @@ export function initQuestions() {
   moveQuestionConfirmButton.addEventListener("click", confirmMoveQuestion);
   moveQuestionModal.addEventListener("click", handleMoveModalOverlayClick);
   document.addEventListener("keydown", handleMoveModalEscapeKey);
+  document.addEventListener(
+    "questions:prepare-create",
+    handleExternalQuestionCreate,
+  );
 
   questionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {

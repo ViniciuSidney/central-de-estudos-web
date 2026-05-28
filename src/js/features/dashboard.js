@@ -727,6 +727,9 @@ export function initDashboard() {
           missing: "themes",
           suffix: " cadastrados.",
           targetSection: "themes",
+          targetAction: "create-theme",
+          subjectId: subject.id,
+          themeId: null,
           priority: 1,
         });
       }
@@ -749,6 +752,9 @@ export function initDashboard() {
           missing: "questions",
           suffix: ".",
           targetSection: "questions",
+          targetAction: "create-question",
+          subjectId: theme.subjectId,
+          themeId: theme.id,
           priority: 2,
         });
       }
@@ -761,6 +767,9 @@ export function initDashboard() {
           missing: "notes",
           suffix: ".",
           targetSection: "notes",
+          targetAction: "create-note",
+          subjectId: theme.subjectId,
+          themeId: theme.id,
           priority: 3,
         });
       }
@@ -910,6 +919,9 @@ export function initDashboard() {
             class="dashboard-link-button"
             type="button"
             data-open-dashboard-section="${escapeHTML(alert.targetSection)}"
+            data-dashboard-action="${escapeHTML(alert.targetAction)}"
+            data-dashboard-subject-id="${escapeHTML(alert.subjectId || "")}"
+            data-dashboard-theme-id="${escapeHTML(alert.themeId || "")}"
             aria-label="Ir para a seção relacionada"
             title="Ir para seção"
           >
@@ -1287,8 +1299,32 @@ export function initDashboard() {
     }
 
     const sectionId = openButton.dataset.openDashboardSection;
+    const action = openButton.dataset.dashboardAction;
+    const subjectId = openButton.dataset.dashboardSubjectId || null;
+    const themeId = openButton.dataset.dashboardThemeId || null;
 
     showAppSection(sectionId);
+
+    const eventByAction = {
+      "create-theme": "themes:prepare-create",
+      "create-question": "questions:prepare-create",
+      "create-note": "notes:prepare-create",
+    };
+
+    const eventName = eventByAction[action];
+
+    if (!eventName) {
+      return;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent(eventName, {
+        detail: {
+          subjectId,
+          themeId,
+        },
+      }),
+    );
   }
 
   function handleDashboardNoteOpen(event) {

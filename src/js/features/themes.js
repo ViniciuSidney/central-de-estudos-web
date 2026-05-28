@@ -356,11 +356,40 @@ export function initThemes() {
     renderThemes();
   }
 
+  function handleExternalThemeCreate(event) {
+    const subjectId = event.detail?.subjectId;
+
+    if (!subjectId) {
+      return;
+    }
+
+    const subjectExists = getSubjects().some((subject) => {
+      return subject.id === subjectId;
+    });
+
+    if (!subjectExists) {
+      return;
+    }
+
+    themeSubjectSelect.value = subjectId;
+    renderThemes();
+
+    themeNameInput.focus();
+
+    setThemeFormMessage(
+      "Cadastre um tema para completar esta matéria.",
+      "success",
+    );
+  }
+
+  //-----------------------------------------------------
+
   themeForm.addEventListener("submit", handleThemeSubmit);
   themeSubjectSelect.addEventListener("change", handleSubjectChange);
   clearThemeFormButton.addEventListener("click", clearThemeForm);
   themesList.addEventListener("click", handleThemeDelete);
   document.addEventListener("subjects:changed", renderSubjectOptions);
+  document.addEventListener("themes:prepare-create", handleExternalThemeCreate);
 
   renderSubjectOptions();
 
