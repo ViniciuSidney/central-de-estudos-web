@@ -458,7 +458,7 @@ export function initDashboard() {
       createCard({
         title: "Questões pendentes",
         value: stats.pendingErrors.length,
-        description: "Questões erradas que ainda precisam de revisão.",
+        description: "Erros que ainda precisam ser revisados.",
       }),
       createCard({
         title: "Revisões feitas",
