@@ -1,65 +1,106 @@
-export function initNavigation() {
-  const sectionButtons = document.querySelectorAll("[data-section-target]");
-  const navCards = document.querySelectorAll(".nav-card");
-  const appSections = document.querySelectorAll(".app-section");
-  const contentPanel = document.querySelector(".content-panel");
-  const navGroupButtons = document.querySelectorAll("[data-nav-group]");
+const SECTION_NAV_GROUPS = {
+  dashboard: "summary",
 
-  if (!sectionButtons.length || !appSections.length || !contentPanel) {
+  subjects: "management",
+  themes: "management",
+  questions: "management",
+
+  solve: "study",
+  notes: "study",
+  reviews: "study",
+};
+
+export function initNavigation() {
+  const navTabButtons = document.querySelectorAll("[data-nav-group]");
+  const navCards = document.querySelectorAll("[data-section]");
+  const sections = document.querySelectorAll(".app-section");
+
+  if (!navTabButtons.length || !navCards.length || !sections.length) {
     return;
   }
 
-  function showNavGroup(groupName) {
-    navGroupButtons.forEach((button) => {
-      const isSelectedGroup = button.dataset.navGroup === groupName;
+  function getNavGroupFromSection(sectionId) {
+    return SECTION_NAV_GROUPS[sectionId] || "summary";
+  }
 
-      button.classList.toggle("is-active", isSelectedGroup);
+  function setActiveNavGroup(groupName) {
+    navTabButtons.forEach((button) => {
+      const isActive = button.dataset.navGroup === groupName;
+
+      button.classList.toggle("is-active", isActive);
     });
 
     navCards.forEach((card) => {
-      const cardCategory = card.dataset.navCategory;
+      const cardGroup = card.dataset.navCardGroup;
 
-      if (!cardCategory) {
+      if (!cardGroup) {
         return;
       }
 
-      card.classList.toggle("is-hidden-by-group", cardCategory !== groupName);
+      card.classList.toggle("is-hidden-by-group", cardGroup !== groupName);
     });
   }
 
-  navGroupButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      showNavGroup(button.dataset.navGroup);
-    });
-  });
-
-  showNavGroup("summary");
-  showNavGroup("management");
-
-  function showSection(sectionId) {
-    appSections.forEach((section) => {
-      const isSelectedSection = section.id === sectionId;
-
-      section.classList.toggle("is-visible", isSelectedSection);
+  function setActiveSection(sectionId) {
+    sections.forEach((section) => {
+      section.classList.toggle("is-visible", section.id === sectionId);
     });
 
     navCards.forEach((card) => {
-      const isSelectedCard = card.dataset.sectionTarget === sectionId;
-
-      card.classList.toggle("is-active", isSelectedCard);
-    });
-
-    contentPanel.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
+      card.classList.toggle("is-active", card.dataset.section === sectionId);
     });
   }
 
-  sectionButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const sectionId = button.dataset.sectionTarget;
+  function navigateToSection(sectionId, shouldScroll = true) {
+    const groupName = getNavGroupFromSection(sectionId);
 
-      showSection(sectionId);
+    setActiveNavGroup(groupName);
+    setActiveSection(sectionId);
+
+    if (shouldScroll) {
+      document.querySelector(`#${sectionId}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }
+
+  navTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const groupName = button.dataset.navGroup;
+
+      setActiveNavGroup(groupName);
+
+      const firstCardFromGroup = Array.from(navCards).find((card) => {
+        return card.dataset.navCardGroup === groupName;
+      });
+
+      if (firstCardFromGroup) {
+        navigateToSection(firstCardFromGroup.dataset.section, false);
+      }
     });
   });
+
+  navCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      navigateToSection(card.dataset.section);
+    });
+  });
+
+  document.addEventListener("app:navigate", (event) => {
+    const sectionId = event.detail?.sectionId;
+
+    if (!sectionId) {
+      return;
+    }
+
+    navigateToSection(sectionId);
+  });
+
+  const initialVisibleSection = document.querySelector(".app-section.is-visible");
+  const initialSectionId = initialVisibleSection?.id || "dashboard";
+
+  navigateToSection(initialSectionId, false);
+
+  console.log("Navegação carregada.");
 }

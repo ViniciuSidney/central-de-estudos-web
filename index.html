@@ -54,6 +54,14 @@
 
         <div class="nav-tabs">
           <button
+            class="nav-tab-button is-active"
+            type="button"
+            data-nav-group="summary"
+          >
+            Resumo
+          </button>
+
+          <button
             class="nav-tab-button"
             type="button"
             data-nav-group="management"
@@ -64,21 +72,15 @@
           <button class="nav-tab-button" type="button" data-nav-group="study">
             Estudo
           </button>
-
-          <button
-            class="nav-tab-button is-active"
-            type="button"
-            data-nav-group="summary"
-          >
-            Resumo
-          </button>
         </div>
 
         <div class="nav-grid">
           <button
-            class="nav-card"
+            class="nav-card is-active"
             type="button"
+            data-section="dashboard"
             data-section-target="dashboard"
+            data-nav-card-group="summary"
             data-nav-category="summary"
           >
             <span>📊</span>
@@ -87,9 +89,11 @@
           </button>
 
           <button
-            class="nav-card"
+            class="nav-card is-hidden-by-group"
             type="button"
+            data-section="subjects"
             data-section-target="subjects"
+            data-nav-card-group="management"
             data-nav-category="management"
           >
             <span>📘</span>
@@ -98,9 +102,11 @@
           </button>
 
           <button
-            class="nav-card"
+            class="nav-card is-hidden-by-group"
             type="button"
+            data-section="themes"
             data-section-target="themes"
+            data-nav-card-group="management"
             data-nav-category="management"
           >
             <span>🧩</span>
@@ -109,9 +115,11 @@
           </button>
 
           <button
-            class="nav-card"
+            class="nav-card is-hidden-by-group"
             type="button"
+            data-section="questions"
             data-section-target="questions"
+            data-nav-card-group="management"
             data-nav-category="management"
           >
             <span>📝</span>
@@ -120,9 +128,11 @@
           </button>
 
           <button
-            class="nav-card"
+            class="nav-card is-hidden-by-group"
             type="button"
+            data-section="solve"
             data-section-target="solve"
+            data-nav-card-group="study"
             data-nav-category="study"
           >
             <span>🧠</span>
@@ -131,25 +141,29 @@
           </button>
 
           <button
-            class="nav-card"
+            class="nav-card is-hidden-by-group"
             type="button"
-            data-section-target="reviews"
-            data-nav-category="study"
-          >
-            <span>🔁</span>
-            <strong>Revisões</strong>
-            <small>Revise seus erros</small>
-          </button>
-
-          <button
-            class="nav-card"
-            type="button"
+            data-section="notes"
             data-section-target="notes"
+            data-nav-card-group="study"
             data-nav-category="study"
           >
             <span>🗒️</span>
             <strong>Anotações</strong>
             <small>Registre resumos</small>
+          </button>
+
+          <button
+            class="nav-card is-hidden-by-group"
+            type="button"
+            data-section="reviews"
+            data-section-target="reviews"
+            data-nav-card-group="study"
+            data-nav-category="study"
+          >
+            <span>🔁</span>
+            <strong>Revisões</strong>
+            <small>Revise seus erros</small>
           </button>
         </div>
       </section>

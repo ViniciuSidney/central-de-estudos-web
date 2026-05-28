@@ -1266,29 +1266,14 @@ export function initDashboard() {
   `;
   }
 
-  function showAppSection(sectionId) {
-    document.querySelectorAll(".app-section").forEach((section) => {
-      section.classList.toggle("is-visible", section.id === sectionId);
-    });
-
-    document.querySelectorAll("[data-section]").forEach((button) => {
-      button.classList.toggle(
-        "is-active",
-        button.dataset.section === sectionId,
-      );
-    });
-
-    document.querySelectorAll("[data-target-section]").forEach((button) => {
-      button.classList.toggle(
-        "is-active",
-        button.dataset.targetSection === sectionId,
-      );
-    });
-
-    document.querySelector(`#${sectionId}`)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  function requestAppNavigation(sectionId) {
+    document.dispatchEvent(
+      new CustomEvent("app:navigate", {
+        detail: {
+          sectionId,
+        },
+      }),
+    );
   }
 
   function handleDashboardSectionOpen(event) {
@@ -1303,7 +1288,7 @@ export function initDashboard() {
     const subjectId = openButton.dataset.dashboardSubjectId || null;
     const themeId = openButton.dataset.dashboardThemeId || null;
 
-    showAppSection(sectionId);
+    requestAppNavigation(sectionId);
 
     const eventByAction = {
       "create-theme": "themes:prepare-create",
@@ -1336,7 +1321,7 @@ export function initDashboard() {
 
     const noteId = openButton.dataset.openDashboardNote;
 
-    showAppSection("notes");
+    requestAppNavigation("notes");
 
     document.dispatchEvent(
       new CustomEvent("notes:open-note", {
