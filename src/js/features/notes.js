@@ -1495,7 +1495,26 @@ export function initNotes() {
     enterQuickEditMode();
   }
 
+  function handleExternalNoteOpen(event) {
+    const noteId = event.detail?.noteId;
+
+    if (!noteId) {
+      return;
+    }
+
+    const note = getNoteById(noteId);
+
+    if (!note) {
+      return;
+    }
+
+    showNoteTab("gallery");
+    openViewNoteModal(note);
+  }
+
   //-------------------------------------
+
+  document.addEventListener("notes:open-note", handleExternalNoteOpen);
 
   noteForm.addEventListener("submit", handleNoteSubmit);
 

@@ -82,6 +82,30 @@ export function initDashboard() {
     return getCollection(NOTES_COLLECTION);
   }
 
+  function getNoteSubjectName(note) {
+    if (!note.subjectId) {
+      return "Livre";
+    }
+
+    return getSubjectName(note.subjectId);
+  }
+
+  function getNoteThemeName(note) {
+    if (!note.themeId) {
+      return "Sem tema";
+    }
+
+    return getThemeName(note.themeId);
+  }
+
+  function getShortTags(tags, limit = 2) {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return [];
+    }
+
+    return tags.slice(0, limit);
+  }
+
   const NOTE_STATUS_LABELS = {
     rascunho: "Rascunho",
     finalizada: "Finalizada",
@@ -686,7 +710,9 @@ export function initDashboard() {
       if (subjectThemes.length === 0) {
         alerts.push({
           title: subject.name,
-          description: "Matéria sem temas cadastrados.",
+          prefix: "Matéria sem ",
+          missing: "themes",
+          suffix: " cadastrados.",
           type: "Matéria",
           priority: 1,
         });
@@ -705,7 +731,9 @@ export function initDashboard() {
       if (themeQuestions.length === 0) {
         alerts.push({
           title: theme.name,
-          description: `Tema de ${getSubjectName(theme.subjectId)} sem questões.`,
+          prefix: `Tema de ${getSubjectName(theme.subjectId)} sem `,
+          missing: "questions",
+          suffix: ".",
           type: "Tema",
           priority: 2,
         });
@@ -714,7 +742,9 @@ export function initDashboard() {
       if (themeNotes.length === 0) {
         alerts.push({
           title: theme.name,
-          description: `Tema de ${getSubjectName(theme.subjectId)} sem anotações.`,
+          prefix: `Tema de ${getSubjectName(theme.subjectId)} sem `,
+          missing: "notes",
+          suffix: ".",
           type: "Tema",
           priority: 3,
         });
@@ -776,24 +806,63 @@ export function initDashboard() {
           note.status === "revisar" ? "Revisar" : "",
         ].filter(Boolean);
 
+        const visibleTags = getShortTags(note.tags);
+        const hiddenTagsCount = Array.isArray(note.tags)
+          ? Math.max(note.tags.length - visibleTags.length, 0)
+          : 0;
+
         return `
-        <article class="dashboard-list-item">
+        <article class="dashboard-list-item dashboard-note-priority-item">
           <div>
             <strong>${escapeHTML(note.title)}</strong>
+
             <span>
               ${escapeHTML(getNoteStatusLabel(note.status))}
               ${
                 markers.length > 0 ? `• ${escapeHTML(markers.join(" • "))}` : ""
               }
             </span>
+
+            <span>
+              ${escapeHTML(getNoteSubjectName(note))}
+              •
+              ${escapeHTML(getNoteThemeName(note))}
+            </span>
+
+            ${
+              visibleTags.length > 0
+                ? `
+                  <div class="dashboard-note-tags">
+                    ${visibleTags
+                      .map((tag) => {
+                        return `<span>#${escapeHTML(tag)}</span>`;
+                      })
+                      .join("")}
+
+                    ${
+                      hiddenTagsCount > 0
+                        ? `<span>+${hiddenTagsCount}</span>`
+                        : ""
+                    }
+                  </div>
+                `
+                : ""
+            }
+
             <small>
               Editada em ${escapeHTML(formatDateTime(note.updatedAt))}
             </small>
           </div>
 
-          <span class="dashboard-chip">
-            Anotação
-          </span>
+          <button
+            class="dashboard-link-button"
+            type="button"
+            data-open-dashboard-note="${note.id}"
+            aria-label="Abrir anotação ${escapeHTML(note.title)}"
+            title="Abrir anotação"
+          >
+            🔗
+          </button>
         </article>
       `;
       })
@@ -815,15 +884,15 @@ export function initDashboard() {
     contentAlertsList.innerHTML = alerts
       .map((alert) => {
         return `
-          <article class="dashboard-list-item">
-            <div>
-              <strong>${escapeHTML(alert.title)}</strong>
-              <span>${escapeHTML(alert.description)}</span>
-            </div>
+        <article class="dashboard-list-item">
+          <div>
+            <strong>${escapeHTML(alert.title)}</strong>
+            <span>${getContentAlertMessage(alert)}</span>
+          </div>
 
-            <span class="dashboard-chip">${escapeHTML(alert.type)}</span>
-          </article>
-        `;
+          <span class="dashboard-chip">${escapeHTML(alert.type)}</span>
+        </article>
+      `;
       })
       .join("");
   }
@@ -1142,6 +1211,65 @@ export function initDashboard() {
       .join("");
   }
 
+  function getContentAlertMessage(alert) {
+    const missingLabel = {
+      themes: "temas",
+      questions: "questões",
+      notes: "anotações",
+    };
+
+    return `
+    ${escapeHTML(alert.prefix)}
+    <strong class="dashboard-missing-highlight">${escapeHTML(missingLabel[alert.missing] || "conteúdos")}</strong>
+    ${escapeHTML(alert.suffix)}
+  `;
+  }
+
+  function showAppSection(sectionId) {
+    document.querySelectorAll(".app-section").forEach((section) => {
+      section.classList.toggle("is-visible", section.id === sectionId);
+    });
+
+    document.querySelectorAll("[data-section]").forEach((button) => {
+      button.classList.toggle(
+        "is-active",
+        button.dataset.section === sectionId,
+      );
+    });
+
+    document.querySelectorAll("[data-target-section]").forEach((button) => {
+      button.classList.toggle(
+        "is-active",
+        button.dataset.targetSection === sectionId,
+      );
+    });
+
+    document.querySelector(`#${sectionId}`)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
+  function handleDashboardNoteOpen(event) {
+    const openButton = event.target.closest("[data-open-dashboard-note]");
+
+    if (!openButton) {
+      return;
+    }
+
+    const noteId = openButton.dataset.openDashboardNote;
+
+    showAppSection("notes");
+
+    document.dispatchEvent(
+      new CustomEvent("notes:open-note", {
+        detail: {
+          noteId,
+        },
+      }),
+    );
+  }
+
   //------------------------------------------------------
 
   function renderDashboard() {
@@ -1177,6 +1305,7 @@ export function initDashboard() {
   document.addEventListener("attempts:changed", renderDashboard);
   document.addEventListener("errorReviews:changed", renderDashboard);
   document.addEventListener("notes:changed", renderDashboard);
+  priorityNotesList.addEventListener("click", handleDashboardNoteOpen);
 
   renderDashboard();
 

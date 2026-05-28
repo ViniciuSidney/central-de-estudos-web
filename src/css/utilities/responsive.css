@@ -316,4 +316,12 @@
     width: fit-content;
     padding: 6px 10px;
   }
+
+  .dashboard-note-priority-item {
+    align-items: stretch;
+  }
+
+  .dashboard-link-button {
+    width: 100%;
+  }
 }

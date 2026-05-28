@@ -59,6 +59,8 @@ A proposta é evitar que matérias, temas, questões, anotações e correções 
 - Criar o primeiro formulário real do sistema.
 - Começar a implementação da v0.2 com o cadastro de matérias.
 
+- Nos cards de anotações: Substituir "Mais" pela adição de 📁, ✏️ e 🗑️, juntamente com ⭐ e 📌
+
 ---
 
 ## Ideias futuras
