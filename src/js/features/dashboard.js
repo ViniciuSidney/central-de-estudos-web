@@ -677,31 +677,41 @@ export function initDashboard() {
     }
 
     pendingErrorsList.innerHTML = pendingErrors
-      .map((review) => {
-        const questionId = getReviewQuestionId(review);
+      .map((attempt) => {
+        const questionId = getReviewQuestionId(attempt);
         const question = questionId ? getQuestionById(questionId) : null;
 
         return `
-          <article class="dashboard-list-item">
-            <div>
-              <strong>${escapeHTML(
-                questionId ? getQuestionTitle(questionId) : "Erro pendente",
-              )}</strong>
-              <span>
-                ${
-                  question
-                    ? `${escapeHTML(getSubjectName(question.subjectId))} • ${escapeHTML(
-                        getThemeName(question.themeId),
-                      )}`
-                    : "Questão não encontrada."
-                }
-              </span>
-              <small>${escapeHTML(formatDateTime(getReviewDate(review)))}</small>
-            </div>
+        <article class="dashboard-list-item dashboard-pending-error-item">
+          <div>
+            <strong>${escapeHTML(
+              questionId ? getQuestionTitle(questionId) : "Erro pendente",
+            )}</strong>
 
-            <span class="dashboard-chip is-danger">Pendente</span>
-          </article>
-        `;
+            <span>
+              ${
+                question
+                  ? `${escapeHTML(getSubjectName(question.subjectId))} • ${escapeHTML(
+                      getThemeName(question.themeId),
+                    )}`
+                  : "Questão não encontrada."
+              }
+            </span>
+
+            <small>${escapeHTML(formatDateTime(getReviewDate(attempt)))}</small>
+          </div>
+
+          <button
+            class="dashboard-link-button dashboard-link-button--danger"
+            type="button"
+            data-open-dashboard-review-error="${escapeHTML(attempt.id)}"
+            aria-label="Revisar erro pendente"
+            title="Revisar erro"
+          >
+            🔗
+          </button>
+        </article>
+      `;
       })
       .join("");
   }
@@ -1332,6 +1342,28 @@ export function initDashboard() {
     );
   }
 
+  function handleDashboardReviewErrorOpen(event) {
+    const openButton = event.target.closest(
+      "[data-open-dashboard-review-error]",
+    );
+
+    if (!openButton) {
+      return;
+    }
+
+    const attemptId = openButton.dataset.openDashboardReviewError;
+
+    requestAppNavigation("reviews");
+
+    document.dispatchEvent(
+      new CustomEvent("reviews:open-error-review", {
+        detail: {
+          attemptId,
+        },
+      }),
+    );
+  }
+
   //------------------------------------------------------
 
   function renderDashboard() {
@@ -1367,9 +1399,10 @@ export function initDashboard() {
   document.addEventListener("attempts:changed", renderDashboard);
   document.addEventListener("errorReviews:changed", renderDashboard);
   document.addEventListener("notes:changed", renderDashboard);
+  
   priorityNotesList.addEventListener("click", handleDashboardNoteOpen);
   contentAlertsList.addEventListener("click", handleDashboardSectionOpen);
-
+pendingErrorsList.addEventListener("click", handleDashboardReviewErrorOpen);
   renderDashboard();
 
   console.log("Dashboard inteligente carregado.");

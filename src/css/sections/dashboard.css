@@ -257,3 +257,11 @@
   color: var(--text);
   font-weight: 900;
 }
+
+.dashboard-pending-error-item {
+  align-items: center;
+}
+
+.dashboard-link-button--danger:hover {
+  border-color: var(--feedback-error-border);
+}

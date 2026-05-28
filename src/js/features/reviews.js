@@ -851,6 +851,28 @@ export function initReviews() {
     renderReviewedErrors();
   }
 
+  function handleExternalReviewOpen(event) {
+    const attemptId = event.detail?.attemptId;
+
+    if (!attemptId) {
+      return;
+    }
+
+    showReviewTab("errors");
+
+    const attempt = getAttempts().find((currentAttempt) => {
+      return currentAttempt.id === attemptId;
+    });
+
+    if (!attempt) {
+      return;
+    }
+
+    openReviewErrorModal(attempt);
+  }
+
+  //----------------------------------------------------
+
   reviewTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       showReviewTab(button.dataset.reviewTab);
@@ -892,6 +914,8 @@ export function initReviews() {
     renderErrors();
     renderReviewedErrors();
   });
+
+  document.addEventListener("reviews:open-error-review", handleExternalReviewOpen);
 
   renderReviews();
 
