@@ -1,6 +1,6 @@
 # Central de Estudos Web
 
-Aplicação web simples para organizar estudos, questões, anotações e revisões em um único lugar.
+Aplicação web para organizar estudos, questões, anotações, revisões e indicadores de desempenho em um único lugar.
 
 ---
 
@@ -8,7 +8,7 @@ Aplicação web simples para organizar estudos, questões, anotações e revisõ
 
 A **Central de Estudos Web** é um projeto pessoal criado para centralizar o processo de estudo.
 
-A ideia principal é permitir que o usuário consiga cadastrar matérias, organizar temas, adicionar questões, resolver exercícios, registrar erros, fazer anotações e acompanhar sua evolução de forma simples.
+A aplicação permite cadastrar matérias, organizar temas, criar questões, resolver exercícios, registrar tentativas, revisar erros, criar anotações independentes e acompanhar a evolução por meio de um Dashboard inteligente.
 
 ---
 
@@ -17,34 +17,75 @@ A ideia principal é permitir que o usuário consiga cadastrar matérias, organi
 Criar uma central de estudos prática, organizada e fácil de usar, focada no ciclo:
 
 ```txt
-Estudar → Resolver questões → Corrigir → Revisar erros
+Organizar conteúdos → Resolver questões → Corrigir → Revisar erros → Registrar aprendizados → Acompanhar evolução
 ```
+
+A proposta é ajudar o estudante a entender não apenas o que já foi cadastrado, mas também o que precisa ser praticado, revisado ou completado.
 
 ---
 
-## Funcionalidades planejadas
+## Funcionalidades implementadas
 
 - Cadastro de matérias
-- Cadastro de temas
-- Cadastro de questões
-- Resolução de exercícios
-- Registro de respostas
-- Correção básica
-- Anotações por tema
-- Revisão de erros
-- Dashboard geral
+- Cadastro de temas vinculados a matérias
+- Cadastro, edição, movimentação e exclusão de questões
+- Modo de resolução de questões
+- Alternativas embaralhadas visualmente
+- Feedback de acerto e erro
+- Registro de tentativas no `localStorage`
+- Histórico de resoluções
+- Revisão de erros pendentes
+- Registro de motivo do erro, regra de correção e observação
+- Separação entre erros pendentes e erros revisados
+- Sistema de anotações independentes
+- Vínculo opcional de anotações com matéria e tema
+- Busca e filtros de anotações
+- Tags, status, favoritas, fixadas e arquivadas
+- Visualização de anotações em modal
+- Edição rápida e edição completa de anotações
+- Formatação básica em Markdown
+- Dashboard organizado por abas
+- Indicadores gerais de estudos
+- Indicadores de desempenho
+- Indicadores de revisão
+- Lacunas da base de conteúdos
+- Anotações prioritárias
+- Atalhos inteligentes entre Dashboard e seções do sistema
+- Alternância entre tema claro e escuro
+- Botão de reset geral dos dados
 - Salvamento local no navegador
-- Interface responsiva
+
+---
+
+## Dashboard inteligente
+
+O Dashboard funciona como uma central de acompanhamento dos estudos.
+
+Ele é dividido em quatro abas principais:
+
+```txt
+Resumo      → visão geral da central
+Desempenho  → acertos, erros, tentativas e rankings de erro
+Revisão     → pendências de revisão e atalhos para revisar erros
+Conteúdos   → lacunas da base e anotações prioritárias
+```
+
+A ideia do Dashboard é ajudar o usuário a decidir o próximo passo de estudo sem precisar abrir todas as seções manualmente.
 
 ---
 
 ## Status do projeto
 
-_Projeto em fase inicial._
-
 Versão atual:
+
 ```txt
-v0.1 — Base inicial do projeto
+v0.8 — Dashboard inteligente e indicadores de estudo
+```
+
+Status:
+
+```txt
+Em revisão final para fechamento
 ```
 
 ---
@@ -54,10 +95,11 @@ v0.1 — Base inicial do projeto
 - HTML
 - CSS
 - JavaScript
+- `localStorage`
 
 ---
 
-## Estrutura inicial
+## Estrutura do projeto
 
 ```txt
 central-estudos-web/
@@ -67,24 +109,29 @@ central-estudos-web/
 ├── ROADMAP.md
 ├── .gitignore
 │
-├── src/
-│   ├── css/
-│   │   └── style.css
-│   │
-│   ├── js/
-│   │   ├── main.js
-│   │   ├── storage.js
-│   │   ├── subjects.js
-│   │   ├── themes.js
-│   │   └── questions.js
-│   │
-│   └── assets/
-│       ├── icons/
-│       └── images/
+├── docs/
+│   └── notes.md
 │
-└── docs/
-    └── notes.md
+└── src/
+    ├── css/
+    │   ├── style.css
+    │   ├── base/
+    │   ├── components/
+    │   ├── layout/
+    │   └── sections/
+    │
+    ├── js/
+    │   ├── main.js
+    │   ├── core/
+    │   ├── ui/
+    │   └── features/
+    │
+    └── assets/
+        ├── icons/
+        └── images/
 ```
+
+> A estrutura pode variar conforme a organização dos arquivos evoluir durante o desenvolvimento.
 
 ---
 
@@ -104,8 +151,27 @@ Este projeto busca transformar o estudo em um processo mais organizado e conscie
 
 A proposta é evitar que conteúdos, questões, correções e anotações fiquem espalhados em vários lugares diferentes.
 
+O sistema caminha para funcionar como uma central que responde:
+
+```txt
+O que tenho cadastrado?
+O que já pratiquei?
+Onde estou errando?
+O que preciso revisar?
+O que falta completar?
+```
+
+---
+
+## Próximos passos
+
+- Fechar a v0.8 com revisão final da documentação
+- Revisar responsividade e consistência visual na v0.9
+- Preparar a aplicação para a primeira versão base usável na v1.0
+- Avaliar futuramente sistema de simulados, exportação de dados e integração com flashcards
+
 ---
 
 ## Autor
 
-_Desenvolvido por **Vinícius Sidney** em 2026_
+Desenvolvido por **Vinícius Sidney** em 2026.

@@ -4,16 +4,19 @@ Anotações técnicas, decisões e ideias do projeto.
 
 ---
 
-## Decisões iniciais
+## Decisões do projeto
 
 - O projeto será desenvolvido inicialmente com HTML, CSS e JavaScript puro.
-- A primeira versão usará armazenamento local com `localStorage`.
-- O foco inicial é criar uma base simples, funcional e fácil de expandir.
-- O projeto será construído por versões pequenas, começando pela v0.1.
+- A aplicação usa `localStorage` como armazenamento local inicial.
+- O foco é criar uma base simples, funcional, organizada e fácil de expandir.
+- O projeto será construído por versões pequenas e fechadas gradualmente.
 - A v1.0 deve ser uma versão base realmente usável para estudos.
 - Login, banco de dados online e sincronização em nuvem ficam para versões futuras.
 - A interface deve seguir um estilo simples, minimalista e responsivo.
 - O sistema deve priorizar clareza, organização e facilidade de uso.
+- Cada seção deve cuidar de sua própria função principal.
+- O Dashboard deve apenas ler dados e orientar o usuário, sem substituir as seções completas.
+- A navegação principal deve ser centralizada para evitar conflitos entre abas, cards e seções visíveis.
 
 ---
 
@@ -21,45 +24,159 @@ Anotações técnicas, decisões e ideias do projeto.
 
 A Central de Estudos Web tem como objetivo organizar o ciclo de estudo:
 
-"Estudar → Resolver questões → Corrigir → Revisar erros"
+```txt
+Organizar conteúdos → Resolver questões → Corrigir → Revisar erros → Registrar aprendizados → Acompanhar evolução
+```
 
-A proposta é evitar que matérias, temas, questões, anotações e correções fiquem espalhados em vários lugares diferentes.
-
----
-
-## Estrutura inicial do projeto
-
-- `index.html`: estrutura principal da aplicação.
-- `src/css/style.css`: estilos visuais do projeto.
-- `src/js/main.js`: lógica principal da interface.
-- `src/js/storage.js`: futuro controle de armazenamento local.
-- `src/js/subjects.js`: futuro sistema de matérias.
-- `src/js/themes.js`: futuro sistema de temas.
-- `src/js/questions.js`: futuro sistema de questões.
-- `src/assets/`: imagens, ícones e outros arquivos visuais.
-- `docs/`: documentação e anotações técnicas.
+A proposta é evitar que matérias, temas, questões, anotações, correções e indicadores fiquem espalhados em vários lugares diferentes.
 
 ---
 
-## Funcionalidades iniciais implementadas
+## Princípios de uso
+
+- Registrar informações de forma simples.
+- Organizar conteúdos por matéria e tema.
+- Praticar com questões cadastradas.
+- Transformar erros em regras de correção.
+- Criar anotações livres ou vinculadas.
+- Usar indicadores para decidir o próximo passo de estudo.
+
+---
+
+## Estrutura lógica atual
+
+```txt
+Matérias
+└── Temas
+    └── Questões
+        └── Tentativas
+            └── Revisões de erro
+
+Anotações
+├── Livres
+├── Vinculadas a uma matéria
+└── Vinculadas a uma matéria e tema
+
+Dashboard
+├── Resumo
+├── Desempenho
+├── Revisão
+└── Conteúdos
+```
+
+---
+
+## Funcionalidades implementadas até a v0.8
 
 - Tela inicial de apresentação.
-- Cards com áreas planejadas do sistema.
-- Navegação visual entre seções.
-- Seções iniciais para Dashboard, Matérias, Temas, Questões, Anotações, Revisões e Roadmap.
+- Navegação visual por grupos: Resumo, Cadastro e Estudo.
 - Alternância entre tema claro e escuro.
-- Salvamento da preferência de tema no navegador.
+- Cadastro de matérias.
+- Cadastro de temas vinculados a matérias.
+- Cadastro, edição, movimentação e exclusão de questões.
+- Modo de resolução de questões.
+- Alternativas embaralhadas visualmente.
+- Registro de tentativas.
+- Histórico completo de resoluções.
+- Revisão de erros pendentes.
+- Separação entre erros pendentes e erros revisados.
+- Anotações independentes.
+- Anotações com vínculos opcionais a matéria e tema.
+- Tags, status, favoritas, fixadas e arquivadas.
+- Busca e filtros de anotações.
+- Visualização e edição de anotações em modal.
+- Formatação Markdown básica.
+- Dashboard inteligente com abas.
+- Indicadores de resumo, desempenho, revisão e conteúdos.
+- Atalhos inteligentes do Dashboard para seções específicas.
+- Ações rápidas nos cards de anotações.
+- Tooltips nos botões de ações e tags ocultas.
+- Botão para apagar todos os dados com confirmação dupla.
 
 ---
 
-## Próximas decisões
+## Decisões técnicas recentes
 
-- Definir como será a estrutura de dados das matérias.
-- Definir o formato base dos objetos salvos no `localStorage`.
-- Criar o primeiro formulário real do sistema.
-- Começar a implementação da v0.2 com o cadastro de matérias.
+### Dashboard
 
-- Nos cards de anotações: Substituir "Mais" pela adição de 📁, ✏️ e 🗑️, juntamente com ⭐ e 📌
+- O Dashboard não deve armazenar dados próprios.
+- O Dashboard deve ler as coleções existentes e calcular indicadores derivados.
+- O Dashboard deve exibir listas curtas, preferencialmente Top 5.
+- A aba Revisão do Dashboard deve seguir a mesma lógica da seção Revisões.
+- Erros pendentes no Dashboard representam questões erradas ainda não revisadas.
+- A seção Revisões continua sendo o lugar completo para histórico, filtros e gestão de erros.
+
+### Navegação
+
+- A navegação principal deve controlar a seção visível e o grupo ativo.
+- Outros módulos devem solicitar navegação por eventos, como `app:navigate`.
+- O Dashboard não deve trocar seções diretamente.
+- Atalhos do Dashboard podem levar para seções específicas e preparar formulários.
+
+### Anotações
+
+- Anotações são entidades independentes.
+- Excluir matéria ou tema não deve apagar anotações automaticamente.
+- Ao excluir matéria, o vínculo da anotação deve ser removido.
+- Ao excluir tema, apenas o vínculo do tema deve ser removido.
+- Cards de anotações devem priorizar leitura rápida e ações visíveis.
+- O botão `Mais` foi substituído por ações rápidas: favoritar, fixar, arquivar, editar e excluir.
+- Tags ocultas podem ser visualizadas por tooltip no indicador `+N`.
+
+---
+
+## Problemas encontrados e resolvidos
+
+### Dependências antigas do Dashboard
+
+Alguns módulos ainda dependiam de IDs antigos do Dashboard, como contadores específicos de matérias, temas e questões. Isso podia impedir a inicialização correta de formulários.
+
+Solução:
+
+```txt
+Remover dependências diretas do Dashboard antigo.
+Permitir que o Dashboard inteligente leia as coleções e atualize os indicadores sozinho.
+```
+
+---
+
+### Navegação visual dessincronizada
+
+Ao abrir atalhos pelo Dashboard, a seção correta aparecia, mas o grupo visual da navegação podia continuar incorreto.
+
+Solução:
+
+```txt
+Centralizar a navegação em um evento app:navigate.
+Sincronizar grupo ativo, cards visíveis e seção aberta.
+```
+
+---
+
+### Diferença entre Dashboard e seção Revisões
+
+O Dashboard e a seção Revisões estavam numerando e filtrando erros pendentes de formas diferentes.
+
+Solução:
+
+```txt
+Alinhar a lógica de erros pendentes.
+Numerar questões dentro do tema, como na seção Revisões.
+Remover apenas tentativas realmente revisadas da lista de pendências.
+```
+
+---
+
+### Tooltip das tags ocultas
+
+O tooltip das tags ocultas herdava estilos de pílulas das tags comuns.
+
+Solução:
+
+```txt
+Criar seletores mais específicos para o tooltip.
+Remover borda, fundo e arredondamento herdados dos spans internos.
+```
 
 ---
 
@@ -68,8 +185,11 @@ A proposta é evitar que matérias, temas, questões, anotações e correções 
 - Importação rápida de questões copiadas do ChatGPT.
 - Exportação de dados em `.json`.
 - Exportação de flashcards em `.csv`.
-- Sistema de revisão por erros.
-- Filtros por matéria, tema, acerto e erro.
+- Sistema de simulados.
+- Revisão espaçada.
+- Transformar erro revisado em anotação.
+- Transformar anotação em flashcard.
+- Exportação de anotações.
 - Instalação como PWA.
 - Uso offline melhorado.
 - Sincronização em nuvem.
@@ -78,14 +198,10 @@ A proposta é evitar que matérias, temas, questões, anotações e correções 
 
 ---
 
-## Problemas encontrados
-
-Nenhum problema técnico registrado até o momento.
-
----
-
 ## Observações
 
-A v0.1 tem como objetivo preparar a base visual e estrutural do projeto.
+A v0.8 consolidou o Dashboard como uma central de orientação do estudo.
 
-O sistema ainda não precisa cadastrar dados reais nesta versão. O foco é deixar a fundação pronta para iniciar o sistema de matérias na v0.2.
+O sistema já permite organizar conteúdos, praticar questões, revisar erros, registrar anotações e acompanhar indicadores básicos.
+
+A próxima etapa natural é revisar a organização visual, responsividade e consistência geral da interface antes da v1.0.

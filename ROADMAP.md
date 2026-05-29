@@ -425,109 +425,136 @@ Recursos mais avançados, como toolbar de formatação, preview lado a lado, exp
 Transformar o Dashboard em uma central de acompanhamento dos estudos, exibindo indicadores sobre organização, desempenho, revisões, anotações e prioridades de estudo.
 
 ### Status
-Planejada.
+Concluída.
 
 ---
 
-## Previsto para a v0.8
+## Implementado na v0.8
 
 ### Organização do Dashboard
 
-- Organização do Dashboard por abas
-- Aba de resumo geral
-- Aba de desempenho
-- Aba de revisão
-- Aba de conteúdos
-- Cards principais de indicadores
-- Listas resumidas com dados importantes
-- Estados vazios quando ainda não houver dados suficientes
+- Organização do Dashboard por abas ✅
+- Aba de resumo geral ✅
+- Aba de desempenho ✅
+- Aba de revisão ✅
+- Aba de conteúdos ✅
+- Cards principais de indicadores ✅
+- Listas resumidas com dados importantes ✅
+- Estados vazios quando ainda não houver dados suficientes ✅
+- Cards de resumo e conteúdos alinhados em linha no desktop ✅
 
 ---
 
 ### Aba de Resumo Geral
 
-- Quantidade de matérias cadastradas
-- Quantidade de temas cadastrados
-- Quantidade de questões cadastradas
-- Quantidade de anotações cadastradas
-- Quantidade de tentativas registradas
-- Quantidade de revisões registradas
-- Quantidade de erros pendentes
-- Taxa geral de acerto
-- Cards simples de progresso geral
-- Lista de últimos estudos ou últimas ações registradas
+- Quantidade de matérias cadastradas ✅
+- Quantidade de temas cadastrados ✅
+- Quantidade de questões cadastradas ✅
+- Quantidade de anotações cadastradas ✅
+- Quantidade de tentativas registradas ✅
+- Taxa geral de acerto ✅
+- Lista de últimas atividades registradas ✅
 
 ---
 
 ### Aba de Desempenho
 
-- Quantidade total de acertos
-- Quantidade total de erros
-- Taxa geral de acerto
-- Indicadores de desempenho por matéria
-- Indicadores de desempenho por tema
-- Matérias com maior quantidade de erros
-- Temas com maior quantidade de erros
-- Matérias com melhor taxa de acerto
-- Temas com melhor taxa de acerto
-- Lista de questões respondidas recentemente
+- Quantidade total de acertos ✅
+- Quantidade total de erros ✅
+- Quantidade total de tentativas ✅
+- Taxa geral de acerto ✅
+- Indicadores de desempenho por matéria ✅
+- Top 5 matérias com mais erros ✅
+- Top 5 temas com mais erros ✅
+- Listas de ranking lado a lado em telas maiores ✅
 
 ---
 
 ### Aba de Revisão
 
-- Quantidade de erros pendentes
-- Lista resumida de erros pendentes
-- Quantidade de erros revisados
-- Lista resumida de revisões recentes
-- Identificação de matérias com mais erros pendentes
-- Identificação de temas com mais erros pendentes
-- Atalhos para acessar a seção de Revisões
+- Quantidade de questões pendentes de revisão ✅
+- Quantidade de revisões feitas ✅
+- Quantidade de tentativas erradas ✅
+- Taxa de revisão ✅
+- Lista resumida de erros pendentes ✅
+- Top 5 matérias com pendências ✅
+- Top 5 temas com pendências ✅
+- Sincronização da lógica de pendências com a seção Revisões ✅
+- Numeração das questões alinhada com a seção Revisões ✅
+- Botão de atalho para abrir revisão de erro direto pelo Dashboard ✅
 
 ---
 
 ### Aba de Conteúdos
 
-- Quantidade de matérias cadastradas
-- Quantidade de temas por matéria
-- Quantidade de questões por matéria
-- Quantidade de questões por tema
-- Quantidade de anotações por matéria
-- Quantidade de anotações livres
-- Quantidade de anotações fixadas
-- Quantidade de anotações arquivadas
-- Lista de matérias com poucos temas ou poucas questões
-- Lista de temas sem questões cadastradas
-- Lista de temas sem anotações cadastradas
+- Quantidade de matérias cadastradas ✅
+- Quantidade de temas cadastrados ✅
+- Quantidade de questões cadastradas ✅
+- Quantidade de anotações livres ✅
+- Quantidade de anotações fixadas ✅
+- Quantidade de anotações arquivadas ✅
+- Lista de lacunas da base ✅
+- Identificação de matérias sem temas ✅
+- Identificação de temas sem questões ✅
+- Identificação de temas sem anotações ✅
+- Destaque visual para o tipo do conteúdo incompleto ✅
+- Botões de atalho para abrir a seção correta e completar a lacuna ✅
+- Lista de anotações prioritárias ✅
+- Exibição de status, vínculos e tags das anotações prioritárias ✅
+- Botão para abrir anotação prioritária direto pelo Dashboard ✅
 
 ---
 
-### Indicadores inteligentes
+### Atalhos inteligentes
 
-- Destaque para conteúdos com mais erros
-- Destaque para conteúdos sem prática registrada
-- Destaque para erros pendentes de revisão
-- Destaque para temas com questões cadastradas, mas sem tentativas
-- Destaque para matérias cadastradas sem temas
-- Destaque para temas cadastrados sem questões
-- Destaque para anotações marcadas como importantes ou revisar depois
+- Atalho do Dashboard para a seção Temas ✅
+- Atalho do Dashboard para a seção Questões ✅
+- Atalho do Dashboard para a seção Anotações ✅
+- Atalho do Dashboard para abrir uma anotação prioritária ✅
+- Atalho do Dashboard para abrir o modal de revisão de erro ✅
+- Sincronização correta entre navegação principal, cards visíveis e seção ativa ✅
+
+---
+
+### Refinamentos complementares
+
+- Remoção de dependências antigas do Dashboard em matérias, temas e questões ✅
+- Centralização da navegação por evento `app:navigate` ✅
+- Ajuste dos cards de anotações com ações rápidas ✅
+- Substituição do botão `Mais` por botões compactos de ação ✅
+- Botões de favoritar, fixar, arquivar, editar e excluir nas anotações ✅
+- Rótulos visuais nos botões dos cards de anotações ✅
+- Tooltip para tags ocultas no indicador `+N` ✅
+- Ajustes visuais no tooltip das tags ocultas ✅
 
 ---
 
 ## Fechamento da v0.8
 
-A versão v0.8 será considerada concluída quando o usuário conseguir:
+A versão v0.8 foi considerada concluída porque o usuário consegue:
 
-- Abrir o sistema e ver um resumo geral dos estudos
-- Acompanhar a quantidade de matérias, temas, questões e anotações cadastradas
-- Ver seus acertos, erros e taxa geral de acerto
-- Identificar pendências de revisão
-- Visualizar indicadores básicos por matéria e tema
-- Identificar conteúdos com maior quantidade de erros
-- Identificar conteúdos ainda pouco praticados
-- Ver listas resumidas de erros pendentes e estudos recentes
-- Consultar indicadores relacionados às anotações
-- Usar o Dashboard para decidir o próximo passo de estudo
+- Abrir o sistema e ver um resumo geral dos estudos ✅
+- Acompanhar a quantidade de matérias, temas, questões e anotações cadastradas ✅
+- Ver seus acertos, erros, tentativas e taxa geral de acerto ✅
+- Identificar matérias e temas com maior quantidade de erros ✅
+- Identificar questões pendentes de revisão ✅
+- Abrir uma revisão de erro diretamente pelo Dashboard ✅
+- Visualizar indicadores de revisão sincronizados com a seção Revisões ✅
+- Identificar lacunas na base de conteúdos ✅
+- Acessar rapidamente a seção necessária para completar uma lacuna ✅
+- Consultar anotações prioritárias pelo Dashboard ✅
+- Abrir uma anotação prioritária diretamente pelo Dashboard ✅
+- Usar o Dashboard para decidir o próximo passo de estudo ✅
+
+---
+
+## Observações da v0.8
+
+O Dashboard passou a funcionar como uma central de orientação do estudo, não apenas como uma área de contadores.
+
+A versão priorizou indicadores úteis e listas curtas, evitando transformar o Dashboard em um relatório grande demais.
+
+As seções específicas continuam responsáveis pelo controle completo dos dados. O Dashboard apenas resume o que é mais importante e oferece atalhos para ações rápidas.
 
 ---
 
