@@ -43,14 +43,6 @@
   box-shadow: var(--shadow);
 }
 
-.app-content-panel .app-section {
-  margin: 0;
-}
-
-.app-content-panel .app-section + .app-section {
-  margin-top: 0;
-}
-
 .app-sidebar .navigation-panel {
   height: 100%;
   margin: 0;
@@ -120,4 +112,16 @@
 .app-hero-panel {
   min-width: 0;
   margin: 0;
+}
+
+.app-content-panel .app-section {
+  margin: 0;
+}
+
+.app-content-panel .app-section + .app-section {
+  margin-top: 0;
+}
+
+.app-sidebar .nav-card.is-hidden-by-group {
+  display: none;
 }
