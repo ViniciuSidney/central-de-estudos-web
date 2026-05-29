@@ -573,6 +573,9 @@ export function initNotes() {
             title="${note.isFavorite ? "Remover dos favoritos" : "Favoritar"}"
           >
             ⭐
+            <span class="note-card__action-tooltip">
+              ${note.isFavorite ? "Remover favorito" : "Favoritar"}
+            </span>
           </button>
 
           <button
@@ -583,6 +586,9 @@ export function initNotes() {
             title="${note.isPinned ? "Desfixar" : "Fixar"}"
           >
             📌
+            <span class="note-card__action-tooltip">
+              ${note.isPinned ? "Desfixar" : "Fixar"}
+            </span>
           </button>
 
           <button
@@ -593,6 +599,9 @@ export function initNotes() {
             title="${note.isArchived ? "Restaurar" : "Arquivar"}"
           >
             📁
+            <span class="note-card__action-tooltip">
+              ${note.isArchived ? "Restaurar" : "Arquivar"}
+            </span>
           </button>
 
           <button
@@ -603,6 +612,7 @@ export function initNotes() {
             title="Editar"
           >
             ✏️
+            <span class="note-card__action-tooltip">Editar</span>
           </button>
 
           <button
@@ -613,6 +623,7 @@ export function initNotes() {
             title="Excluir"
           >
             🗑️
+            <span class="note-card__action-tooltip">Excluir</span>
           </button>
         </div>
 			`;

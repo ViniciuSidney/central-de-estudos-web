@@ -325,4 +325,17 @@
   .dashboard-link-button {
     width: 100%;
   }
+
+  .note-card__action-tooltip {
+    display: none;
+  }
+
+  .note-card__actions--compact {
+    gap: 6px;
+  }
+
+  .note-card__action-button {
+    width: 36px;
+    height: 36px;
+  }
 }

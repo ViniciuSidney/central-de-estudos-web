@@ -565,6 +565,8 @@
 }
 
 .note-card__action-button {
+  position: relative;
+
   width: 38px;
   height: 38px;
 
@@ -603,4 +605,40 @@
   color: #ffffff;
   background: #9f3d3d;
   border-color: #b95252;
+}
+
+.note-card__action-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 20;
+
+  width: max-content;
+  max-width: 160px;
+  padding: 6px 9px;
+
+  pointer-events: none;
+
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.note-card__action-button:hover .note-card__action-tooltip,
+.note-card__action-button:focus-visible .note-card__action-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
