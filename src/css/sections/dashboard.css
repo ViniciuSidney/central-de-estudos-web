@@ -40,6 +40,26 @@
   gap: 12px;
 }
 
+.dashboard-grid--six-cards {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.dashboard-grid--six-cards .dashboard-card {
+  min-width: 0;
+}
+
+.dashboard-grid--six-cards .dashboard-card strong {
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+}
+
+.dashboard-grid--six-cards .dashboard-card span {
+  font-size: 0.95rem;
+}
+
+.dashboard-grid--six-cards .dashboard-card p {
+  font-size: 0.85rem;
+}
+
 .dashboard-card {
   display: grid;
   gap: 8px;
