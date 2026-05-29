@@ -1,6 +1,5 @@
 .navigation-panel {
-  padding: 24px;
-  margin-bottom: 20px;
+  padding: 20px;
 
   background: var(--surface);
   border: 1px solid var(--border);
@@ -8,21 +7,40 @@
   box-shadow: var(--shadow);
 }
 
-.section-heading {
+.nav-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.section-heading h2 {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+.nav-tab-button {
+  cursor: pointer;
+  padding: 11px 15px;
+
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.section-heading p {
-  max-width: 720px;
-  font-size: 0.98rem;
-  line-height: 1.55;
+.nav-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.nav-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
 }
 
 .nav-grid {

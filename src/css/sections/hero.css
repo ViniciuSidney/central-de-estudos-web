@@ -1,11 +1,10 @@
 .hero {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 24px;
 
-  padding: 34px 40px;
-  margin-bottom: 20px;
+  padding: 24px;
 
   background: var(--surface);
   border: 1px solid var(--border);
@@ -13,32 +12,34 @@
   box-shadow: var(--shadow);
 }
 
+.hero__content {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
 .hero__tag,
 .hero h1,
 .hero__description {
-  grid-column: 1;
+  margin: 0;
 }
 
 .hero h1 {
-  max-width: 700px;
-  font-size: clamp(2.4rem, 5vw, 4rem);
+  max-width: 760px;
+  font-size: clamp(2rem, 4vw, 3.2rem);
   line-height: 1.05;
   letter-spacing: -0.06em;
 }
 
 .hero__description {
-  max-width: 700px;
-  font-size: 1.1rem;
-  line-height: 1.6;
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.55;
 }
 
 .hero__actions {
-  grid-column: 2;
-  grid-row: 1 / span 3;
-
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: end;
-  min-width: 180px;
+  display: grid;
+  gap: 10px;
+  min-width: 190px;
 }

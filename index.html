@@ -9,1135 +9,990 @@
     <link rel="stylesheet" href="src/css/style.css" />
   </head>
   <body>
-    <main class="app">
-      <section class="hero">
-        <p class="hero__tag">📚 Projeto pessoal de estudos</p>
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <section
+          class="navigation-panel"
+          aria-label="Navegação principal do sistema"
+        >
+          <div class="section-heading">
+            <p class="section-heading__tag">🧭 Navegação</p>
+            <h2>Central</h2>
+            <p>Escolha uma área.</p>
+          </div>
 
-        <h1>Central de Estudos Web</h1>
-
-        <p class="hero__description">
-          Organize matérias, temas, questões, anotações e revisões em um único
-          lugar.
-        </p>
-
-        <div class="hero__actions">
-          <button
-            class="button button--primary"
-            type="button"
-            data-section-target="dashboard"
-          >
-            Começar estudos
-          </button>
-          <br />
-          <button
-            class="button button--secondary"
-            type="button"
-            data-section-target="roadmap"
-          >
-            Ver roadmap
-          </button>
-        </div>
-      </section>
-
-      <section
-        class="navigation-panel"
-        aria-label="Navegação principal do sistema"
-      >
-        <div class="section-heading">
-          <p class="section-heading__tag">🧭 Navegação</p>
-          <h2>Escolha uma área da central</h2>
-          <p>
-            Use as abas para alternar entre resumo, cadastro e ferramentas de
-            estudo.
-          </p>
-        </div>
-
-        <div class="nav-tabs">
-          <button
-            class="nav-tab-button is-active"
-            type="button"
-            data-nav-group="summary"
-          >
-            Resumo
-          </button>
-
-          <button
-            class="nav-tab-button"
-            type="button"
-            data-nav-group="management"
-          >
-            Cadastro
-          </button>
-
-          <button class="nav-tab-button" type="button" data-nav-group="study">
-            Estudo
-          </button>
-        </div>
-
-        <div class="nav-grid">
-          <button
-            class="nav-card is-active"
-            type="button"
-            data-section="dashboard"
-            data-section-target="dashboard"
-            data-nav-card-group="summary"
-            data-nav-category="summary"
-          >
-            <span>📊</span>
-            <strong>Dashboard</strong>
-            <small>Visão geral dos estudos</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="subjects"
-            data-section-target="subjects"
-            data-nav-card-group="management"
-            data-nav-category="management"
-          >
-            <span>📘</span>
-            <strong>Matérias</strong>
-            <small>Organize suas disciplinas</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="themes"
-            data-section-target="themes"
-            data-nav-card-group="management"
-            data-nav-category="management"
-          >
-            <span>🧩</span>
-            <strong>Temas</strong>
-            <small>Divida os conteúdos</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="questions"
-            data-section-target="questions"
-            data-nav-card-group="management"
-            data-nav-category="management"
-          >
-            <span>📝</span>
-            <strong>Questões</strong>
-            <small>Cadastre exercícios</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="solve"
-            data-section-target="solve"
-            data-nav-card-group="study"
-            data-nav-category="study"
-          >
-            <span>🧠</span>
-            <strong>Resolver</strong>
-            <small>Pratique questões cadastradas</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="notes"
-            data-section-target="notes"
-            data-nav-card-group="study"
-            data-nav-category="study"
-          >
-            <span>🗒️</span>
-            <strong>Anotações</strong>
-            <small>Registre resumos</small>
-          </button>
-
-          <button
-            class="nav-card is-hidden-by-group"
-            type="button"
-            data-section="reviews"
-            data-section-target="reviews"
-            data-nav-card-group="study"
-            data-nav-category="study"
-          >
-            <span>🔁</span>
-            <strong>Revisões</strong>
-            <small>Revise seus erros</small>
-          </button>
-        </div>
-      </section>
-
-      <section class="content-panel">
-        <article class="app-section is-visible" id="dashboard">
-          <p class="app-section__tag">📊 Dashboard</p>
-
-          <h2>Visão geral dos estudos</h2>
-
-          <p>
-            Acompanhe sua organização, desempenho, revisões pendentes e
-            conteúdos cadastrados.
-          </p>
-
-          <div class="dashboard-tabs">
+          <div class="nav-tabs">
             <button
-              class="dashboard-tab-button is-active"
+              class="nav-tab-button is-active"
               type="button"
-              data-dashboard-tab="summary"
+              data-nav-group="summary"
             >
               Resumo
             </button>
 
             <button
-              class="dashboard-tab-button"
+              class="nav-tab-button"
               type="button"
-              data-dashboard-tab="performance"
+              data-nav-group="management"
             >
-              Desempenho
+              Cadastro
             </button>
 
-            <button
-              class="dashboard-tab-button"
-              type="button"
-              data-dashboard-tab="reviews"
-            >
-              Revisão
-            </button>
-
-            <button
-              class="dashboard-tab-button"
-              type="button"
-              data-dashboard-tab="contents"
-            >
-              Conteúdos
+            <button class="nav-tab-button" type="button" data-nav-group="study">
+              Estudo
             </button>
           </div>
 
-          <section class="dashboard-tab-panel">
-            <div
-              class="dashboard-tab-content is-active"
-              id="dashboard-summary-tab"
+          <div class="nav-grid">
+            <button
+              class="nav-card is-active"
+              type="button"
+              data-section="dashboard"
+              data-section-target="dashboard"
+              data-nav-card-group="summary"
+              data-nav-category="summary"
             >
-              <div class="dashboard-section-header">
-                <div>
-                  <h3>Resumo geral</h3>
-                  <p>Veja os principais números da sua central de estudos.</p>
-                </div>
-              </div>
+              <span>📊</span>
+              <strong>Dashboard</strong>
+              <small>Visão geral dos estudos</small>
+            </button>
 
-              <div
-                class="dashboard-grid dashboard-grid--six-cards"
-                id="dashboard-summary-cards"
-              ></div>
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="subjects"
+              data-section-target="subjects"
+              data-nav-card-group="management"
+              data-nav-category="management"
+            >
+              <span>📘</span>
+              <strong>Matérias</strong>
+              <small>Organize suas disciplinas</small>
+            </button>
 
-              <div class="dashboard-list-panel">
-                <div class="dashboard-section-header">
-                  <div>
-                    <h3>Últimas atividades</h3>
-                    <p>Registros recentes de resolução e revisão.</p>
-                  </div>
-                </div>
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="themes"
+              data-section-target="themes"
+              data-nav-card-group="management"
+              data-nav-category="management"
+            >
+              <span>🧩</span>
+              <strong>Temas</strong>
+              <small>Divida os conteúdos</small>
+            </button>
 
-                <div
-                  class="dashboard-list"
-                  id="dashboard-recent-activity"
-                ></div>
-              </div>
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="questions"
+              data-section-target="questions"
+              data-nav-card-group="management"
+              data-nav-category="management"
+            >
+              <span>📝</span>
+              <strong>Questões</strong>
+              <small>Cadastre exercícios</small>
+            </button>
+
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="solve"
+              data-section-target="solve"
+              data-nav-card-group="study"
+              data-nav-category="study"
+            >
+              <span>🧠</span>
+              <strong>Resolver</strong>
+              <small>Pratique questões cadastradas</small>
+            </button>
+
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="notes"
+              data-section-target="notes"
+              data-nav-card-group="study"
+              data-nav-category="study"
+            >
+              <span>🗒️</span>
+              <strong>Anotações</strong>
+              <small>Registre resumos</small>
+            </button>
+
+            <button
+              class="nav-card is-hidden-by-group"
+              type="button"
+              data-section="reviews"
+              data-section-target="reviews"
+              data-nav-card-group="study"
+              data-nav-category="study"
+            >
+              <span>🔁</span>
+              <strong>Revisões</strong>
+              <small>Revise seus erros</small>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <main class="app-main">
+        <section class="hero app-hero-panel">
+          <div class="hero__content">
+            <p class="hero__tag">📚 Projeto pessoal de estudos</p>
+
+            <h1>Central de Estudos Web</h1>
+
+            <p class="hero__description">
+              Organize matérias, temas, questões, anotações e revisões em um
+              único lugar.
+            </p>
+          </div>
+
+          <div class="hero__actions">
+            <button
+              class="button button--primary"
+              type="button"
+              data-section-target="dashboard"
+            >
+              Começar estudos
+            </button>
+
+            <button
+              class="button button--secondary"
+              type="button"
+              data-section-target="roadmap"
+            >
+              Ver roadmap
+            </button>
+          </div>
+        </section>
+
+        <section class="app-content-panel">
+          <article class="app-section is-visible" id="dashboard">
+            <p class="app-section__tag">📊 Dashboard</p>
+
+            <h2>Visão geral dos estudos</h2>
+
+            <p>
+              Acompanhe sua organização, desempenho, revisões pendentes e
+              conteúdos cadastrados.
+            </p>
+
+            <div class="dashboard-tabs">
+              <button
+                class="dashboard-tab-button is-active"
+                type="button"
+                data-dashboard-tab="summary"
+              >
+                Resumo
+              </button>
+
+              <button
+                class="dashboard-tab-button"
+                type="button"
+                data-dashboard-tab="performance"
+              >
+                Desempenho
+              </button>
+
+              <button
+                class="dashboard-tab-button"
+                type="button"
+                data-dashboard-tab="reviews"
+              >
+                Revisão
+              </button>
+
+              <button
+                class="dashboard-tab-button"
+                type="button"
+                data-dashboard-tab="contents"
+              >
+                Conteúdos
+              </button>
             </div>
 
-            <div class="dashboard-tab-content" id="dashboard-performance-tab">
-              <div class="dashboard-section-header">
-                <div>
-                  <h3>Desempenho</h3>
-                  <p>Analise acertos, erros e taxa de aproveitamento.</p>
-                </div>
-              </div>
-
+            <section class="dashboard-tab-panel">
               <div
-                class="dashboard-grid"
-                id="dashboard-performance-cards"
-              ></div>
-
-              <div class="dashboard-list-panel">
+                class="dashboard-tab-content is-active"
+                id="dashboard-summary-tab"
+              >
                 <div class="dashboard-section-header">
                   <div>
-                    <h3>Desempenho por matéria</h3>
-                    <p>
-                      Compare resultados registrados nas questões resolvidas.
-                    </p>
+                    <h3>Resumo geral</h3>
+                    <p>Veja os principais números da sua central de estudos.</p>
                   </div>
                 </div>
 
                 <div
-                  class="dashboard-list"
-                  id="dashboard-subject-performance"
+                  class="dashboard-grid dashboard-grid--six-cards"
+                  id="dashboard-summary-cards"
                 ></div>
+
+                <div class="dashboard-list-panel">
+                  <div class="dashboard-section-header">
+                    <div>
+                      <h3>Últimas atividades</h3>
+                      <p>Registros recentes de resolução e revisão.</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="dashboard-list"
+                    id="dashboard-recent-activity"
+                  ></div>
+                </div>
+              </div>
+
+              <div class="dashboard-tab-content" id="dashboard-performance-tab">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Desempenho</h3>
+                    <p>Analise acertos, erros e taxa de aproveitamento.</p>
+                  </div>
+                </div>
+
+                <div
+                  class="dashboard-grid"
+                  id="dashboard-performance-cards"
+                ></div>
+
+                <div class="dashboard-list-panel">
+                  <div class="dashboard-section-header">
+                    <div>
+                      <h3>Desempenho por matéria</h3>
+                      <p>
+                        Compare resultados registrados nas questões resolvidas.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="dashboard-list"
+                    id="dashboard-subject-performance"
+                  ></div>
+                  <div class="dashboard-insight-grid">
+                    <section class="dashboard-list-panel">
+                      <div class="dashboard-section-header">
+                        <div>
+                          <h3>Top 5 matérias com mais erros</h3>
+                          <p>Veja quais matérias mais precisam de atenção.</p>
+                        </div>
+                      </div>
+
+                      <div
+                        class="dashboard-list"
+                        id="dashboard-top-error-subjects"
+                      ></div>
+                    </section>
+
+                    <section class="dashboard-list-panel">
+                      <div class="dashboard-section-header">
+                        <div>
+                          <h3>Top 5 temas com mais erros</h3>
+                          <p>
+                            Identifique os temas que mais geraram respostas
+                            incorretas.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div
+                        class="dashboard-list"
+                        id="dashboard-top-error-themes"
+                      ></div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-tab-content" id="dashboard-reviews-tab">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Revisão</h3>
+                    <p>Acompanhe erros pendentes e revisões registradas.</p>
+                  </div>
+                </div>
+
+                <div class="dashboard-grid" id="dashboard-review-cards"></div>
+
+                <div class="dashboard-list-panel">
+                  <div class="dashboard-section-header">
+                    <div>
+                      <h3>Erros pendentes</h3>
+                      <p>Questões que ainda precisam de análise.</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="dashboard-list"
+                    id="dashboard-pending-errors"
+                  ></div>
+                </div>
+
                 <div class="dashboard-insight-grid">
                   <section class="dashboard-list-panel">
                     <div class="dashboard-section-header">
                       <div>
-                        <h3>Top 5 matérias com mais erros</h3>
-                        <p>Veja quais matérias mais precisam de atenção.</p>
+                        <h3>Top 5 matérias com pendências</h3>
+                        <p>Matérias com mais erros aguardando revisão.</p>
                       </div>
                     </div>
 
                     <div
                       class="dashboard-list"
-                      id="dashboard-top-error-subjects"
+                      id="dashboard-top-pending-subjects"
                     ></div>
                   </section>
 
                   <section class="dashboard-list-panel">
                     <div class="dashboard-section-header">
                       <div>
-                        <h3>Top 5 temas com mais erros</h3>
+                        <h3>Top 5 temas com pendências</h3>
+                        <p>Temas com mais erros ainda não revisados.</p>
+                      </div>
+                    </div>
+
+                    <div
+                      class="dashboard-list"
+                      id="dashboard-top-pending-themes"
+                    ></div>
+                  </section>
+                </div>
+              </div>
+
+              <div class="dashboard-tab-content" id="dashboard-contents-tab">
+                <div class="dashboard-section-header">
+                  <div>
+                    <h3>Conteúdos</h3>
+                    <p>
+                      Veja como sua base de matérias, temas, questões e
+                      anotações está organizada.
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  class="dashboard-grid dashboard-grid--six-cards"
+                  id="dashboard-content-cards"
+                ></div>
+
+                <div class="dashboard-insight-grid">
+                  <section class="dashboard-list-panel">
+                    <div class="dashboard-section-header">
+                      <div>
+                        <h3>Lacunas da base</h3>
                         <p>
-                          Identifique os temas que mais geraram respostas
-                          incorretas.
+                          Conteúdos cadastrados que ainda precisam ser
+                          completados.
                         </p>
                       </div>
                     </div>
 
                     <div
                       class="dashboard-list"
-                      id="dashboard-top-error-themes"
+                      id="dashboard-content-alerts"
+                    ></div>
+                  </section>
+
+                  <section class="dashboard-list-panel">
+                    <div class="dashboard-section-header">
+                      <div>
+                        <h3>Anotações prioritárias</h3>
+                        <p>
+                          Anotações importantes, fixadas ou marcadas para
+                          revisão.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      class="dashboard-list"
+                      id="dashboard-priority-notes"
                     ></div>
                   </section>
                 </div>
               </div>
-            </div>
+            </section>
+          </article>
 
-            <div class="dashboard-tab-content" id="dashboard-reviews-tab">
-              <div class="dashboard-section-header">
-                <div>
-                  <h3>Revisão</h3>
-                  <p>Acompanhe erros pendentes e revisões registradas.</p>
-                </div>
-              </div>
+          <article class="app-section" id="subjects">
+            <p class="app-section__tag">📘 Matérias</p>
+            <h2>Organização por matérias</h2>
+            <p>
+              Cadastre suas matérias de estudo para organizar temas, questões,
+              anotações e revisões futuramente.
+            </p>
 
-              <div class="dashboard-grid" id="dashboard-review-cards"></div>
-
-              <div class="dashboard-list-panel">
-                <div class="dashboard-section-header">
-                  <div>
-                    <h3>Erros pendentes</h3>
-                    <p>Questões que ainda precisam de análise.</p>
-                  </div>
-                </div>
-
-                <div class="dashboard-list" id="dashboard-pending-errors"></div>
-              </div>
-
-              <div class="dashboard-insight-grid">
-                <section class="dashboard-list-panel">
-                  <div class="dashboard-section-header">
-                    <div>
-                      <h3>Top 5 matérias com pendências</h3>
-                      <p>Matérias com mais erros aguardando revisão.</p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="dashboard-list"
-                    id="dashboard-top-pending-subjects"
-                  ></div>
-                </section>
-
-                <section class="dashboard-list-panel">
-                  <div class="dashboard-section-header">
-                    <div>
-                      <h3>Top 5 temas com pendências</h3>
-                      <p>Temas com mais erros ainda não revisados.</p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="dashboard-list"
-                    id="dashboard-top-pending-themes"
-                  ></div>
-                </section>
-              </div>
-            </div>
-
-            <div class="dashboard-tab-content" id="dashboard-contents-tab">
-              <div class="dashboard-section-header">
-                <div>
-                  <h3>Conteúdos</h3>
-                  <p>
-                    Veja como sua base de matérias, temas, questões e anotações
-                    está organizada.
-                  </p>
-                </div>
-              </div>
-
-              <div
-                class="dashboard-grid dashboard-grid--six-cards"
-                id="dashboard-content-cards"
-              ></div>
-
-              <div class="dashboard-insight-grid">
-                <section class="dashboard-list-panel">
-                  <div class="dashboard-section-header">
-                    <div>
-                      <h3>Lacunas da base</h3>
-                      <p>
-                        Conteúdos cadastrados que ainda precisam ser
-                        completados.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="dashboard-list"
-                    id="dashboard-content-alerts"
-                  ></div>
-                </section>
-
-                <section class="dashboard-list-panel">
-                  <div class="dashboard-section-header">
-                    <div>
-                      <h3>Anotações prioritárias</h3>
-                      <p>
-                        Anotações importantes, fixadas ou marcadas para revisão.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div
-                    class="dashboard-list"
-                    id="dashboard-priority-notes"
-                  ></div>
-                </section>
-              </div>
-            </div>
-          </section>
-        </article>
-
-        <article class="app-section" id="subjects">
-          <p class="app-section__tag">📘 Matérias</p>
-          <h2>Organização por matérias</h2>
-          <p>
-            Cadastre suas matérias de estudo para organizar temas, questões,
-            anotações e revisões futuramente.
-          </p>
-
-          <form class="subject-form" id="subject-form">
-            <div class="form-group">
-              <label for="subject-name">Nome da matéria</label>
-              <input
-                type="text"
-                id="subject-name"
-                name="subjectName"
-                placeholder="Ex: História"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="subject-description">Descrição</label>
-              <textarea
-                id="subject-description"
-                name="subjectDescription"
-                rows="3"
-                placeholder="Ex: Conteúdos de História Geral e do Brasil"
-              ></textarea>
-            </div>
-
-            <p
-              class="form-message"
-              id="subject-form-message"
-              aria-live="polite"
-            ></p>
-
-            <div class="form-actions">
-              <button class="button button--primary" type="submit">
-                Adicionar matéria
-              </button>
-
-              <button
-                class="button button--secondary"
-                type="button"
-                id="clear-subject-form"
-              >
-                Limpar
-              </button>
-            </div>
-          </form>
-
-          <div class="subjects-area">
-            <div class="subjects-header">
-              <h3>Matérias cadastradas</h3>
-              <span id="subjects-count">0 matérias</span>
-            </div>
-
-            <div class="empty-state" id="subjects-empty-state">
-              <strong>Nenhuma matéria cadastrada ainda.</strong>
-              <span
-                >Use o formulário acima para adicionar sua primeira
-                matéria.</span
-              >
-            </div>
-
-            <div class="subjects-list" id="subjects-list"></div>
-          </div>
-        </article>
-
-        <article class="app-section" id="themes">
-          <p class="app-section__tag">🧩 Temas</p>
-          <h2>Divisão dos conteúdos</h2>
-          <p>
-            Organize cada matéria em temas menores para facilitar o estudo por
-            blocos, revisões e questões futuramente.
-          </p>
-
-          <div class="theme-warning" id="theme-no-subject-warning" hidden>
-            <strong>Cadastre uma matéria primeiro.</strong>
-            <span>
-              Para criar temas, é necessário ter pelo menos uma matéria
-              cadastrada.
-            </span>
-          </div>
-
-          <form class="theme-form" id="theme-form">
-            <div class="form-group">
-              <label for="theme-subject">Matéria relacionada</label>
-              <select id="theme-subject" name="themeSubject">
-                <option value="">Selecione uma matéria</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="theme-name">Nome do tema</label>
-              <input
-                type="text"
-                id="theme-name"
-                name="themeName"
-                placeholder="Ex: Brasil República"
-                autocomplete="off"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="theme-description">Descrição</label>
-              <textarea
-                id="theme-description"
-                name="themeDescription"
-                rows="3"
-                placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"
-              ></textarea>
-            </div>
-
-            <p
-              class="form-message"
-              id="theme-form-message"
-              aria-live="polite"
-            ></p>
-
-            <div class="form-actions">
-              <button class="button button--primary" type="submit">
-                Adicionar tema
-              </button>
-
-              <button
-                class="button button--secondary"
-                type="button"
-                id="clear-theme-form"
-              >
-                Limpar
-              </button>
-            </div>
-          </form>
-
-          <div class="themes-area">
-            <div class="themes-header">
-              <div>
-                <h3>Temas cadastrados</h3>
-                <p id="themes-current-subject">
-                  Selecione uma matéria para visualizar seus temas.
-                </p>
-              </div>
-
-              <span id="themes-count">0 temas</span>
-            </div>
-
-            <div class="empty-state" id="themes-empty-state">
-              <strong>Nenhum tema cadastrado ainda.</strong>
-              <span
-                >Escolha uma matéria e use o formulário acima para adicionar um
-                tema.</span
-              >
-            </div>
-
-            <div class="themes-list" id="themes-list"></div>
-          </div>
-        </article>
-
-        <article class="app-section" id="questions">
-          <p class="app-section__tag">📝 Questões</p>
-          <h2>Banco de questões</h2>
-          <p>
-            Cadastre questões dentro de um tema específico para organizar
-            exercícios, gabaritos e explicações em um único lugar.
-          </p>
-
-          <div class="question-warning" id="question-no-subject-warning" hidden>
-            <strong>Cadastre uma matéria primeiro.</strong>
-            <span>
-              Para criar questões, é necessário ter pelo menos uma matéria
-              cadastrada.
-            </span>
-          </div>
-
-          <div class="question-filters" id="question-filters">
-            <div class="form-grid">
+            <form class="subject-form" id="subject-form">
               <div class="form-group">
-                <label for="question-subject">Matéria relacionada</label>
-                <select id="question-subject" name="questionSubject">
-                  <option value="">Selecione uma matéria</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="question-theme">Tema relacionado</label>
-                <select id="question-theme" name="questionTheme">
-                  <option value="">Selecione um tema</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="question-warning" id="question-no-theme-warning" hidden>
-            <strong>Cadastre um tema primeiro.</strong>
-            <span>
-              Esta matéria ainda não possui temas. Crie um tema antes de
-              cadastrar questões.
-            </span>
-          </div>
-
-          <div class="question-tabs">
-            <button
-              class="question-tab-button is-active"
-              type="button"
-              data-question-tab="list"
-            >
-              Listagem
-            </button>
-
-            <button
-              class="question-tab-button"
-              type="button"
-              data-question-tab="form"
-            >
-              Cadastro
-            </button>
-          </div>
-
-          <div class="question-tab-panel" id="question-tab-panel">
-            <div class="question-tab-content is-active" id="question-list-tab">
-              <div class="questions-area">
-                <div class="questions-header">
-                  <div>
-                    <h3>Questões cadastradas</h3>
-                    <p id="questions-current-theme">
-                      Selecione uma matéria e um tema para visualizar suas
-                      questões.
-                    </p>
-                  </div>
-
-                  <span id="questions-count">0 questões</span>
-                </div>
-
-                <div class="empty-state" id="questions-empty-state">
-                  <strong>Nenhuma questão selecionada ainda.</strong>
-                  <span
-                    >Escolha um tema para visualizar ou cadastrar
-                    questões.</span
-                  >
-                </div>
-
-                <div class="questions-list" id="questions-list"></div>
-              </div>
-            </div>
-
-            <div class="question-tab-content" id="question-form-tab">
-              <form class="question-form" id="question-form">
-                <div class="form-group">
-                  <label for="question-statement">Enunciado</label>
-                  <textarea
-                    id="question-statement"
-                    name="questionStatement"
-                    rows="5"
-                    placeholder="Cole ou escreva o enunciado da questão"
-                  ></textarea>
-                </div>
-
-                <div class="alternatives-grid">
-                  <div class="form-group">
-                    <label for="alternative-a">Alternativa A</label>
-                    <input
-                      type="text"
-                      id="alternative-a"
-                      name="alternativeA"
-                      placeholder="Texto da alternativa A"
-                      autocomplete="off"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="alternative-b">Alternativa B</label>
-                    <input
-                      type="text"
-                      id="alternative-b"
-                      name="alternativeB"
-                      placeholder="Texto da alternativa B"
-                      autocomplete="off"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="alternative-c">Alternativa C</label>
-                    <input
-                      type="text"
-                      id="alternative-c"
-                      name="alternativeC"
-                      placeholder="Texto da alternativa C"
-                      autocomplete="off"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="alternative-d">Alternativa D</label>
-                    <input
-                      type="text"
-                      id="alternative-d"
-                      name="alternativeD"
-                      placeholder="Texto da alternativa D"
-                      autocomplete="off"
-                    />
-                  </div>
-
-                  <div class="form-group">
-                    <label for="alternative-e">Alternativa E</label>
-                    <input
-                      type="text"
-                      id="alternative-e"
-                      name="alternativeE"
-                      placeholder="Texto da alternativa E"
-                      autocomplete="off"
-                    />
-                  </div>
-                </div>
-
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label for="correct-alternative">Alternativa correta</label>
-                    <select id="correct-alternative" name="correctAlternative">
-                      <option value="">Selecione a correta</option>
-                      <option value="A">Alternativa A</option>
-                      <option value="B">Alternativa B</option>
-                      <option value="C">Alternativa C</option>
-                      <option value="D">Alternativa D</option>
-                      <option value="E">Alternativa E</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="question-explanation"
-                    >Explicação / Correção</label
-                  >
-                  <textarea
-                    id="question-explanation"
-                    name="questionExplanation"
-                    rows="4"
-                    placeholder="Explique por que a alternativa correta está certa"
-                  ></textarea>
-                </div>
-
-                <p
-                  class="form-message"
-                  id="question-form-message"
-                  aria-live="polite"
-                ></p>
-
-                <div class="form-actions">
-                  <button
-                    class="button button--primary"
-                    type="submit"
-                    id="save-question-button"
-                  >
-                    Adicionar questão
-                  </button>
-
-                  <button
-                    class="button button--secondary"
-                    type="button"
-                    id="clear-question-form"
-                  >
-                    Limpar
-                  </button>
-
-                  <button
-                    class="button button--secondary"
-                    type="button"
-                    id="cancel-question-edit"
-                    hidden
-                  >
-                    Cancelar edição
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </article>
-
-        <article class="app-section" id="solve">
-          <p class="app-section__tag">🧠 Resolver</p>
-          <h2>Modo de resolução</h2>
-          <p>
-            Escolha uma matéria, um tema e uma questão para praticar com
-            alternativas embaralhadas e correção automática.
-          </p>
-
-          <div class="solve-warning" id="solve-no-question-warning" hidden>
-            <strong>Nenhuma questão disponível.</strong>
-            <span> Cadastre questões primeiro para começar a praticar. </span>
-          </div>
-
-          <div class="solve-filters" id="solve-filters">
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="solve-subject">Matéria</label>
-                <select id="solve-subject">
-                  <option value="">Selecione uma matéria</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="solve-theme">Tema</label>
-                <select id="solve-theme">
-                  <option value="">Selecione um tema</option>
-                </select>
-              </div>
-            </div>
-            <br />
-            <div class="form-group">
-              <label for="solve-question">Questão</label>
-              <select id="solve-question">
-                <option value="">Selecione uma questão</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="solve-area" id="solve-area">
-            <div class="solve-empty-state" id="solve-empty-state">
-              <strong>Nenhuma questão selecionada.</strong>
-              <span>
-                Escolha uma matéria, um tema e uma questão para iniciar a
-                resolução.
-              </span>
-            </div>
-
-            <article class="solve-card" id="solve-card" hidden>
-              <div class="solve-card__header">
-                <div>
-                  <p class="solve-card__tag" id="solve-question-context">
-                    Questão selecionada
-                  </p>
-
-                  <h3>Resolva a questão</h3>
-                </div>
-
-                <span id="solve-question-status">Aguardando resposta</span>
-              </div>
-
-              <p
-                class="solve-card__statement"
-                id="solve-question-statement"
-              ></p>
-
-              <div class="solve-alternatives" id="solve-alternatives"></div>
-
-              <div class="solve-actions">
-                <button
-                  class="button button--primary"
-                  type="button"
-                  id="confirm-answer"
-                >
-                  Confirmar resposta
-                </button>
-
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  id="retry-question"
-                  disabled
-                >
-                  Tentar novamente
-                </button>
-
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  id="next-question"
-                  disabled
-                >
-                  Próxima questão do tema
-                </button>
-              </div>
-
-              <div class="solve-feedback" id="solve-feedback" hidden></div>
-            </article>
-          </div>
-
-          <section class="solve-history" id="solve-history">
-            <div class="solve-history__header">
-              <div>
-                <h3>Histórico recente</h3>
-                <p>Veja apenas suas 3 resoluções mais recentes.</p>
-                <p class="section-note">
-                  O histórico completo fica em Revisões.
-                </p>
-              </div>
-
-              <span id="solve-history-count">0 registros</span>
-            </div>
-
-            <div class="empty-state" id="solve-history-empty">
-              <strong>Nenhuma resolução registrada ainda.</strong>
-              <span>Resolva uma questão para que ela apareça aqui.</span>
-            </div>
-
-            <div class="solve-history-list" id="solve-history-list"></div>
-          </section>
-        </article>
-
-        <article class="app-section" id="notes">
-          <p class="app-section__tag">🗒️ Anotações</p>
-
-          <h2>Anotações independentes</h2>
-
-          <p>
-            Registre resumos, dúvidas, regras, erros e ideias importantes com ou
-            sem vínculo com matérias e temas.
-          </p>
-
-          <div class="note-tabs">
-            <button
-              class="note-tab-button is-active"
-              type="button"
-              data-note-tab="gallery"
-            >
-              Galeria
-            </button>
-
-            <button class="note-tab-button" type="button" data-note-tab="form">
-              Nova Anotação
-            </button>
-          </div>
-
-          <div class="note-tab-content" id="note-form-tab">
-            <div class="note-form-header">
-              <div>
-                <h3 id="note-form-title">Nova anotação</h3>
-                <p id="note-form-description">
-                  Registre uma anotação livre ou vincule-a a uma matéria e tema.
-                </p>
-              </div>
-
-              <button
-                class="button button--secondary"
-                type="button"
-                id="back-to-notes-gallery"
-              >
-                Voltar para galeria
-              </button>
-            </div>
-
-            <form class="note-form" id="note-form">
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="note-title">Título da anotação</label>
-                  <input
-                    id="note-title"
-                    type="text"
-                    placeholder="Ex: Diferença entre totalitarismo e autoritarismo"
-                    autocomplete="off"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="note-type">Tipo da anotação</label>
-                  <select id="note-type">
-                    <option value="">Selecione um tipo</option>
-                    <option value="resumo">Resumo</option>
-                    <option value="erro">Erro</option>
-                    <option value="regra">Regra</option>
-                    <option value="duvida">Dúvida</option>
-                    <option value="exemplo">Exemplo</option>
-                    <option value="insight">Insight</option>
-                    <option value="revisao">Revisão</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="note-status">Status da anotação</label>
-                  <select id="note-status">
-                    <option value="rascunho">Rascunho</option>
-                    <option value="finalizada">Finalizada</option>
-                    <option value="revisar">Revisar depois</option>
-                    <option value="flashcard">Virar flashcard</option>
-                    <option value="importante">Importante</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="note-tags">Tags</label>
-                  <input
-                    id="note-tags"
-                    type="text"
-                    placeholder="Ex: enem, política, prova"
-                    autocomplete="off"
-                  />
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="note-subject">Matéria relacionada</label>
-                  <select id="note-subject">
-                    <option value="">Nenhuma matéria</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="note-theme">Tema relacionado</label>
-                  <select id="note-theme" disabled>
-                    <option value="">Nenhum tema</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="note-content">Conteúdo da anotação</label>
-
-                <button
-                  class="button button--secondary note-help-button"
-                  type="button"
-                  id="open-markdown-help"
-                >
-                  Ajuda Markdown
-                </button>
-
-                <button
-                  class="button button--secondary note-help-button"
-                  type="button"
-                  id="open-focused-editor"
-                >
-                  Editor focado
-                </button>
-
-                <textarea
-                  id="note-content"
-                  rows="5"
-                  placeholder="Escreva sua anotação principal aqui..."
-                ></textarea>
-              </div>
-
-              <p class="form-message" id="note-message" aria-live="polite"></p>
-
-              <div class="form-actions">
-                <button
-                  class="button button--primary"
-                  type="submit"
-                  id="save-note-button"
-                >
-                  Salvar anotação
-                </button>
-
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  id="clear-note-form"
-                >
-                  Limpar campos
-                </button>
-
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  id="cancel-note-edit"
-                  hidden
-                >
-                  Cancelar edição
-                </button>
-              </div>
-            </form>
-          </div>
-          <div class="note-tab-content is-active" id="note-gallery-tab">
-            <section class="note-filters" id="note-filters">
-              <div class="notes-header">
-                <div>
-                  <h3>Galeria de anotações</h3>
-                  <p>Busque, filtre e acesse suas anotações salvas.</p>
-                </div>
-
-                <button
-                  class="button button--primary"
-                  type="button"
-                  id="new-note-button"
-                >
-                  Nova anotação
-                </button>
-
-                <button
-                  class="button button--secondary"
-                  type="button"
-                  id="toggle-note-filters"
-                  aria-expanded="false"
-                >
-                  Mostrar filtros
-                </button>
-              </div>
-
-              <div class="form-group">
-                <label for="note-search">Buscar anotação</label>
+                <label for="subject-name">Nome da matéria</label>
                 <input
-                  id="note-search"
                   type="text"
-                  placeholder="Buscar por título, conteúdo, tag, matéria, tema..."
+                  id="subject-name"
+                  name="subjectName"
+                  placeholder="Ex: História"
                   autocomplete="off"
                 />
               </div>
 
-              <div
-                class="note-filters__advanced"
-                id="note-filters-advanced"
-                hidden
-              >
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label for="note-filter-subject">Filtrar por matéria</label>
-                    <select id="note-filter-subject">
-                      <option value="">Todas as matérias</option>
-                    </select>
-                  </div>
+              <div class="form-group">
+                <label for="subject-description">Descrição</label>
+                <textarea
+                  id="subject-description"
+                  name="subjectDescription"
+                  rows="3"
+                  placeholder="Ex: Conteúdos de História Geral e do Brasil"
+                ></textarea>
+              </div>
 
-                  <div class="form-group">
-                    <label for="note-filter-theme">Filtrar por tema</label>
-                    <select id="note-filter-theme">
-                      <option value="">Todos os temas</option>
-                    </select>
-                  </div>
+              <p
+                class="form-message"
+                id="subject-form-message"
+                aria-live="polite"
+              ></p>
+
+              <div class="form-actions">
+                <button class="button button--primary" type="submit">
+                  Adicionar matéria
+                </button>
+
+                <button
+                  class="button button--secondary"
+                  type="button"
+                  id="clear-subject-form"
+                >
+                  Limpar
+                </button>
+              </div>
+            </form>
+
+            <div class="subjects-area">
+              <div class="subjects-header">
+                <h3>Matérias cadastradas</h3>
+                <span id="subjects-count">0 matérias</span>
+              </div>
+
+              <div class="empty-state" id="subjects-empty-state">
+                <strong>Nenhuma matéria cadastrada ainda.</strong>
+                <span
+                  >Use o formulário acima para adicionar sua primeira
+                  matéria.</span
+                >
+              </div>
+
+              <div class="subjects-list" id="subjects-list"></div>
+            </div>
+          </article>
+
+          <article class="app-section" id="themes">
+            <p class="app-section__tag">🧩 Temas</p>
+            <h2>Divisão dos conteúdos</h2>
+            <p>
+              Organize cada matéria em temas menores para facilitar o estudo por
+              blocos, revisões e questões futuramente.
+            </p>
+
+            <div class="theme-warning" id="theme-no-subject-warning" hidden>
+              <strong>Cadastre uma matéria primeiro.</strong>
+              <span>
+                Para criar temas, é necessário ter pelo menos uma matéria
+                cadastrada.
+              </span>
+            </div>
+
+            <form class="theme-form" id="theme-form">
+              <div class="form-group">
+                <label for="theme-subject">Matéria relacionada</label>
+                <select id="theme-subject" name="themeSubject">
+                  <option value="">Selecione uma matéria</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="theme-name">Nome do tema</label>
+                <input
+                  type="text"
+                  id="theme-name"
+                  name="themeName"
+                  placeholder="Ex: Brasil República"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="theme-description">Descrição</label>
+                <textarea
+                  id="theme-description"
+                  name="themeDescription"
+                  rows="3"
+                  placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"
+                ></textarea>
+              </div>
+
+              <p
+                class="form-message"
+                id="theme-form-message"
+                aria-live="polite"
+              ></p>
+
+              <div class="form-actions">
+                <button class="button button--primary" type="submit">
+                  Adicionar tema
+                </button>
+
+                <button
+                  class="button button--secondary"
+                  type="button"
+                  id="clear-theme-form"
+                >
+                  Limpar
+                </button>
+              </div>
+            </form>
+
+            <div class="themes-area">
+              <div class="themes-header">
+                <div>
+                  <h3>Temas cadastrados</h3>
+                  <p id="themes-current-subject">
+                    Selecione uma matéria para visualizar seus temas.
+                  </p>
                 </div>
 
+                <span id="themes-count">0 temas</span>
+              </div>
+
+              <div class="empty-state" id="themes-empty-state">
+                <strong>Nenhum tema cadastrado ainda.</strong>
+                <span
+                  >Escolha uma matéria e use o formulário acima para adicionar
+                  um tema.</span
+                >
+              </div>
+
+              <div class="themes-list" id="themes-list"></div>
+            </div>
+          </article>
+
+          <article class="app-section" id="questions">
+            <p class="app-section__tag">📝 Questões</p>
+            <h2>Banco de questões</h2>
+            <p>
+              Cadastre questões dentro de um tema específico para organizar
+              exercícios, gabaritos e explicações em um único lugar.
+            </p>
+
+            <div
+              class="question-warning"
+              id="question-no-subject-warning"
+              hidden
+            >
+              <strong>Cadastre uma matéria primeiro.</strong>
+              <span>
+                Para criar questões, é necessário ter pelo menos uma matéria
+                cadastrada.
+              </span>
+            </div>
+
+            <div class="question-filters" id="question-filters">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="question-subject">Matéria relacionada</label>
+                  <select id="question-subject" name="questionSubject">
+                    <option value="">Selecione uma matéria</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="question-theme">Tema relacionado</label>
+                  <select id="question-theme" name="questionTheme">
+                    <option value="">Selecione um tema</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="question-warning" id="question-no-theme-warning" hidden>
+              <strong>Cadastre um tema primeiro.</strong>
+              <span>
+                Esta matéria ainda não possui temas. Crie um tema antes de
+                cadastrar questões.
+              </span>
+            </div>
+
+            <div class="question-tabs">
+              <button
+                class="question-tab-button is-active"
+                type="button"
+                data-question-tab="list"
+              >
+                Listagem
+              </button>
+
+              <button
+                class="question-tab-button"
+                type="button"
+                data-question-tab="form"
+              >
+                Cadastro
+              </button>
+            </div>
+
+            <div class="question-tab-panel" id="question-tab-panel">
+              <div
+                class="question-tab-content is-active"
+                id="question-list-tab"
+              >
+                <div class="questions-area">
+                  <div class="questions-header">
+                    <div>
+                      <h3>Questões cadastradas</h3>
+                      <p id="questions-current-theme">
+                        Selecione uma matéria e um tema para visualizar suas
+                        questões.
+                      </p>
+                    </div>
+
+                    <span id="questions-count">0 questões</span>
+                  </div>
+
+                  <div class="empty-state" id="questions-empty-state">
+                    <strong>Nenhuma questão selecionada ainda.</strong>
+                    <span
+                      >Escolha um tema para visualizar ou cadastrar
+                      questões.</span
+                    >
+                  </div>
+
+                  <div class="questions-list" id="questions-list"></div>
+                </div>
+              </div>
+
+              <div class="question-tab-content" id="question-form-tab">
+                <form class="question-form" id="question-form">
+                  <div class="form-group">
+                    <label for="question-statement">Enunciado</label>
+                    <textarea
+                      id="question-statement"
+                      name="questionStatement"
+                      rows="5"
+                      placeholder="Cole ou escreva o enunciado da questão"
+                    ></textarea>
+                  </div>
+
+                  <div class="alternatives-grid">
+                    <div class="form-group">
+                      <label for="alternative-a">Alternativa A</label>
+                      <input
+                        type="text"
+                        id="alternative-a"
+                        name="alternativeA"
+                        placeholder="Texto da alternativa A"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="alternative-b">Alternativa B</label>
+                      <input
+                        type="text"
+                        id="alternative-b"
+                        name="alternativeB"
+                        placeholder="Texto da alternativa B"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="alternative-c">Alternativa C</label>
+                      <input
+                        type="text"
+                        id="alternative-c"
+                        name="alternativeC"
+                        placeholder="Texto da alternativa C"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="alternative-d">Alternativa D</label>
+                      <input
+                        type="text"
+                        id="alternative-d"
+                        name="alternativeD"
+                        placeholder="Texto da alternativa D"
+                        autocomplete="off"
+                      />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="alternative-e">Alternativa E</label>
+                      <input
+                        type="text"
+                        id="alternative-e"
+                        name="alternativeE"
+                        placeholder="Texto da alternativa E"
+                        autocomplete="off"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="correct-alternative"
+                        >Alternativa correta</label
+                      >
+                      <select
+                        id="correct-alternative"
+                        name="correctAlternative"
+                      >
+                        <option value="">Selecione a correta</option>
+                        <option value="A">Alternativa A</option>
+                        <option value="B">Alternativa B</option>
+                        <option value="C">Alternativa C</option>
+                        <option value="D">Alternativa D</option>
+                        <option value="E">Alternativa E</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="question-explanation"
+                      >Explicação / Correção</label
+                    >
+                    <textarea
+                      id="question-explanation"
+                      name="questionExplanation"
+                      rows="4"
+                      placeholder="Explique por que a alternativa correta está certa"
+                    ></textarea>
+                  </div>
+
+                  <p
+                    class="form-message"
+                    id="question-form-message"
+                    aria-live="polite"
+                  ></p>
+
+                  <div class="form-actions">
+                    <button
+                      class="button button--primary"
+                      type="submit"
+                      id="save-question-button"
+                    >
+                      Adicionar questão
+                    </button>
+
+                    <button
+                      class="button button--secondary"
+                      type="button"
+                      id="clear-question-form"
+                    >
+                      Limpar
+                    </button>
+
+                    <button
+                      class="button button--secondary"
+                      type="button"
+                      id="cancel-question-edit"
+                      hidden
+                    >
+                      Cancelar edição
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </article>
+
+          <article class="app-section" id="solve">
+            <p class="app-section__tag">🧠 Resolver</p>
+            <h2>Modo de resolução</h2>
+            <p>
+              Escolha uma matéria, um tema e uma questão para praticar com
+              alternativas embaralhadas e correção automática.
+            </p>
+
+            <div class="solve-warning" id="solve-no-question-warning" hidden>
+              <strong>Nenhuma questão disponível.</strong>
+              <span> Cadastre questões primeiro para começar a praticar. </span>
+            </div>
+
+            <div class="solve-filters" id="solve-filters">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="solve-subject">Matéria</label>
+                  <select id="solve-subject">
+                    <option value="">Selecione uma matéria</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="solve-theme">Tema</label>
+                  <select id="solve-theme">
+                    <option value="">Selecione um tema</option>
+                  </select>
+                </div>
+              </div>
+              <br />
+              <div class="form-group">
+                <label for="solve-question">Questão</label>
+                <select id="solve-question">
+                  <option value="">Selecione uma questão</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="solve-area" id="solve-area">
+              <div class="solve-empty-state" id="solve-empty-state">
+                <strong>Nenhuma questão selecionada.</strong>
+                <span>
+                  Escolha uma matéria, um tema e uma questão para iniciar a
+                  resolução.
+                </span>
+              </div>
+
+              <article class="solve-card" id="solve-card" hidden>
+                <div class="solve-card__header">
+                  <div>
+                    <p class="solve-card__tag" id="solve-question-context">
+                      Questão selecionada
+                    </p>
+
+                    <h3>Resolva a questão</h3>
+                  </div>
+
+                  <span id="solve-question-status">Aguardando resposta</span>
+                </div>
+
+                <p
+                  class="solve-card__statement"
+                  id="solve-question-statement"
+                ></p>
+
+                <div class="solve-alternatives" id="solve-alternatives"></div>
+
+                <div class="solve-actions">
+                  <button
+                    class="button button--primary"
+                    type="button"
+                    id="confirm-answer"
+                  >
+                    Confirmar resposta
+                  </button>
+
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    id="retry-question"
+                    disabled
+                  >
+                    Tentar novamente
+                  </button>
+
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    id="next-question"
+                    disabled
+                  >
+                    Próxima questão do tema
+                  </button>
+                </div>
+
+                <div class="solve-feedback" id="solve-feedback" hidden></div>
+              </article>
+            </div>
+
+            <section class="solve-history" id="solve-history">
+              <div class="solve-history__header">
+                <div>
+                  <h3>Histórico recente</h3>
+                  <p>Veja apenas suas 3 resoluções mais recentes.</p>
+                  <p class="section-note">
+                    O histórico completo fica em Revisões.
+                  </p>
+                </div>
+
+                <span id="solve-history-count">0 registros</span>
+              </div>
+
+              <div class="empty-state" id="solve-history-empty">
+                <strong>Nenhuma resolução registrada ainda.</strong>
+                <span>Resolva uma questão para que ela apareça aqui.</span>
+              </div>
+
+              <div class="solve-history-list" id="solve-history-list"></div>
+            </section>
+          </article>
+
+          <article class="app-section" id="notes">
+            <p class="app-section__tag">🗒️ Anotações</p>
+
+            <h2>Anotações independentes</h2>
+
+            <p>
+              Registre resumos, dúvidas, regras, erros e ideias importantes com
+              ou sem vínculo com matérias e temas.
+            </p>
+
+            <div class="note-tabs">
+              <button
+                class="note-tab-button is-active"
+                type="button"
+                data-note-tab="gallery"
+              >
+                Galeria
+              </button>
+
+              <button
+                class="note-tab-button"
+                type="button"
+                data-note-tab="form"
+              >
+                Nova Anotação
+              </button>
+            </div>
+
+            <div class="note-tab-content" id="note-form-tab">
+              <div class="note-form-header">
+                <div>
+                  <h3 id="note-form-title">Nova anotação</h3>
+                  <p id="note-form-description">
+                    Registre uma anotação livre ou vincule-a a uma matéria e
+                    tema.
+                  </p>
+                </div>
+
+                <button
+                  class="button button--secondary"
+                  type="button"
+                  id="back-to-notes-gallery"
+                >
+                  Voltar para galeria
+                </button>
+              </div>
+
+              <form class="note-form" id="note-form">
                 <div class="form-grid">
                   <div class="form-group">
-                    <label for="note-filter-type">Filtrar por tipo</label>
-                    <select id="note-filter-type">
-                      <option value="">Todos os tipos</option>
+                    <label for="note-title">Título da anotação</label>
+                    <input
+                      id="note-title"
+                      type="text"
+                      placeholder="Ex: Diferença entre totalitarismo e autoritarismo"
+                      autocomplete="off"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="note-type">Tipo da anotação</label>
+                    <select id="note-type">
+                      <option value="">Selecione um tipo</option>
                       <option value="resumo">Resumo</option>
                       <option value="erro">Erro</option>
                       <option value="regra">Regra</option>
@@ -1147,11 +1002,12 @@
                       <option value="revisao">Revisão</option>
                     </select>
                   </div>
+                </div>
 
+                <div class="form-grid">
                   <div class="form-group">
-                    <label for="note-filter-status">Filtrar por status</label>
-                    <select id="note-filter-status">
-                      <option value="">Todos os status</option>
+                    <label for="note-status">Status da anotação</label>
+                    <select id="note-status">
                       <option value="rascunho">Rascunho</option>
                       <option value="finalizada">Finalizada</option>
                       <option value="revisar">Revisar depois</option>
@@ -1159,246 +1015,427 @@
                       <option value="importante">Importante</option>
                     </select>
                   </div>
+
+                  <div class="form-group">
+                    <label for="note-tags">Tags</label>
+                    <input
+                      id="note-tags"
+                      type="text"
+                      placeholder="Ex: enem, política, prova"
+                      autocomplete="off"
+                    />
+                  </div>
                 </div>
 
                 <div class="form-grid">
                   <div class="form-group">
-                    <label for="note-filter-tag">Filtrar por tag</label>
-                    <select id="note-filter-tag">
-                      <option value="">Todas as tags</option>
+                    <label for="note-subject">Matéria relacionada</label>
+                    <select id="note-subject">
+                      <option value="">Nenhuma matéria</option>
                     </select>
                   </div>
 
                   <div class="form-group">
-                    <label for="note-filter-flag">Filtrar por marcação</label>
-                    <select id="note-filter-flag">
-                      <option value="active">Não arquivadas</option>
-                      <option value="all">Todas</option>
-                      <option value="favorites">Favoritas</option>
-                      <option value="pinned">Fixadas</option>
-                      <option value="archived">Arquivadas</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-actions">
-                  <button
-                    class="button button--secondary"
-                    type="button"
-                    id="clear-note-filters"
-                  >
-                    Limpar filtros
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            <section class="notes-area">
-              <div class="notes-header">
-                <div>
-                  <h3>Minhas anotações</h3>
-                  <p>
-                    Clique em uma anotação para visualizar o conteúdo completo.
-                  </p>
-                </div>
-
-                <span id="notes-count">0 anotações</span>
-              </div>
-
-              <div class="empty-state" id="notes-empty">
-                <strong>Nenhuma anotação cadastrada ainda.</strong>
-                <span
-                  >Crie uma anotação livre ou vinculada a uma matéria e
-                  tema.</span
-                >
-              </div>
-
-              <div class="notes-list" id="notes-list"></div>
-            </section>
-          </div>
-        </article>
-
-        <article class="app-section" id="reviews">
-          <p class="app-section__tag">🔁 Revisões</p>
-          <h2>Histórico e revisão de erros</h2>
-          <p>
-            Acompanhe suas resoluções anteriores, identifique erros recorrentes
-            e transforme respostas incorretas em regras de correção.
-          </p>
-
-          <div class="review-tabs">
-            <button
-              class="review-tab-button is-active"
-              type="button"
-              data-review-tab="history"
-            >
-              Histórico
-            </button>
-
-            <button
-              class="review-tab-button"
-              type="button"
-              data-review-tab="errors"
-            >
-              Erros pendentes
-            </button>
-
-            <button
-              class="review-tab-button"
-              type="button"
-              data-review-tab="reviewed"
-            >
-              Erros revisados
-            </button>
-          </div>
-
-          <div class="review-tab-panel">
-            <div class="review-tab-content is-active" id="review-history-tab">
-              <div class="review-section-header">
-                <div>
-                  <h3>Histórico de resoluções</h3>
-                  <p>
-                    Veja todas as tentativas registradas durante seus estudos.
-                  </p>
-                </div>
-
-                <span id="review-history-count">0 registros</span>
-              </div>
-
-              <div class="review-filters">
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label for="review-history-subject">Matéria</label>
-                    <select id="review-history-subject">
-                      <option value="">Todas as matérias</option>
-                    </select>
-                  </div>
-
-                  <div class="form-group">
-                    <label for="review-history-theme">Tema</label>
-                    <select id="review-history-theme">
-                      <option value="">Todos os temas</option>
+                    <label for="note-theme">Tema relacionado</label>
+                    <select id="note-theme" disabled>
+                      <option value="">Nenhum tema</option>
                     </select>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="review-history-result">Resultado</label>
-                  <select id="review-history-result">
-                    <option value="all">Todos</option>
-                    <option value="correct">Acertos</option>
-                    <option value="wrong">Erros</option>
-                  </select>
-                </div>
-              </div>
+                  <label for="note-content">Conteúdo da anotação</label>
 
-              <div class="empty-state" id="review-history-empty">
-                <strong>Nenhuma resolução registrada ainda.</strong>
-                <span
-                  >Resolva questões para criar seu histórico de estudos.</span
+                  <button
+                    class="button button--secondary note-help-button"
+                    type="button"
+                    id="open-markdown-help"
+                  >
+                    Ajuda Markdown
+                  </button>
+
+                  <button
+                    class="button button--secondary note-help-button"
+                    type="button"
+                    id="open-focused-editor"
+                  >
+                    Editor focado
+                  </button>
+
+                  <textarea
+                    id="note-content"
+                    rows="5"
+                    placeholder="Escreva sua anotação principal aqui..."
+                  ></textarea>
+                </div>
+
+                <p
+                  class="form-message"
+                  id="note-message"
+                  aria-live="polite"
+                ></p>
+
+                <div class="form-actions">
+                  <button
+                    class="button button--primary"
+                    type="submit"
+                    id="save-note-button"
+                  >
+                    Salvar anotação
+                  </button>
+
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    id="clear-note-form"
+                  >
+                    Limpar campos
+                  </button>
+
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    id="cancel-note-edit"
+                    hidden
+                  >
+                    Cancelar edição
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div class="note-tab-content is-active" id="note-gallery-tab">
+              <section class="note-filters" id="note-filters">
+                <div class="notes-header">
+                  <div>
+                    <h3>Galeria de anotações</h3>
+                    <p>Busque, filtre e acesse suas anotações salvas.</p>
+                  </div>
+
+                  <button
+                    class="button button--primary"
+                    type="button"
+                    id="new-note-button"
+                  >
+                    Nova anotação
+                  </button>
+
+                  <button
+                    class="button button--secondary"
+                    type="button"
+                    id="toggle-note-filters"
+                    aria-expanded="false"
+                  >
+                    Mostrar filtros
+                  </button>
+                </div>
+
+                <div class="form-group">
+                  <label for="note-search">Buscar anotação</label>
+                  <input
+                    id="note-search"
+                    type="text"
+                    placeholder="Buscar por título, conteúdo, tag, matéria, tema..."
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div
+                  class="note-filters__advanced"
+                  id="note-filters-advanced"
+                  hidden
                 >
-              </div>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="note-filter-subject"
+                        >Filtrar por matéria</label
+                      >
+                      <select id="note-filter-subject">
+                        <option value="">Todas as matérias</option>
+                      </select>
+                    </div>
 
-              <div class="review-history-list" id="review-history-list"></div>
-            </div>
+                    <div class="form-group">
+                      <label for="note-filter-theme">Filtrar por tema</label>
+                      <select id="note-filter-theme">
+                        <option value="">Todos os temas</option>
+                      </select>
+                    </div>
+                  </div>
 
-            <div class="review-tab-content" id="review-errors-tab">
-              <div class="review-section-header">
-                <div>
-                  <h3>Erros pendentes</h3>
-                  <p>
-                    Liste questões erradas que ainda precisam de análise e
-                    revisão.
-                  </p>
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="note-filter-type">Filtrar por tipo</label>
+                      <select id="note-filter-type">
+                        <option value="">Todos os tipos</option>
+                        <option value="resumo">Resumo</option>
+                        <option value="erro">Erro</option>
+                        <option value="regra">Regra</option>
+                        <option value="duvida">Dúvida</option>
+                        <option value="exemplo">Exemplo</option>
+                        <option value="insight">Insight</option>
+                        <option value="revisao">Revisão</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="note-filter-status">Filtrar por status</label>
+                      <select id="note-filter-status">
+                        <option value="">Todos os status</option>
+                        <option value="rascunho">Rascunho</option>
+                        <option value="finalizada">Finalizada</option>
+                        <option value="revisar">Revisar depois</option>
+                        <option value="flashcard">Virar flashcard</option>
+                        <option value="importante">Importante</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="note-filter-tag">Filtrar por tag</label>
+                      <select id="note-filter-tag">
+                        <option value="">Todas as tags</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="note-filter-flag">Filtrar por marcação</label>
+                      <select id="note-filter-flag">
+                        <option value="active">Não arquivadas</option>
+                        <option value="all">Todas</option>
+                        <option value="favorites">Favoritas</option>
+                        <option value="pinned">Fixadas</option>
+                        <option value="archived">Arquivadas</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button
+                      class="button button--secondary"
+                      type="button"
+                      id="clear-note-filters"
+                    >
+                      Limpar filtros
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section class="notes-area">
+                <div class="notes-header">
+                  <div>
+                    <h3>Minhas anotações</h3>
+                    <p>
+                      Clique em uma anotação para visualizar o conteúdo
+                      completo.
+                    </p>
+                  </div>
+
+                  <span id="notes-count">0 anotações</span>
                 </div>
 
-                <span id="review-errors-count">0 erros</span>
-              </div>
-
-              <div class="empty-state" id="review-errors-empty">
-                <strong>Nenhum erro pendente encontrado.</strong>
-                <span
-                  >Quando uma questão for respondida incorretamente, ela
-                  aparecerá aqui.</span
-                >
-              </div>
-
-              <div class="review-errors-list" id="review-errors-list"></div>
-            </div>
-
-            <div class="review-tab-content" id="review-reviewed-tab">
-              <div class="review-section-header">
-                <div>
-                  <h3>Erros revisados</h3>
-                  <p>
-                    Consulte erros que já foram analisados e transformados em
-                    regra de correção.
-                  </p>
+                <div class="empty-state" id="notes-empty">
+                  <strong>Nenhuma anotação cadastrada ainda.</strong>
+                  <span
+                    >Crie uma anotação livre ou vinculada a uma matéria e
+                    tema.</span
+                  >
                 </div>
 
-                <span id="review-reviewed-count">0 revisões</span>
-              </div>
-
-              <div class="empty-state" id="review-reviewed-empty">
-                <strong>Nenhum erro revisado ainda.</strong>
-                <span>Revise um erro pendente para que ele apareça aqui.</span>
-              </div>
-
-              <div class="review-reviewed-list" id="review-reviewed-list"></div>
+                <div class="notes-list" id="notes-list"></div>
+              </section>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <article class="app-section" id="roadmap">
-          <p class="app-section__tag">🗺️ Roadmap</p>
+          <article class="app-section" id="reviews">
+            <p class="app-section__tag">🔁 Revisões</p>
+            <h2>Histórico e revisão de erros</h2>
+            <p>
+              Acompanhe suas resoluções anteriores, identifique erros
+              recorrentes e transforme respostas incorretas em regras de
+              correção.
+            </p>
 
-          <h2>Planejamento do projeto</h2>
+            <div class="review-tabs">
+              <button
+                class="review-tab-button is-active"
+                type="button"
+                data-review-tab="history"
+              >
+                Histórico
+              </button>
 
-          <p>
-            O roadmap completo está documentado no arquivo
-            <strong>ROADMAP.md</strong>. Esta área serve como um resumo visual
-            da versão atual e dos próximos passos da aplicação.
-          </p>
+              <button
+                class="review-tab-button"
+                type="button"
+                data-review-tab="errors"
+              >
+                Erros pendentes
+              </button>
 
-          <div class="empty-state">
-            <strong
-              >Versão atual: v0.8 — Dashboard inteligente e indicadores de
-              estudo</strong
-            >
+              <button
+                class="review-tab-button"
+                type="button"
+                data-review-tab="reviewed"
+              >
+                Erros revisados
+              </button>
+            </div>
 
-            <span>
-              Transformar o Dashboard em uma central de acompanhamento dos
-              estudos, exibindo indicadores sobre organização, desempenho,
-              revisões, anotações e prioridades de estudo.
-            </span>
-          </div>
+            <div class="review-tab-panel">
+              <div class="review-tab-content is-active" id="review-history-tab">
+                <div class="review-section-header">
+                  <div>
+                    <h3>Histórico de resoluções</h3>
+                    <p>
+                      Veja todas as tentativas registradas durante seus estudos.
+                    </p>
+                  </div>
 
-          <div class="empty-state">
-            <strong>Principais entregas da v0.8</strong>
+                  <span id="review-history-count">0 registros</span>
+                </div>
 
-            <span>
-              Dashboard organizado por abas, resumo geral, indicadores de
-              desempenho, revisão de erros pendentes, lacunas da base, anotações
-              prioritárias e atalhos inteligentes para acessar seções
-              relacionadas.
-            </span>
-          </div>
+                <div class="review-filters">
+                  <div class="form-grid">
+                    <div class="form-group">
+                      <label for="review-history-subject">Matéria</label>
+                      <select id="review-history-subject">
+                        <option value="">Todas as matérias</option>
+                      </select>
+                    </div>
 
-          <div class="empty-state">
-            <strong
-              >Próxima versão: v0.9 — Organização visual e
-              responsividade</strong
-            >
+                    <div class="form-group">
+                      <label for="review-history-theme">Tema</label>
+                      <select id="review-history-theme">
+                        <option value="">Todos os temas</option>
+                      </select>
+                    </div>
+                  </div>
 
-            <span>
-              Melhorar a consistência visual da aplicação, revisar espaçamentos,
-              responsividade, botões, formulários, estados visuais e experiência
-              em telas menores.
-            </span>
-          </div>
-        </article>
-      </section>
-    </main>
+                  <div class="form-group">
+                    <label for="review-history-result">Resultado</label>
+                    <select id="review-history-result">
+                      <option value="all">Todos</option>
+                      <option value="correct">Acertos</option>
+                      <option value="wrong">Erros</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="empty-state" id="review-history-empty">
+                  <strong>Nenhuma resolução registrada ainda.</strong>
+                  <span
+                    >Resolva questões para criar seu histórico de estudos.</span
+                  >
+                </div>
+
+                <div class="review-history-list" id="review-history-list"></div>
+              </div>
+
+              <div class="review-tab-content" id="review-errors-tab">
+                <div class="review-section-header">
+                  <div>
+                    <h3>Erros pendentes</h3>
+                    <p>
+                      Liste questões erradas que ainda precisam de análise e
+                      revisão.
+                    </p>
+                  </div>
+
+                  <span id="review-errors-count">0 erros</span>
+                </div>
+
+                <div class="empty-state" id="review-errors-empty">
+                  <strong>Nenhum erro pendente encontrado.</strong>
+                  <span
+                    >Quando uma questão for respondida incorretamente, ela
+                    aparecerá aqui.</span
+                  >
+                </div>
+
+                <div class="review-errors-list" id="review-errors-list"></div>
+              </div>
+
+              <div class="review-tab-content" id="review-reviewed-tab">
+                <div class="review-section-header">
+                  <div>
+                    <h3>Erros revisados</h3>
+                    <p>
+                      Consulte erros que já foram analisados e transformados em
+                      regra de correção.
+                    </p>
+                  </div>
+
+                  <span id="review-reviewed-count">0 revisões</span>
+                </div>
+
+                <div class="empty-state" id="review-reviewed-empty">
+                  <strong>Nenhum erro revisado ainda.</strong>
+                  <span
+                    >Revise um erro pendente para que ele apareça aqui.</span
+                  >
+                </div>
+
+                <div
+                  class="review-reviewed-list"
+                  id="review-reviewed-list"
+                ></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="app-section" id="roadmap">
+            <p class="app-section__tag">🗺️ Roadmap</p>
+
+            <h2>Planejamento do projeto</h2>
+
+            <p>
+              O roadmap completo está documentado no arquivo
+              <strong>ROADMAP.md</strong>. Esta área serve como um resumo visual
+              da versão atual e dos próximos passos da aplicação.
+            </p>
+
+            <div class="empty-state">
+              <strong
+                >Versão atual: v0.8 — Dashboard inteligente e indicadores de
+                estudo</strong
+              >
+
+              <span>
+                Transformar o Dashboard em uma central de acompanhamento dos
+                estudos, exibindo indicadores sobre organização, desempenho,
+                revisões, anotações e prioridades de estudo.
+              </span>
+            </div>
+
+            <div class="empty-state">
+              <strong>Principais entregas da v0.8</strong>
+
+              <span>
+                Dashboard organizado por abas, resumo geral, indicadores de
+                desempenho, revisão de erros pendentes, lacunas da base,
+                anotações prioritárias e atalhos inteligentes para acessar
+                seções relacionadas.
+              </span>
+            </div>
+
+            <div class="empty-state">
+              <strong
+                >Próxima versão: v0.9 — Organização visual e
+                responsividade</strong
+              >
+
+              <span>
+                Melhorar a consistência visual da aplicação, revisar
+                espaçamentos, responsividade, botões, formulários, estados
+                visuais e experiência em telas menores.
+              </span>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
 
     <!-- Ajuda Markdown -->
     <div

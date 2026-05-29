@@ -11,6 +11,8 @@
 
 @import url("./sections/hero.css");
 @import url("./sections/navigation.css");
+@import url("./layout/app-shell.css");
+
 @import url("./sections/dashboard.css");
 @import url("./sections/subjects.css");
 @import url("./sections/themes.css");
