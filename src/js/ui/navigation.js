@@ -14,6 +14,9 @@ export function initNavigation() {
   const navTabButtons = document.querySelectorAll("[data-nav-group]");
   const navCards = document.querySelectorAll("[data-section]");
   const sections = document.querySelectorAll(".app-section");
+  const sectionTargetButtons = document.querySelectorAll(
+    "[data-section-target]",
+  );
 
   if (!navTabButtons.length || !navCards.length || !sections.length) {
     return;
@@ -97,10 +100,24 @@ export function initNavigation() {
     navigateToSection(sectionId);
   });
 
-  const initialVisibleSection = document.querySelector(".app-section.is-visible");
+  const initialVisibleSection = document.querySelector(
+    ".app-section.is-visible",
+  );
   const initialSectionId = initialVisibleSection?.id || "dashboard";
 
   navigateToSection(initialSectionId, false);
+
+  sectionTargetButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const sectionId = button.dataset.sectionTarget;
+
+      if (!sectionId) {
+        return;
+      }
+
+      navigateToSection(sectionId);
+    });
+  });
 
   console.log("Navegação carregada.");
 }
