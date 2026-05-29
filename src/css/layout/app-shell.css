@@ -3,7 +3,7 @@
   height: 100vh;
 
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  grid-template-columns: 300px minmax(0, 1fr);
   gap: 16px;
 
   padding: 16px;
@@ -35,7 +35,10 @@
 
   padding: 24px;
 
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-gutter: stable;
 
   background: var(--surface);
   border: 1px solid var(--border);
@@ -47,8 +50,8 @@
   height: 100%;
   margin: 0;
 
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 18px;
 
   overflow: hidden;
@@ -81,22 +84,28 @@
 
   display: grid;
   grid-template-columns: 1fr;
+  align-content: start;
   gap: 10px;
 
-  overflow: auto;
-  padding-right: 4px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 8px;
+  scrollbar-gutter: stable;
 }
 
 .app-sidebar .nav-card {
   width: 100%;
-  min-height: auto;
+  min-height: 76px;
 
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   align-content: center;
-  column-gap: 10px;
+  column-gap: 12px;
   row-gap: 4px;
+
+  padding: 14px;
 
   text-align: left;
 }
@@ -124,4 +133,33 @@
 
 .app-sidebar .nav-card.is-hidden-by-group {
   display: none;
+}
+
+.app-sidebar .nav-grid,
+.app-content-panel {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) var(--surface);
+}
+
+.app-sidebar .nav-grid::-webkit-scrollbar,
+.app-content-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.app-sidebar .nav-grid::-webkit-scrollbar-track,
+.app-content-panel::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 999px;
+}
+
+.app-sidebar .nav-grid::-webkit-scrollbar-thumb,
+.app-content-panel::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+}
+
+.app-sidebar .nav-grid::-webkit-scrollbar-thumb:hover,
+.app-content-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-strong, var(--accent));
 }
