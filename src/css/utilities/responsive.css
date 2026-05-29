@@ -338,4 +338,8 @@
     width: 36px;
     height: 36px;
   }
+
+  .note-card__tag-tooltip {
+    display: none;
+  }
 }

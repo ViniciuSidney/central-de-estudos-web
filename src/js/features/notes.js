@@ -494,10 +494,10 @@ export function initNotes() {
       }
       noteCard.dataset.noteId = note.id;
 
-      const visibleTags = Array.isArray(note.tags) ? note.tags.slice(0, 2) : [];
-      const hiddenTagsCount = Array.isArray(note.tags)
-        ? Math.max(note.tags.length - visibleTags.length, 0)
-        : 0;
+      const tags = Array.isArray(note.tags) ? note.tags : [];
+      const visibleTags = tags.slice(0, 2);
+      const hiddenTags = tags.slice(2);
+      const hiddenTagsCount = hiddenTags.length;
 
       noteCard.innerHTML = `
 				<button
@@ -547,15 +547,27 @@ export function initNotes() {
             visibleTags.length > 0
               ? `
 							<div class="note-card__tags">
-								${visibleTags
+                ${visibleTags
                   .map((tag) => {
-                    return `<span>#${escapeHTML(tag)}</span>`;
+                    return `<span class="note-card__tag">#${escapeHTML(tag)}</span>`;
                   })
                   .join("")}
 
-								${
+                ${
                   hiddenTagsCount > 0
-                    ? `<span class="note-card__more-tags">+${hiddenTagsCount}</span>`
+                    ? `
+                      <span class="note-card__tag note-card__tag-overflow">
+                        +${hiddenTagsCount}
+
+                        <span class="note-card__tag-tooltip">
+                          ${hiddenTags
+                            .map((tag) => {
+                              return `<span>#${escapeHTML(tag)}</span>`;
+                            })
+                            .join("")}
+                        </span>
+                      </span>
+                    `
                     : ""
                 }
 							</div>
