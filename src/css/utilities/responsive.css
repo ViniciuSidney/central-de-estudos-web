@@ -73,6 +73,15 @@
   .app-sidebar .nav-card span {
     grid-row: auto;
   }
+
+  .app-section__header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .app-section__header p {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 820px) {
@@ -129,7 +138,7 @@
 
   .hero__actions .button {
     width: 100%;
-        min-width: 0;
+    min-width: 0;
   }
 
   .button {
@@ -369,6 +378,15 @@
 
   .note-card__tag-tooltip {
     display: none;
+  }
+
+  .app-section__header h2 {
+    font-size: clamp(1.6rem, 9vw, 2.1rem);
+  }
+
+  .app-section__header p {
+    padding: 12px;
+    font-size: 0.9rem;
   }
 }
 
