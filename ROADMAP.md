@@ -558,10 +558,10 @@ As seções específicas continuam responsáveis pelo controle completo dos dado
 
 ---
 
-# v0.9 — Organização visual e responsividade
+# v0.9 — Refinamento de interface, layout e responsividade
 
 ### Objetivo
-Melhorar a aparência, a navegação e a experiência de uso do sistema em celulares e computadores.
+Melhorar a aparência, a navegação e a experiência de uso da aplicação, tornando as telas mais acessíveis, legíveis, compactas e organizadas, sem adicionar grandes sistemas novos.
 
 ### Status
 Planejada.
@@ -570,34 +570,121 @@ Planejada.
 
 ## Previsto para a v0.9
 
-- Melhorias no layout geral
-- Interface mais limpa e minimalista
-- Navegação mais intuitiva
-- Ajustes de responsividade
-- Melhor uso em dispositivos móveis
-- Melhor organização dos cards
-- Melhor organização dos formulários
-- Melhor organização das abas
-- Estados visuais de vazio, erro e sucesso
-- Revisão dos espaçamentos
-- Revisão das fontes
-- Revisão dos botões
-- Revisão do tema claro e escuro
-- Pequenos ajustes de acessibilidade
+### Layout geral
+
+- Revisar a estrutura visual da página inicial
+- Melhorar a disposição do Hero
+- Melhorar a área de navegação principal
+- Reduzir rolagem desnecessária
+- Tornar as seções mais acessíveis
+- Deixar o conteúdo mais compacto sem perder legibilidade
+- Melhorar o equilíbrio entre largura, espaçamento e densidade visual
+
+---
+
+### Navegação
+
+- Revisar o sistema de abas da navegação principal
+- Melhorar a visualização dos grupos: Resumo, Cadastro e Estudo
+- Garantir que cards e abas fiquem sempre sincronizados
+- Melhorar o destaque da seção ativa
+- Revisar atalhos internos entre Dashboard, Revisões, Anotações, Questões e Temas
+- Corrigir inconsistências de navegação quando ações forem disparadas por atalhos
+
+---
+
+### Cards e listas
+
+- Padronizar aparência dos cards principais
+- Revisar cards de matérias, temas, questões, revisões e anotações
+- Melhorar espaçamentos internos dos cards
+- Melhorar organização dos botões de ação
+- Reduzir excesso visual em metadados, tags e indicadores
+- Garantir boa leitura em cards com pouco ou muito conteúdo
+
+---
+
+### Formulários
+
+- Revisar layout dos formulários
+- Melhorar agrupamento dos campos
+- Padronizar mensagens de erro, sucesso e aviso
+- Melhorar disposição dos botões de formulário
+- Evitar formulários visualmente longos quando possível
+- Melhorar clareza dos campos obrigatórios e opcionais
+
+---
+
+### Modais
+
+- Revisar modais de confirmação
+- Revisar modal de revisão de erro
+- Revisar modal de visualização de anotação
+- Melhorar scroll interno dos modais
+- Garantir boa leitura em telas menores
+- Padronizar cabeçalho, conteúdo e rodapé dos modais
+
+---
+
+### Dashboard
+
+- Revisar espaçamentos do Dashboard
+- Ajustar os grids de cards em telas grandes e médias
+- Garantir que as abas do Dashboard continuem compactas e legíveis
+- Melhorar estados vazios
+- Revisar listas de indicadores para evitar excesso de informação
+- Manter o Dashboard como painel de decisão, não como relatório completo
+
+---
+
+### Responsividade
+
+- Ajustar layout para celular
+- Ajustar layout para tablet
+- Ajustar layout para notebook
+- Ajustar layout para desktop
+- Melhorar grids responsivos
+- Garantir que botões não quebrem o layout
+- Garantir que modais possam ser rolados corretamente
+- Melhorar leitura em telas estreitas
+
+---
+
+### Organização do CSS
+
+- Revisar arquivos CSS separados por função
+- Remover estilos duplicados ou antigos
+- Agrupar estilos por componente
+- Padronizar nomes de classes
+- Revisar estilos não utilizados
+- Melhorar manutenção futura do CSS
+
+---
+
+### Acessibilidade e usabilidade
+
+- Melhorar foco visual em botões e campos
+- Revisar textos de botões e mensagens
+- Conferir uso de `aria-label` quando necessário
+- Melhorar tooltips e rótulos visuais
+- Garantir que ações importantes sejam compreensíveis
+- Evitar depender apenas de ícones quando houver risco de ambiguidade
 
 ---
 
 ## Fechamento da v0.9
 
-A versão v0.9 será considerada concluída quando o sistema tiver:
+A versão v0.9 será considerada concluída quando o usuário conseguir:
 
-- Visual mais consistente
-- Boa leitura no celular
-- Navegação simples
-- Telas bem separadas
-- Formulários mais agradáveis de usar
-- Experiência mais fluida
-- Tema claro e escuro mais equilibrados
+- Usar a aplicação com uma interface mais limpa e organizada
+- Acessar as principais áreas com menos esforço
+- Navegar entre seções sem inconsistências visuais
+- Ler cards, listas, formulários e modais com mais facilidade
+- Usar a aplicação em telas menores sem perda grave de usabilidade
+- Visualizar os conteúdos com espaçamento equilibrado
+- Interagir com botões e ações de forma clara
+- Perceber uma identidade visual mais consistente entre as seções
+- Manter a aplicação funcional sem regressões nas versões anteriores
 
 ---
 
