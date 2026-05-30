@@ -1,25 +1,26 @@
-@import url("./base/variables.css");
-@import url("./base/reset.css");
-@import url("./base/layout.css");
+@import url('./base/variables.css');
+@import url('./base/reset.css');
+@import url('./base/layout.css');
 
-@import url("./components/buttons.css");
-@import url("./components/forms.css");
-@import url("./components/modals.css");
-@import url("./components/tabs.css");
-@import url("./components/tags.css");
-@import url("./components/states.css");
+@import url('./components/buttons.css');
+@import url('./components/forms.css');
+@import url('./components/modals.css');
+@import url('./components/tabs.css');
+@import url('./components/tags.css');
+@import url('./components/states.css');
 
-@import url("./sections/hero.css");
-@import url("./sections/navigation.css");
-@import url("./layout/app-shell.css");
+@import url('./sections/hero.css');
+@import url('./sections/navigation.css');
+@import url('./sections/management.css');
+@import url('./layout/app-shell.css');
 
-@import url("./sections/dashboard.css");
-@import url("./sections/subjects.css");
-@import url("./sections/themes.css");
-@import url("./sections/questions.css");
-@import url("./sections/solve.css");
-@import url("./sections/reviews.css");
-@import url("./sections/notes.css");
-@import url("./sections/dataReset.css");
+@import url('./sections/dashboard.css');
+@import url('./sections/subjects.css');
+@import url('./sections/themes.css');
+@import url('./sections/questions.css');
+@import url('./sections/solve.css');
+@import url('./sections/reviews.css');
+@import url('./sections/notes.css');
+@import url('./sections/dataReset.css');
 
-@import url("./utilities/responsive.css");
+@import url('./utilities/responsive.css');

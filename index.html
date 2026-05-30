@@ -289,38 +289,46 @@
 							<p>Cadastre suas matérias de estudo para organizar temas, questões, anotações e revisões futuramente.</p>
 						</header>
 
-						<form class="subject-form" id="subject-form">
-							<div class="form-group">
-								<label for="subject-name">Nome da matéria</label>
-								<input type="text" id="subject-name" name="subjectName" placeholder="Ex: História" autocomplete="off" />
-							</div>
+						<div class="management-workspace">
+							<section class="management-form-panel">
+								<form class="subject-form" id="subject-form">
+									<div class="form-group">
+										<label for="subject-name">Nome da matéria</label>
+										<input type="text" id="subject-name" name="subjectName" placeholder="Ex: História" autocomplete="off" />
+									</div>
 
-							<div class="form-group">
-								<label for="subject-description">Descrição</label>
-								<textarea id="subject-description" name="subjectDescription" rows="3" placeholder="Ex: Conteúdos de História Geral e do Brasil"></textarea>
-							</div>
+									<div class="form-group">
+										<label for="subject-description">Descrição</label>
+										<textarea id="subject-description" name="subjectDescription" rows="3" placeholder="Ex: Conteúdos de História Geral e do Brasil"></textarea>
+									</div>
 
-							<p class="form-message" id="subject-form-message" aria-live="polite"></p>
+									<p class="form-message" id="subject-form-message" aria-live="polite"></p>
 
-							<div class="form-actions">
-								<button class="button button--primary" type="submit">Adicionar matéria</button>
+									<div class="form-actions">
+										<button class="button button--primary" type="submit">Adicionar matéria</button>
 
-								<button class="button button--secondary" type="button" id="clear-subject-form">Limpar</button>
-							</div>
-						</form>
+										<button class="button button--secondary" type="button" id="clear-subject-form">Limpar</button>
+									</div>
+								</form>
+							</section>
 
-						<div class="subjects-area">
-							<div class="subjects-header">
-								<h3>Matérias cadastradas</h3>
-								<span id="subjects-count">0 matérias</span>
-							</div>
+							<section class="management-list-panel subjects-area">
+								<div class="subjects-header management-list-header">
+									<div>
+										<h3>Matérias cadastradas</h3>
+										<p>Veja e gerencie suas áreas principais de estudo.</p>
+									</div>
 
-							<div class="empty-state" id="subjects-empty-state">
-								<strong>Nenhuma matéria cadastrada ainda.</strong>
-								<span>Use o formulário acima para adicionar sua primeira matéria.</span>
-							</div>
+									<span id="subjects-count">0 matérias</span>
+								</div>
 
-							<div class="subjects-list" id="subjects-list"></div>
+								<div class="empty-state" id="subjects-empty-state">
+									<strong>Nenhuma matéria cadastrada ainda.</strong>
+									<span>Use o formulário ao lado para adicionar sua primeira matéria.</span>
+								</div>
+
+								<div class="subjects-list management-gallery" id="subjects-list"></div>
+							</section>
 						</div>
 					</article>
 
@@ -330,54 +338,58 @@
 							<p>Organize cada matéria em temas menores para facilitar o estudo por blocos, revisões e questões futuramente.</p>
 						</header>
 
-						<div class="theme-warning" id="theme-no-subject-warning" hidden>
-							<strong>Cadastre uma matéria primeiro.</strong>
-							<span> Para criar temas, é necessário ter pelo menos uma matéria cadastrada. </span>
-						</div>
-
-						<form class="theme-form" id="theme-form">
-							<div class="form-group">
-								<label for="theme-subject">Matéria relacionada</label>
-								<select id="theme-subject" name="themeSubject">
-									<option value="">Selecione uma matéria</option>
-								</select>
-							</div>
-
-							<div class="form-group">
-								<label for="theme-name">Nome do tema</label>
-								<input type="text" id="theme-name" name="themeName" placeholder="Ex: Brasil República" autocomplete="off" />
-							</div>
-
-							<div class="form-group">
-								<label for="theme-description">Descrição</label>
-								<textarea id="theme-description" name="themeDescription" rows="3" placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"></textarea>
-							</div>
-
-							<p class="form-message" id="theme-form-message" aria-live="polite"></p>
-
-							<div class="form-actions">
-								<button class="button button--primary" type="submit">Adicionar tema</button>
-
-								<button class="button button--secondary" type="button" id="clear-theme-form">Limpar</button>
-							</div>
-						</form>
-
-						<div class="themes-area">
-							<div class="themes-header">
-								<div>
-									<h3>Temas cadastrados</h3>
-									<p id="themes-current-subject">Selecione uma matéria para visualizar seus temas.</p>
+						<div class="management-workspace">
+							<section class="management-form-panel">
+								<div class="theme-warning" id="theme-no-subject-warning" hidden>
+									<strong>Cadastre uma matéria primeiro.</strong>
+									<span> Para criar temas, é necessário ter pelo menos uma matéria cadastrada. </span>
 								</div>
 
-								<span id="themes-count">0 temas</span>
-							</div>
+								<form class="theme-form" id="theme-form">
+									<div class="form-group">
+										<label for="theme-subject">Matéria relacionada</label>
+										<select id="theme-subject" name="themeSubject">
+											<option value="">Selecione uma matéria</option>
+										</select>
+									</div>
 
-							<div class="empty-state" id="themes-empty-state">
-								<strong>Nenhum tema cadastrado ainda.</strong>
-								<span>Escolha uma matéria e use o formulário acima para adicionar um tema.</span>
-							</div>
+									<div class="form-group">
+										<label for="theme-name">Nome do tema</label>
+										<input type="text" id="theme-name" name="themeName" placeholder="Ex: Brasil República" autocomplete="off" />
+									</div>
 
-							<div class="themes-list" id="themes-list"></div>
+									<div class="form-group">
+										<label for="theme-description">Descrição</label>
+										<textarea id="theme-description" name="themeDescription" rows="3" placeholder="Ex: Coronelismo, política dos governadores e voto de cabresto"></textarea>
+									</div>
+
+									<p class="form-message" id="theme-form-message" aria-live="polite"></p>
+
+									<div class="form-actions">
+										<button class="button button--primary" type="submit">Adicionar tema</button>
+
+										<button class="button button--secondary" type="button" id="clear-theme-form">Limpar</button>
+									</div>
+								</form>
+							</section>
+
+							<section class="management-list-panel themes-area">
+								<div class="themes-header management-list-header">
+									<div>
+										<h3>Temas cadastrados</h3>
+										<p id="themes-current-subject">Selecione uma matéria para visualizar seus temas.</p>
+									</div>
+
+									<span id="themes-count">0 temas</span>
+								</div>
+
+								<div class="empty-state" id="themes-empty-state">
+									<strong>Nenhum tema cadastrado ainda.</strong>
+									<span> Escolha uma matéria e use o formulário ao lado para adicionar um tema. </span>
+								</div>
+
+								<div class="themes-list management-gallery" id="themes-list"></div>
+							</section>
 						</div>
 					</article>
 

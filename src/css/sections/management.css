@@ -1,0 +1,59 @@
+.management-workspace {
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.management-form-panel,
+.management-list-panel {
+  min-width: 0;
+
+  padding: 16px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.management-form-panel {
+  align-self: start;
+}
+
+.management-list-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.management-list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.management-list-header h3 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.management-list-header p,
+.management-list-header span {
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.management-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
