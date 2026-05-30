@@ -1,39 +1,56 @@
+@media (min-width: 1501px) {
+	.dashboard-rank-item {
+		grid-template-columns: auto minmax(0, 1fr) auto;
+	}
+
+	.dashboard-rank-item .dashboard-chip,
+	.dashboard-rank-item .dashboard-chip.is-danger {
+		grid-column: auto;
+		justify-self: end;
+		margin-top: 0;
+	}
+
+	.dashboard-tab-layout {
+		grid-template-columns: 300px minmax(0, 1fr);
+	}
+}
+
 @media (max-width: 1500px) {
-  .dashboard-insight-grid {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-insight-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 1300px) {
-  .dashboard-tab-layout {
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
+	.dashboard-tab-layout {
+		grid-template-columns: 220px minmax(0, 1fr);
+	}
 
-  .dashboard-workspace {
-    grid-template-columns: 150px minmax(0, 1fr);
-  }
+	.dashboard-workspace {
+		grid-template-columns: 150px minmax(0, 1fr);
+	}
 }
 
 @media (max-width: 1150px) {
-  .dashboard-workspace {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-workspace {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-tabs--vertical {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
+	.dashboard-tabs--vertical {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
 
-  .dashboard-tabs--vertical .dashboard-tab-button {
-    justify-content: center;
-  }
+	.dashboard-tabs--vertical .dashboard-tab-button {
+		justify-content: center;
+	}
 
-  .dashboard-tab-layout {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-tab-layout {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-grid--rail {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.dashboard-grid--rail {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (max-width: 1100px) {
@@ -166,20 +183,20 @@
 }
 
 @media (max-width: 700px) {
-  .dashboard-tabs--vertical,
-  .dashboard-grid--rail {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-tabs--vertical,
+	.dashboard-grid--rail {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-content-alert-item,
-  .dashboard-note-priority-item,
-  .dashboard-pending-error-item {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-content-alert-item,
+	.dashboard-note-priority-item,
+	.dashboard-pending-error-item {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-link-button {
-    width: 100%;
-  }
+	.dashboard-link-button {
+		width: 100%;
+	}
 }
 
 @media (max-width: 620px) {
