@@ -1,397 +1,411 @@
 @media (max-width: 1100px) {
-  .dashboard-grid--six-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+	.dashboard-workspace {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-tabs--vertical {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.dashboard-tabs--vertical .dashboard-tab-button {
+		justify-content: center;
+	}
 }
 
 @media (max-width: 980px) {
-  .review-error-workspace {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "meta"
-      "preview"
-      "form";
-    gap: 18px;
-    width: min(100%, calc(100vw - 24px));
-  }
+	.review-error-workspace {
+		grid-template-columns: 1fr;
+		grid-template-areas:
+			'meta'
+			'preview'
+			'form';
+		gap: 18px;
+		width: min(100%, calc(100vw - 24px));
+	}
 
-  .review-error-window--form,
-  .review-error-window--preview {
-    min-height: auto;
-  }
+	.review-error-window--form,
+	.review-error-window--preview {
+		min-height: auto;
+	}
 
-  .review-error-meta__grid,
-  .review-error-preview__answers {
-    grid-template-columns: 1fr;
-  }
+	.review-error-meta__grid,
+	.review-error-preview__answers {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 900px) {
-  .app-shell {
-    height: auto;
-    min-height: 100vh;
+	.app-shell {
+		height: auto;
+		min-height: 100vh;
 
-    grid-template-columns: 1fr;
-    overflow: visible;
-  }
+		grid-template-columns: 1fr;
+		overflow: visible;
+	}
 
-  .app-sidebar,
-  .app-main,
-  .app-content-panel {
-    height: auto;
-    overflow: visible;
-  }
+	.app-sidebar,
+	.app-main,
+	.app-content-panel {
+		height: auto;
+		overflow: visible;
+	}
 
-  .app-main {
-    grid-template-rows: auto auto;
-  }
+	.app-main {
+		grid-template-rows: auto auto;
+	}
 
-  .hero {
-    grid-template-columns: 1fr;
-  }
+	.hero {
+		grid-template-columns: 1fr;
+	}
 
-  .hero__actions {
-    width: 100%;
-    min-width: 0;
-    justify-content: flex-start;
-  }
+	.hero__actions {
+		width: 100%;
+		min-width: 0;
+		justify-content: flex-start;
+	}
 
-  .app-sidebar .navigation-panel {
-    height: auto;
-    overflow: visible;
-  }
+	.app-sidebar .navigation-panel {
+		height: auto;
+		overflow: visible;
+	}
 
-  .app-sidebar .nav-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    overflow: visible;
-  }
+	.app-sidebar .nav-grid {
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		overflow: visible;
+	}
 
-  .app-sidebar .nav-card {
-    grid-template-columns: 1fr;
-  }
+	.app-sidebar .nav-card {
+		grid-template-columns: 1fr;
+	}
 
-  .app-sidebar .nav-card span {
-    grid-row: auto;
-  }
+	.app-sidebar .nav-card span {
+		grid-row: auto;
+	}
 
-  .app-section__header {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
+	.app-section__header {
+		grid-template-columns: 1fr;
+		align-items: start;
+	}
 
-  .app-section__header p {
-    max-width: 100%;
-  }
+	.app-section__header p {
+		max-width: 100%;
+	}
+}
+
+@media (max-width: 860px) {
+	.dashboard-tab-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-grid--rail {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (max-width: 820px) {
-  .question-card,
-  .review-card {
-    flex-direction: column;
-  }
+	.question-card,
+	.review-card {
+		flex-direction: column;
+	}
 
-  .question-card__actions,
-  .review-card__actions {
-    width: 100%;
-    min-width: 0;
-  }
+	.question-card__actions,
+	.review-card__actions {
+		width: 100%;
+		min-width: 0;
+	}
 
-  .question-card__actions .button,
-  .question-card__actions .question-card__status,
-  .question-card__actions .question-card__badge,
-  .review-card__actions .button,
-  .review-card__actions .review-card__status {
-    width: 100%;
-  }
+	.question-card__actions .button,
+	.question-card__actions .question-card__status,
+	.question-card__actions .question-card__badge,
+	.review-card__actions .button,
+	.review-card__actions .review-card__status {
+		width: 100%;
+	}
 
-  .dashboard-insight-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .dashboard-grid--six-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+	.dashboard-insight-grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 620px) {
-  .app-shell {
-    padding: 12px;
-    gap: 12px;
-  }
+	.app-shell {
+		padding: 12px;
+		gap: 12px;
+	}
 
-  .hero,
-  .navigation-panel,
-  .app-content-panel {
-    padding: 18px;
-  }
+	.hero,
+	.navigation-panel,
+	.app-content-panel {
+		padding: 18px;
+	}
 
-  .hero__title {
-    font-size: clamp(1.8rem, 10vw, 2.4rem);
-  }
+	.hero__title {
+		font-size: clamp(1.8rem, 10vw, 2.4rem);
+	}
 
-  .hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.hero__actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .hero__actions .button {
-    width: 100%;
-    min-width: 0;
-  }
+	.hero__actions .button {
+		width: 100%;
+		min-width: 0;
+	}
 
-  .button {
-    width: 100%;
-  }
+	.button {
+		width: 100%;
+	}
 
-  .nav-grid,
-  .placeholder-grid {
-    grid-template-columns: 1fr;
-  }
+	.nav-grid,
+	.placeholder-grid {
+		grid-template-columns: 1fr;
+	}
 
-  .nav-card {
-    min-height: 96px;
-  }
+	.nav-card {
+		min-height: 96px;
+	}
 
-  .subjects-header,
-  .subject-card,
-  .themes-header,
-  .theme-card,
-  .questions-header,
-  .question-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.subjects-header,
+	.subject-card,
+	.themes-header,
+	.theme-card,
+	.questions-header,
+	.question-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .subject-card__actions {
-    width: 100%;
-  }
+	.subject-card__actions {
+		width: 100%;
+	}
 
-  .subject-card__actions .button {
-    width: 100%;
-  }
+	.subject-card__actions .button {
+		width: 100%;
+	}
 
-  .subject-card__actions,
-  .theme-card__actions,
-  .question-card__actions {
-    width: 100%;
-  }
+	.subject-card__actions,
+	.theme-card__actions,
+	.question-card__actions {
+		width: 100%;
+	}
 
-  .subject-card__actions .button,
-  .theme-card__actions .button,
-  .question-card__actions .button {
-    width: 100%;
-  }
+	.subject-card__actions .button,
+	.theme-card__actions .button,
+	.question-card__actions .button {
+		width: 100%;
+	}
 
-  .theme-card__actions {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
+	.theme-card__actions {
+		flex-wrap: wrap;
+		justify-content: flex-end;
+	}
 
-  .question-card__top {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+	.question-card__top {
+		align-items: flex-start;
+		flex-direction: column;
+	}
 
-  .question-card__answer {
-    width: fit-content;
-  }
+	.question-card__answer {
+		width: fit-content;
+	}
 
-  .question-form-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.question-form-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .question-form-header .button {
-    width: 100%;
-  }
+	.question-form-header .button {
+		width: 100%;
+	}
 
-  .question-tabs {
-    flex-direction: column;
-  }
+	.question-tabs {
+		flex-direction: column;
+	}
 
-  .question-tab-button {
-    width: 100%;
-  }
+	.question-tab-button {
+		width: 100%;
+	}
 
-  .solve-card__header {
-    flex-direction: column;
-  }
+	.solve-card__header {
+		flex-direction: column;
+	}
 
-  .solve-actions .button {
-    width: 100%;
-  }
+	.solve-actions .button {
+		width: 100%;
+	}
 
-  .solve-feedback__grid {
-    grid-template-columns: 1fr;
-  }
+	.solve-feedback__grid {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-tabs {
-    flex-direction: column;
-  }
+	.dashboard-tabs {
+		flex-direction: column;
+	}
 
-  .dashboard-tab-button {
-    width: 100%;
-  }
+	.dashboard-tab-button {
+		width: 100%;
+	}
 
-  .solve-history__header,
-  .solve-history-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.solve-history__header,
+	.solve-history-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .review-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.review-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .review-card__actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
+	.review-card__actions {
+		width: 100%;
+		justify-content: flex-start;
+	}
 
-  .review-card__actions .button {
-    width: 100%;
-  }
+	.review-card__actions .button {
+		width: 100%;
+	}
 
-  .review-error-preview__answers {
-    grid-template-columns: 1fr;
-  }
+	.review-error-preview__answers {
+		grid-template-columns: 1fr;
+	}
 
-  .nav-tabs {
-    flex-direction: column;
-  }
+	.nav-tabs {
+		flex-direction: column;
+	}
 
-  .nav-tab-button {
-    width: 100%;
-  }
+	.nav-tab-button {
+		width: 100%;
+	}
 
-  .note-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.note-card {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .note-card__top {
-    flex-direction: column;
-  }
+	.note-card__top {
+		flex-direction: column;
+	}
 
-  .note-card__actions {
-    width: 100%;
-  }
+	.note-card__actions {
+		width: 100%;
+	}
 
-  .note-card__more {
-    margin-left: auto;
-  }
+	.note-card__more {
+		margin-left: auto;
+	}
 
-  .note-card__more-menu {
-    right: 0;
-    bottom: auto;
-    top: calc(100% + 8px);
-  }
+	.note-card__more-menu {
+		right: 0;
+		bottom: auto;
+		top: calc(100% + 8px);
+	}
 
-  .note-view-modal__header {
-    flex-direction: column;
-  }
+	.note-view-modal__header {
+		flex-direction: column;
+	}
 
-  .note-view-modal .modal__actions {
-    flex-direction: column;
-  }
+	.note-view-modal .modal__actions {
+		flex-direction: column;
+	}
 
-  .note-view-modal .modal__actions .button {
-    width: 100%;
-  }
+	.note-view-modal .modal__actions .button {
+		width: 100%;
+	}
 
-  .note-tabs {
-    flex-direction: column;
-  }
+	.note-tabs {
+		flex-direction: column;
+	}
 
-  .note-tab-button {
-    width: 100%;
-  }
+	.note-tab-button {
+		width: 100%;
+	}
 
-  .note-form-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.note-form-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .note-form-header .button {
-    width: 100%;
-  }
+	.note-form-header .button {
+		width: 100%;
+	}
 
-  .note-filters .notes-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
+	.note-filters .notes-header {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-  .note-filters .notes-header .button {
-    width: 100%;
-  }
+	.note-filters .notes-header .button {
+		width: 100%;
+	}
 
-  .note-content-actions {
-    width: 100%;
-  }
+	.note-content-actions {
+		width: 100%;
+	}
 
-  .note-content-actions .button {
-    width: 100%;
-  }
+	.note-content-actions .button {
+		width: 100%;
+	}
 
-  .dashboard-section-header,
-  .dashboard-list-item {
-    flex-direction: column;
-  }
+	.dashboard-section-header,
+	.dashboard-list-item {
+		flex-direction: column;
+	}
 
-  .dashboard-chip {
-    width: fit-content;
-  }
+	.dashboard-chip {
+		width: fit-content;
+	}
 
-  .dashboard-rank-item {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-rank-item {
+		grid-template-columns: 1fr;
+	}
 
-  .dashboard-rank-position {
-    width: fit-content;
-    padding: 6px 10px;
-  }
+	.dashboard-rank-position {
+		width: fit-content;
+		padding: 6px 10px;
+	}
 
-  .dashboard-note-priority-item,
-  .dashboard-content-alert-item {
-    align-items: stretch;
-  }
+	.dashboard-note-priority-item,
+	.dashboard-content-alert-item {
+		align-items: stretch;
+	}
 
-  .dashboard-link-button {
-    width: 100%;
-  }
+	.dashboard-link-button {
+		width: 100%;
+	}
 
-  .note-card__action-tooltip {
-    display: none;
-  }
+	.note-card__action-tooltip {
+		display: none;
+	}
 
-  .note-card__actions--compact {
-    gap: 6px;
-  }
+	.note-card__actions--compact {
+		gap: 6px;
+	}
 
-  .note-card__action-button {
-    width: 36px;
-    height: 36px;
-  }
+	.note-card__action-button {
+		width: 36px;
+		height: 36px;
+	}
 
-  .note-card__tag-tooltip {
-    display: none;
-  }
+	.note-card__tag-tooltip {
+		display: none;
+	}
 
-  .app-section__header h2 {
-    font-size: clamp(1.6rem, 9vw, 2.1rem);
-  }
+	.app-section__header h2 {
+		font-size: clamp(1.6rem, 9vw, 2.1rem);
+	}
 
-  .app-section__header p {
-    padding: 12px;
-    font-size: 0.9rem;
-  }
-}
+	.app-section__header p {
+		padding: 12px;
+		font-size: 0.9rem;
+	}
 
-@media (max-width: 480px) {
-  .dashboard-grid--six-cards {
-    grid-template-columns: 1fr;
-  }
+	.dashboard-tabs--vertical {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-grid--rail {
+		grid-template-columns: 1fr;
+	}
 }
