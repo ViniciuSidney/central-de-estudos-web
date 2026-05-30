@@ -396,128 +396,161 @@
 					<article class="app-section" id="questions">
 						<header class="app-section__header">
 							<h2>📝 Banco de questões</h2>
+
 							<p>Cadastre questões dentro de um tema específico para organizar exercícios, gabaritos e explicações em um único lugar.</p>
 						</header>
 
-						<div class="question-warning" id="question-no-subject-warning" hidden>
-							<strong>Cadastre uma matéria primeiro.</strong>
-							<span> Para criar questões, é necessário ter pelo menos uma matéria cadastrada. </span>
-						</div>
+						<div class="questions-workspace">
+							<aside class="questions-sidebar">
+								<div class="question-tabs question-tabs--vertical">
+									<button class="question-tab-button is-active" type="button" data-question-tab="list">Listagem</button>
 
-						<div class="question-filters" id="question-filters">
-							<div class="form-grid">
-								<div class="form-group">
-									<label for="question-subject">Matéria relacionada</label>
-									<select id="question-subject" name="questionSubject">
-										<option value="">Selecione uma matéria</option>
-									</select>
+									<button class="question-tab-button" type="button" data-question-tab="form">Cadastro</button>
 								</div>
 
-								<div class="form-group">
-									<label for="question-theme">Tema relacionado</label>
-									<select id="question-theme" name="questionTheme">
-										<option value="">Selecione um tema</option>
-									</select>
-								</div>
-							</div>
-						</div>
-
-						<div class="question-warning" id="question-no-theme-warning" hidden>
-							<strong>Cadastre um tema primeiro.</strong>
-							<span> Esta matéria ainda não possui temas. Crie um tema antes de cadastrar questões. </span>
-						</div>
-
-						<div class="question-tabs">
-							<button class="question-tab-button is-active" type="button" data-question-tab="list">Listagem</button>
-
-							<button class="question-tab-button" type="button" data-question-tab="form">Cadastro</button>
-						</div>
-
-						<div class="question-tab-panel" id="question-tab-panel">
-							<div class="question-tab-content is-active" id="question-list-tab">
-								<div class="questions-area">
-									<div class="questions-header">
-										<div>
-											<h3>Questões cadastradas</h3>
-											<p id="questions-current-theme">Selecione uma matéria e um tema para visualizar suas questões.</p>
-										</div>
-
-										<span id="questions-count">0 questões</span>
+								<section class="questions-context-panel">
+									<div class="questions-context-header">
+										<h3>Contexto</h3>
+										<p>Escolha a matéria e o tema usados na listagem ou no cadastro.</p>
 									</div>
 
-									<div class="empty-state" id="questions-empty-state">
-										<strong>Nenhuma questão selecionada ainda.</strong>
-										<span>Escolha um tema para visualizar ou cadastrar questões.</span>
+									<div class="question-warning" id="question-no-subject-warning" hidden>
+										<strong>Cadastre uma matéria primeiro.</strong>
+										<span> Para criar questões, é necessário ter pelo menos uma matéria cadastrada. </span>
 									</div>
 
-									<div class="questions-list" id="questions-list"></div>
-								</div>
-							</div>
-
-							<div class="question-tab-content" id="question-form-tab">
-								<form class="question-form" id="question-form">
-									<div class="form-group">
-										<label for="question-statement">Enunciado</label>
-										<textarea id="question-statement" name="questionStatement" rows="5" placeholder="Cole ou escreva o enunciado da questão"></textarea>
-									</div>
-
-									<div class="alternatives-grid">
+									<div class="question-filters" id="question-filters">
 										<div class="form-group">
-											<label for="alternative-a">Alternativa A</label>
-											<input type="text" id="alternative-a" name="alternativeA" placeholder="Texto da alternativa A" autocomplete="off" />
+											<label for="question-subject">Matéria relacionada</label>
+											<select id="question-subject" name="questionSubject">
+												<option value="">Selecione uma matéria</option>
+											</select>
 										</div>
 
 										<div class="form-group">
-											<label for="alternative-b">Alternativa B</label>
-											<input type="text" id="alternative-b" name="alternativeB" placeholder="Texto da alternativa B" autocomplete="off" />
-										</div>
-
-										<div class="form-group">
-											<label for="alternative-c">Alternativa C</label>
-											<input type="text" id="alternative-c" name="alternativeC" placeholder="Texto da alternativa C" autocomplete="off" />
-										</div>
-
-										<div class="form-group">
-											<label for="alternative-d">Alternativa D</label>
-											<input type="text" id="alternative-d" name="alternativeD" placeholder="Texto da alternativa D" autocomplete="off" />
-										</div>
-
-										<div class="form-group">
-											<label for="alternative-e">Alternativa E</label>
-											<input type="text" id="alternative-e" name="alternativeE" placeholder="Texto da alternativa E" autocomplete="off" />
-										</div>
-									</div>
-
-									<div class="form-grid">
-										<div class="form-group">
-											<label for="correct-alternative">Alternativa correta</label>
-											<select id="correct-alternative" name="correctAlternative">
-												<option value="">Selecione a correta</option>
-												<option value="A">Alternativa A</option>
-												<option value="B">Alternativa B</option>
-												<option value="C">Alternativa C</option>
-												<option value="D">Alternativa D</option>
-												<option value="E">Alternativa E</option>
+											<label for="question-theme">Tema relacionado</label>
+											<select id="question-theme" name="questionTheme">
+												<option value="">Selecione um tema</option>
 											</select>
 										</div>
 									</div>
 
-									<div class="form-group">
-										<label for="question-explanation">Explicação / Correção</label>
-										<textarea id="question-explanation" name="questionExplanation" rows="4" placeholder="Explique por que a alternativa correta está certa"></textarea>
+									<div class="question-warning" id="question-no-theme-warning" hidden>
+										<strong>Cadastre um tema primeiro.</strong>
+										<span> Esta matéria ainda não possui temas. Crie um tema antes de cadastrar questões. </span>
+									</div>
+								</section>
+							</aside>
+
+							<section class="questions-main-panel">
+								<div class="question-tab-panel" id="question-tab-panel">
+									<div class="question-tab-content is-active" id="question-list-tab">
+										<div class="questions-area">
+											<div class="questions-header">
+												<div>
+													<h3>Questões cadastradas</h3>
+													<p id="questions-current-theme">Selecione uma matéria e um tema para visualizar suas questões.</p>
+												</div>
+
+												<span id="questions-count">0 questões</span>
+											</div>
+
+											<div class="empty-state" id="questions-empty-state">
+												<strong>Nenhuma questão selecionada ainda.</strong>
+												<span>Escolha um tema para visualizar ou cadastrar questões.</span>
+											</div>
+
+											<div class="questions-list" id="questions-list"></div>
+										</div>
 									</div>
 
-									<p class="form-message" id="question-form-message" aria-live="polite"></p>
+									<div class="question-tab-content" id="question-form-tab">
+										<form class="question-form question-form--compact" id="question-form">
+											<div class="question-form-left">
+												<section class="question-form-panel question-form-panel--main">
+													<div class="question-form-panel__header">
+														<h3>Cadastro da questão</h3>
+														<p>Defina o enunciado, a resposta correta e a explicação.</p>
+													</div>
 
-									<div class="form-actions">
-										<button class="button button--primary" type="submit" id="save-question-button">Adicionar questão</button>
+													<div class="form-group">
+														<label for="question-statement">Enunciado</label>
+														<textarea id="question-statement" name="questionStatement" rows="5" placeholder="Cole ou escreva o enunciado da questão"></textarea>
+													</div>
 
-										<button class="button button--secondary" type="button" id="clear-question-form">Limpar</button>
+													<div class="form-group">
+														<label for="correct-alternative">Alternativa correta</label>
+														<select id="correct-alternative" name="correctAlternative">
+															<option value="">Selecione a correta</option>
+															<option value="A">Alternativa A</option>
+															<option value="B">Alternativa B</option>
+															<option value="C">Alternativa C</option>
+															<option value="D">Alternativa D</option>
+															<option value="E">Alternativa E</option>
+														</select>
+													</div>
 
-										<button class="button button--secondary" type="button" id="cancel-question-edit" hidden>Cancelar edição</button>
+													<div class="form-group">
+														<label for="question-explanation">Explicação / Correção</label>
+														<textarea id="question-explanation" name="questionExplanation" rows="5" placeholder="Explique por que a alternativa correta está certa"></textarea>
+													</div>
+												</section>
+
+												<section class="question-form-panel question-form-panel--actions">
+													<div class="question-form-panel__header">
+														<h3>Ações</h3>
+														<p>Salve, limpe ou cancele a edição atual.</p>
+													</div>
+
+													<p class="form-message" id="question-form-message" aria-live="polite"></p>
+
+													<div class="form-actions question-form-actions">
+														<button class="button button--primary" type="submit" id="save-question-button">Adicionar questão</button>
+
+														<button class="button button--secondary" type="button" id="clear-question-form">Limpar</button>
+
+														<button class="button button--secondary" type="button" id="cancel-question-edit" hidden>Cancelar edição</button>
+													</div>
+												</section>
+											</div>
+
+											<section class="question-form-panel question-form-panel--alternatives">
+												<div class="question-form-panel__header">
+													<h3>Alternativas</h3>
+													<p>Preencha as opções de resposta da questão.</p>
+												</div>
+
+												<div class="alternatives-grid alternatives-grid--question">
+													<div class="form-group">
+														<label for="alternative-a">Alternativa A</label>
+														<input type="text" id="alternative-a" name="alternativeA" placeholder="Texto da alternativa A" autocomplete="off" />
+													</div>
+
+													<div class="form-group">
+														<label for="alternative-b">Alternativa B</label>
+														<input type="text" id="alternative-b" name="alternativeB" placeholder="Texto da alternativa B" autocomplete="off" />
+													</div>
+
+													<div class="form-group">
+														<label for="alternative-c">Alternativa C</label>
+														<input type="text" id="alternative-c" name="alternativeC" placeholder="Texto da alternativa C" autocomplete="off" />
+													</div>
+
+													<div class="form-group">
+														<label for="alternative-d">Alternativa D</label>
+														<input type="text" id="alternative-d" name="alternativeD" placeholder="Texto da alternativa D" autocomplete="off" />
+													</div>
+
+													<div class="form-group">
+														<label for="alternative-e">Alternativa E</label>
+														<input type="text" id="alternative-e" name="alternativeE" placeholder="Texto da alternativa E" autocomplete="off" />
+													</div>
+												</div>
+											</section>
+										</form>
 									</div>
-								</form>
-							</div>
+								</div>
+							</section>
 						</div>
 					</article>
 
