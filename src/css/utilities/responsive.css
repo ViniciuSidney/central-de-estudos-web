@@ -408,4 +408,8 @@
 	.dashboard-grid--rail {
 		grid-template-columns: 1fr;
 	}
+
+	.dashboard-grid--rail .dashboard-card {
+		grid-template-columns: auto 1fr;
+	}
 }
