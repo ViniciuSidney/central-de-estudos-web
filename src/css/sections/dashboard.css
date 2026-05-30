@@ -359,7 +359,7 @@
 .dashboard-grid--rail .dashboard-card strong {
 	grid-row: span 2;
 
-	min-width: 44px;
+	min-width: 32px;
 
 	color: var(--accent);
 	font-size: 1.55rem;
@@ -382,13 +382,12 @@
 }
 
 #dashboard {
-	min-height: 0;
-	display: grid;
-	grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
 }
 
-.dashboard-workspace {
-	min-height: 0;
+#dashboard.app-section.is-visible {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
 }
 
 .dashboard-tab-panel--workspace {
