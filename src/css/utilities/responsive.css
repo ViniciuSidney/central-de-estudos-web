@@ -145,6 +145,10 @@
 	.app-section__header p {
 		max-width: 100%;
 	}
+
+	.dashboard-pending-errors-gallery {
+		grid-template-columns: 1fr;
+	}
 }
 
 @media (max-width: 860px) {
@@ -196,6 +200,19 @@
 
 	.dashboard-link-button {
 		width: 100%;
+	}
+
+	.dashboard-pending-errors-gallery {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-pending-error-card {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-pending-error-card__link {
+		width: 100%;
+		justify-self: stretch;
 	}
 }
 

@@ -613,44 +613,58 @@ export function initDashboard() {
 			.join('');
 	}
 
-	function renderPendingErrors(stats) {
-		const pendingErrors = stats.pendingErrors.slice(0, 5);
-
-		if (pendingErrors.length === 0) {
-			renderEmptyState(pendingErrorsList, 'Nenhum erro pendente encontrado.', 'Quando uma questão for respondida incorretamente, ela aparecerá aqui.');
+	function renderDashboardPendingErrors(pendingErrors) {
+		if (!pendingErrors.length) {
+			renderEmptyState(pendingErrorsList, 'Nenhum erro pendente encontrado.', 'Quando houver erros, eles aparecerão aqui.');
 			return;
 		}
 
-		pendingErrorsList.innerHTML = pendingErrors
-			.map((attempt) => {
-				const questionId = getReviewQuestionId(attempt);
-				const question = questionId ? getQuestionById(questionId) : null;
+		const sortedErrors = [...pendingErrors].sort((firstError, secondError) => {
+			return new Date(getAttemptDate(secondError)) - new Date(getAttemptDate(firstError));
+		});
 
-				return `
-        <article class="dashboard-list-item dashboard-pending-error-item">
-          <div>
-            <strong>${escapeHTML(questionId ? getQuestionTitle(questionId) : 'Erro pendente')}</strong>
+		pendingErrorsList.innerHTML = `
+		<div class="dashboard-pending-errors-gallery">
+			${sortedErrors
+				.map((attempt) => {
+					const questionId = getReviewQuestionId(attempt);
+					const question = questionId ? getQuestionById(questionId) : null;
 
-            <span>
-              ${question ? `${escapeHTML(getSubjectName(question.subjectId))} • ${escapeHTML(getThemeName(question.themeId))}` : 'Questão não encontrada.'}
-            </span>
+					const questionTitle = questionId ? getQuestionTitle(questionId) : 'Erro pendente';
 
-            <small>${escapeHTML(formatDateTime(getReviewDate(attempt)))}</small>
-          </div>
+					const context = question ? `${getSubjectName(question.subjectId)} • ${getThemeName(question.themeId)}` : 'Questão não encontrada.';
 
-          <button
-            class="dashboard-link-button dashboard-link-button--danger"
-            type="button"
-            data-open-dashboard-review-error="${escapeHTML(attempt.id)}"
-            aria-label="Revisar erro pendente"
-            title="Revisar erro"
-          >
-            🔗
-          </button>
-        </article>
-      `;
-			})
-			.join('');
+					return `
+						<article class="dashboard-pending-error-card">
+							<div class="dashboard-pending-error-card__content">
+								<strong class="dashboard-pending-error-card__title">
+									${escapeHTML(questionTitle)}
+								</strong>
+
+								<span class="dashboard-pending-error-card__meta">
+									${escapeHTML(context)}
+								</span>
+
+								<small class="dashboard-pending-error-card__date">
+									${escapeHTML(formatDateTime(getAttemptDate(attempt)))}
+								</small>
+							</div>
+
+							<button
+								type="button"
+								class="dashboard-link-button dashboard-pending-error-card__link"
+								data-open-dashboard-review-error="${escapeHTML(attempt.id)}"
+								aria-label="Abrir revisão do erro"
+								title="Abrir revisão do erro"
+							>
+								🔗
+							</button>
+						</article>
+					`;
+				})
+				.join('')}
+		</div>
+	`;
 	}
 
 	function getContentAlerts() {
@@ -1252,7 +1266,7 @@ export function initDashboard() {
 		renderContentCards(stats);
 		renderRecentActivity(stats);
 		renderSubjectPerformance();
-		renderPendingErrors(stats);
+		renderDashboardPendingErrors(stats.pendingErrors);
 		renderContentAlerts();
 
 		renderTopErrorSubjects();
