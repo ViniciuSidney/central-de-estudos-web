@@ -214,6 +214,18 @@
 		width: 100%;
 		justify-self: stretch;
 	}
+
+	.dashboard-subject-performance-gallery {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-subject-performance-card {
+		grid-template-columns: 1fr;
+	}
+
+	.dashboard-subject-performance-card__chip {
+		justify-self: start;
+	}
 }
 
 @media (max-width: 620px) {

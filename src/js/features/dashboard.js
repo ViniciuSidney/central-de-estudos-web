@@ -593,24 +593,33 @@ export function initDashboard() {
 			return;
 		}
 
-		subjectPerformanceList.innerHTML = subjectPerformance
-			.map((item) => {
-				return `
-          <article class="dashboard-list-item">
-            <div>
-              <strong>${escapeHTML(item.subject.name)}</strong>
-              <span>
-                ${formatCount(item.correct, 'acerto', 'acertos')} • ${formatCount(item.wrong, 'erro', 'erros')} • ${formatCount(item.attempts, 'tentativa', 'tentativas')}
-              </span>
-            </div>
+		subjectPerformanceList.innerHTML = `
+		<div class="dashboard-subject-performance-gallery">
+			${subjectPerformance
+				.map((item) => {
+					return `
+						<article class="dashboard-subject-performance-card">
+							<div class="dashboard-subject-performance-card__content">
+								<strong class="dashboard-subject-performance-card__title">
+									${escapeHTML(item.subject.name)}
+								</strong>
 
-            <span class="dashboard-chip">
-              ${escapeHTML(formatPercent(item.accuracy))}
-            </span>
-          </article>
-        `;
-			})
-			.join('');
+								<span class="dashboard-subject-performance-card__meta">
+									${formatCount(item.correct, 'acerto', 'acertos')} •
+									${formatCount(item.wrong, 'erro', 'erros')} •
+									${formatCount(item.attempts, 'tentativa', 'tentativas')}
+								</span>
+							</div>
+
+							<span class="dashboard-chip dashboard-subject-performance-card__chip">
+								${escapeHTML(formatPercent(item.accuracy))}
+							</span>
+						</article>
+					`;
+				})
+				.join('')}
+		</div>
+	`;
 	}
 
 	function renderDashboardPendingErrors(pendingErrors) {
