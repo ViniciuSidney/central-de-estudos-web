@@ -632,214 +632,198 @@
 						</div>
 					</section>
 
-					<article class="app-section" id="notes">
-						<header class="app-section__header">
-							<h2>🗒️ Anotações independentes</h2>
-
-							<p>Registre resumos, dúvidas, regras, erros e ideias importantes com ou sem vínculo com matérias e temas.</p>
-						</header>
-
-						<div class="note-tabs">
-							<button class="note-tab-button is-active" type="button" data-note-tab="gallery">Galeria</button>
-
-							<button class="note-tab-button" type="button" data-note-tab="form">Nova Anotação</button>
-						</div>
-
-						<div class="note-tab-content" id="note-form-tab">
-							<div class="note-form-header">
-								<div>
-									<h3 id="note-form-title">Nova anotação</h3>
-									<p id="note-form-description">Registre uma anotação livre ou vincule-a a uma matéria e tema.</p>
-								</div>
-
-								<button class="button button--secondary" type="button" id="back-to-notes-gallery">Voltar para galeria</button>
+					<section id="notes" class="app-section notes-section">
+						<div class="app-section__header compact-section-header">
+							<div class="compact-section-header__title">
+								<h2>📒 Anotações independentes</h2>
 							</div>
 
-							<form class="note-form" id="note-form">
-								<div class="form-grid">
-									<div class="form-group">
-										<label for="note-title">Título da anotação</label>
-										<input id="note-title" type="text" placeholder="Ex: Diferença entre totalitarismo e autoritarismo" autocomplete="off" />
-									</div>
-
-									<div class="form-group">
-										<label for="note-type">Tipo da anotação</label>
-										<select id="note-type">
-											<option value="">Selecione um tipo</option>
-											<option value="resumo">Resumo</option>
-											<option value="erro">Erro</option>
-											<option value="regra">Regra</option>
-											<option value="duvida">Dúvida</option>
-											<option value="exemplo">Exemplo</option>
-											<option value="insight">Insight</option>
-											<option value="revisao">Revisão</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-grid">
-									<div class="form-group">
-										<label for="note-status">Status da anotação</label>
-										<select id="note-status">
-											<option value="rascunho">Rascunho</option>
-											<option value="finalizada">Finalizada</option>
-											<option value="revisar">Revisar depois</option>
-											<option value="flashcard">Virar flashcard</option>
-											<option value="importante">Importante</option>
-										</select>
-									</div>
-
-									<div class="form-group">
-										<label for="note-tags">Tags</label>
-										<input id="note-tags" type="text" placeholder="Ex: enem, política, prova" autocomplete="off" />
-									</div>
-								</div>
-
-								<div class="form-grid">
-									<div class="form-group">
-										<label for="note-subject">Matéria relacionada</label>
-										<select id="note-subject">
-											<option value="">Nenhuma matéria</option>
-										</select>
-									</div>
-
-									<div class="form-group">
-										<label for="note-theme">Tema relacionado</label>
-										<select id="note-theme" disabled>
-											<option value="">Nenhum tema</option>
-										</select>
-									</div>
-								</div>
-
-								<div class="form-group">
-									<label for="note-content">Conteúdo da anotação</label>
-
-									<button class="button button--secondary note-help-button" type="button" id="open-markdown-help">Ajuda Markdown</button>
-
-									<button class="button button--secondary note-help-button" type="button" id="open-focused-editor">Editor focado</button>
-
-									<textarea id="note-content" rows="5" placeholder="Escreva sua anotação principal aqui..."></textarea>
-								</div>
-
-								<p class="form-message" id="note-message" aria-live="polite"></p>
-
-								<div class="form-actions">
-									<button class="button button--primary" type="submit" id="save-note-button">Salvar anotação</button>
-
-									<button class="button button--secondary" type="button" id="clear-note-form">Limpar campos</button>
-
-									<button class="button button--secondary" type="button" id="cancel-note-edit" hidden>Cancelar edição</button>
-								</div>
-							</form>
+							<div class="compact-section-header__description">
+								<p>Registre resumos, dúvidas, regras, erros e ideias importantes com ou sem vínculo com matérias e temas.</p>
+							</div>
 						</div>
-						<div class="note-tab-content is-active" id="note-gallery-tab">
-							<section class="note-filters" id="note-filters">
-								<div class="notes-header">
-									<div>
-										<h3>Galeria de anotações</h3>
-										<p>Busque, filtre e acesse suas anotações salvas.</p>
-									</div>
 
-									<button class="button button--primary" type="button" id="new-note-button">Nova anotação</button>
+						<div class="notes-mode-tabs">
+							<button id="notes-gallery-tab-button" class="button button--tab is-active" type="button" data-notes-mode="gallery">Galeria</button>
 
-									<button class="button button--secondary" type="button" id="toggle-note-filters" aria-expanded="false">Mostrar filtros</button>
-								</div>
+							<button id="notes-form-tab-button" class="button button--tab" type="button" data-notes-mode="form">Nova Anotação</button>
+						</div>
 
-								<div class="form-group">
-									<label for="note-search">Buscar anotação</label>
-									<input id="note-search" type="text" placeholder="Buscar por título, conteúdo, tag, matéria, tema..." autocomplete="off" />
-								</div>
-
-								<div class="note-filters__advanced" id="note-filters-advanced" hidden>
-									<div class="form-grid">
-										<div class="form-group">
-											<label for="note-filter-subject">Filtrar por matéria</label>
-											<select id="note-filter-subject">
-												<option value="">Todas as matérias</option>
-											</select>
-										</div>
-
-										<div class="form-group">
-											<label for="note-filter-theme">Filtrar por tema</label>
-											<select id="note-filter-theme">
-												<option value="">Todos os temas</option>
-											</select>
+						<div id="notes-gallery-view" class="notes-view is-active">
+							<div class="notes-gallery-layout">
+								<aside class="notes-search-panel">
+									<div class="notes-panel-header">
+										<div>
+											<h3>Busca e filtros</h3>
+											<p>Busque por título, conteúdo, tag, matéria, tema ou status.</p>
 										</div>
 									</div>
 
-									<div class="form-grid">
+									<div class="form-group">
+										<label for="notes-search-input">Buscar anotação</label>
+										<input id="notes-search-input" type="text" placeholder="Buscar por título, conteúdo, tag, matéria, tema..." />
+									</div>
+
+									<div class="notes-filter-actions">
+										<button id="toggle-note-filters-button" class="button button--secondary" type="button">Mostrar filtros</button>
+									</div>
+
+									<div id="notes-filters-panel" class="notes-filters-panel" hidden>
 										<div class="form-group">
-											<label for="note-filter-type">Filtrar por tipo</label>
-											<select id="note-filter-type">
-												<option value="">Todos os tipos</option>
+											<label for="notes-filter-type">Tipo</label>
+											<select id="notes-filter-type">
+												<option value="">Todos</option>
 												<option value="resumo">Resumo</option>
-												<option value="erro">Erro</option>
 												<option value="regra">Regra</option>
+												<option value="erro">Erro</option>
 												<option value="duvida">Dúvida</option>
-												<option value="exemplo">Exemplo</option>
-												<option value="insight">Insight</option>
 												<option value="revisao">Revisão</option>
 											</select>
 										</div>
 
 										<div class="form-group">
-											<label for="note-filter-status">Filtrar por status</label>
-											<select id="note-filter-status">
-												<option value="">Todos os status</option>
+											<label for="notes-filter-status">Status</label>
+											<select id="notes-filter-status">
+												<option value="">Todos</option>
 												<option value="rascunho">Rascunho</option>
 												<option value="finalizada">Finalizada</option>
 												<option value="revisar">Revisar depois</option>
-												<option value="flashcard">Virar flashcard</option>
-												<option value="importante">Importante</option>
-											</select>
-										</div>
-									</div>
-
-									<div class="form-grid">
-										<div class="form-group">
-											<label for="note-filter-tag">Filtrar por tag</label>
-											<select id="note-filter-tag">
-												<option value="">Todas as tags</option>
 											</select>
 										</div>
 
 										<div class="form-group">
-											<label for="note-filter-flag">Filtrar por marcação</label>
-											<select id="note-filter-flag">
-												<option value="active">Não arquivadas</option>
-												<option value="all">Todas</option>
-												<option value="favorites">Favoritas</option>
-												<option value="pinned">Fixadas</option>
-												<option value="archived">Arquivadas</option>
+											<label for="notes-filter-subject">Matéria</label>
+											<select id="notes-filter-subject">
+												<option value="">Todas</option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="notes-filter-theme">Tema</label>
+											<select id="notes-filter-theme">
+												<option value="">Todos</option>
 											</select>
 										</div>
 									</div>
+								</aside>
 
-									<div class="form-actions">
-										<button class="button button--secondary" type="button" id="clear-note-filters">Limpar filtros</button>
-									</div>
-								</div>
-							</section>
+								<div class="notes-gallery-panel">
+									<div class="notes-panel-header notes-gallery-panel__header">
+										<div>
+											<h3>Minhas anotações</h3>
+											<p>Clique em uma anotação para visualizar o conteúdo completo.</p>
+										</div>
 
-							<section class="notes-area">
-								<div class="notes-header">
-									<div>
-										<h3>Minhas anotações</h3>
-										<p>Clique em uma anotação para visualizar o conteúdo completo.</p>
+										<span id="notes-counter" class="notes-counter">0 anotações</span>
 									</div>
 
-									<span id="notes-count">0 anotações</span>
+									<div id="notes-list" class="notes-gallery-grid">
+									</div>
 								</div>
-
-								<div class="empty-state" id="notes-empty">
-									<strong>Nenhuma anotação cadastrada ainda.</strong>
-									<span>Crie uma anotação livre ou vinculada a uma matéria e tema.</span>
-								</div>
-
-								<div class="notes-list" id="notes-list"></div>
-							</section>
+							</div>
 						</div>
-					</article>
+
+						<div id="notes-form-view" class="notes-view">
+							<div class="notes-form-layout">
+								<aside class="notes-meta-panel">
+									<div class="notes-panel-header">
+										<div>
+											<h3>Dados da anotação</h3>
+											<p>Defina o contexto e os metadados da sua anotação.</p>
+										</div>
+									</div>
+
+									<div class="notes-meta-grid">
+										<div class="form-group">
+											<label for="note-title">Título da anotação</label>
+											<input id="note-title" type="text" placeholder="Ex: Diferença entre totalitarismo e autoritarismo" />
+										</div>
+
+										<div class="form-group">
+											<label for="note-type">Tipo da anotação</label>
+											<select id="note-type">
+												<option value="">Selecione um tipo</option>
+												<option value="resumo">Resumo</option>
+												<option value="regra">Regra</option>
+												<option value="erro">Erro</option>
+												<option value="duvida">Dúvida</option>
+												<option value="revisao">Revisão</option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="note-status">Status da anotação</label>
+											<select id="note-status">
+												<option value="rascunho">Rascunho</option>
+												<option value="finalizada">Finalizada</option>
+												<option value="revisar">Revisar depois</option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="note-tags">Tags</label>
+											<input id="note-tags" type="text" placeholder="Ex: enem, política, prova" />
+										</div>
+
+										<div class="form-group">
+											<label for="note-subject">Matéria relacionada</label>
+											<select id="note-subject">
+												<option value="">Nenhuma matéria</option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="note-theme">Tema relacionado</label>
+											<select id="note-theme">
+												<option value="">Nenhum tema</option>
+											</select>
+										</div>
+									</div>
+								</aside>
+
+								<div class="notes-editor-column">
+									<div class="notes-tools-panel">
+										<div class="notes-panel-header">
+											<div>
+												<h3>Ferramentas</h3>
+												<p>Acesse ajuda de formatação e edição focada.</p>
+											</div>
+										</div>
+
+										<div class="notes-tools-actions">
+											<button id="notes-markdown-help-button" class="button button--secondary" type="button">Ajuda Markdown</button>
+
+											<button id="notes-focused-editor-button" class="button button--secondary" type="button">Editor focado</button>
+										</div>
+									</div>
+
+									<div class="notes-editor-panel">
+										<div class="notes-panel-header">
+											<div>
+												<h3>Conteúdo da anotação</h3>
+												<p>Escreva sua anotação principal aqui.</p>
+											</div>
+										</div>
+
+										<div class="form-group notes-editor-field">
+											<label for="note-content">Conteúdo</label>
+											<textarea id="note-content" rows="16" placeholder="Escreva sua anotação principal aqui..."></textarea>
+										</div>
+
+										<div class="form-actions">
+											<button id="save-note-button" class="button button--primary" type="button">Salvar anotação</button>
+
+											<button id="clear-note-button" class="button button--secondary" type="button">Limpar</button>
+
+											<button id="notes-back-to-gallery-button" class="button button--secondary" type="button">Voltar para galeria</button>
+										</div>
+
+										<p id="note-form-message" class="form-message"></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
 
 					<article class="app-section" id="reviews">
 						<header class="app-section__header">
