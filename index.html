@@ -717,8 +717,7 @@
 										<span id="notes-counter" class="notes-counter">0 anotações</span>
 									</div>
 
-									<div id="notes-list" class="notes-gallery-grid">
-									</div>
+									<div id="notes-list" class="notes-gallery-grid"></div>
 								</div>
 							</div>
 						</div>
@@ -828,98 +827,116 @@
 					<article class="app-section" id="reviews">
 						<header class="app-section__header">
 							<h2>🔁 Histórico e revisão de erros</h2>
+
 							<p>Acompanhe suas resoluções anteriores, identifique erros recorrentes e transforme respostas incorretas em regras de correção.</p>
 						</header>
 
-						<div class="review-tabs">
-							<button class="review-tab-button is-active" type="button" data-review-tab="history">Histórico</button>
+						<div class="reviews-workspace">
+							<div class="review-tabs review-tabs--horizontal">
+								<button class="review-tab-button is-active" type="button" data-review-tab="history">Histórico</button>
 
-							<button class="review-tab-button" type="button" data-review-tab="errors">Erros pendentes</button>
+								<button class="review-tab-button" type="button" data-review-tab="errors">Erros pendentes</button>
 
-							<button class="review-tab-button" type="button" data-review-tab="reviewed">Erros revisados</button>
-						</div>
+								<button class="review-tab-button" type="button" data-review-tab="reviewed">Erros revisados</button>
+							</div>
 
-						<div class="review-tab-panel">
-							<div class="review-tab-content is-active" id="review-history-tab">
-								<div class="review-section-header">
-									<div>
-										<h3>Histórico de resoluções</h3>
-										<p>Veja todas as tentativas registradas durante seus estudos.</p>
+							<section class="review-tab-panel review-tab-panel--workspace">
+								<div class="review-tab-content is-active" id="review-history-tab">
+									<div class="review-history-workspace">
+										<aside class="review-filter-panel">
+											<div class="review-section-header">
+												<div>
+													<h3>Filtros</h3>
+													<p>Filtre resoluções por matéria, tema e resultado.</p>
+												</div>
+											</div>
+
+											<div class="review-filters">
+												<div class="form-group">
+													<label for="review-history-subject">Matéria</label>
+													<select id="review-history-subject">
+														<option value="">Todas as matérias</option>
+													</select>
+												</div>
+
+												<div class="form-group">
+													<label for="review-history-theme">Tema</label>
+													<select id="review-history-theme">
+														<option value="">Todos os temas</option>
+													</select>
+												</div>
+
+												<div class="form-group">
+													<label for="review-history-result">Resultado</label>
+													<select id="review-history-result">
+														<option value="all">Todos</option>
+														<option value="correct">Acertos</option>
+														<option value="wrong">Erros</option>
+													</select>
+												</div>
+											</div>
+										</aside>
+
+										<section class="review-main-panel">
+											<div class="review-section-header">
+												<div>
+													<h3>Histórico de resoluções</h3>
+													<p>Veja todas as tentativas registradas durante seus estudos.</p>
+												</div>
+
+												<span id="review-history-count">0 registros</span>
+											</div>
+
+											<div class="empty-state" id="review-history-empty">
+												<strong>Nenhuma resolução registrada ainda.</strong>
+												<span>Resolva questões para criar seu histórico de estudos.</span>
+											</div>
+
+											<div class="review-history-list review-gallery" id="review-history-list"></div>
+										</section>
 									</div>
-
-									<span id="review-history-count">0 registros</span>
 								</div>
 
-								<div class="review-filters">
-									<div class="form-grid">
-										<div class="form-group">
-											<label for="review-history-subject">Matéria</label>
-											<select id="review-history-subject">
-												<option value="">Todas as matérias</option>
-											</select>
+								<div class="review-tab-content" id="review-errors-tab">
+									<section class="review-main-panel">
+										<div class="review-section-header">
+											<div>
+												<h3>Erros pendentes</h3>
+												<p>Liste questões erradas que ainda precisam de análise e revisão.</p>
+											</div>
+
+											<span id="review-errors-count">0 erros</span>
 										</div>
 
-										<div class="form-group">
-											<label for="review-history-theme">Tema</label>
-											<select id="review-history-theme">
-												<option value="">Todos os temas</option>
-											</select>
+										<div class="empty-state" id="review-errors-empty">
+											<strong>Nenhum erro pendente encontrado.</strong>
+											<span> Quando uma questão for respondida incorretamente, ela aparecerá aqui. </span>
 										</div>
-									</div>
 
-									<div class="form-group">
-										<label for="review-history-result">Resultado</label>
-										<select id="review-history-result">
-											<option value="all">Todos</option>
-											<option value="correct">Acertos</option>
-											<option value="wrong">Erros</option>
-										</select>
-									</div>
+										<div class="review-errors-list review-gallery" id="review-errors-list"></div>
+									</section>
 								</div>
 
-								<div class="empty-state" id="review-history-empty">
-									<strong>Nenhuma resolução registrada ainda.</strong>
-									<span>Resolva questões para criar seu histórico de estudos.</span>
+								<div class="review-tab-content" id="review-reviewed-tab">
+									<section class="review-main-panel">
+										<div class="review-section-header">
+											<div>
+												<h3>Erros revisados</h3>
+												<p>Consulte erros que já foram analisados e transformados em regra de correção.</p>
+											</div>
+
+											<span id="review-reviewed-count">0 revisões</span>
+										</div>
+
+										<div class="empty-state" id="review-reviewed-empty">
+											<strong>Nenhum erro revisado ainda.</strong>
+											<span>Revise um erro pendente para que ele apareça aqui.</span>
+										</div>
+
+										<div class="review-reviewed-list review-gallery" id="review-reviewed-list"></div>
+									</section>
 								</div>
-
-								<div class="review-history-list" id="review-history-list"></div>
-							</div>
-
-							<div class="review-tab-content" id="review-errors-tab">
-								<div class="review-section-header">
-									<div>
-										<h3>Erros pendentes</h3>
-										<p>Liste questões erradas que ainda precisam de análise e revisão.</p>
-									</div>
-
-									<span id="review-errors-count">0 erros</span>
-								</div>
-
-								<div class="empty-state" id="review-errors-empty">
-									<strong>Nenhum erro pendente encontrado.</strong>
-									<span>Quando uma questão for respondida incorretamente, ela aparecerá aqui.</span>
-								</div>
-
-								<div class="review-errors-list" id="review-errors-list"></div>
-							</div>
-
-							<div class="review-tab-content" id="review-reviewed-tab">
-								<div class="review-section-header">
-									<div>
-										<h3>Erros revisados</h3>
-										<p>Consulte erros que já foram analisados e transformados em regra de correção.</p>
-									</div>
-
-									<span id="review-reviewed-count">0 revisões</span>
-								</div>
-
-								<div class="empty-state" id="review-reviewed-empty">
-									<strong>Nenhum erro revisado ainda.</strong>
-									<span>Revise um erro pendente para que ele apareça aqui.</span>
-								</div>
-
-								<div class="review-reviewed-list" id="review-reviewed-list"></div>
-							</div>
+							</section>
 						</div>
 					</article>
 
