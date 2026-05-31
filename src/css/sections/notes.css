@@ -2,7 +2,7 @@
    ANOTAÇÕES — ABAS PRINCIPAIS
    ========================================================= */
 
-.notes-section {
+#notes.is-visible {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
