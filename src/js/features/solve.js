@@ -8,44 +8,38 @@ const ATTEMPTS_COLLECTION = 'attempts';
 const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
 
 export function initSolve() {
-	const solveSubjectSelect = document.querySelector('#solve-subject');
-	const solveThemeSelect = document.querySelector('#solve-theme');
-	const solveQuestionSelect = document.querySelector('#solve-question');
-	const solveNoQuestionWarning = document.querySelector('#solve-no-question-warning');
-	const solveFilters = document.querySelector('#solve-filters');
-	const solveEmptyState = document.querySelector('#solve-empty-state');
-	const solveCard = document.querySelector('#solve-card');
+	const solveSubjectSelect = document.querySelector('#solve-subject-select');
+	const solveThemeSelect = document.querySelector('#solve-theme-select');
+	const solveQuestionSelect = document.querySelector('#solve-question-select');
+
 	const solveQuestionContext = document.querySelector('#solve-question-context');
+	const solveQuestionTitle = document.querySelector('#solve-question-title');
 	const solveQuestionStatus = document.querySelector('#solve-question-status');
 	const solveQuestionStatement = document.querySelector('#solve-question-statement');
-	const solveAlternatives = document.querySelector('#solve-alternatives');
-	const confirmAnswerButton = document.querySelector('#confirm-answer');
-	const nextQuestionButton = document.querySelector('#next-question');
-	const solveFeedback = document.querySelector('#solve-feedback');
-	const retryQuestionButton = document.querySelector('#retry-question');
-	const solveHistoryCount = document.querySelector('#solve-history-count');
-	const solveHistoryEmpty = document.querySelector('#solve-history-empty');
+	const solveAlternatives = document.querySelector('#solve-alternatives-list');
+	const solveFeedback = document.querySelector('#solve-feedback-panel');
+
+	const confirmAnswerButton = document.querySelector('#solve-confirm-button');
+	const retryQuestionButton = document.querySelector('#solve-retry-button');
+	const nextQuestionButton = document.querySelector('#solve-next-button');
+
 	const solveHistoryList = document.querySelector('#solve-history-list');
+	const solveHistoryPanel = document.querySelector('.solve-history-panel');
 
 	if (
-		!solveHistoryCount ||
-		!solveHistoryEmpty ||
-		!solveHistoryList ||
-		!retryQuestionButton ||
 		!solveSubjectSelect ||
 		!solveThemeSelect ||
 		!solveQuestionSelect ||
-		!solveNoQuestionWarning ||
-		!solveFilters ||
-		!solveEmptyState ||
-		!solveCard ||
 		!solveQuestionContext ||
+		!solveQuestionTitle ||
 		!solveQuestionStatus ||
 		!solveQuestionStatement ||
 		!solveAlternatives ||
+		!solveFeedback ||
 		!confirmAnswerButton ||
+		!retryQuestionButton ||
 		!nextQuestionButton ||
-		!solveFeedback
+		!solveHistoryList
 	) {
 		return;
 	}
@@ -171,16 +165,25 @@ export function initSolve() {
 
 		const recentAttempts = allAttempts.slice(0, 3);
 
-		solveHistoryList.innerHTML = '';
+		if (solveHistoryPanel) {
+			const description = solveHistoryPanel.querySelector('.solve-panel__header p');
 
-		solveHistoryCount.textContent = allAttempts.length === 1 ? '1 registro' : `${allAttempts.length} registros`;
+			if (description) {
+				description.textContent = allAttempts.length === 1 ? '1 resolução registrada. Exibindo a mais recente.' : `${allAttempts.length} resoluções registradas. Exibindo as 3 mais recentes.`;
+			}
+		}
 
-		if (allAttempts.length === 0) {
-			solveHistoryEmpty.hidden = false;
+		if (recentAttempts.length === 0) {
+			solveHistoryList.innerHTML = `
+			<div class="solve-empty-state">
+				<strong>Nenhuma resolução registrada ainda.</strong>
+				<span>Resolva uma questão para que ela apareça aqui.</span>
+			</div>
+		`;
 			return;
 		}
 
-		solveHistoryEmpty.hidden = true;
+		solveHistoryList.innerHTML = '';
 
 		recentAttempts.forEach((attempt) => {
 			const subject = getSubjectById(attempt.subjectId);
@@ -193,19 +196,19 @@ export function initSolve() {
 
 			const attemptCard = document.createElement('article');
 
-			attemptCard.classList.add('review-card');
+			attemptCard.classList.add('solve-history-card');
 
 			attemptCard.innerHTML = `
-				<div class="review-card__content">
+			<div class="solve-history-card__content">
 				<strong>Questão ${escapeHTML(questionNumber)}</strong>
 				<span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
-				<span>Resolvida em ${escapeHTML(formatDateTime(attempt.answeredAt))}</span>
-				</div>
+				<small>${escapeHTML(formatDateTime(attempt.answeredAt))}</small>
+			</div>
 
-				<span class="review-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
+			<span class="solve-history-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
 				${attempt.isCorrect ? 'Acertou' : 'Errou'}
-				</span>
-			`;
+			</span>
+		`;
 
 			solveHistoryList.appendChild(attemptCard);
 		});
@@ -288,16 +291,18 @@ export function initSolve() {
 		selectedVisualAlternative = null;
 		hasAnsweredCurrentQuestion = false;
 
-		solveCard.hidden = true;
-		solveEmptyState.hidden = false;
-		solveAlternatives.innerHTML = '';
-		solveQuestionStatement.textContent = '';
+		solveQuestionContext.textContent = 'Matéria • Tema';
+		solveQuestionTitle.textContent = 'Resolva a questão';
+		solveQuestionStatement.textContent = 'Selecione uma matéria, um tema e uma questão para iniciar a resolução.';
 		solveQuestionStatus.textContent = 'Aguardando resposta';
 		solveQuestionStatus.className = '';
+
+		solveAlternatives.innerHTML = '';
 		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback';
+		solveFeedback.className = 'solve-feedback-panel';
 		solveFeedback.innerHTML = '';
-		confirmAnswerButton.disabled = false;
+
+		confirmAnswerButton.disabled = true;
 		retryQuestionButton.disabled = true;
 		nextQuestionButton.disabled = true;
 	}
@@ -307,8 +312,8 @@ export function initSolve() {
 		const hasQuestions = getQuestions().length > 0;
 
 		solveSubjectSelect.innerHTML = `
-      <option value="">Selecione uma matéria</option>
-    `;
+		<option value="">Selecione uma matéria</option>
+	`;
 
 		subjects.forEach((subject) => {
 			const option = document.createElement('option');
@@ -319,11 +324,18 @@ export function initSolve() {
 			solveSubjectSelect.appendChild(option);
 		});
 
-		solveNoQuestionWarning.hidden = hasQuestions;
-		solveFilters.hidden = !hasQuestions;
-
 		if (!hasQuestions) {
+			solveThemeSelect.innerHTML = `
+			<option value="">Selecione um tema</option>
+		`;
+
+			solveQuestionSelect.innerHTML = `
+			<option value="">Selecione uma questão</option>
+		`;
+
 			resetSolveCard();
+
+			solveQuestionStatement.textContent = 'Cadastre questões primeiro para começar a praticar.';
 			return;
 		}
 
@@ -385,8 +397,14 @@ export function initSolve() {
 			alternativeButton.dataset.visualAlternative = visualLetter;
 
 			alternativeButton.innerHTML = `
-        <strong>${escapeHTML(visualLetter)})</strong> ${escapeHTML(alternative.text)}
-      `;
+			<span class="solve-alternative__letter">
+				${escapeHTML(visualLetter)})
+			</span>
+
+			<span class="solve-alternative__text">
+				${escapeHTML(alternative.text)}
+			</span>
+		`;
 
 			alternativeButton.addEventListener('click', () => {
 				if (hasAnsweredCurrentQuestion) {
@@ -419,10 +437,8 @@ export function initSolve() {
 		selectedVisualAlternative = null;
 		hasAnsweredCurrentQuestion = false;
 
-		solveEmptyState.hidden = true;
-		solveCard.hidden = false;
-
 		solveQuestionContext.textContent = `${selectedSubject.name} • ${selectedTheme.name}`;
+		solveQuestionTitle.textContent = `Questão ${getQuestionIndexWithinTheme(selectedQuestion)}`;
 
 		solveQuestionStatus.textContent = 'Aguardando resposta';
 		solveQuestionStatus.className = '';
@@ -431,8 +447,9 @@ export function initSolve() {
 		renderAlternativeButtons(selectedQuestion);
 
 		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback';
+		solveFeedback.className = 'solve-feedback-panel';
 		solveFeedback.innerHTML = '';
+
 		confirmAnswerButton.disabled = false;
 		retryQuestionButton.disabled = true;
 		nextQuestionButton.disabled = true;
@@ -582,7 +599,7 @@ export function initSolve() {
 		renderAlternativeButtons(selectedQuestion);
 
 		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback';
+		solveFeedback.className = 'solve-feedback-panel';
 		solveFeedback.innerHTML = '';
 
 		confirmAnswerButton.disabled = false;
@@ -619,6 +636,7 @@ export function initSolve() {
 
 	renderSubjectOptions();
 	renderSolveHistory();
+	resetSolveCard();
 
 	console.log('Modo de resolução carregado.');
 }

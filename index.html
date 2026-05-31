@@ -554,94 +554,83 @@
 						</div>
 					</article>
 
-					<article class="app-section" id="solve">
+					<section id="solve" class="app-section">
 						<header class="app-section__header">
-							<h2>🧠 Modo de resolução</h2>
-							<p>Escolha uma matéria, um tema e uma questão para praticar com alternativas embaralhadas e correção automática.</p>
+							<h2>🧠 Resolução de questões</h2>
+
+							<p>Pratique questões cadastradas, acompanhe o resultado e consulte seu histórico recente.</p>
 						</header>
 
-						<div class="solve-warning" id="solve-no-question-warning" hidden>
-							<strong>Nenhuma questão disponível.</strong>
-							<span> Cadastre questões primeiro para começar a praticar. </span>
-						</div>
-
-						<div class="solve-filters" id="solve-filters">
-							<div class="form-grid">
-								<div class="form-group">
-									<label for="solve-subject">Matéria</label>
-									<select id="solve-subject">
-										<option value="">Selecione uma matéria</option>
-									</select>
-								</div>
-
-								<div class="form-group">
-									<label for="solve-theme">Tema</label>
-									<select id="solve-theme">
-										<option value="">Selecione um tema</option>
-									</select>
-								</div>
-							</div>
-							<br />
-							<div class="form-group">
-								<label for="solve-question">Questão</label>
-								<select id="solve-question">
-									<option value="">Selecione uma questão</option>
-								</select>
-							</div>
-						</div>
-
-						<div class="solve-area" id="solve-area">
-							<div class="solve-empty-state" id="solve-empty-state">
-								<strong>Nenhuma questão selecionada.</strong>
-								<span> Escolha uma matéria, um tema e uma questão para iniciar a resolução. </span>
-							</div>
-
-							<article class="solve-card" id="solve-card" hidden>
-								<div class="solve-card__header">
-									<div>
-										<p class="solve-card__tag" id="solve-question-context">Questão selecionada</p>
-
-										<h3>Resolva a questão</h3>
+						<div class="solve-workspace">
+							<aside class="solve-sidebar">
+								<div class="solve-panel solve-filters-panel">
+									<div class="solve-panel__header">
+										<h3>Seleção</h3>
+										<p>Escolha a matéria, o tema e a questão que deseja resolver.</p>
 									</div>
 
-									<span id="solve-question-status">Aguardando resposta</span>
+									<div class="form-grid solve-filter-grid">
+										<div class="form-group">
+											<label for="solve-subject-select">Matéria</label>
+											<select id="solve-subject-select"></select>
+										</div>
+
+										<div class="form-group">
+											<label for="solve-theme-select">Tema</label>
+											<select id="solve-theme-select"></select>
+										</div>
+
+										<div class="form-group form-group--full">
+											<label for="solve-question-select">Questão</label>
+											<select id="solve-question-select"></select>
+										</div>
+									</div>
 								</div>
 
-								<p class="solve-card__statement" id="solve-question-statement"></p>
+								<div class="solve-panel solve-history-panel">
+									<div class="solve-panel__header">
+										<h3>Histórico recente</h3>
+										<p>Exibe apenas as 3 resoluções mais recentes.</p>
+									</div>
 
-								<div class="solve-alternatives" id="solve-alternatives"></div>
-
-								<div class="solve-actions">
-									<button class="button button--primary" type="button" id="confirm-answer">Confirmar resposta</button>
-
-									<button class="button button--secondary" type="button" id="retry-question" disabled>Tentar novamente</button>
-
-									<button class="button button--secondary" type="button" id="next-question" disabled>Próxima questão do tema</button>
+									<div id="solve-history-list" class="solve-history-list">
+										<!-- cards do histórico -->
+									</div>
 								</div>
+							</aside>
 
-								<div class="solve-feedback" id="solve-feedback" hidden></div>
-							</article>
+							<div class="solve-panel solve-main-panel">
+								<div class="solve-question-shell">
+									<div class="solve-question-topbar">
+										<div class="solve-question-meta">
+											<span id="solve-question-context">Matéria • Tema</span>
+											<h3 id="solve-question-title">Resolva a questão</h3>
+										</div>
+
+										<span id="solve-question-status" class="dashboard-chip"> Aguardando resposta </span>
+									</div>
+
+									<p id="solve-question-statement" class="solve-question-statement">Enunciado da questão.</p>
+
+									<div id="solve-alternatives-list" class="solve-alternatives-list">
+										<!-- alternativas -->
+									</div>
+
+									<div id="solve-feedback-panel" class="solve-feedback-panel">
+										<!-- feedback -->
+									</div>
+
+									<div class="solve-actions">
+										<button id="solve-confirm-button" class="button button--primary" type="button">Confirmar resposta</button>
+
+										<button id="solve-retry-button" class="button button--secondary" type="button">Tentar novamente</button>
+
+										<button id="solve-next-button" class="button button--secondary" type="button">Próxima questão</button>
+									</div>
+								</div>
+							</div>
 						</div>
-
-						<section class="solve-history" id="solve-history">
-							<div class="solve-history__header">
-								<div>
-									<h3>Histórico recente</h3>
-									<p>Veja apenas suas 3 resoluções mais recentes.</p>
-									<p class="section-note">O histórico completo fica em Revisões.</p>
-								</div>
-
-								<span id="solve-history-count">0 registros</span>
-							</div>
-
-							<div class="empty-state" id="solve-history-empty">
-								<strong>Nenhuma resolução registrada ainda.</strong>
-								<span>Resolva uma questão para que ela apareça aqui.</span>
-							</div>
-
-							<div class="solve-history-list" id="solve-history-list"></div>
-						</section>
-					</article>
+					</section>
 
 					<article class="app-section" id="notes">
 						<header class="app-section__header">
