@@ -1507,72 +1507,88 @@
             <section class="options-panel">
               <div class="options-grid">
                 <article class="option-card">
-                  <div class="option-card__content">
-                    <span class="option-card__icon">🌗</span>
+                  <div class="option-card__body">
+                    <div class="option-card__content">
+                      <span class="option-card__icon">🌓</span>
 
-                    <div>
-                      <h3>Tema da aplicação</h3>
-                      <p>Alterne entre os modos claro e escuro da interface.</p>
+                      <div class="option-card__text">
+                        <h3>Tema da aplicação</h3>
+                        <p>
+                          Alterne entre os modos claro e escuro da interface.
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  <button
-                    class="button button--secondary theme-toggle option-card__button"
-                    type="button"
-                    aria-label="Alternar tema"
-                  >
-                    Alternar tema 🌙
-                  </button>
+                  <div class="option-card__footer">
+                    <button
+                      class="button button--secondary theme-toggle option-card__button"
+                      type="button"
+                      id="theme-toggle-button"
+                      aria-label="Alternar tema"
+                    >
+                      Alternar tema 🌙
+                    </button>
+                  </div>
                 </article>
 
                 <article class="option-card option-card--danger">
-                  <div class="option-card__content">
-                    <span class="option-card__icon">🗑️</span>
+                  <div class="option-card__body">
+                    <div class="option-card__content">
+                      <span class="option-card__icon">🗑️</span>
 
-                    <div>
-                      <h3>Excluir todos os dados</h3>
-                      <p>
-                        Apague matérias, temas, questões, anotações, tentativas
-                        e revisões salvas nesta aplicação.
-                      </p>
+                      <div class="option-card__text">
+                        <h3>Excluir todos os dados</h3>
+                        <p>
+                          Apague matérias, temas, questões, anotações,
+                          tentativas e revisões salvas nesta aplicação.
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  <button
-                    class="button button--danger danger-reset-button option-card__button"
-                    type="button"
-                    id="open-reset-data-modal"
-                    aria-label="Apagar todos os dados"
-                  >
-                    Excluir tudo 🗑️
-                  </button>
+                  <div class="option-card__footer">
+                    <button
+                      class="button button--danger danger-reset-button option-card__button"
+                      type="button"
+                      id="open-reset-data-modal"
+                      aria-label="Apagar todos os dados"
+                    >
+                      Excluir tudo 🗑️
+                    </button>
+                  </div>
                 </article>
 
                 <article class="option-card">
-                  <div class="option-card__content">
-                    <span class="option-card__icon">💾</span>
+                  <div class="option-card__body">
+                    <div class="option-card__content">
+                      <span class="option-card__icon">💾</span>
 
-                    <div>
-                      <h3>Backup dos dados</h3>
-
-                      <p>
-                        Exporte matérias, temas, questões, anotações, tentativas
-                        e revisões em um arquivo JSON de segurança.
-                      </p>
+                      <div class="option-card__text">
+                        <h3>Backup dos dados</h3>
+                        <p>
+                          Exporte matérias, temas, questões, anotações,
+                          tentativas e revisões em um arquivo JSON de segurança.
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="option-card__actions">
+                  <div class="option-card__footer">
+                    <p
+                      id="data-portability-message"
+                      class="option-card__message"
+                      aria-live="polite"
+                    ></p>
+
                     <button
                       class="button button--primary option-card__button"
                       type="button"
                       id="export-data-button"
                     >
-                      Exportar dados
+                      Exportar dados 💾
                     </button>
                   </div>
-
-                  <p id="data-portability-message" class="form-message"></p>
                 </article>
               </div>
             </section>

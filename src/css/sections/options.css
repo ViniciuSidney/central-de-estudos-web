@@ -23,18 +23,16 @@
   align-items: stretch;
 }
 
-
 /* =========================================================
    OPÇÕES — CARDS
    ========================================================= */
 
 .option-card {
   min-width: 0;
-  min-height: 180px;
+  min-height: 260px;
 
-  display: grid;
-  align-content: space-between;
-  gap: 18px;
+  display: flex;
+  flex-direction: column;
 
   padding: 18px;
 
@@ -43,41 +41,67 @@
   border-radius: 18px;
 }
 
+.option-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .option-card__content {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
-  align-items: flex-start;
+  gap: 14px;
+  align-items: start;
 }
 
 .option-card__icon {
-  display: inline-grid;
-  place-items: center;
+  width: 44px;
+  height: 44px;
 
-  width: 42px;
-  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  font-size: 1.25rem;
+  font-size: 1.2rem;
 
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 14px;
 }
 
-.option-card h3 {
-  margin: 0 0 6px;
-
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.25;
+.option-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.option-card p {
+.option-card__text h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.option-card__text p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.option-card__footer {
+  margin-top: auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.option-card__message {
+  min-height: 20px;
   margin: 0;
 
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  color: var(--accent);
+  font-size: 0.92rem;
+  line-height: 1.4;
 }
 
 .option-card--danger {
@@ -165,6 +189,8 @@
 .option-card__actions {
   display: grid;
   gap: 10px;
+
+  margin-top: auto;
 }
 
 .options-section .form-message {
@@ -201,4 +227,3 @@
     grid-template-columns: 1fr;
   }
 }
-
