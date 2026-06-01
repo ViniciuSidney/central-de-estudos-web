@@ -92,16 +92,40 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 8px;
 }
 
 .option-card__message {
   min-height: 20px;
   margin: 0;
 
+  display: flex;
+  align-items: center;
+
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.3;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+
+.option-card__message.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.option-card__message.is-success {
   color: var(--accent);
-  font-size: 0.92rem;
-  line-height: 1.4;
+}
+
+.option-card__message.is-error {
+  color: var(--feedback-error-border);
 }
 
 .option-card--danger {
@@ -171,6 +195,8 @@
 .option-card__button {
   width: 100%;
   justify-content: center;
+
+  font-weight: 800;
 }
 
 .options-section .theme-toggle,
@@ -191,23 +217,6 @@
   gap: 10px;
 
   margin-top: auto;
-}
-
-.options-section .form-message {
-  min-height: 20px;
-  margin: 0;
-
-  color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.options-section .form-message.is-success {
-  color: var(--accent);
-}
-
-.options-section .form-message.is-error {
-  color: var(--feedback-error-border);
 }
 
 /* =========================================================

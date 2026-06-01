@@ -21,10 +21,22 @@ export function initDataPortability() {
     return;
   }
 
+  let messageTimeoutId = null;
+
   function setMessage(text, type = "default") {
+    if (messageTimeoutId) {
+      clearTimeout(messageTimeoutId);
+    }
+
     message.textContent = text;
 
-    message.classList.remove("is-error", "is-success");
+    message.classList.remove("is-error", "is-success", "is-visible");
+
+    if (!text) {
+      return;
+    }
+
+    message.classList.add("is-visible");
 
     if (type === "error") {
       message.classList.add("is-error");
@@ -33,6 +45,12 @@ export function initDataPortability() {
     if (type === "success") {
       message.classList.add("is-success");
     }
+
+    messageTimeoutId = setTimeout(() => {
+      message.textContent = "";
+      message.classList.remove("is-error", "is-success", "is-visible");
+      messageTimeoutId = null;
+    }, 3500);
   }
 
   function createBackupPayload() {
