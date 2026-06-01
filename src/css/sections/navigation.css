@@ -1,132 +1,131 @@
 .navigation-panel {
-  padding: 16px;
+	min-height: 0;
+	height: 100%;
 
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	padding: 16px;
+
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
 }
 
 .nav-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
 .nav-tab-button {
-  cursor: pointer;
-  padding: 11px 15px;
+	cursor: pointer;
+	padding: 11px 15px;
 
-  color: var(--muted);
-  font: inherit;
-  font-weight: 800;
+	color: var(--muted);
+	font: inherit;
+	font-weight: 800;
 
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 999px;
+	background: transparent;
+	border: 1px solid var(--border);
+	border-radius: 999px;
 
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		background 0.2s ease,
+		color 0.2s ease,
+		border-color 0.2s ease;
 }
 
 .nav-tab-button:hover {
-  transform: translateY(-2px);
-  background: var(--surface-soft);
+	transform: translateY(-2px);
+	background: var(--surface-soft);
 }
 
 .nav-tab-button.is-active {
-  color: #ffffff;
-  background: var(--accent);
-  border-color: var(--accent);
+	color: #ffffff;
+	background: var(--accent);
+	border-color: var(--accent);
 }
 
+/* Cards principais da aba selecionada */
 .nav-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+	min-height: 0;
+
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+/* Rodapé fixo da navegação */
+.nav-footer {
+	margin-top: auto;
+
+	display: grid;
+	gap: 12px;
+
+	padding-top: 14px;
 }
 
 .nav-card {
-  min-height: 112px;
+	min-height: 96px;
 
-  display: grid;
-  align-content: start;
-  gap: 8px;
+	display: grid;
+	align-content: center;
+	gap: 6px;
 
-  cursor: pointer;
-  padding: 16px;
+	cursor: pointer;
+	padding: 14px;
 
-  color: var(--text);
-  text-align: left;
+	color: var(--text);
+	text-align: left;
 
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 16px;
+	background: transparent;
+	border: 1px solid var(--border);
+	border-radius: 16px;
 
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		background 0.2s ease,
+		border-color 0.2s ease;
 }
 
 .nav-card:hover {
-  transform: translateY(-2px);
-  background: var(--surface-soft);
+	transform: translateY(-2px);
+	background: var(--surface-soft);
 }
 
 .nav-card.is-active {
-  background: var(--success-soft);
-  border-color: var(--accent);
+	background: var(--success-soft);
+	border-color: var(--accent);
 }
 
 .nav-card span {
-  font-size: 1.35rem;
+	font-size: 1.25rem;
 }
 
 .nav-card strong {
-  font-size: 1rem;
+	font-size: 0.95rem;
+	line-height: 1.25;
 }
 
 .nav-card small {
-  color: var(--muted);
-  font-size: 0.88rem;
-  line-height: 1.4;
+	color: var(--muted);
+	font-size: 0.82rem;
+	line-height: 1.35;
 }
 
 .nav-card.is-hidden-by-group {
-  display: none;
-}
-
-.app-sidebar,
-.navigation-panel,
-.nav-panel {
-  min-height: 0;
-}
-
-.nav-card-list,
-.nav-grid,
-.nav-cards {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+	display: none;
 }
 
 .nav-card--static {
-  margin-top: auto;
+	min-height: 92px;
 }
 
 .nav-card--static.is-active {
-  background: var(--success-soft);
-  border-color: var(--accent);
-}
-
-.nav-card--static {
-  margin-top: auto;
-}
-
-.nav-card--static small {
-  max-width: 100%;
+	background: var(--success-soft);
+	border-color: var(--accent);
 }

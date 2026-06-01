@@ -141,6 +141,28 @@
 }
 
 /* =========================================================
+   OPÇÕES — BOTÕES DOS CARDS
+   ========================================================= */
+
+.option-card__button {
+  width: 100%;
+  justify-content: center;
+}
+
+.options-section .theme-toggle,
+.options-section .danger-reset-button {
+  position: static;
+  inset: auto;
+  z-index: auto;
+
+  width: 100%;
+  height: auto;
+  min-height: 42px;
+
+  box-shadow: none;
+}
+
+/* =========================================================
    OPÇÕES — RESPONSIVIDADE
    ========================================================= */
 
