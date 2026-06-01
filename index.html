@@ -1505,7 +1505,7 @@
             </header>
 
             <section class="options-panel">
-              <div class="options-grid">
+              <div class="options-grid options-grid--general">
                 <article class="option-card">
                   <div class="option-card__body">
                     <div class="option-card__content">
@@ -1558,62 +1558,104 @@
                     </button>
                   </div>
                 </article>
+              </div>
+            </section>
 
-                <article class="option-card">
-                  <div class="option-card__body">
-                    <div class="option-card__content">
-                      <span class="option-card__icon">💾</span>
+            <section class="options-panel options-panel--backup">
+              <div class="options-subsection-header">
+                <div>
+                  <h3>Backup e restauração</h3>
+                  <p>
+                    Exporte seus dados em JSON ou restaure um backup válido da
+                    aplicação.
+                  </p>
+                </div>
+              </div>
 
-                      <div class="option-card__text">
-                        <h3>Backup dos dados</h3>
-                        <p>
-                          Exporte ou importe matérias, temas, questões,
-                          anotações, tentativas e revisões usando um arquivo
-                          JSON de segurança.
-                        </p>
-                      </div>
+              <div class="backup-workspace">
+                <article class="backup-block">
+                  <div class="backup-block__header">
+                    <span class="option-card__icon">💾</span>
+
+                    <div>
+                      <h4>Exportar dados</h4>
+                      <p>
+                        Baixe uma cópia de segurança contendo matérias, temas,
+                        questões, anotações, tentativas e revisões.
+                      </p>
                     </div>
                   </div>
 
-                  <div class="option-card__footer">
-                    <p
-                      id="data-portability-message"
-                      class="option-card__message"
-                      aria-live="polite"
-                    ></p>
+                  <button
+                    class="button button--primary option-card__button"
+                    type="button"
+                    id="export-data-button"
+                  >
+                    Exportar dados 💾
+                  </button>
+                </article>
 
-                    <div class="option-card__actions">
-                      <button
-                        class="button button--primary option-card__button"
-                        type="button"
-                        id="export-data-button"
-                      >
-                        Exportar dados 💾
-                      </button>
+                <article class="backup-block backup-block--import">
+                  <div class="backup-block__header">
+                    <span class="option-card__icon">📥</span>
 
-                      <label
-                        class="button button--secondary option-card__button"
-                        for="import-data-input"
-                      >
-                        Selecionar backup
-                      </label>
-
-                      <input
-                        id="import-data-input"
-                        type="file"
-                        accept="application/json,.json"
-                        hidden
-                      />
-
-                      <button
-                        class="button button--secondary option-card__button"
-                        type="button"
-                        id="import-data-button"
-                        disabled
-                      >
-                        Importar dados
-                      </button>
+                    <div>
+                      <h4>Importar backup</h4>
+                      <p>
+                        Selecione um arquivo JSON exportado pela Central de
+                        Estudos Web para restaurar os dados.
+                      </p>
                     </div>
+                  </div>
+
+                  <input
+                    id="import-data-input"
+                    type="file"
+                    accept="application/json,.json"
+                    hidden
+                  />
+
+                  <div class="backup-file-status">
+                    <strong id="selected-backup-name">
+                      Nenhum arquivo selecionado.
+                    </strong>
+
+                    <span id="selected-backup-status">
+                      Selecione um backup JSON para liberar a importação.
+                    </span>
+                  </div>
+
+                  <p
+                    id="data-portability-message"
+                    class="option-card__message"
+                    aria-live="polite"
+                  ></p>
+
+                  <div class="backup-actions">
+                    <label
+                      class="button button--secondary option-card__button"
+                      for="import-data-input"
+                    >
+                      Selecionar backup
+                    </label>
+
+                    <button
+                      class="button button--secondary option-card__button"
+                      type="button"
+                      id="clear-import-data-button"
+                      disabled
+                    >
+                      Limpar seleção
+                    </button>
+
+                    <button
+                      class="button button--primary option-card__button"
+                      type="button"
+                      id="import-data-button"
+                      disabled
+                    >
+                      Importar dados
+                    </button>
                   </div>
                 </article>
               </div>
