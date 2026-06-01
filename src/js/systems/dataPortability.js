@@ -17,9 +17,22 @@ export function initDataPortability() {
   const exportButton = document.querySelector("#export-data-button");
   const importInput = document.querySelector("#import-data-input");
   const importButton = document.querySelector("#import-data-button");
+  const clearImportButton = document.querySelector("#clear-import-data-button");
+  const selectedBackupName = document.querySelector("#selected-backup-name");
+  const selectedBackupStatus = document.querySelector("#selected-backup-status");
+  const backupFileStatus = document.querySelector(".backup-file-status");
   const message = document.querySelector("#data-portability-message");
 
-  if (!exportButton || !importInput || !importButton || !message) {
+  if (
+    !exportButton ||
+    !importInput ||
+    !importButton ||
+    !clearImportButton ||
+    !selectedBackupName ||
+    !selectedBackupStatus ||
+    !backupFileStatus ||
+    !message
+  ) {
     return;
   }
 
@@ -53,6 +66,30 @@ export function initDataPortability() {
       message.classList.remove("is-error", "is-success", "is-visible");
       messageTimeoutId = null;
     }, 3500);
+  }
+
+  function setBackupSelectionState({
+    fileName = "Nenhum arquivo selecionado.",
+    status = "Selecione um backup JSON para liberar a importação.",
+    isValid = false,
+    isInvalid = false,
+  } = {}) {
+    selectedBackupName.textContent = fileName;
+    selectedBackupStatus.textContent = status;
+
+    backupFileStatus.classList.toggle("is-valid", isValid);
+    backupFileStatus.classList.toggle("is-invalid", isInvalid);
+
+    importButton.disabled = !isValid;
+    clearImportButton.disabled = !fileName || fileName === "Nenhum arquivo selecionado.";
+  }
+
+  function clearSelectedBackup() {
+    selectedBackupPayload = null;
+    importInput.value = "";
+
+    setBackupSelectionState();
+    setMessage("");
   }
 
   function createBackupPayload() {
@@ -164,10 +201,7 @@ export function initDataPortability() {
       }),
     );
 
-    selectedBackupPayload = null;
-    importInput.value = "";
-    importButton.disabled = true;
-
+    clearSelectedBackup();
     setMessage("Backup importado com sucesso.", "success");
   }
 
@@ -205,13 +239,18 @@ export function initDataPortability() {
     importButton.disabled = true;
 
     if (!file) {
-      setMessage("");
+      clearSelectedBackup();
       return;
     }
 
     if (!file.name.toLowerCase().endsWith(".json")) {
-      importInput.value = "";
-      setMessage("Selecione um arquivo JSON válido.", "error");
+      setBackupSelectionState({
+        fileName: file.name,
+        status: "Selecione um arquivo JSON válido.",
+        isInvalid: true,
+      });
+
+      setMessage("Arquivo inválido.", "error");
       return;
     }
 
@@ -223,26 +262,52 @@ export function initDataPortability() {
         const validationError = validateBackupPayload(payload);
 
         if (validationError) {
-          importInput.value = "";
-          setMessage(validationError, "error");
+          selectedBackupPayload = null;
+
+          setBackupSelectionState({
+            fileName: file.name,
+            status: validationError,
+            isInvalid: true,
+          });
+
+          setMessage("Backup inválido.", "error");
           return;
         }
 
         selectedBackupPayload = payload;
-        importButton.disabled = false;
+
+        setBackupSelectionState({
+          fileName: file.name,
+          status: "Backup válido. A importação está liberada.",
+          isValid: true,
+        });
 
         setMessage("Backup válido selecionado.", "success");
       } catch (error) {
         console.error(error);
 
-        importInput.value = "";
-        setMessage("Não foi possível ler o arquivo JSON.", "error");
+        selectedBackupPayload = null;
+
+        setBackupSelectionState({
+          fileName: file.name,
+          status: "Não foi possível ler o arquivo JSON.",
+          isInvalid: true,
+        });
+
+        setMessage("Erro ao ler o arquivo.", "error");
       }
     });
 
     reader.addEventListener("error", () => {
-      importInput.value = "";
-      setMessage("Erro ao ler o arquivo selecionado.", "error");
+      selectedBackupPayload = null;
+
+      setBackupSelectionState({
+        fileName: file.name,
+        status: "Erro ao ler o arquivo selecionado.",
+        isInvalid: true,
+      });
+
+      setMessage("Erro ao ler o arquivo.", "error");
     });
 
     reader.readAsText(file);
@@ -251,6 +316,9 @@ export function initDataPortability() {
   exportButton.addEventListener("click", exportData);
   importInput.addEventListener("change", handleBackupFileSelection);
   importButton.addEventListener("click", importSelectedBackup);
+  clearImportButton.addEventListener("click", clearSelectedBackup);
+
+  setBackupSelectionState();
 
   console.log("Sistema de exportação/importação carregado.");
 }
