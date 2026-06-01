@@ -24,11 +24,15 @@ export function initDataPortability() {
   );
   const backupFileStatus = document.querySelector(".backup-file-status");
   const message = document.querySelector("#data-portability-message");
+  const selectImportButton = document.querySelector(
+    "#select-import-data-button",
+  );
 
   if (
     !exportButton ||
     !importInput ||
     !importButton ||
+    !selectImportButton ||
     !clearImportButton ||
     !selectedBackupName ||
     !selectedBackupStatus ||
@@ -80,6 +84,8 @@ export function initDataPortability() {
     isValid = false,
     isInvalid = false,
   } = {}) {
+    const hasSelectedFile = fileName !== "Nenhum arquivo selecionado.";
+
     selectedBackupName.textContent = fileName;
     selectedBackupStatus.textContent = status;
 
@@ -87,8 +93,10 @@ export function initDataPortability() {
     backupFileStatus.classList.toggle("is-invalid", isInvalid);
 
     importButton.disabled = !isValid;
-    clearImportButton.disabled =
-      !fileName || fileName === "Nenhum arquivo selecionado.";
+    clearImportButton.disabled = !hasSelectedFile;
+
+    selectImportButton.classList.toggle("is-disabled", isValid);
+    selectImportButton.setAttribute("aria-disabled", String(isValid));
   }
 
   function clearSelectedBackup() {
@@ -216,6 +224,7 @@ export function initDataPortability() {
     tag = "⚠️ Confirmação",
     title = "Confirmar ação",
     description = "Tem certeza que deseja continuar?",
+    descriptionHTML = "",
     confirmText = "Confirmar",
     cancelText = "Cancelar",
     confirmButtonClass = "button button--primary",
@@ -273,7 +282,11 @@ export function initDataPortability() {
 
       modalTag.textContent = tag;
       modalTitle.textContent = title;
-      modalDescription.textContent = description;
+      if (descriptionHTML) {
+        modalDescription.innerHTML = descriptionHTML;
+      } else {
+        modalDescription.textContent = description;
+      }
 
       cancelButton.textContent = cancelText;
       confirmButton.textContent = confirmText;
@@ -292,16 +305,30 @@ export function initDataPortability() {
     });
   }
 
+  function escapeHTML(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function confirmImportBackup() {
-    const fileName = getSelectedBackupFileName();
+    const fileName = escapeHTML(getSelectedBackupFileName());
 
     return openAppConfirmModal({
       tag: "⚠️ Importação de dados",
       title: "Substituir dados atuais?",
-      description:
-        `Arquivo selecionado: ${fileName}. ` +
-        "Ao continuar, os dados atuais serão substituídos pelos dados deste backup. " +
-        "Exporte um backup atual antes de prosseguir se quiser preservar as informações existentes.",
+      descriptionHTML: `
+      <strong>Arquivo selecionado:</strong>
+      <strong class="modal-file-name">${fileName}</strong>
+
+      <span class="modal-description-spacer"></span>
+
+      Ao continuar, os dados atuais serão substituídos pelos dados deste backup.
+      Exporte um backup atual antes de prosseguir se quiser preservar as informações existentes.
+    `,
       confirmText: "Substituir dados",
       cancelText: "Cancelar",
       confirmButtonClass: "button button--danger",

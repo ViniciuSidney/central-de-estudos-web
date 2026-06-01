@@ -52,6 +52,27 @@
   line-height: 1.6;
 }
 
+.modal-description-spacer {
+  display: block;
+  height: 14px;
+}
+
+.modal-file-name {
+  display: inline-block;
+
+  padding: 2px 7px;
+  margin: 0 0px;
+
+  color: var(--accent);
+  font-weight: 700;
+
+  background: var(--success-soft);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+
+  overflow-wrap: anywhere;
+}
+
 .modal__actions {
   display: flex;
   justify-content: flex-end;

@@ -222,6 +222,13 @@
   opacity: 0.55;
 }
 
+.option-card__button.is-disabled,
+.backup-actions .button.is-disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 /* =========================================================
    OPÇÕES — PAINÉIS ESPECÍFICOS
    ========================================================= */
