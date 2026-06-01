@@ -211,6 +211,15 @@ export function initSubjects() {
 	subjectsList.addEventListener('click', handleSubjectDelete);
 	clearSubjectFormButton.addEventListener('click', clearForm);
 
+	document.addEventListener('subjects:changed', () => {
+		renderSubjects();
+	});
+
+	document.addEventListener('app:data-reset', () => {
+		clearForm();
+		renderSubjects();
+	});
+
 	renderSubjects();
 
 	console.log('Sistema de matérias carregado.');
