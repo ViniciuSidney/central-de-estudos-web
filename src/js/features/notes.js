@@ -83,7 +83,10 @@ export function initNotes() {
 	const closeMarkdownHelpButton = document.querySelector('#close-markdown-help');
 	const openFocusedEditorButton = document.querySelector('#notes-focused-editor-button');
 
+	const noteFilterArchiveSelect = document.querySelector('#notes-filter-archive');
+
 	if (
+		!noteFilterArchiveSelect ||
 		!openFocusedEditorButton ||
 		!openMarkdownHelpButton ||
 		!markdownHelpModal ||
@@ -1119,8 +1122,7 @@ export function initNotes() {
 		const selectedThemeId = noteFilterThemeSelect.value;
 		const selectedType = noteFilterTypeSelect.value;
 		const selectedStatus = noteFilterStatusSelect.value;
-		const selectedTag = '';
-		const selectedFlag = 'active';
+		const selectedArchiveFilter = noteFilterArchiveSelect.value || 'active';
 
 		return getNotes()
 			.filter((note) => {
@@ -1134,16 +1136,14 @@ export function initNotes() {
 
 				const matchesStatus = !selectedStatus || (note.status || 'rascunho') === selectedStatus;
 
-				const matchesTag = !selectedTag || (Array.isArray(note.tags) && note.tags.includes(selectedTag));
+				const matchesArchive =
+					selectedArchiveFilter === 'all' ||
+					(selectedArchiveFilter === 'active' && !note.isArchived) ||
+					(selectedArchiveFilter === 'archived' && note.isArchived) ||
+					(selectedArchiveFilter === 'favorites' && note.isFavorite) ||
+					(selectedArchiveFilter === 'pinned' && note.isPinned);
 
-				const matchesFlag =
-					selectedFlag === 'all' ||
-					(selectedFlag === 'active' && !note.isArchived) ||
-					(selectedFlag === 'favorites' && note.isFavorite) ||
-					(selectedFlag === 'pinned' && note.isPinned) ||
-					(selectedFlag === 'archived' && note.isArchived);
-
-				return matchesSearch && matchesSubject && matchesTheme && matchesType && matchesStatus && matchesTag && matchesFlag;
+				return matchesSearch && matchesSubject && matchesTheme && matchesType && matchesStatus && matchesArchive;
 			})
 			.sort((firstNote, secondNote) => {
 				const firstPinnedValue = firstNote.isPinned ? 1 : 0;
@@ -1215,28 +1215,6 @@ export function initNotes() {
 		noteFilterThemeSelect.value = themeStillExists ? previousThemeId : '';
 	}
 
-	function renderFilterTagOptions() {
-		const tags = getUniqueTags();
-		const previousTag = noteFilterTagSelect.value;
-
-		noteFilterTagSelect.innerHTML = `
-    <option value="">Todas as tags</option>
-  `;
-
-		tags.forEach((tag) => {
-			const option = document.createElement('option');
-
-			option.value = tag;
-			option.textContent = `#${tag}`;
-
-			noteFilterTagSelect.appendChild(option);
-		});
-
-		const tagStillExists = tags.includes(previousTag);
-
-		noteFilterTagSelect.value = tagStillExists ? previousTag : '';
-	}
-
 	function toggleAdvancedNoteFilters() {
 		const filtersAreHidden = noteFiltersAdvanced.hidden;
 
@@ -1253,6 +1231,7 @@ export function initNotes() {
 		noteFilterThemeSelect.value = '';
 		noteFilterTypeSelect.value = '';
 		noteFilterStatusSelect.value = '';
+		noteFilterArchiveSelect.value = 'active';
 
 		renderFilterThemeOptions();
 		renderNotes();
@@ -1503,6 +1482,7 @@ export function initNotes() {
 	openFocusedEditorButton.addEventListener('click', openFocusedEditorFromForm);
 
 	noteSearchInput.addEventListener('input', renderNotes);
+
 	noteFilterSubjectSelect.addEventListener('change', () => {
 		renderFilterThemeOptions();
 		renderNotes();
@@ -1510,6 +1490,7 @@ export function initNotes() {
 	noteFilterThemeSelect.addEventListener('change', renderNotes);
 	noteFilterTypeSelect.addEventListener('change', renderNotes);
 	noteFilterStatusSelect.addEventListener('change', renderNotes);
+	noteFilterArchiveSelect.addEventListener('change', renderNotes);
 
 	markdownHelpModal.addEventListener('click', (event) => {
 		if (event.target === markdownHelpModal) {
