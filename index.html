@@ -1567,8 +1567,9 @@
                       <div class="option-card__text">
                         <h3>Backup dos dados</h3>
                         <p>
-                          Exporte matérias, temas, questões, anotações,
-                          tentativas e revisões em um arquivo JSON de segurança.
+                          Exporte ou importe matérias, temas, questões,
+                          anotações, tentativas e revisões usando um arquivo
+                          JSON de segurança.
                         </p>
                       </div>
                     </div>
@@ -1581,13 +1582,38 @@
                       aria-live="polite"
                     ></p>
 
-                    <button
-                      class="button button--primary option-card__button"
-                      type="button"
-                      id="export-data-button"
-                    >
-                      Exportar dados 💾
-                    </button>
+                    <div class="option-card__actions">
+                      <button
+                        class="button button--primary option-card__button"
+                        type="button"
+                        id="export-data-button"
+                      >
+                        Exportar dados 💾
+                      </button>
+
+                      <label
+                        class="button button--secondary option-card__button"
+                        for="import-data-input"
+                      >
+                        Selecionar backup
+                      </label>
+
+                      <input
+                        id="import-data-input"
+                        type="file"
+                        accept="application/json,.json"
+                        hidden
+                      />
+
+                      <button
+                        class="button button--secondary option-card__button"
+                        type="button"
+                        id="import-data-button"
+                        disabled
+                      >
+                        Importar dados
+                      </button>
+                    </div>
                   </div>
                 </article>
               </div>
