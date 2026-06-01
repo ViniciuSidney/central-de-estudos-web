@@ -19,7 +19,9 @@ export function initDataPortability() {
   const importButton = document.querySelector("#import-data-button");
   const clearImportButton = document.querySelector("#clear-import-data-button");
   const selectedBackupName = document.querySelector("#selected-backup-name");
-  const selectedBackupStatus = document.querySelector("#selected-backup-status");
+  const selectedBackupStatus = document.querySelector(
+    "#selected-backup-status",
+  );
   const backupFileStatus = document.querySelector(".backup-file-status");
   const message = document.querySelector("#data-portability-message");
 
@@ -81,7 +83,8 @@ export function initDataPortability() {
     backupFileStatus.classList.toggle("is-invalid", isInvalid);
 
     importButton.disabled = !isValid;
-    clearImportButton.disabled = !fileName || fileName === "Nenhum arquivo selecionado.";
+    clearImportButton.disabled =
+      !fileName || fileName === "Nenhum arquivo selecionado.";
   }
 
   function clearSelectedBackup() {
@@ -205,19 +208,105 @@ export function initDataPortability() {
     setMessage("Backup importado com sucesso.", "success");
   }
 
-  function confirmImportBackup() {
-    return window.confirm(
-      "Importar este backup substituirá os dados atuais da aplicação. Deseja continuar?",
-    );
+  function openAppConfirmModal({
+    tag = "⚠️ Confirmação",
+    title = "Confirmar ação",
+    description = "Tem certeza que deseja continuar?",
+    confirmText = "Confirmar",
+    cancelText = "Cancelar",
+    confirmButtonClass = "button button--primary",
+  } = {}) {
+    const modal = document.querySelector("#app-confirm-modal");
+    const modalTag = document.querySelector("#app-confirm-tag");
+    const modalTitle = document.querySelector("#app-confirm-title");
+    const modalDescription = document.querySelector("#app-confirm-description");
+    const cancelButton = document.querySelector("#app-confirm-cancel");
+    const confirmButton = document.querySelector("#app-confirm-confirm");
+
+    if (
+      !modal ||
+      !modalTag ||
+      !modalTitle ||
+      !modalDescription ||
+      !cancelButton ||
+      !confirmButton
+    ) {
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      function closeModal(result) {
+        modal.hidden = true;
+        document.body.style.overflow = "";
+
+        cancelButton.removeEventListener("click", handleCancel);
+        confirmButton.removeEventListener("click", handleConfirm);
+        modal.removeEventListener("click", handleOverlayClick);
+        document.removeEventListener("keydown", handleEscape);
+
+        resolve(result);
+      }
+
+      function handleCancel() {
+        closeModal(false);
+      }
+
+      function handleConfirm() {
+        closeModal(true);
+      }
+
+      function handleOverlayClick(event) {
+        if (event.target === modal) {
+          closeModal(false);
+        }
+      }
+
+      function handleEscape(event) {
+        if (event.key === "Escape") {
+          closeModal(false);
+        }
+      }
+
+      modalTag.textContent = tag;
+      modalTitle.textContent = title;
+      modalDescription.textContent = description;
+
+      cancelButton.textContent = cancelText;
+      confirmButton.textContent = confirmText;
+
+      confirmButton.className = confirmButtonClass;
+
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+
+      cancelButton.addEventListener("click", handleCancel);
+      confirmButton.addEventListener("click", handleConfirm);
+      modal.addEventListener("click", handleOverlayClick);
+      document.addEventListener("keydown", handleEscape);
+
+      cancelButton.focus();
+    });
   }
 
-  function importSelectedBackup() {
+  function confirmImportBackup() {
+    return openAppConfirmModal({
+      tag: "⚠️ Importação de dados",
+      title: "Substituir dados atuais?",
+      description:
+        "A importação substituirá matérias, temas, questões, anotações, tentativas e revisões atuais pelos dados do backup selecionado. Exporte um backup atual antes de continuar, caso queira preservar os dados existentes.",
+      confirmText: "Substituir dados",
+      cancelText: "Cancelar",
+      confirmButtonClass: "button button--danger",
+    });
+  }
+
+  async function importSelectedBackup() {
     if (!selectedBackupPayload) {
       setMessage("Selecione um backup válido antes de importar.", "error");
       return;
     }
 
-    const confirmed = confirmImportBackup();
+    const confirmed = await confirmImportBackup();
 
     if (!confirmed) {
       setMessage("Importação cancelada.");
