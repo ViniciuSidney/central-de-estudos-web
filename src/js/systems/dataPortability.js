@@ -41,6 +41,10 @@ export function initDataPortability() {
   let messageTimeoutId = null;
   let selectedBackupPayload = null;
 
+  function getSelectedBackupFileName() {
+    return selectedBackupName.textContent || "backup selecionado";
+  }
+
   function setMessage(text, type = "default") {
     if (messageTimeoutId) {
       clearTimeout(messageTimeoutId);
@@ -289,11 +293,15 @@ export function initDataPortability() {
   }
 
   function confirmImportBackup() {
+    const fileName = getSelectedBackupFileName();
+
     return openAppConfirmModal({
       tag: "⚠️ Importação de dados",
       title: "Substituir dados atuais?",
       description:
-        "A importação substituirá matérias, temas, questões, anotações, tentativas e revisões atuais pelos dados do backup selecionado. Exporte um backup atual antes de continuar, caso queira preservar os dados existentes.",
+        `Arquivo selecionado: ${fileName}. ` +
+        "Ao continuar, os dados atuais serão substituídos pelos dados deste backup. " +
+        "Exporte um backup atual antes de prosseguir se quiser preservar as informações existentes.",
       confirmText: "Substituir dados",
       cancelText: "Cancelar",
       confirmButtonClass: "button button--danger",
