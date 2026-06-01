@@ -564,183 +564,308 @@ As seções específicas continuam responsáveis pelo controle completo dos dado
 Melhorar a aparência, a navegação e a experiência de uso da aplicação, tornando as telas mais acessíveis, legíveis, compactas e organizadas, sem adicionar grandes sistemas novos.
 
 ### Status
-Planejada.
+Concluída.
 
 ---
 
-## Previsto para a v0.9
+## Implementado na v0.9
 
 ### Layout geral
 
-- Revisar a estrutura visual da página inicial
-- Melhorar a disposição do Hero
-- Melhorar a área de navegação principal
-- Reduzir rolagem desnecessária
-- Tornar as seções mais acessíveis
-- Deixar o conteúdo mais compacto sem perder legibilidade
-- Melhorar o equilíbrio entre largura, espaçamento e densidade visual
+- Reformulação da estrutura visual geral da aplicação ✅
+- Reorganização do layout principal com sidebar fixa e painel principal ✅
+- Redução de rolagem desnecessária em várias seções ✅
+- Melhor distribuição de espaço entre navegação, hero e conteúdo ✅
+- Compactação dos cabeçalhos das seções ✅
+- Melhoria da legibilidade dos títulos, descrições, cards e listas ✅
+- Criação da seção Opções para ações globais da aplicação ✅
 
 ---
 
 ### Navegação
 
-- Revisar o sistema de abas da navegação principal
-- Melhorar a visualização dos grupos: Resumo, Cadastro e Estudo
-- Garantir que cards e abas fiquem sempre sincronizados
-- Melhorar o destaque da seção ativa
-- Revisar atalhos internos entre Dashboard, Revisões, Anotações, Questões e Temas
-- Corrigir inconsistências de navegação quando ações forem disparadas por atalhos
-
----
-
-### Cards e listas
-
-- Padronizar aparência dos cards principais
-- Revisar cards de matérias, temas, questões, revisões e anotações
-- Melhorar espaçamentos internos dos cards
-- Melhorar organização dos botões de ação
-- Reduzir excesso visual em metadados, tags e indicadores
-- Garantir boa leitura em cards com pouco ou muito conteúdo
-
----
-
-### Formulários
-
-- Revisar layout dos formulários
-- Melhorar agrupamento dos campos
-- Padronizar mensagens de erro, sucesso e aviso
-- Melhorar disposição dos botões de formulário
-- Evitar formulários visualmente longos quando possível
-- Melhorar clareza dos campos obrigatórios e opcionais
-
----
-
-### Modais
-
-- Revisar modais de confirmação
-- Revisar modal de revisão de erro
-- Revisar modal de visualização de anotação
-- Melhorar scroll interno dos modais
-- Garantir boa leitura em telas menores
-- Padronizar cabeçalho, conteúdo e rodapé dos modais
+- Reformulação da navegação principal em formato lateral ✅
+- Organização por grupos: Resumo, Cadastro e Estudo ✅
+- Cards de navegação sincronizados com as seções ativas ✅
+- Correção de inconsistências ao navegar por atalhos internos ✅
+- Adição da seção Opções como área fixa da navegação ✅
+- Remoção de botões flutuantes antigos de tema e exclusão total ✅
+- Centralização da navegação por evento `app:navigate` ✅
 
 ---
 
 ### Dashboard
 
-- Revisar espaçamentos do Dashboard
-- Ajustar os grids de cards em telas grandes e médias
-- Garantir que as abas do Dashboard continuem compactas e legíveis
-- Melhorar estados vazios
-- Revisar listas de indicadores para evitar excesso de informação
-- Manter o Dashboard como painel de decisão, não como relatório completo
+- Reorganização visual do Dashboard ✅
+- Reestruturação das abas internas do Dashboard ✅
+- Separação entre abas, contadores e conteúdo principal ✅
+- Ajustes nos cards de resumo, desempenho, revisão e conteúdos ✅
+- Transformação de listas importantes em galerias compactas ✅
+- Correção de transbordamentos em textos, tags e indicadores ✅
+- Ajuste de rankings e listas para telas médias e grandes ✅
+- Correção da sincronização entre Dashboard e Revisões ✅
 
 ---
 
-### Responsividade
+### Cadastro
 
-- Ajustar layout para celular
-- Ajustar layout para tablet
-- Ajustar layout para notebook
-- Ajustar layout para desktop
-- Melhorar grids responsivos
-- Garantir que botões não quebrem o layout
-- Garantir que modais possam ser rolados corretamente
-- Melhorar leitura em telas estreitas
+- Reorganização das seções de matérias e temas ✅
+- Formulários posicionados lado a lado com as listagens ✅
+- Transformação das listagens em galerias de cards ✅
+- Ajustes nos cards de matérias e temas ✅
+- Melhoria nos botões de ação dos cards ✅
+- Redução de fundos e painéis visuais desnecessários ✅
 
 ---
 
-### Organização do CSS
+### Questões
 
-- Revisar arquivos CSS separados por função
-- Remover estilos duplicados ou antigos
-- Agrupar estilos por componente
-- Padronizar nomes de classes
-- Revisar estilos não utilizados
-- Melhorar manutenção futura do CSS
+- Reformulação da seção de questões ✅
+- Separação entre abas internas, contexto e conteúdo principal ✅
+- Reorganização do formulário de cadastro de questões ✅
+- Separação entre dados principais, alternativas e ações ✅
+- Transformação da listagem de questões em galeria ✅
+- Ajustes nos cards de questões ✅
+- Correções no script da seção após mudança de layout ✅
+- Redução de espaçamentos verticais para evitar rolagem excessiva ✅
 
 ---
 
-### Acessibilidade e usabilidade
+### Resolução de questões
 
-- Melhorar foco visual em botões e campos
-- Revisar textos de botões e mensagens
-- Conferir uso de `aria-label` quando necessário
-- Melhorar tooltips e rótulos visuais
-- Garantir que ações importantes sejam compreensíveis
-- Evitar depender apenas de ícones quando houver risco de ambiguidade
+- Reorganização da seção Resolver ✅
+- Separação entre seleção, histórico recente e painel de resolução ✅
+- Adaptação do `solve.js` ao novo layout ✅
+- Histórico recente limitado e mais compacto ✅
+- Ajuste visual dos botões de resolução ✅
+- Correção de classes antigas que quebravam o layout ✅
+
+---
+
+### Anotações
+
+- Reorganização da seção de Anotações ✅
+- Separação entre Galeria e Nova Anotação ✅
+- Criação de layout próprio para busca, filtros e galeria ✅
+- Criação de layout próprio para metadados, ferramentas e editor ✅
+- Adaptação do `notes.js` ao novo layout ✅
+- Limpeza do `notes.css` ✅
+- Correção da visibilidade da seção de anotações na navegação ✅
+- Adição de filtro de exibição para anotações não arquivadas, todas e arquivadas ✅
+- Correção da recuperação de anotações arquivadas ✅
+
+---
+
+### Revisões
+
+- Reorganização da seção Revisões ✅
+- Reformulação das abas Histórico, Erros pendentes e Erros revisados ✅
+- Transformação de listas em galerias de cards ✅
+- Ajuste dos filtros do histórico ✅
+- Restauração do layout do modal de revisão de erro ✅
+- Correção visual do modal de edição/revisão ✅
+
+---
+
+### Opções
+
+- Criação da seção Opções ✅
+- Card para alternar tema da aplicação ✅
+- Card para excluir todos os dados da aplicação ✅
+- Reaproveitamento do modal de confirmação dupla para exclusão total ✅
+- Remoção dos botões flutuantes antigos ✅
+- Correção da atualização visual após excluir todos os dados ✅
+
+---
+
+### Responsividade e CSS
+
+- Ajustes para telas grandes, médias e menores ✅
+- Correção de transbordamentos em cards e listas ✅
+- Melhoria da barra de rolagem da aplicação ✅
+- Limpeza de estilos antigos em seções reformuladas ✅
+- Reorganização de CSS por seção e componente ✅
+- Remoção de duplicações visuais relevantes ✅
 
 ---
 
 ## Fechamento da v0.9
 
-A versão v0.9 será considerada concluída quando o usuário conseguir:
+A versão v0.9 foi considerada concluída porque o usuário consegue:
 
-- Usar a aplicação com uma interface mais limpa e organizada
-- Acessar as principais áreas com menos esforço
-- Navegar entre seções sem inconsistências visuais
-- Ler cards, listas, formulários e modais com mais facilidade
-- Usar a aplicação em telas menores sem perda grave de usabilidade
-- Visualizar os conteúdos com espaçamento equilibrado
-- Interagir com botões e ações de forma clara
-- Perceber uma identidade visual mais consistente entre as seções
-- Manter a aplicação funcional sem regressões nas versões anteriores
+- Usar a aplicação com uma interface mais limpa e organizada ✅
+- Acessar as principais áreas com menos esforço ✅
+- Navegar entre seções sem inconsistências visuais ✅
+- Ler cards, listas, formulários e modais com mais facilidade ✅
+- Usar a aplicação em diferentes larguras de tela com menos quebras visuais ✅
+- Visualizar conteúdos com espaçamento mais equilibrado ✅
+- Interagir com botões e ações de forma mais clara ✅
+- Usar uma seção própria para opções globais da aplicação ✅
+- Alternar tema e excluir dados sem botões flutuantes soltos ✅
+- Excluir todos os dados e ver a interface atualizar sem recarregar a página ✅
+- Arquivar e recuperar anotações usando filtros de exibição ✅
 
 ---
 
-# v1.0 — Primeira versão base usável
+## Observações da v0.9
+
+A v0.9 foi uma versão de refinamento estrutural e visual.  
+O foco principal foi reorganizar a interface, reduzir confusão visual e preparar a aplicação para uso real com mais conforto.
+
+A versão não teve como objetivo criar grandes sistemas novos, mas acabou adicionando a seção Opções por necessidade de organização das ações globais.
+
+Com a v0.9 concluída, a aplicação está pronta para iniciar a v1.0 com foco em segurança dos dados, exportação, importação e uso pessoal mais confiável.
+
+---
+
+# v1.0 — Exportação, importação e segurança dos dados
 
 ### Objetivo
-Entregar a primeira versão realmente utilizável da central de estudos, permitindo cadastrar conteúdos, resolver questões, revisar erros, criar anotações e acompanhar o desempenho básico.
+Adicionar recursos para exportar e importar os dados da aplicação, permitindo criar backups, migrar informações entre dispositivos e usar a central de estudos com mais segurança antes de transformá-la em um app instalável.
 
 ### Status
-Planejada.
+Em desenvolvimento.
 
 ---
 
 ## Previsto para a v1.0
 
-- Cadastro de matérias
-- Cadastro de temas
-- Cadastro de questões
-- Edição de questões
-- Movimentação de questões entre temas
-- Resolução de questões
-- Registro de respostas
-- Correção básica das questões
-- Histórico de resoluções
-- Revisão de erros
-- Anotações por tema
-- Dashboard geral
-- Salvamento local com `localStorage`
-- Interface responsiva
-- Organização visual consistente
-- Revisão geral do código
-- Revisão geral da documentação
+### Exportação de dados
+
+- Criar sistema de exportação geral dos dados
+- Exportar matérias
+- Exportar temas
+- Exportar questões
+- Exportar tentativas
+- Exportar revisões de erros
+- Exportar anotações
+- Gerar arquivo `.json` com todos os dados principais da aplicação
+- Adicionar data de exportação no arquivo
+- Adicionar versão da aplicação no arquivo exportado
+- Criar botão de exportar dados na seção Opções
+- Exibir mensagem de sucesso ao exportar dados
+- Orientar o usuário a guardar o arquivo como backup
+
+---
+
+### Importação de dados
+
+- Criar sistema de importação de dados por arquivo `.json`
+- Validar se o arquivo importado tem estrutura compatível
+- Validar versão/origem dos dados importados
+- Permitir substituir os dados atuais pelos dados importados
+- Usar confirmação antes de sobrescrever dados existentes
+- Atualizar todas as seções após importar dados
+- Exibir mensagem de sucesso ao importar dados
+- Exibir mensagem de erro caso o arquivo seja inválido
+
+---
+
+### Backup e restauração
+
+- Criar fluxo simples de backup manual
+- Permitir restaurar dados a partir de um backup exportado
+- Evitar perda acidental de dados durante a importação
+- Manter o botão de exclusão total separado da importação
+- Melhorar textos de aviso sobre ações perigosas
+- Preparar a aplicação para uso pessoal com dados reais
+
+---
+
+### Integração com a interface
+
+- Adicionar card de Backup na seção Opções
+- Adicionar botão de Exportar dados
+- Adicionar botão de Importar dados
+- Adicionar campo para selecionar arquivo de backup
+- Padronizar mensagens de feedback
+- Garantir que a interface atualize sem recarregar após importação
+- Manter o visual consistente com a v0.9
+
+---
+
+### Preparação para app instalável
+
+- Revisar se a aplicação pode funcionar de forma estável com dados locais
+- Definir requisitos mínimos para futura versão PWA
+- Planejar criação de `manifest.json`
+- Planejar criação de `service-worker.js`
+- Planejar ícones da aplicação
+- Preparar caminho para instalação futura no PC e celular
 
 ---
 
 ## Fechamento da v1.0
 
-A versão v1.0 será considerada concluída quando o sistema tiver:
+A versão v1.0 será considerada concluída quando o usuário conseguir:
 
-- Uma central básica de estudos funcional
-- Matérias organizadas
-- Temas organizados
-- Questões cadastradas
-- Modo de resolução funcionando
-- Correção básica funcionando
-- Tentativas salvas
-- Histórico de resoluções funcionando
-- Revisão de erros funcionando
-- Anotações salvas
-- Dashboard funcional
-- Dados salvos no navegador
-- Interface simples, clara e responsiva
+- Exportar todos os dados principais da aplicação em um arquivo `.json`
+- Guardar esse arquivo como backup
+- Importar um arquivo `.json` válido
+- Restaurar matérias, temas, questões, tentativas, revisões e anotações
+- Ver a interface atualizar após a importação sem precisar recarregar a página
+- Receber avisos claros antes de sobrescrever dados existentes
+- Receber mensagens de erro quando tentar importar um arquivo inválido
+- Usar a aplicação com mais segurança para estudos reais
+- Ter uma base confiável para transformar a aplicação em app instalável posteriormente
 
 ---
 
-# v1.1 — Sistema de simulados
+## Observações da v1.0
+
+A v1.0 passa a ter como foco principal a segurança e a portabilidade dos dados.
+
+Antes de transformar a aplicação em PWA ou app instalável, é importante garantir que o usuário consiga salvar, transportar e restaurar suas informações. Isso evita que os dados fiquem presos apenas ao navegador ou sejam perdidos ao limpar cache, trocar de dispositivo ou mudar de ambiente.
+
+---
+
+# v1.1 — Aplicação instalável com PWA
+
+### Objetivo
+Transformar a Central de Estudos Web em uma aplicação instalável, permitindo uso mais formal no computador e no celular por meio de recursos de PWA.
+
+### Status
+Ideia futura.
+
+---
+
+## Previsto para a v1.1
+
+- Criar arquivo `manifest.json`
+- Criar arquivo `service-worker.js`
+- Definir nome, descrição e ícones da aplicação
+- Permitir instalação pelo navegador
+- Preparar uso em janela própria no desktop
+- Preparar uso pela tela inicial do celular
+- Configurar cache básico dos arquivos principais
+- Melhorar experiência offline inicial
+- Testar instalação no computador
+- Testar instalação no celular
+- Revisar responsividade em formato de app
+- Ajustar ícone e identidade visual da aplicação
+
+---
+
+## Fechamento da v1.1
+
+A versão v1.1 será considerada concluída quando o usuário conseguir:
+
+- Abrir a aplicação pelo navegador
+- Instalar a aplicação no computador
+- Adicionar a aplicação à tela inicial do celular
+- Usar a aplicação com aparência mais próxima de um app
+- Acessar a aplicação mesmo sem depender diretamente do ambiente de desenvolvimento
+- Manter os dados protegidos usando o sistema de exportação/importação da v1.0
+
+---
+
+## Observações da v1.1
+
+A transformação em PWA deve acontecer depois da implementação de backup, exportação e importação, para garantir que o uso da aplicação como app não aumente o risco de perda de dados.
+
+---
+
+# v1.2 — Sistema de simulados
 
 ### Objetivo
 Criar um modo de simulado com questões selecionadas, resolução sem feedback imediato e correção apenas ao final.
@@ -750,7 +875,7 @@ Ideia futura.
 
 ---
 
-## Previsto para a v1.1
+## Previsto para a v1.2
 
 - Tela de criação de simulado
 - Seleção de matéria
@@ -770,7 +895,7 @@ Ideia futura.
 
 ---
 
-## Fechamento da v1.1
+## Fechamento da v1.2
 
 A versão v1.1 será considerada concluída quando o usuário conseguir:
 
