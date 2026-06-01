@@ -1,0 +1,160 @@
+/* =========================================================
+   OPÇÕES — ESTRUTURA GERAL
+   ========================================================= */
+
+.options-section {
+  min-height: 0;
+}
+
+.options-panel {
+  min-width: 0;
+
+  padding: 18px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 360px));
+  gap: 14px;
+  align-items: stretch;
+}
+
+
+/* =========================================================
+   OPÇÕES — CARDS
+   ========================================================= */
+
+.option-card {
+  min-width: 0;
+  min-height: 180px;
+
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+
+  padding: 18px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.option-card__content {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.option-card__icon {
+  display: inline-grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+
+  font-size: 1.25rem;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.option-card h3 {
+  margin: 0 0 6px;
+
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.option-card p {
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.option-card--danger {
+  border-color: var(--feedback-error-border);
+}
+
+.option-card--danger .option-card__icon {
+  background: var(--feedback-inner-error-bg);
+  border-color: var(--feedback-error-border);
+}
+
+/* =========================================================
+   OPÇÕES — BOTÕES INTERNOS DOS CARDS
+   ========================================================= */
+
+.options-section .theme-toggle,
+.options-section .danger-reset-button {
+  position: static;
+  inset: auto;
+  z-index: auto;
+
+  width: 100%;
+  height: auto;
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 11px 16px;
+
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.options-section .theme-toggle {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.options-section .theme-toggle:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+  border-color: var(--accent);
+}
+
+.options-section .danger-reset-button {
+  color: #ffffff;
+  background: #9f3d3d;
+  border: 1px solid #b95252;
+}
+
+.options-section .danger-reset-button:hover {
+  transform: translateY(-2px);
+  background: #7f2f2f;
+}
+
+/* =========================================================
+   OPÇÕES — RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 720px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .option-card {
+    min-height: auto;
+  }
+
+  .option-card__content {
+    grid-template-columns: 1fr;
+  }
+}
+

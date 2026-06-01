@@ -99,3 +99,34 @@
 .nav-card.is-hidden-by-group {
   display: none;
 }
+
+.app-sidebar,
+.navigation-panel,
+.nav-panel {
+  min-height: 0;
+}
+
+.nav-card-list,
+.nav-grid,
+.nav-cards {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.nav-card--static {
+  margin-top: auto;
+}
+
+.nav-card--static.is-active {
+  background: var(--success-soft);
+  border-color: var(--accent);
+}
+
+.nav-card--static {
+  margin-top: auto;
+}
+
+.nav-card--static small {
+  max-width: 100%;
+}

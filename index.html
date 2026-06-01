@@ -68,6 +68,12 @@
 							<strong>Revisões</strong>
 							<small>Revise seus erros</small>
 						</button>
+
+						<button class="nav-card nav-card--static" type="button" data-section="options" data-section-target="options">
+							<span>⚙️</span>
+							<strong>Opções</strong>
+							<small>Aparência e dados</small>
+						</button>
 					</div>
 				</section>
 			</aside>
@@ -940,6 +946,46 @@
 						</div>
 					</article>
 
+					<article class="app-section options-section" id="options">
+						<header class="app-section__header">
+							<h2>⚙️ Opções</h2>
+
+							<p>Gerencie aparência, preferências visuais e ações gerais da aplicação.</p>
+						</header>
+
+						<section class="options-panel">
+							<div class="options-grid">
+								<article class="option-card">
+									<div class="option-card__content">
+										<span class="option-card__icon">🌗</span>
+
+										<div>
+											<h3>Tema da aplicação</h3>
+											<p>Alterne entre os modos claro e escuro da interface.</p>
+										</div>
+									</div>
+
+									<button class="button button--secondary theme-toggle option-card__button" type="button" aria-label="Alternar tema">Alternar tema 🌙</button>
+								</article>
+
+								<article class="option-card option-card--danger">
+									<div class="option-card__content">
+										<span class="option-card__icon">🗑️</span>
+
+										<div>
+											<h3>Excluir todos os dados</h3>
+											<p>Apague matérias, temas, questões, anotações, tentativas e revisões salvas nesta aplicação.</p>
+										</div>
+									</div>
+
+									<button class="button button--danger danger-reset-button option-card__button" type="button" id="open-reset-data-modal" aria-label="Apagar todos os dados">
+										Excluir tudo 🗑️
+									</button>
+								</article>
+							</div>
+						</section>
+					</article>
+
 					<article class="app-section" id="roadmap">
 						<header class="app-section__header">
 							<h2>🗺️ Planejamento do projeto</h2>
@@ -1185,10 +1231,6 @@
 				</div>
 			</div>
 		</div>
-
-		<button class="danger-reset-button" type="button" id="open-reset-data-modal" aria-label="Apagar todos os dados">🗑️</button>
-
-		<button class="theme-toggle" type="button" aria-label="Alternar tema">🌙</button>
 
 		<script type="module" src="src/js/main.js"></script>
 	</body>
