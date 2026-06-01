@@ -670,6 +670,14 @@
                   >
                     Cadastro
                   </button>
+
+                  <button
+                    class="question-tab-button"
+                    type="button"
+                    data-question-tab="import"
+                  >
+                    Importação
+                  </button>
                 </div>
 
                 <section class="questions-context-panel">
@@ -922,6 +930,89 @@
                         </div>
                       </section>
                     </form>
+                  </div>
+
+                  <div
+                    class="question-tab-content question-import-tab"
+                    id="question-import-tab"
+                  >
+                    <section class="question-import-panel">
+                      <div class="question-import-header">
+                        <div>
+                          <h3>Importar questões por texto</h3>
+
+                          <p>
+                            Cole questões no formato oficial para adicioná-las
+                            ao tema selecionado.
+                          </p>
+                        </div>
+
+                        <span class="question-import-format-badge">
+                          Formato CEW Questions v1
+                        </span>
+                      </div>
+
+                      <div class="question-import-layout">
+                        <article class="question-import-editor">
+                          <label for="question-import-text">
+                            Texto das questões
+                          </label>
+
+                          <textarea
+                            id="question-import-text"
+                            rows="14"
+                            placeholder="@questao&#10;enunciado: Texto do enunciado&#10;a: Alternativa A&#10;b: Alternativa B&#10;c: Alternativa C&#10;d: Alternativa D&#10;e: Alternativa E&#10;correta: A&#10;explicacao: Texto da explicação&#10;---"
+                          ></textarea>
+
+                          <div class="question-import-actions">
+                            <button
+                              class="button button--primary"
+                              type="button"
+                              id="validate-question-import"
+                            >
+                              Validar questões
+                            </button>
+
+                            <button
+                              class="button button--secondary"
+                              type="button"
+                              id="clear-question-import"
+                            >
+                              Limpar
+                            </button>
+                          </div>
+                        </article>
+
+                        <aside class="question-import-preview">
+                          <h4>Resultado da validação</h4>
+
+                          <div
+                            class="question-import-summary"
+                            id="question-import-summary"
+                          >
+                            <strong>Aguardando validação.</strong>
+                            <span>
+                              Cole o texto das questões e clique em Validar
+                              questões.
+                            </span>
+                          </div>
+
+                          <ul
+                            class="question-import-errors"
+                            id="question-import-errors"
+                          ></ul>
+
+                          <button
+                            class="button button--primary"
+                            type="button"
+                            id="import-validated-questions"
+                            disabled
+                          >
+                            Importar questões
+                          </button>
+                        </aside>
+                      </div>
+                    </section>
                   </div>
                 </div>
               </section>
