@@ -1,5 +1,6 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
+import { parseQuestionsFromText } from "../systems/questionTextImport.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -126,6 +127,7 @@ export function initQuestions() {
 
   let editingQuestionId = null;
   let movingQuestionId = null;
+  let importedQuestionsPreview = [];
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -316,6 +318,187 @@ export function initQuestions() {
     if (type === "success") {
       questionFormMessage.classList.add("is-success");
     }
+  }
+
+  function setQuestionImportSummary({
+    title = "Aguardando validação.",
+    description = "Cole o texto das questões e clique em Validar questões.",
+    type = "default",
+  } = {}) {
+    questionImportSummary.innerHTML = `
+		<strong>${escapeHTML(title)}</strong>
+		<span>${escapeHTML(description)}</span>
+	`;
+
+    questionImportSummary.classList.remove("is-success", "is-error");
+
+    if (type === "success") {
+      questionImportSummary.classList.add("is-success");
+    }
+
+    if (type === "error") {
+      questionImportSummary.classList.add("is-error");
+    }
+  }
+
+  function renderQuestionImportErrors(errors = []) {
+    questionImportErrors.innerHTML = "";
+
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
+
+      errorItem.textContent = error;
+
+      questionImportErrors.appendChild(errorItem);
+    });
+  }
+
+  function clearQuestionImport() {
+    importedQuestionsPreview = [];
+
+    questionImportTextInput.value = "";
+    importValidatedQuestionsButton.disabled = true;
+
+    setQuestionImportSummary();
+    renderQuestionImportErrors();
+
+    questionImportTextInput.focus();
+  }
+
+  function validateQuestionImportContext() {
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
+
+    if (!selectedSubjectId) {
+      setQuestionImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de validar a importação.",
+        type: "error",
+      });
+
+      return false;
+    }
+
+    if (!selectedThemeId) {
+      setQuestionImportSummary({
+        title: "Tema não selecionado.",
+        description: "Selecione um tema antes de validar a importação.",
+        type: "error",
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateQuestionImportText() {
+    const hasValidContext = validateQuestionImportContext();
+
+    if (!hasValidContext) {
+      importedQuestionsPreview = [];
+      importValidatedQuestionsButton.disabled = true;
+      renderQuestionImportErrors();
+      return;
+    }
+
+    const importText = questionImportTextInput.value.trim();
+    const result = parseQuestionsFromText(importText);
+
+    importedQuestionsPreview = result.validQuestions;
+
+    renderQuestionImportErrors(result.errors);
+
+    const validCount = result.validQuestions.length;
+    const errorCount = result.errors.length;
+
+    importValidatedQuestionsButton.disabled = validCount === 0;
+
+    if (validCount === 0 && errorCount > 0) {
+      setQuestionImportSummary({
+        title: "Nenhuma questão válida encontrada.",
+        description: `${errorCount} problema(s) encontrado(s). Corrija o texto e valide novamente.`,
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (validCount > 0 && errorCount > 0) {
+      setQuestionImportSummary({
+        title: `${validCount} questão(ões) válida(s) encontrada(s).`,
+        description: `${errorCount} problema(s) encontrado(s). Apenas as questões válidas serão importadas.`,
+        type: "error",
+      });
+
+      return;
+    }
+
+    setQuestionImportSummary({
+      title: `${validCount} questão(ões) pronta(s) para importação.`,
+      description:
+        "Nenhum erro encontrado. Você já pode importar as questões para o tema selecionado.",
+      type: "success",
+    });
+  }
+
+  function importValidatedQuestions() {
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
+
+    if (!selectedSubjectId || !selectedThemeId) {
+      setQuestionImportSummary({
+        title: "Contexto incompleto.",
+        description: "Selecione matéria e tema antes de importar as questões.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (importedQuestionsPreview.length === 0) {
+      setQuestionImportSummary({
+        title: "Nenhuma questão validada.",
+        description: "Valide o texto antes de importar.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    const questions = getQuestions();
+
+    const newQuestions = importedQuestionsPreview.map((question) => {
+      return createQuestion({
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        statement: question.statement,
+        alternatives: question.alternatives,
+        correctAlternative: question.correctAlternative,
+        explanation: question.explanation,
+      });
+    });
+
+    saveQuestions([...questions, ...newQuestions]);
+    notifyQuestionsChanged();
+
+    renderQuestions();
+
+    const importedCount = newQuestions.length;
+
+    importedQuestionsPreview = [];
+    importValidatedQuestionsButton.disabled = true;
+    questionImportTextInput.value = "";
+
+    setQuestionImportSummary({
+      title: `${importedCount} questão(ões) importada(s) com sucesso.`,
+      description: "As questões foram adicionadas ao tema selecionado.",
+      type: "success",
+    });
+
+    renderQuestionImportErrors();
+
+    showQuestionTab("list");
   }
 
   function updateQuestionsCount(questions) {
@@ -1058,12 +1241,14 @@ export function initQuestions() {
 
   function handleSubjectChange() {
     setQuestionFormMessage("");
+    clearQuestionImport();
     questionThemeSelect.value = "";
     renderThemeOptions();
   }
 
   function handleThemeChange() {
     setQuestionFormMessage("");
+    clearQuestionImport();
     setQuestionInputTabsEnabled(Boolean(questionThemeSelect.value));
     renderQuestions();
   }
@@ -1115,6 +1300,16 @@ export function initQuestions() {
   questionThemeSelect.addEventListener("change", handleThemeChange);
   clearQuestionFormButton.addEventListener("click", clearQuestionForm);
   cancelQuestionEditButton.addEventListener("click", exitEditMode);
+
+  validateQuestionImportButton.addEventListener(
+    "click",
+    validateQuestionImportText,
+  );
+  clearQuestionImportButton.addEventListener("click", clearQuestionImport);
+  importValidatedQuestionsButton.addEventListener(
+    "click",
+    importValidatedQuestions,
+  );
 
   questionsList.addEventListener("click", handleQuestionEdit);
   questionsList.addEventListener("click", handleQuestionMove);
