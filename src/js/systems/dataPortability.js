@@ -3,6 +3,7 @@ import { getCollection, saveCollection } from "../core/storage.js";
 const APP_BACKUP_NAME = "central-de-estudos-web";
 const APP_VERSION = "1.0";
 const SCHEMA_VERSION = 1;
+const EMPTY_BACKUP_FILE_NAME = "Nenhum arquivo selecionado.";
 
 const BACKUP_COLLECTIONS = [
   "subjects",
@@ -46,7 +47,7 @@ export function initDataPortability() {
   let selectedBackupPayload = null;
 
   function getSelectedBackupFileName() {
-    return selectedBackupName.textContent || "backup selecionado";
+    return selectedBackupName.textContent.trim() || EMPTY_BACKUP_FILE_NAME;
   }
 
   function setMessage(text, type = "default") {
@@ -79,12 +80,12 @@ export function initDataPortability() {
   }
 
   function setBackupSelectionState({
-    fileName = "Nenhum arquivo selecionado.",
+    fileName = EMPTY_BACKUP_FILE_NAME,
     status = "Selecione um backup JSON para liberar a importação.",
     isValid = false,
     isInvalid = false,
   } = {}) {
-    const hasSelectedFile = fileName !== "Nenhum arquivo selecionado.";
+    const hasSelectedFile = fileName !== EMPTY_BACKUP_FILE_NAME;
 
     selectedBackupName.textContent = fileName;
     selectedBackupStatus.textContent = status;
@@ -95,8 +96,16 @@ export function initDataPortability() {
     importButton.disabled = !isValid;
     clearImportButton.disabled = !hasSelectedFile;
 
-    selectImportButton.classList.toggle("is-disabled", isValid);
-    selectImportButton.setAttribute("aria-disabled", String(isValid));
+    const shouldDisableSelectButton = isValid;
+
+    selectImportButton.classList.toggle(
+      "is-disabled",
+      shouldDisableSelectButton,
+    );
+    selectImportButton.setAttribute(
+      "aria-disabled",
+      String(shouldDisableSelectButton),
+    );
   }
 
   function clearSelectedBackup() {
