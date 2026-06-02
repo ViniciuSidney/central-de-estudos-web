@@ -1,5 +1,6 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
+import { compareNames, parseItemsFromListText } from "../systems/listTextImport.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -23,8 +24,22 @@ export function initThemes() {
   const themeImportAddedList = document.querySelector("#theme-import-added-list");
   const themeImportAddedCount = document.querySelector("#theme-import-added-count");
   const themeImportAddedEmpty = document.querySelector("#theme-import-added-empty");
+  const themeImportTextInput = document.querySelector("#theme-import-text");
+  const validateThemeImportButton = document.querySelector("#validate-theme-import");
+  const clearThemeImportButton = document.querySelector("#clear-theme-import");
+  const importValidatedThemesButton = document.querySelector("#import-validated-themes");
+  const themeImportSummary = document.querySelector("#theme-import-summary");
+  const themeImportList = document.querySelector("#theme-import-list");
+  const themeImportErrors = document.querySelector("#theme-import-errors");
 
   if (
+    !themeImportTextInput ||
+    !validateThemeImportButton ||
+    !clearThemeImportButton ||
+    !importValidatedThemesButton ||
+    !themeImportSummary ||
+    !themeImportList ||
+    !themeImportErrors ||
     !themeImportAddedList ||
     !themeImportAddedCount ||
     !themeImportAddedEmpty ||
@@ -45,6 +60,8 @@ export function initThemes() {
   ) {
     return;
   }
+
+  let importedThemesPreview = [];
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -285,6 +302,19 @@ export function initThemes() {
       return;
     }
 
+    const selectedSubjectThemes = getThemesFromSelectedSubject();
+
+    const duplicatedTheme = selectedSubjectThemes.find((theme) => {
+      return compareNames(theme.name, themeName);
+    });
+
+    if (duplicatedTheme) {
+      setThemeFormMessage(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`, "error");
+
+      themeNameInput.focus();
+      return;
+    }
+
     const themes = getThemes();
     const newTheme = createTheme(selectedSubjectId, themeName, themeDescription);
 
@@ -345,6 +375,7 @@ export function initThemes() {
 
   function handleSubjectChange() {
     setThemeFormMessage("");
+    clearThemeImport();
     renderThemes();
   }
 
@@ -420,6 +451,195 @@ export function initThemes() {
     });
   }
 
+  function setThemeImportSummary({
+    title = "Aguardando validação.",
+    description = "Selecione uma matéria, cole a lista e clique em Validar temas.",
+    type = "default",
+  } = {}) {
+    themeImportSummary.innerHTML = `
+    <strong>${escapeHTML(title)}</strong>
+    <span>${escapeHTML(description)}</span>
+  `;
+
+    themeImportSummary.classList.remove("is-success", "is-error");
+
+    if (type === "success") {
+      themeImportSummary.classList.add("is-success");
+    }
+
+    if (type === "error") {
+      themeImportSummary.classList.add("is-error");
+    }
+  }
+
+  function renderThemeImportList(items = []) {
+    themeImportList.innerHTML = "";
+
+    items.forEach((item) => {
+      const listItem = document.createElement("li");
+
+      listItem.textContent = item;
+
+      themeImportList.appendChild(listItem);
+    });
+  }
+
+  function renderThemeImportErrors(errors = []) {
+    themeImportErrors.innerHTML = "";
+
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
+
+      errorItem.textContent = error;
+
+      themeImportErrors.appendChild(errorItem);
+    });
+  }
+
+  function clearThemeImport() {
+    importedThemesPreview = [];
+
+    themeImportTextInput.value = "";
+    importValidatedThemesButton.disabled = true;
+
+    setThemeImportSummary();
+    renderThemeImportList();
+    renderThemeImportErrors();
+
+    themeImportTextInput.focus();
+  }
+
+  function validateThemeImport() {
+    const selectedSubjectId = themeSubjectSelect.value;
+
+    if (!selectedSubjectId) {
+      importedThemesPreview = [];
+      importValidatedThemesButton.disabled = true;
+
+      setThemeImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de validar a importação.",
+        type: "error",
+      });
+
+      renderThemeImportList();
+      renderThemeImportErrors();
+      themeSubjectSelect.focus();
+      return;
+    }
+
+    const result = parseItemsFromListText(themeImportTextInput.value);
+    const currentThemes = getThemesFromSelectedSubject();
+
+    const duplicatedInStorage = [];
+    const validThemes = [];
+
+    result.items.forEach((themeName) => {
+      const alreadyExists = currentThemes.some((theme) => {
+        return compareNames(theme.name, themeName);
+      });
+
+      if (alreadyExists) {
+        duplicatedInStorage.push(themeName);
+        return;
+      }
+
+      validThemes.push(themeName);
+    });
+
+    importedThemesPreview = validThemes;
+
+    const errors = [...result.errors];
+
+    result.duplicatedItems.forEach((item) => {
+      errors.push(`"${item}" aparece repetido na lista e será ignorado.`);
+    });
+
+    duplicatedInStorage.forEach((item) => {
+      errors.push(`"${item}" já está cadastrado nesta matéria e será ignorado.`);
+    });
+
+    renderThemeImportList(validThemes);
+    renderThemeImportErrors(errors);
+
+    importValidatedThemesButton.disabled = validThemes.length === 0;
+
+    if (validThemes.length === 0 && errors.length > 0) {
+      setThemeImportSummary({
+        title: "Nenhum tema novo encontrado.",
+        description: `${formatCount(errors.length, "aviso encontrado", "avisos encontrados")}. Ajuste a lista e valide novamente.`,
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (validThemes.length > 0 && errors.length > 0) {
+      setThemeImportSummary({
+        title: `${formatCount(validThemes.length, "tema pronto", "temas prontos")} para importação.`,
+        description: `${formatCount(errors.length, "item será ignorado", "itens serão ignorados")} por repetição ou duplicidade.`,
+        type: "success",
+      });
+
+      return;
+    }
+
+    setThemeImportSummary({
+      title: `${formatCount(validThemes.length, "tema pronto", "temas prontos")} para importação.`,
+      description: "Nenhum problema encontrado. Você já pode importar os temas.",
+      type: "success",
+    });
+  }
+
+  function importValidatedThemes() {
+    const selectedSubjectId = themeSubjectSelect.value;
+
+    if (!selectedSubjectId) {
+      setThemeImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de importar os temas.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (importedThemesPreview.length === 0) {
+      setThemeImportSummary({
+        title: "Nenhum tema validado.",
+        description: "Valide uma lista antes de importar.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    const themes = getThemes();
+
+    const newThemes = importedThemesPreview.map((themeName) => {
+      return createTheme(selectedSubjectId, themeName, "");
+    });
+
+    saveThemes([...themes, ...newThemes]);
+    notifyThemesChanged();
+
+    importedThemesPreview = [];
+    themeImportTextInput.value = "";
+    importValidatedThemesButton.disabled = true;
+
+    setThemeImportSummary({
+      title: `${formatCount(newThemes.length, "tema importado", "temas importados")} com sucesso.`,
+      description: "Os temas foram adicionados à matéria selecionada.",
+      type: "success",
+    });
+
+    renderThemeImportList();
+    renderThemeImportErrors();
+    renderThemes();
+
+    showThemeTab("list");
+  }
+
   //-----------------------------------------------------
 
   themeForm.addEventListener("submit", handleThemeSubmit);
@@ -427,6 +647,10 @@ export function initThemes() {
   clearThemeFormButton.addEventListener("click", clearThemeForm);
   themesList.addEventListener("click", handleThemeDelete);
   themeImportAddedList.addEventListener("click", handleThemeDelete);
+
+  validateThemeImportButton.addEventListener("click", validateThemeImport);
+  clearThemeImportButton.addEventListener("click", clearThemeImport);
+  importValidatedThemesButton.addEventListener("click", importValidatedThemes);
 
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:prepare-create", handleExternalThemeCreate);
