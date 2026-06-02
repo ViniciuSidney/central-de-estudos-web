@@ -31,6 +31,20 @@
   }
 }
 
+@media (max-width: 1550px) and (min-width: 981px) {
+  .import-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  }
+
+  .import-panel--list {
+    grid-column: 1 / -1;
+  }
+
+  .import-panel--list .import-list {
+    max-height: 220px;
+  }
+}
+
 @media (max-width: 1200px) {
   /* solve */
   .solve-workspace {
@@ -64,7 +78,7 @@
 
   /* import-tools */
   .import-workspace {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .import-panel--list {

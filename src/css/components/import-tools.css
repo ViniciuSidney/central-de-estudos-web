@@ -4,19 +4,24 @@
 
 .import-workspace {
   min-width: 0;
+  max-width: 100%;
 
   display: grid;
   grid-template-columns:
-    minmax(260px, 0.9fr)
-    minmax(220px, 0.75fr)
-    minmax(300px, 1.1fr);
+    minmax(0, 0.9fr)
+    minmax(0, 0.75fr)
+    minmax(0, 1.1fr);
   gap: 14px;
   align-items: stretch;
+
+  overflow: hidden;
 }
 
 .import-panel {
   min-width: 0;
-
+  max-width: 100%;
+  overflow: hidden;
+  
   display: flex;
   flex-direction: column;
   gap: 14px;

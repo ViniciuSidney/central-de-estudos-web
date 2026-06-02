@@ -189,6 +189,7 @@
 .theme-import-added-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  min-width: 0;
   align-items: center;
   gap: 12px;
 }
@@ -225,7 +226,7 @@
 }
 
 #theme-import-added-list {
-  max-height: 250px;
+  max-height: 400px;
   overflow: auto;
   padding-right: 4px;
 }
