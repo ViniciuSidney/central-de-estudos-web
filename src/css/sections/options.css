@@ -375,36 +375,3 @@
 .backup-block--import .option-card__message {
   min-height: 20px;
 }
-
-/* =========================================================
-   OPÇÕES — RESPONSIVIDADE
-   ========================================================= */
-
-@media (max-width: 980px) {
-  .options-grid--general {
-    grid-template-columns: 1fr;
-  }
-
-  .backup-workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .backup-actions {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 720px) {
-  .options-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .option-card {
-    min-height: auto;
-  }
-
-  .option-card__content,
-  .backup-block__header {
-    grid-template-columns: 1fr;
-  }
-}

@@ -444,38 +444,3 @@
 	color: var(--muted);
 	line-height: 1.5;
 }
-
-/* =========================================================
-   RESPONSIVIDADE LOCAL
-   ========================================================= */
-
-@media (max-width: 1200px) {
-	.solve-workspace {
-		grid-template-columns: 1fr;
-	}
-
-	.solve-sidebar {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
-@media (max-width: 900px) {
-	.solve-sidebar {
-		grid-template-columns: 1fr;
-	}
-
-	.solve-question-topbar {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.solve-feedback__grid {
-		grid-template-columns: 1fr;
-	}
-
-	.solve-actions {
-		flex-direction: column;
-		align-items: stretch;
-	}
-}
-

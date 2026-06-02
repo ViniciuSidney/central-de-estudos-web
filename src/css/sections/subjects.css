@@ -230,9 +230,3 @@
   justify-self: center;
   flex-shrink: 0;
 }
-
-@media (max-width: 980px) {
-  .management-layout {
-    grid-template-columns: 1fr;
-  }
-}
