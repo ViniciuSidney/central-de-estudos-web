@@ -93,3 +93,109 @@
 	align-items: center;
 	justify-content: flex-end;
 }
+
+/* =========================================================
+   MATÉRIAS — LAYOUT DA SEÇÃO
+   ========================================================= */
+
+.management-layout {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.management-sidebar,
+.management-content {
+  min-width: 0;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.management-sidebar {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+
+  padding: 16px;
+}
+
+.management-content {
+  padding: 18px;
+}
+
+/* =========================================================
+   MATÉRIAS — ABAS INTERNAS
+   ========================================================= */
+
+.subject-mode-tabs {
+  display: grid;
+  gap: 10px;
+}
+
+.subject-tab-button {
+  cursor: pointer;
+
+  padding: 11px 16px;
+
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.subject-tab-button:hover {
+  transform: translateY(-2px);
+  background: var(--surface-soft);
+}
+
+.subject-tab-button.is-active {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.subject-tab-content {
+  display: none;
+}
+
+.subject-tab-content.is-active {
+  display: grid;
+  gap: 14px;
+}
+
+.subject-import-added-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.subject-import-added-header span {
+  flex-shrink: 0;
+
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.import-panel--list .empty-state {
+  margin-top: auto;
+}
+
+@media (max-width: 980px) {
+  .management-layout {
+    grid-template-columns: 1fr;
+  }
+}

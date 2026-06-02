@@ -1,95 +1,110 @@
-import {getCollection, saveCollection} from '../core/storage.js';
-import {openConfirmModal} from '../ui/confirmModal.js';
+import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
 
-const SUBJECTS_COLLECTION = 'subjects';
-const THEMES_COLLECTION = 'themes';
-const QUESTIONS_COLLECTION = 'questions';
+const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
+const QUESTIONS_COLLECTION = "questions";
 
 export function initSubjects() {
-	const subjectForm = document.querySelector('#subject-form');
-	const subjectNameInput = document.querySelector('#subject-name');
-	const subjectDescriptionInput = document.querySelector('#subject-description');
-	const clearSubjectFormButton = document.querySelector('#clear-subject-form');
-	const subjectFormMessage = document.querySelector('#subject-form-message');
-	const subjectsList = document.querySelector('#subjects-list');
-	const subjectsEmptyState = document.querySelector('#subjects-empty-state');
-	const subjectsCount = document.querySelector('#subjects-count');
+  const subjectForm = document.querySelector("#subject-form");
+  const subjectNameInput = document.querySelector("#subject-name");
+  const subjectDescriptionInput = document.querySelector("#subject-description");
+  const clearSubjectFormButton = document.querySelector("#clear-subject-form");
+  const subjectFormMessage = document.querySelector("#subject-form-message");
+  const subjectsList = document.querySelector("#subjects-list");
+  const subjectsEmptyState = document.querySelector("#subjects-empty-state");
+  const subjectsCount = document.querySelector("#subjects-count");
+  const subjectTabButtons = document.querySelectorAll("[data-subject-tab]");
+  const subjectListTab = document.querySelector("#subject-list-tab");
+  const subjectImportTab = document.querySelector("#subject-import-tab");
 
-	if (!subjectForm || !subjectNameInput || !subjectDescriptionInput || !clearSubjectFormButton || !subjectFormMessage || !subjectsList || !subjectsEmptyState || !subjectsCount) {
-		return;
-	}
+  if (
+    !subjectTabButtons.length ||
+    !subjectListTab ||
+    !subjectImportTab ||
+    !subjectForm ||
+    !subjectNameInput ||
+    !subjectDescriptionInput ||
+    !clearSubjectFormButton ||
+    !subjectFormMessage ||
+    !subjectsList ||
+    !subjectsEmptyState ||
+    !subjectsCount
+  ) {
+    return;
+  }
 
-	function getSubjects() {
-		return getCollection(SUBJECTS_COLLECTION);
-	}
+  function getSubjects() {
+    return getCollection(SUBJECTS_COLLECTION);
+  }
 
-	function saveSubjects(subjects) {
-		saveCollection(SUBJECTS_COLLECTION, subjects);
-	}
+  function saveSubjects(subjects) {
+    saveCollection(SUBJECTS_COLLECTION, subjects);
+  }
 
-	function createSubject(name, description) {
-		return {
-			id: crypto.randomUUID(),
-			name,
-			description,
-			createdAt: new Date().toISOString()
-		};
-	}
+  function createSubject(name, description) {
+    return {
+      id: crypto.randomUUID(),
+      name,
+      description,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
-	function formatDate(dateValue) {
-		const date = new Date(dateValue);
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
 
-		return date.toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric'
-		});
-	}
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
 
-	function setFormMessage(message, type = 'default') {
-		subjectFormMessage.textContent = message;
+  function setFormMessage(message, type = "default") {
+    subjectFormMessage.textContent = message;
 
-		subjectFormMessage.classList.remove('is-error', 'is-success');
+    subjectFormMessage.classList.remove("is-error", "is-success");
 
-		if (type === 'error') {
-			subjectFormMessage.classList.add('is-error');
-		}
+    if (type === "error") {
+      subjectFormMessage.classList.add("is-error");
+    }
 
-		if (type === 'success') {
-			subjectFormMessage.classList.add('is-success');
-		}
-	}
+    if (type === "success") {
+      subjectFormMessage.classList.add("is-success");
+    }
+  }
 
-	function updateSubjectsCount(subjects) {
-		const totalSubjects = subjects.length;
+  function updateSubjectsCount(subjects) {
+    const totalSubjects = subjects.length;
 
-		subjectsCount.textContent = totalSubjects === 1 ? '1 matéria' : `${totalSubjects} matérias`;
-	}
+    subjectsCount.textContent = totalSubjects === 1 ? "1 matéria" : `${totalSubjects} matérias`;
+  }
 
-	function renderSubjects() {
-		const subjects = getSubjects();
+  function renderSubjects() {
+    const subjects = getSubjects();
 
-		subjectsList.innerHTML = '';
+    subjectsList.innerHTML = "";
 
-		updateSubjectsCount(subjects);
+    updateSubjectsCount(subjects);
 
-		if (subjects.length === 0) {
-			subjectsEmptyState.hidden = false;
-			return;
-		}
+    if (subjects.length === 0) {
+      subjectsEmptyState.hidden = false;
+      return;
+    }
 
-		subjectsEmptyState.hidden = true;
+    subjectsEmptyState.hidden = true;
 
-		subjects.forEach((subject) => {
-			const subjectCard = document.createElement('article');
+    subjects.forEach((subject) => {
+      const subjectCard = document.createElement("article");
 
-			subjectCard.classList.add('subject-card');
-			subjectCard.dataset.subjectId = subject.id;
+      subjectCard.classList.add("subject-card");
+      subjectCard.dataset.subjectId = subject.id;
 
-			subjectCard.innerHTML = `
+      subjectCard.innerHTML = `
         <div class="subject-card__content">
           <h3>${subject.name}</h3>
-          <p>${subject.description || 'Sem descrição adicionada.'}</p>
+          <p>${subject.description || "Sem descrição adicionada."}</p>
           <span class="subject-card__date">
             Criada em ${formatDate(subject.createdAt)}
           </span>
@@ -108,119 +123,138 @@ export function initSubjects() {
         </div>
       `;
 
-			subjectsList.appendChild(subjectCard);
-		});
-	}
+      subjectsList.appendChild(subjectCard);
+    });
+  }
 
-	function clearForm() {
-		subjectNameInput.value = '';
-		subjectDescriptionInput.value = '';
-		setFormMessage('');
-		subjectNameInput.focus();
-	}
+  function clearForm() {
+    subjectNameInput.value = "";
+    subjectDescriptionInput.value = "";
+    setFormMessage("");
+    subjectNameInput.focus();
+  }
 
-	function handleSubjectSubmit(event) {
-		event.preventDefault();
+  function handleSubjectSubmit(event) {
+    event.preventDefault();
 
-		const subjectName = subjectNameInput.value.trim();
-		const subjectDescription = subjectDescriptionInput.value.trim();
+    const subjectName = subjectNameInput.value.trim();
+    const subjectDescription = subjectDescriptionInput.value.trim();
 
-		if (!subjectName) {
-			setFormMessage('Informe o nome da matéria antes de cadastrar.', 'error');
-			subjectNameInput.focus();
-			return;
-		}
+    if (!subjectName) {
+      setFormMessage("Informe o nome da matéria antes de cadastrar.", "error");
+      subjectNameInput.focus();
+      return;
+    }
 
-		const subjects = getSubjects();
-		const newSubject = createSubject(subjectName, subjectDescription);
+    const subjects = getSubjects();
+    const newSubject = createSubject(subjectName, subjectDescription);
 
-		subjects.push(newSubject);
+    subjects.push(newSubject);
 
-		saveSubjects(subjects);
-		renderSubjects();
-		clearForm();
-		notifySubjectsChanged();
+    saveSubjects(subjects);
+    renderSubjects();
+    clearForm();
+    notifySubjectsChanged();
 
-		setFormMessage('Matéria cadastrada com sucesso.', 'success');
-	}
+    setFormMessage("Matéria cadastrada com sucesso.", "success");
+  }
 
-	function handleSubjectDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-subject]');
+  function handleSubjectDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-subject]");
 
-		if (!deleteButton) {
-			return;
-		}
+    if (!deleteButton) {
+      return;
+    }
 
-		const subjectId = deleteButton.dataset.deleteSubject;
+    const subjectId = deleteButton.dataset.deleteSubject;
 
-		const subject = getSubjects().find((currentSubject) => {
-			return currentSubject.id === subjectId;
-		});
+    const subject = getSubjects().find((currentSubject) => {
+      return currentSubject.id === subjectId;
+    });
 
-		if (!subject) {
-			return;
-		}
+    if (!subject) {
+      return;
+    }
 
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir matéria',
-			message: `Tem certeza que deseja excluir a matéria "${subject.name}"?`,
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteSubject(subject.id);
-			}
-		});
-	}
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir matéria",
+      message: `Tem certeza que deseja excluir a matéria "${subject.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteSubject(subject.id);
+      },
+    });
+  }
 
-	function deleteSubject(subjectId) {
-		const updatedSubjects = getSubjects().filter((currentSubject) => {
-			return currentSubject.id !== subjectId;
-		});
+  function deleteSubject(subjectId) {
+    const updatedSubjects = getSubjects().filter((currentSubject) => {
+      return currentSubject.id !== subjectId;
+    });
 
-		deleteQuestionsFromSubject(subjectId);
-		deleteThemesFromSubject(subjectId);
-		saveSubjects(updatedSubjects);
-		renderSubjects();
-		notifySubjectsChanged();
+    deleteQuestionsFromSubject(subjectId);
+    deleteThemesFromSubject(subjectId);
+    saveSubjects(updatedSubjects);
+    renderSubjects();
+    notifySubjectsChanged();
 
-		setFormMessage('Matéria, temas e questões relacionadas excluídos com sucesso.', 'success');
-	}
+    setFormMessage("Matéria, temas e questões relacionadas excluídos com sucesso.", "success");
+  }
 
-	function deleteThemesFromSubject(subjectId) {
-		const updatedThemes = getCollection(THEMES_COLLECTION).filter((theme) => {
-			return theme.subjectId !== subjectId;
-		});
+  function deleteThemesFromSubject(subjectId) {
+    const updatedThemes = getCollection(THEMES_COLLECTION).filter((theme) => {
+      return theme.subjectId !== subjectId;
+    });
 
-		saveCollection(THEMES_COLLECTION, updatedThemes);
-	}
+    saveCollection(THEMES_COLLECTION, updatedThemes);
+  }
 
-	function deleteQuestionsFromSubject(subjectId) {
-		const updatedQuestions = getCollection(QUESTIONS_COLLECTION).filter((question) => {
-			return question.subjectId !== subjectId;
-		});
+  function deleteQuestionsFromSubject(subjectId) {
+    const updatedQuestions = getCollection(QUESTIONS_COLLECTION).filter((question) => {
+      return question.subjectId !== subjectId;
+    });
 
-		saveCollection(QUESTIONS_COLLECTION, updatedQuestions);
-	}
+    saveCollection(QUESTIONS_COLLECTION, updatedQuestions);
+  }
 
-	function notifySubjectsChanged() {
-		document.dispatchEvent(new CustomEvent('subjects:changed'));
-	}
+  function notifySubjectsChanged() {
+    document.dispatchEvent(new CustomEvent("subjects:changed"));
+  }
 
-	subjectForm.addEventListener('submit', handleSubjectSubmit);
-	subjectsList.addEventListener('click', handleSubjectDelete);
-	clearSubjectFormButton.addEventListener('click', clearForm);
+  function showSubjectTab(tabName) {
+    subjectTabButtons.forEach((button) => {
+      const isActive = button.dataset.subjectTab === tabName;
 
-	document.addEventListener('subjects:changed', () => {
-		renderSubjects();
-	});
+      button.classList.toggle("is-active", isActive);
+    });
 
-	document.addEventListener('app:data-reset', () => {
-		clearForm();
-		renderSubjects();
-	});
+    subjectListTab.classList.toggle("is-active", tabName === "list");
+    subjectImportTab.classList.toggle("is-active", tabName === "import");
+  }
 
-	renderSubjects();
+  // Event Listeners
 
-	console.log('Sistema de matérias carregado.');
+  subjectTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      showSubjectTab(button.dataset.subjectTab);
+    });
+  });
+  subjectForm.addEventListener("submit", handleSubjectSubmit);
+  subjectsList.addEventListener("click", handleSubjectDelete);
+  clearSubjectFormButton.addEventListener("click", clearForm);
+
+  document.addEventListener("subjects:changed", () => {
+    renderSubjects();
+  });
+
+  document.addEventListener("app:data-reset", () => {
+    clearForm();
+    renderSubjects();
+  });
+
+  renderSubjects();
+  showSubjectTab('list');
+
+  console.log("Sistema de matérias carregado.");
 }

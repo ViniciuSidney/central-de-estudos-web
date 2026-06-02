@@ -16,25 +16,13 @@ export function initQuestions() {
   const alternativeCInput = document.querySelector("#alternative-c");
   const alternativeDInput = document.querySelector("#alternative-d");
   const alternativeEInput = document.querySelector("#alternative-e");
-  const correctAlternativeSelect = document.querySelector(
-    "#correct-alternative",
-  );
-  const questionExplanationInput = document.querySelector(
-    "#question-explanation",
-  );
-  const clearQuestionFormButton = document.querySelector(
-    "#clear-question-form",
-  );
+  const correctAlternativeSelect = document.querySelector("#correct-alternative");
+  const questionExplanationInput = document.querySelector("#question-explanation");
+  const clearQuestionFormButton = document.querySelector("#clear-question-form");
   const questionFormMessage = document.querySelector("#question-form-message");
-  const questionNoSubjectWarning = document.querySelector(
-    "#question-no-subject-warning",
-  );
-  const questionNoThemeWarning = document.querySelector(
-    "#question-no-theme-warning",
-  );
-  const questionsCurrentTheme = document.querySelector(
-    "#questions-current-theme",
-  );
+  const questionNoSubjectWarning = document.querySelector("#question-no-subject-warning");
+  const questionNoThemeWarning = document.querySelector("#question-no-theme-warning");
+  const questionsCurrentTheme = document.querySelector("#questions-current-theme");
   const questionsCount = document.querySelector("#questions-count");
   const questionsEmptyState = document.querySelector("#questions-empty-state");
   const questionsList = document.querySelector("#questions-list");
@@ -45,41 +33,21 @@ export function initQuestions() {
   const questionFilters = document.querySelector("#question-filters");
   const questionTabPanel = document.querySelector("#question-tab-panel");
   const saveQuestionButton = document.querySelector("#save-question-button");
-  const cancelQuestionEditButton = document.querySelector(
-    "#cancel-question-edit",
-  );
+  const cancelQuestionEditButton = document.querySelector("#cancel-question-edit");
   const moveQuestionModal = document.querySelector("#move-question-modal");
   const moveQuestionCurrent = document.querySelector("#move-question-current");
-  const moveQuestionThemeSelect = document.querySelector(
-    "#move-question-theme",
-  );
+  const moveQuestionThemeSelect = document.querySelector("#move-question-theme");
   const moveQuestionMessage = document.querySelector("#move-question-message");
-  const moveQuestionCancelButton = document.querySelector(
-    "#move-question-cancel",
-  );
-  const moveQuestionConfirmButton = document.querySelector(
-    "#move-question-confirm",
-  );
+  const moveQuestionCancelButton = document.querySelector("#move-question-cancel");
+  const moveQuestionConfirmButton = document.querySelector("#move-question-confirm");
 
   const questionImportTab = document.querySelector("#question-import-tab");
-  const questionImportTextInput = document.querySelector(
-    "#question-import-text",
-  );
-  const validateQuestionImportButton = document.querySelector(
-    "#validate-question-import",
-  );
-  const clearQuestionImportButton = document.querySelector(
-    "#clear-question-import",
-  );
-  const importValidatedQuestionsButton = document.querySelector(
-    "#import-validated-questions",
-  );
-  const questionImportSummary = document.querySelector(
-    "#question-import-summary",
-  );
-  const questionImportErrors = document.querySelector(
-    "#question-import-errors",
-  );
+  const questionImportTextInput = document.querySelector("#question-import-text");
+  const validateQuestionImportButton = document.querySelector("#validate-question-import");
+  const clearQuestionImportButton = document.querySelector("#clear-question-import");
+  const importValidatedQuestionsButton = document.querySelector("#import-validated-questions");
+  const questionImportSummary = document.querySelector("#question-import-summary");
+  const questionImportErrors = document.querySelector("#question-import-errors");
 
   if (
     !questionImportTab ||
@@ -145,14 +113,7 @@ export function initQuestions() {
     saveCollection(QUESTIONS_COLLECTION, questions);
   }
 
-  function createQuestion({
-    subjectId,
-    themeId,
-    statement,
-    alternatives,
-    correctAlternative,
-    explanation,
-  }) {
+  function createQuestion({ subjectId, themeId, statement, alternatives, correctAlternative, explanation }) {
     return {
       id: crypto.randomUUID(),
       subjectId,
@@ -290,12 +251,7 @@ export function initQuestions() {
   }
 
   function escapeHTML(value) {
-    return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+    return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
   }
 
   function getShortText(text, maxLength = 170) {
@@ -436,8 +392,7 @@ export function initQuestions() {
 
     setQuestionImportSummary({
       title: `${validCount} questão(ões) pronta(s) para importação.`,
-      description:
-        "Nenhum erro encontrado. Você já pode importar as questões para o tema selecionado.",
+      description: "Nenhum erro encontrado. Você já pode importar as questões para o tema selecionado.",
       type: "success",
     });
   }
@@ -504,8 +459,7 @@ export function initQuestions() {
   function updateQuestionsCount(questions) {
     const totalQuestions = questions.length;
 
-    questionsCount.textContent =
-      totalQuestions === 1 ? "1 questão" : `${totalQuestions} questões`;
+    questionsCount.textContent = totalQuestions === 1 ? "1 questão" : `${totalQuestions} questões`;
   }
 
   function getSelectedSubject() {
@@ -653,10 +607,7 @@ export function initQuestions() {
     moveQuestionConfirmButton.disabled = !hasAvailableThemes;
 
     if (!hasAvailableThemes) {
-      setMoveQuestionMessage(
-        "Não existe outro tema disponível para mover esta questão.",
-        "error",
-      );
+      setMoveQuestionMessage("Não existe outro tema disponível para mover esta questão.", "error");
     } else {
       setMoveQuestionMessage("");
     }
@@ -692,10 +643,7 @@ export function initQuestions() {
     const targetTheme = getThemeById(targetThemeId);
 
     if (!targetTheme) {
-      setMoveQuestionMessage(
-        "Selecione um tema válido para mover a questão.",
-        "error",
-      );
+      setMoveQuestionMessage("Selecione um tema válido para mover a questão.", "error");
       return;
     }
 
@@ -821,8 +769,7 @@ export function initQuestions() {
 
       questionNoThemeWarning.hidden = true;
 
-      questionsCurrentTheme.textContent =
-        "Cadastre uma matéria antes de criar questões.";
+      questionsCurrentTheme.textContent = "Cadastre uma matéria antes de criar questões.";
 
       updateQuestionsCount([]);
 
@@ -909,8 +856,7 @@ export function initQuestions() {
     updateQuestionsCount(questionsFromContext);
 
     if (!selectedSubject) {
-      questionsCurrentTheme.textContent =
-        "Selecione uma matéria para carregar os temas.";
+      questionsCurrentTheme.textContent = "Selecione uma matéria para carregar os temas.";
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
@@ -1053,27 +999,15 @@ export function initQuestions() {
     questionStatementInput.focus();
   }
 
-  function validateQuestionForm({
-    selectedSubjectId,
-    selectedThemeId,
-    statement,
-    alternatives,
-    correctAlternative,
-  }) {
+  function validateQuestionForm({ selectedSubjectId, selectedThemeId, statement, alternatives, correctAlternative }) {
     if (!selectedSubjectId) {
-      setQuestionFormMessage(
-        "Selecione uma matéria antes de cadastrar a questão.",
-        "error",
-      );
+      setQuestionFormMessage("Selecione uma matéria antes de cadastrar a questão.", "error");
       questionSubjectSelect.focus();
       return false;
     }
 
     if (!selectedThemeId) {
-      setQuestionFormMessage(
-        "Selecione um tema antes de cadastrar a questão.",
-        "error",
-      );
+      setQuestionFormMessage("Selecione um tema antes de cadastrar a questão.", "error");
       questionThemeSelect.focus();
       return false;
     }
@@ -1085,10 +1019,7 @@ export function initQuestions() {
     }
 
     if (!correctAlternative) {
-      setQuestionFormMessage(
-        "Selecione a alternativa correta da questão.",
-        "error",
-      );
+      setQuestionFormMessage("Selecione a alternativa correta da questão.", "error");
       correctAlternativeSelect.focus();
       return false;
     }
@@ -1096,10 +1027,7 @@ export function initQuestions() {
     const correctAlternativeText = alternatives[correctAlternative];
 
     if (!correctAlternativeText) {
-      setQuestionFormMessage(
-        `Preencha o texto da alternativa ${correctAlternative}.`,
-        "error",
-      );
+      setQuestionFormMessage(`Preencha o texto da alternativa ${correctAlternative}.`, "error");
 
       const alternativeInputs = {
         A: alternativeAInput,
@@ -1287,10 +1215,7 @@ export function initQuestions() {
 
     questionStatementInput.focus();
 
-    setQuestionFormMessage(
-      "Cadastre uma questão para completar este tema.",
-      "success",
-    );
+    setQuestionFormMessage("Cadastre uma questão para completar este tema.", "success");
   }
 
   //-----------------------------------------------------
@@ -1301,15 +1226,9 @@ export function initQuestions() {
   clearQuestionFormButton.addEventListener("click", clearQuestionForm);
   cancelQuestionEditButton.addEventListener("click", exitEditMode);
 
-  validateQuestionImportButton.addEventListener(
-    "click",
-    validateQuestionImportText,
-  );
+  validateQuestionImportButton.addEventListener("click", validateQuestionImportText);
   clearQuestionImportButton.addEventListener("click", clearQuestionImport);
-  importValidatedQuestionsButton.addEventListener(
-    "click",
-    importValidatedQuestions,
-  );
+  importValidatedQuestionsButton.addEventListener("click", importValidatedQuestions);
 
   questionsList.addEventListener("click", handleQuestionEdit);
   questionsList.addEventListener("click", handleQuestionMove);
@@ -1319,10 +1238,7 @@ export function initQuestions() {
   moveQuestionConfirmButton.addEventListener("click", confirmMoveQuestion);
   moveQuestionModal.addEventListener("click", handleMoveModalOverlayClick);
   document.addEventListener("keydown", handleMoveModalEscapeKey);
-  document.addEventListener(
-    "questions:prepare-create",
-    handleExternalQuestionCreate,
-  );
+  document.addEventListener("questions:prepare-create", handleExternalQuestionCreate);
 
   questionTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
