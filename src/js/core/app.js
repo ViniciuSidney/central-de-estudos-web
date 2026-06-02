@@ -10,6 +10,7 @@ import { initSolve } from "../features/solve.js";
 import { initDashboard } from "../features/dashboard.js";
 import { initResetData } from "../features/resetData.js";
 import { initDataPortability } from "../systems/dataPortability.js";
+import { purgeOrphanStudyRecords } from "../systems/dataIntegrity.js";
 
 export function startApp() {
   console.log("Central de Estudos Web iniciada.");
@@ -26,4 +27,5 @@ export function startApp() {
   initReviews();
   initResetData();
   initDataPortability();
+  purgeOrphanStudyRecords();
 }

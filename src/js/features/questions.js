@@ -1,6 +1,7 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
 import { parseQuestionsFromText } from "../systems/questionTextImport.js";
+import { removeAttemptsAndReviewsByQuestionIds } from "../systems/dataIntegrity.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -199,14 +200,15 @@ export function initQuestions() {
     });
 
     saveQuestions(updatedQuestions);
-    notifyQuestionsChanged();
+    removeAttemptsAndReviewsByQuestionIds([questionId]);
 
     if (editingQuestionId === questionId) {
       exitEditMode();
     }
 
     renderQuestions();
-
+    notifyQuestionsChanged();
+    
     setQuestionFormMessage("Questão excluída com sucesso.", "success");
   }
 

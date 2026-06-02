@@ -1,6 +1,7 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
 import { compareNames, parseItemsFromListText } from "../systems/listTextImport.js";
+import { removeThemesQuestionsAndRelatedDataBySubjectIds } from "../systems/dataIntegrity.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -273,17 +274,17 @@ export function initSubjects() {
   }
 
   function deleteSubject(subjectId) {
-    const updatedSubjects = getSubjects().filter((currentSubject) => {
-      return currentSubject.id !== subjectId;
+    const updatedSubjects = getSubjects().filter((subject) => {
+      return subject.id !== subjectId;
     });
 
-    deleteQuestionsFromSubject(subjectId);
-    deleteThemesFromSubject(subjectId);
     saveSubjects(updatedSubjects);
+    removeThemesQuestionsAndRelatedDataBySubjectIds([subjectId]);
+
     renderSubjects();
     notifySubjectsChanged();
 
-    setFormMessage("Matéria, temas e questões relacionadas excluídos com sucesso.", "success");
+    setFormMessage("Matéria, temas, questões e registros relacionados excluídos com sucesso.", "success");
   }
 
   function deleteThemesFromSubject(subjectId) {

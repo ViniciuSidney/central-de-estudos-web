@@ -1,6 +1,7 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
 import { compareNames, parseItemsFromListText } from "../systems/listTextImport.js";
+import { removeQuestionsAndRelatedDataByThemeIds } from "../systems/dataIntegrity.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -119,14 +120,6 @@ export function initThemes() {
     if (type === "success") {
       themeFormMessage.classList.add("is-success");
     }
-  }
-
-  function deleteQuestionsFromTheme(themeId) {
-    const updatedQuestions = getCollection(QUESTIONS_COLLECTION).filter((question) => {
-      return question.themeId !== themeId;
-    });
-
-    saveCollection(QUESTIONS_COLLECTION, updatedQuestions);
   }
 
   function updateThemesCount(themes) {
@@ -365,8 +358,9 @@ export function initThemes() {
       return theme.id !== themeId;
     });
 
-    deleteQuestionsFromTheme(themeId);
     saveThemes(updatedThemes);
+    removeQuestionsAndRelatedDataByThemeIds([themeId]);
+
     renderThemes();
     notifyThemesChanged();
 
