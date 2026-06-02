@@ -95,39 +95,6 @@
 }
 
 /* =========================================================
-   MATÉRIAS — LAYOUT DA SEÇÃO
-   ========================================================= */
-
-.management-layout {
-  min-width: 0;
-
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: 14px;
-}
-
-.management-sidebar,
-.management-content {
-  min-width: 0;
-
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-}
-
-.management-sidebar {
-  display: grid;
-  align-content: start;
-  gap: 14px;
-
-  padding: 16px;
-}
-
-.management-content {
-  padding: 18px;
-}
-
-/* =========================================================
    MATÉRIAS — ABAS INTERNAS
    ========================================================= */
 

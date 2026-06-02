@@ -464,11 +464,18 @@
           <article class="app-section" id="themes">
             <header class="app-section__header">
               <h2>🧩 Divisão dos conteúdos</h2>
+
               <p>Organize cada matéria em temas menores para facilitar o estudo por blocos, revisões e questões futuramente.</p>
             </header>
 
-            <div class="management-workspace">
-              <section class="management-form-panel">
+            <div class="management-layout">
+              <aside class="management-sidebar">
+                <div class="theme-mode-tabs">
+                  <button class="theme-tab-button is-active" type="button" data-theme-tab="list">Listagem</button>
+
+                  <button class="theme-tab-button" type="button" data-theme-tab="import">Importação</button>
+                </div>
+
                 <div class="theme-warning" id="theme-no-subject-warning" hidden>
                   <strong>Cadastre uma matéria primeiro.</strong>
                   <span> Para criar temas, é necessário ter pelo menos uma matéria cadastrada. </span>
@@ -477,6 +484,7 @@
                 <form class="theme-form" id="theme-form">
                   <div class="form-group">
                     <label for="theme-subject">Matéria relacionada</label>
+
                     <select id="theme-subject" name="themeSubject">
                       <option value="">Selecione uma matéria</option>
                     </select>
@@ -484,11 +492,13 @@
 
                   <div class="form-group">
                     <label for="theme-name">Nome do tema</label>
+
                     <input type="text" id="theme-name" name="themeName" placeholder="Ex: Brasil República" autocomplete="off" />
                   </div>
 
                   <div class="form-group">
                     <label for="theme-description">Descrição</label>
+
                     <textarea
                       id="theme-description"
                       name="themeDescription"
@@ -505,25 +515,93 @@
                     <button class="button button--secondary" type="button" id="clear-theme-form">Limpar</button>
                   </div>
                 </form>
-              </section>
+              </aside>
 
-              <section class="management-list-panel themes-area">
-                <div class="themes-header management-list-header">
-                  <div>
-                    <h3>Temas cadastrados</h3>
-                    <p id="themes-current-subject">Selecione uma matéria para visualizar seus temas.</p>
+              <main class="management-content">
+                <section class="theme-tab-content is-active" id="theme-list-tab">
+                  <div class="themes-header management-list-header">
+                    <div>
+                      <h3>Temas cadastrados</h3>
+
+                      <p id="themes-current-subject">Selecione uma matéria para visualizar seus temas.</p>
+                    </div>
+
+                    <span id="themes-count">0 temas</span>
                   </div>
 
-                  <span id="themes-count">0 temas</span>
-                </div>
+                  <div class="empty-state" id="themes-empty-state">
+                    <strong>Nenhum tema cadastrado ainda.</strong>
+                    <span> Escolha uma matéria e use o formulário ao lado para adicionar um tema. </span>
+                  </div>
 
-                <div class="empty-state" id="themes-empty-state">
-                  <strong>Nenhum tema cadastrado ainda.</strong>
-                  <span> Escolha uma matéria e use o formulário ao lado para adicionar um tema. </span>
-                </div>
+                  <div class="themes-list management-gallery" id="themes-list"></div>
+                </section>
 
-                <div class="themes-list management-gallery" id="themes-list"></div>
-              </section>
+                <section class="theme-tab-content" id="theme-import-tab">
+                  <div class="import-workspace theme-import-workspace">
+                    <article class="import-panel import-panel--editor">
+                      <div>
+                        <h3>Importar temas em lote</h3>
+
+                        <p>
+                          Cole uma lista de temas separados por vírgula, ponto e vírgula ou quebra de linha. Os temas serão adicionados à matéria selecionada.
+                        </p>
+                      </div>
+
+                      <textarea
+                        class="import-textarea"
+                        id="theme-import-text"
+                        rows="12"
+                        placeholder="Probabilidade,&#10;Análise Combinatória,&#10;Geometria"
+                      ></textarea>
+
+                      <div class="import-actions">
+                        <button class="button button--primary" type="button" id="validate-theme-import">Validar temas</button>
+
+                        <button class="button button--secondary" type="button" id="clear-theme-import">Limpar</button>
+                      </div>
+                    </article>
+
+                    <article class="import-panel import-panel--validation">
+                      <div>
+                        <h3>Validação</h3>
+
+                        <p>Confira se a lista está pronta antes de importar.</p>
+                      </div>
+
+                      <div class="import-summary" id="theme-import-summary">
+                        <strong>Aguardando validação.</strong>
+                        <span> Selecione uma matéria, cole a lista e clique em Validar temas. </span>
+                      </div>
+
+                      <ul class="import-list" id="theme-import-list"></ul>
+
+                      <ul class="import-errors" id="theme-import-errors"></ul>
+
+                      <button class="button button--primary import-button" type="button" id="import-validated-themes" disabled>Importar temas</button>
+                    </article>
+
+                    <aside class="import-panel import-panel--list">
+                      <div class="theme-import-added-header">
+                        <div>
+                          <h3>Temas adicionados</h3>
+
+                          <p>Veja uma versão compacta dos temas da matéria selecionada.</p>
+                        </div>
+
+                        <span id="theme-import-added-count">0 temas</span>
+                      </div>
+
+                      <ul class="import-list" id="theme-import-added-list"></ul>
+
+                      <div class="empty-state" id="theme-import-added-empty">
+                        <strong>Nenhum tema cadastrado.</strong>
+                        <span> Os temas da matéria selecionada aparecerão aqui. </span>
+                      </div>
+                    </aside>
+                  </div>
+                </section>
+              </main>
             </div>
           </article>
 
