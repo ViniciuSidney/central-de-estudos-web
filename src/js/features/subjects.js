@@ -17,11 +17,17 @@ export function initSubjects() {
   const subjectTabButtons = document.querySelectorAll("[data-subject-tab]");
   const subjectListTab = document.querySelector("#subject-list-tab");
   const subjectImportTab = document.querySelector("#subject-import-tab");
+  const subjectImportAddedList = document.querySelector("#subject-import-added-list");
+  const subjectImportAddedCount = document.querySelector("#subject-import-added-count");
+  const subjectImportAddedEmpty = document.querySelector("#subject-import-added-empty");
 
   if (
     !subjectTabButtons.length ||
     !subjectListTab ||
     !subjectImportTab ||
+    !subjectImportAddedList ||
+    !subjectImportAddedCount ||
+    !subjectImportAddedEmpty ||
     !subjectForm ||
     !subjectNameInput ||
     !subjectDescriptionInput ||
@@ -81,12 +87,43 @@ export function initSubjects() {
     subjectsCount.textContent = totalSubjects === 1 ? "1 matéria" : `${totalSubjects} matérias`;
   }
 
+  function updateSubjectImportAddedCount(subjects) {
+    const totalSubjects = subjects.length;
+
+    subjectImportAddedCount.textContent = totalSubjects === 1 ? "1 matéria" : `${totalSubjects} matérias`;
+  }
+
+  function renderSubjectImportAddedList(subjects) {
+    subjectImportAddedList.innerHTML = "";
+
+    updateSubjectImportAddedCount(subjects);
+
+    if (subjects.length === 0) {
+      subjectImportAddedEmpty.hidden = false;
+      return;
+    }
+
+    subjectImportAddedEmpty.hidden = true;
+
+    subjects.forEach((subject) => {
+      const item = document.createElement("li");
+
+      item.innerHTML = `
+      <strong>${subject.name}</strong>
+      <span>${subject.description || "Sem descrição adicionada."}</span>
+    `;
+
+      subjectImportAddedList.appendChild(item);
+    });
+  }
+
   function renderSubjects() {
     const subjects = getSubjects();
 
     subjectsList.innerHTML = "";
 
     updateSubjectsCount(subjects);
+    renderSubjectImportAddedList(subjects);
 
     if (subjects.length === 0) {
       subjectsEmptyState.hidden = false;
@@ -254,7 +291,7 @@ export function initSubjects() {
   });
 
   renderSubjects();
-  showSubjectTab('list');
+  showSubjectTab("list");
 
   console.log("Sistema de matérias carregado.");
 }

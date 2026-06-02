@@ -194,6 +194,25 @@
   margin-top: auto;
 }
 
+#subject-import-added-list li {
+  display: grid;
+  gap: 4px;
+}
+
+#subject-import-added-list strong {
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+#subject-import-added-list span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 980px) {
   .management-layout {
     grid-template-columns: 1fr;
