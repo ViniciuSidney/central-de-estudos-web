@@ -84,6 +84,10 @@ export function initSubjects() {
     });
   }
 
+  function formatCount(total, singular, plural) {
+    return total === 1 ? `1 ${singular}` : `${total} ${plural}`;
+  }
+
   function setFormMessage(message, type = "default") {
     subjectFormMessage.textContent = message;
 
@@ -201,6 +205,18 @@ export function initSubjects() {
     }
 
     const subjects = getSubjects();
+
+    const duplicatedSubject = subjects.find((subject) => {
+      return compareNames(subject.name, subjectName);
+    });
+
+    if (duplicatedSubject) {
+      setFormMessage(`A matéria "${duplicatedSubject.name}" já está cadastrada.`, "error");
+
+      subjectNameInput.focus();
+      return;
+    }
+
     const newSubject = createSubject(subjectName, subjectDescription);
 
     subjects.push(newSubject);
@@ -381,7 +397,7 @@ export function initSubjects() {
     if (validSubjects.length === 0 && errors.length > 0) {
       setSubjectImportSummary({
         title: "Nenhuma matéria nova encontrada.",
-        description: `${errors.length} aviso(s) encontrado(s). Ajuste a lista e valide novamente.`,
+        description: `${formatCount(errors.length, "aviso encontrado", "avisos encontrados")}. Ajuste a lista e valide novamente.`,
         type: "error",
       });
 
@@ -390,8 +406,8 @@ export function initSubjects() {
 
     if (validSubjects.length > 0 && errors.length > 0) {
       setSubjectImportSummary({
-        title: `${validSubjects.length} matéria(s) pronta(s) para importação.`,
-        description: `${errors.length} item(ns) serão ignorados por repetição ou duplicidade.`,
+        title: `${formatCount(validSubjects.length, "matéria pronta", "matérias prontas")} para importação.`,
+        description: `${formatCount(errors.length, "item ignorado", "itens ignorados")} por repetição ou duplicidade.`,
         type: "success",
       });
 
@@ -399,7 +415,7 @@ export function initSubjects() {
     }
 
     setSubjectImportSummary({
-      title: `${validSubjects.length} matéria(s) pronta(s) para importação.`,
+      title: `${formatCount(validSubjects.length, "matéria pronta", "matérias prontas")} para importação.`,
       description: "Nenhum problema encontrado. Você já pode importar as matérias.",
       type: "success",
     });
@@ -430,7 +446,7 @@ export function initSubjects() {
     importValidatedSubjectsButton.disabled = true;
 
     setSubjectImportSummary({
-      title: `${newSubjects.length} matéria(s) importada(s) com sucesso.`,
+      title: `${formatCount(newSubjects.length, "matéria importada", "matérias importadas")} com sucesso.`,
       description: "As matérias foram adicionadas à sua base de estudos.",
       type: "success",
     });
