@@ -132,21 +132,20 @@ export function initSubjects() {
       item.classList.add("subject-import-added-item");
 
       item.innerHTML = `
-			<div class="subject-import-added-item__top">
-				<strong>${subject.name}</strong>
-
-				<button
-				class="management-icon-button management-icon-button--danger"
-				type="button"
-				data-delete-subject="${subject.id}"
-				aria-label="Excluir matéria ${subject.name}"
-				title="Excluir matéria"
-				>
-				🗑️
-				</button>
-			</div>
-
+		<div class="subject-import-added-item__content">
+			<strong>${subject.name}</strong>
 			<span>${subject.description || "Sem descrição adicionada."}</span>
+		</div>
+
+		<button
+			class="management-icon-button management-icon-button--danger"
+			type="button"
+			data-delete-subject="${subject.id}"
+			aria-label="Excluir matéria ${subject.name}"
+			title="Excluir matéria"
+		>
+			🗑️
+		</button>
 		`;
 
       subjectImportAddedList.appendChild(item);
