@@ -129,10 +129,25 @@ export function initSubjects() {
     subjects.forEach((subject) => {
       const item = document.createElement("li");
 
+      item.classList.add("subject-import-added-item");
+
       item.innerHTML = `
-      <strong>${subject.name}</strong>
-      <span>${subject.description || "Sem descrição adicionada."}</span>
-    `;
+			<div class="subject-import-added-item__top">
+				<strong>${subject.name}</strong>
+
+				<button
+				class="management-icon-button management-icon-button--danger"
+				type="button"
+				data-delete-subject="${subject.id}"
+				aria-label="Excluir matéria ${subject.name}"
+				title="Excluir matéria"
+				>
+				🗑️
+				</button>
+			</div>
+
+			<span>${subject.description || "Sem descrição adicionada."}</span>
+		`;
 
       subjectImportAddedList.appendChild(item);
     });
@@ -466,6 +481,7 @@ export function initSubjects() {
   });
   subjectForm.addEventListener("submit", handleSubjectSubmit);
   subjectsList.addEventListener("click", handleSubjectDelete);
+  subjectImportAddedList.addEventListener("click", handleSubjectDelete);
   clearSubjectFormButton.addEventListener("click", clearForm);
 
   validateSubjectImportButton.addEventListener("click", validateSubjectImport);
