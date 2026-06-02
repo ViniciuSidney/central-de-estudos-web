@@ -20,8 +20,14 @@ export function initThemes() {
   const themeTabButtons = document.querySelectorAll("[data-theme-tab]");
   const themeListTab = document.querySelector("#theme-list-tab");
   const themeImportTab = document.querySelector("#theme-import-tab");
+  const themeImportAddedList = document.querySelector("#theme-import-added-list");
+  const themeImportAddedCount = document.querySelector("#theme-import-added-count");
+  const themeImportAddedEmpty = document.querySelector("#theme-import-added-empty");
 
   if (
+    !themeImportAddedList ||
+    !themeImportAddedCount ||
+    !themeImportAddedEmpty ||
     !themeTabButtons.length ||
     !themeListTab ||
     !themeImportTab ||
@@ -74,6 +80,10 @@ export function initThemes() {
       month: "2-digit",
       year: "numeric",
     });
+  }
+
+  function formatCount(total, singular, plural) {
+    return total === 1 ? `1 ${singular}` : `${total} ${plural}`;
   }
 
   function escapeHTML(value) {
@@ -136,6 +146,7 @@ export function initThemes() {
     themesList.innerHTML = "";
 
     updateThemesCount(selectedSubjectThemes);
+    renderThemeImportAddedList(selectedSubjectThemes);
 
     if (!selectedSubject) {
       themesCurrentSubject.textContent = "Selecione uma matéria para visualizar seus temas.";
@@ -371,12 +382,52 @@ export function initThemes() {
     themeImportTab.classList.toggle("is-active", tabName === "import");
   }
 
+  function renderThemeImportAddedList(themes) {
+    themeImportAddedList.innerHTML = "";
+
+    themeImportAddedCount.textContent = formatCount(themes.length, "tema", "temas");
+
+    if (themes.length === 0) {
+      themeImportAddedEmpty.hidden = false;
+      return;
+    }
+
+    themeImportAddedEmpty.hidden = true;
+
+    themes.forEach((theme) => {
+      const item = document.createElement("li");
+
+      item.classList.add("theme-import-added-item");
+
+      item.innerHTML = `
+			<div class="theme-import-added-item__content">
+				<strong>${escapeHTML(theme.name)}</strong>
+				<span>${escapeHTML(theme.description || "Sem descrição adicionada.")}</span>
+			</div>
+
+			<button
+			class="management-icon-button management-icon-button--danger"
+			type="button"
+			data-delete-theme="${theme.id}"
+			aria-label="Excluir tema ${escapeHTML(theme.name)}"
+			title="Excluir tema"
+			>
+				🗑️
+			</button>
+		`;
+
+      themeImportAddedList.appendChild(item);
+    });
+  }
+
   //-----------------------------------------------------
 
   themeForm.addEventListener("submit", handleThemeSubmit);
   themeSubjectSelect.addEventListener("change", handleSubjectChange);
   clearThemeFormButton.addEventListener("click", clearThemeForm);
   themesList.addEventListener("click", handleThemeDelete);
+  themeImportAddedList.addEventListener("click", handleThemeDelete);
+
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:prepare-create", handleExternalThemeCreate);
   themeTabButtons.forEach((button) => {
