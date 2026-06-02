@@ -1,5 +1,6 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { openConfirmModal } from "../ui/confirmModal.js";
+import { compareNames, parseItemsFromListText } from "../systems/listTextImport.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -20,8 +21,22 @@ export function initSubjects() {
   const subjectImportAddedList = document.querySelector("#subject-import-added-list");
   const subjectImportAddedCount = document.querySelector("#subject-import-added-count");
   const subjectImportAddedEmpty = document.querySelector("#subject-import-added-empty");
+  const subjectImportTextInput = document.querySelector("#subject-import-text");
+  const validateSubjectImportButton = document.querySelector("#validate-subject-import");
+  const clearSubjectImportButton = document.querySelector("#clear-subject-import");
+  const importValidatedSubjectsButton = document.querySelector("#import-validated-subjects");
+  const subjectImportSummary = document.querySelector("#subject-import-summary");
+  const subjectImportList = document.querySelector("#subject-import-list");
+  const subjectImportErrors = document.querySelector("#subject-import-errors");
 
   if (
+    !subjectImportTextInput ||
+    !validateSubjectImportButton ||
+    !clearSubjectImportButton ||
+    !importValidatedSubjectsButton ||
+    !subjectImportSummary ||
+    !subjectImportList ||
+    !subjectImportErrors ||
     !subjectTabButtons.length ||
     !subjectListTab ||
     !subjectImportTab ||
@@ -39,6 +54,8 @@ export function initSubjects() {
   ) {
     return;
   }
+
+  let importedSubjectsPreview = [];
 
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
@@ -270,6 +287,160 @@ export function initSubjects() {
     subjectImportTab.classList.toggle("is-active", tabName === "import");
   }
 
+  function setSubjectImportSummary({ title = "Aguardando validação.", description = "Cole a lista e clique em Validar matérias.", type = "default" } = {}) {
+    subjectImportSummary.innerHTML = `
+    <strong>${title}</strong>
+    <span>${description}</span>
+  `;
+
+    subjectImportSummary.classList.remove("is-success", "is-error");
+
+    if (type === "success") {
+      subjectImportSummary.classList.add("is-success");
+    }
+
+    if (type === "error") {
+      subjectImportSummary.classList.add("is-error");
+    }
+  }
+
+  function renderSubjectImportList(items = []) {
+    subjectImportList.innerHTML = "";
+
+    items.forEach((item) => {
+      const listItem = document.createElement("li");
+
+      listItem.textContent = item;
+
+      subjectImportList.appendChild(listItem);
+    });
+  }
+
+  function renderSubjectImportErrors(errors = []) {
+    subjectImportErrors.innerHTML = "";
+
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
+
+      errorItem.textContent = error;
+
+      subjectImportErrors.appendChild(errorItem);
+    });
+  }
+
+  function clearSubjectImport() {
+    importedSubjectsPreview = [];
+
+    subjectImportTextInput.value = "";
+    importValidatedSubjectsButton.disabled = true;
+
+    setSubjectImportSummary();
+    renderSubjectImportList();
+    renderSubjectImportErrors();
+
+    subjectImportTextInput.focus();
+  }
+
+  function validateSubjectImport() {
+    const result = parseItemsFromListText(subjectImportTextInput.value);
+    const currentSubjects = getSubjects();
+
+    const duplicatedInStorage = [];
+    const validSubjects = [];
+
+    result.items.forEach((subjectName) => {
+      const alreadyExists = currentSubjects.some((subject) => {
+        return compareNames(subject.name, subjectName);
+      });
+
+      if (alreadyExists) {
+        duplicatedInStorage.push(subjectName);
+        return;
+      }
+
+      validSubjects.push(subjectName);
+    });
+
+    importedSubjectsPreview = validSubjects;
+
+    const errors = [...result.errors];
+
+    result.duplicatedItems.forEach((item) => {
+      errors.push(`"${item}" aparece repetido na lista e será ignorado.`);
+    });
+
+    duplicatedInStorage.forEach((item) => {
+      errors.push(`"${item}" já está cadastrado e será ignorado.`);
+    });
+
+    renderSubjectImportList(validSubjects);
+    renderSubjectImportErrors(errors);
+
+    importValidatedSubjectsButton.disabled = validSubjects.length === 0;
+
+    if (validSubjects.length === 0 && errors.length > 0) {
+      setSubjectImportSummary({
+        title: "Nenhuma matéria nova encontrada.",
+        description: `${errors.length} aviso(s) encontrado(s). Ajuste a lista e valide novamente.`,
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (validSubjects.length > 0 && errors.length > 0) {
+      setSubjectImportSummary({
+        title: `${validSubjects.length} matéria(s) pronta(s) para importação.`,
+        description: `${errors.length} item(ns) serão ignorados por repetição ou duplicidade.`,
+        type: "success",
+      });
+
+      return;
+    }
+
+    setSubjectImportSummary({
+      title: `${validSubjects.length} matéria(s) pronta(s) para importação.`,
+      description: "Nenhum problema encontrado. Você já pode importar as matérias.",
+      type: "success",
+    });
+  }
+
+  function importValidatedSubjects() {
+    if (importedSubjectsPreview.length === 0) {
+      setSubjectImportSummary({
+        title: "Nenhuma matéria validada.",
+        description: "Valide uma lista antes de importar.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    const subjects = getSubjects();
+
+    const newSubjects = importedSubjectsPreview.map((subjectName) => {
+      return createSubject(subjectName, "");
+    });
+
+    saveSubjects([...subjects, ...newSubjects]);
+    notifySubjectsChanged();
+
+    importedSubjectsPreview = [];
+    subjectImportTextInput.value = "";
+    importValidatedSubjectsButton.disabled = true;
+
+    setSubjectImportSummary({
+      title: `${newSubjects.length} matéria(s) importada(s) com sucesso.`,
+      description: "As matérias foram adicionadas à sua base de estudos.",
+      type: "success",
+    });
+
+    renderSubjectImportList();
+    renderSubjectImportErrors();
+
+    showSubjectTab("list");
+  }
+
   // Event Listeners
 
   subjectTabButtons.forEach((button) => {
@@ -280,6 +451,10 @@ export function initSubjects() {
   subjectForm.addEventListener("submit", handleSubjectSubmit);
   subjectsList.addEventListener("click", handleSubjectDelete);
   clearSubjectFormButton.addEventListener("click", clearForm);
+
+  validateSubjectImportButton.addEventListener("click", validateSubjectImport);
+  clearSubjectImportButton.addEventListener("click", clearSubjectImport);
+  importValidatedSubjectsButton.addEventListener("click", importValidatedSubjects);
 
   document.addEventListener("subjects:changed", () => {
     renderSubjects();
