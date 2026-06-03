@@ -46,6 +46,24 @@ export function initQuickStart() {
 		return items[randomIndex];
 	}
 
+	function findThemeWithoutQuestions() {
+		const subjects = getCollection('subjects');
+		const themes = getCollection('themes');
+		const questions = getCollection('questions');
+
+		const subjectIds = new Set(subjects.map((subject) => subject.id));
+
+		return themes.find((theme) => {
+			const themeHasValidSubject = subjectIds.has(theme.subjectId);
+
+			const themeHasQuestions = questions.some((question) => {
+				return question.themeId === theme.id;
+			});
+
+			return themeHasValidSubject && !themeHasQuestions;
+		});
+	}
+
 	function startStudy() {
 		const subjects = getCollection('subjects');
 		const themes = getCollection('themes');
@@ -62,10 +80,19 @@ export function initQuickStart() {
 		}
 
 		if (questions.length === 0) {
+			const emptyTheme = findThemeWithoutQuestions();
+
 			navigateTo('questions');
 
 			window.setTimeout(() => {
-				openQuestionFormTab();
+				document.dispatchEvent(
+					new CustomEvent('questions:prepare-create', {
+						detail: {
+							subjectId: emptyTheme?.subjectId || '',
+							themeId: emptyTheme?.id || ''
+						}
+					})
+				);
 			}, 150);
 
 			return;
