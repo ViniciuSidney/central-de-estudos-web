@@ -87,8 +87,8 @@
 					</div>
 
 					<div class="hero__actions">
-						<button class="button button--primary" type="button" data-section-target="dashboard">Começar estudos</button>
-
+						<button class="button button--primary" type="button" id="start-study-button">Começar estudos</button>
+						<button class="button button--secondary" type="button" id="open-about-modal">Sobre</button>
 						<button class="button button--secondary" type="button" data-section-target="roadmap">Ver roadmap</button>
 					</div>
 				</section>
@@ -1480,6 +1480,28 @@
 					<button class="button button--secondary" type="button" id="cancel-reset-data">Cancelar</button>
 
 					<button class="button button--danger" type="button" id="confirm-reset-data" disabled>Apagar tudo</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Sobre -->
+		<div class="modal-overlay" id="about-modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title" hidden>
+			<div class="modal about-modal">
+				<p class="modal__tag">📘 Sobre</p>
+
+				<h3 class="modal__title" id="about-modal-title">Central de Estudos Web</h3>
+
+				<div class="modal__description about-modal__content">
+					<p>A <strong>Central de Estudos Web</strong> é uma aplicação criada para organizar estudos por matérias, temas, questões, anotações e revisões.</p>
+
+					<p>O objetivo é centralizar a rotina de estudos em <strong>um único lugar</strong>, facilitando cadastro de conteúdos, resolução de questões, revisão de erros e backup dos dados.</p>
+
+					<br>
+					<p>Projeto criado por <strong>Vinícius Sidney</strong>, com foco em organização pessoal, produtividade e aprendizado contínuo.</p>
+				</div>
+
+				<div class="modal__actions">
+					<button class="button button--primary" type="button" id="close-about-modal">Legal!</button>
 				</div>
 			</div>
 		</div>

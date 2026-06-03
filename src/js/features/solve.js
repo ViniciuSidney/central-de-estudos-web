@@ -607,6 +607,29 @@ export function initSolve() {
 		nextQuestionButton.disabled = true;
 	}
 
+	function selectQuestionById(questionId) {
+		const questions = getCollection('questions');
+		const question = questions.find((currentQuestion) => {
+			return currentQuestion.id === questionId;
+		});
+
+		if (!question) {
+			return;
+		}
+
+		solveSubjectSelect.value = question.subjectId;
+
+		renderThemeOptions();
+		solveThemeSelect.value = question.themeId;
+
+		renderQuestionOptions();
+		solveQuestionSelect.value = question.id;
+
+		renderSelectedQuestion();
+	}
+
+	// Event listeners
+
 	solveSubjectSelect.addEventListener('change', () => {
 		solveThemeSelect.value = '';
 		solveQuestionSelect.value = '';
@@ -633,6 +656,16 @@ export function initSolve() {
 	});
 
 	document.addEventListener('attempts:changed', renderSolveHistory);
+
+	document.addEventListener('solve:select-question', (event) => {
+		const questionId = event.detail?.questionId;
+
+		if (!questionId) {
+			return;
+		}
+
+		selectQuestionById(questionId);
+	});
 
 	renderSubjectOptions();
 	renderSolveHistory();
