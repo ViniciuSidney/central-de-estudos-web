@@ -17,16 +17,6 @@ export function initQuickStart() {
 		);
 	}
 
-	function openQuestionFormTab() {
-		document.dispatchEvent(
-			new CustomEvent('questions:set-tab', {
-				detail: {
-					tabName: 'form'
-				}
-			})
-		);
-	}
-
 	function getValidQuestions() {
 		const subjects = getCollection('subjects');
 		const themes = getCollection('themes');
