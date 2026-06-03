@@ -158,3 +158,13 @@
   cursor: not-allowed;
   opacity: 0.55;
 }
+
+#subject-import-added-list li,
+#theme-import-added-list li {
+  padding: 9px 10px;
+}
+
+#subject-import-added-list,
+#theme-import-added-list {
+  gap: 7px;
+}

@@ -92,8 +92,8 @@
 }
 
 .subject-card__themes-count.is-empty {
-  color: var(--feedback-error-border);
-  font-weight: 900;
+	color: var(--feedback-error-border);
+	font-weight: 900;
 }
 
 .subject-card__date {
@@ -157,6 +157,10 @@
 	gap: 14px;
 }
 
+/* =========================================================
+	MATÉRIAS — IMPORTAÇÃO
+	========================================================= */
+
 .subject-import-added-header {
 	display: flex;
 	align-items: flex-start;
@@ -212,36 +216,27 @@
 .subject-import-added-item {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto;
-	min-width: 0;
 	align-items: center;
 	gap: 12px;
 }
 
-.subject-import-added-item__content {
+.subject-import-added-item__title {
 	min-width: 0;
 
-	display: grid;
-	gap: 6px;
-}
-
-.subject-import-added-item__content strong {
 	color: var(--text);
 	font-size: 0.9rem;
+	font-weight: 800;
 	line-height: 1.3;
-	overflow-wrap: anywhere;
-}
 
-.subject-import-added-item__content span {
-	color: var(--muted);
-	font-size: 0.78rem;
-	line-height: 1.35;
 	overflow-wrap: anywhere;
 }
 
 .subject-import-added-item .management-icon-button {
-	width: 36px;
-	height: 36px;
+	width: 32px;
+	height: 32px;
+
 	align-self: center;
 	justify-self: center;
+
 	flex-shrink: 0;
 }

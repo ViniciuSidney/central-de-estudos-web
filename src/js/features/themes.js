@@ -443,21 +443,20 @@ export function initThemes() {
 			item.classList.add('theme-import-added-item');
 
 			item.innerHTML = `
-			<div class="theme-import-added-item__content">
-				<strong>${escapeHTML(theme.name)}</strong>
-				<span>${escapeHTML(theme.description || 'Sem descrição adicionada.')}</span>
-			</div>
+        <strong class="theme-import-added-item__title">
+          ${escapeHTML(theme.name)}
+        </strong>
 
-			<button
-			class="management-icon-button management-icon-button--danger"
-			type="button"
-			data-delete-theme="${theme.id}"
-			aria-label="Excluir tema ${escapeHTML(theme.name)}"
-			title="Excluir tema"
-			>
-				🗑️
-			</button>
-		`;
+        <button
+          class="management-icon-button management-icon-button--danger"
+          type="button"
+          data-delete-theme="${theme.id}"
+          aria-label="Excluir tema ${escapeHTML(theme.name)}"
+          title="Excluir tema"
+        >
+          🗑️
+        </button>
+      `;
 
 			themeImportAddedList.appendChild(item);
 		});
