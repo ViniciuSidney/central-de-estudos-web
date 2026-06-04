@@ -1,4 +1,4 @@
-const QUESTION_SEPARATOR = "---";
+const QUESTION_SEPARATOR = "+++";
 const QUESTION_MARKER = "@questao";
 
 const REQUIRED_FIELDS = [
