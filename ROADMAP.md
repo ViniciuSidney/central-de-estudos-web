@@ -724,90 +724,107 @@ Com a v0.9 concluída, a aplicação está pronta para iniciar a v1.0 com foco e
 Adicionar recursos para exportar e importar os dados da aplicação, permitindo criar backups, migrar informações entre dispositivos e usar a central de estudos com mais segurança antes de transformá-la em um app instalável.
 
 ### Status
-Em desenvolvimento.
+Concluída.
 
 ---
 
-## Previsto para a v1.0
+## Implementado na v1.0
 
-### Exportação de dados
+### Exportação e backup
 
-- Criar sistema de exportação geral dos dados
-- Exportar matérias
-- Exportar temas
-- Exportar questões
-- Exportar tentativas
-- Exportar revisões de erros
-- Exportar anotações
-- Gerar arquivo `.json` com todos os dados principais da aplicação
-- Adicionar data de exportação no arquivo
-- Adicionar versão da aplicação no arquivo exportado
-- Criar botão de exportar dados na seção Opções
-- Exibir mensagem de sucesso ao exportar dados
-- Orientar o usuário a guardar o arquivo como backup
+- Sistema de exportação geral dos dados ✅
+- Exportação de matérias ✅
+- Exportação de temas ✅
+- Exportação de questões ✅
+- Exportação de tentativas ✅
+- Exportação de revisões de erros ✅
+- Exportação de anotações ✅
+- Geração de arquivo `.json` com os dados principais ✅
+- Inclusão da data de exportação no backup ✅
+- Inclusão da versão/origem do backup ✅
+- Card de exportação na seção Opções ✅
+- Mensagem de sucesso ao exportar dados ✅
 
----
+### Importação e restauração
 
-### Importação de dados
+- Sistema de importação de backup por arquivo `.json` ✅
+- Seleção de arquivo de backup ✅
+- Validação de estrutura do arquivo importado ✅
+- Bloqueio da importação quando o arquivo é inválido ✅
+- Confirmação antes de substituir dados existentes ✅
+- Modal de confirmação com dois painéis independentes ✅
+- Prévia do conteúdo do backup antes da importação ✅
+- Exibição de contagem de matérias, temas, questões, anotações, tentativas e revisões ✅
+- Restauração das coleções principais da aplicação ✅
+- Atualização da interface após importar dados sem recarregar a página ✅
+- Mensagens de sucesso, erro e cancelamento da importação ✅
 
-- Criar sistema de importação de dados por arquivo `.json`
-- Validar se o arquivo importado tem estrutura compatível
-- Validar versão/origem dos dados importados
-- Permitir substituir os dados atuais pelos dados importados
-- Usar confirmação antes de sobrescrever dados existentes
-- Atualizar todas as seções após importar dados
-- Exibir mensagem de sucesso ao importar dados
-- Exibir mensagem de erro caso o arquivo seja inválido
+### Importação em lote
 
----
+- Importação em lote de matérias por texto ✅
+- Importação em lote de temas por texto ✅
+- Importação de questões por texto estruturado ✅
+- Parser para formato oficial de questões ✅
+- Validação antes da importação ✅
+- Exibição de erros encontrados no texto importado ✅
+- Tratamento de duplicatas dentro da lista importada ✅
+- Tratamento de duplicatas já cadastradas ✅
+- Comparação ignorando maiúsculas, minúsculas e acentos ✅
+- Listagem compacta dos itens já cadastrados na aba de importação ✅
+- Exclusão rápida de matérias e temas pela listagem compacta ✅
 
-### Backup e restauração
+### Integridade e segurança dos dados
 
-- Criar fluxo simples de backup manual
-- Permitir restaurar dados a partir de um backup exportado
-- Evitar perda acidental de dados durante a importação
-- Manter o botão de exclusão total separado da importação
-- Melhorar textos de aviso sobre ações perigosas
-- Preparar a aplicação para uso pessoal com dados reais
+- Limpeza de tentativas e revisões ao excluir questões ✅
+- Limpeza de questões, tentativas e revisões ao excluir temas ✅
+- Limpeza de temas, questões, tentativas e revisões ao excluir matérias ✅
+- Remoção de registros órfãos antigos ✅
+- Correção de inconsistências em Dashboard, Revisões e Histórico ✅
+- Atualização visual das seções após exclusões e importações ✅
 
----
+### Melhorias de usabilidade
 
-### Integração com a interface
+- Botão “Começar estudos” com fluxo inteligente ✅
+- Redirecionamento para Matérias quando não há matérias cadastradas ✅
+- Redirecionamento para Temas quando não há temas cadastrados ✅
+- Redirecionamento para Questões > Cadastro quando há tema sem questão ✅
+- Seleção automática de matéria e tema no cadastro de questão ✅
+- Seleção aleatória de questão válida na seção Resolver ✅
+- Modal “Sobre” com resumo, objetivo, propósito e criador ✅
+- Contador de temas nos cards de matérias ✅
+- Contador de questões nos cards de temas ✅
+- Destaque visual para matérias sem temas e temas sem questões ✅
 
-- Adicionar card de Backup na seção Opções
-- Adicionar botão de Exportar dados
-- Adicionar botão de Importar dados
-- Adicionar campo para selecionar arquivo de backup
-- Padronizar mensagens de feedback
-- Garantir que a interface atualize sem recarregar após importação
-- Manter o visual consistente com a v0.9
+### Refinamentos visuais e responsividade
 
----
-
-### Preparação para app instalável
-
-- Revisar se a aplicação pode funcionar de forma estável com dados locais
-- Definir requisitos mínimos para futura versão PWA
-- Planejar criação de `manifest.json`
-- Planejar criação de `service-worker.js`
-- Planejar ícones da aplicação
-- Preparar caminho para instalação futura no PC e celular
+- Ajustes na seção Opções para separar ações gerais e backup ✅
+- Reorganização visual do card de backup ✅
+- Ajustes de responsividade dos painéis de importação ✅
+- Correção de transbordamentos entre 1200px e 1550px ✅
+- Cards compactos mais limpos nas abas de importação ✅
+- Melhorias no modal de importação de backup ✅
 
 ---
 
 ## Fechamento da v1.0
 
-A versão v1.0 será considerada concluída quando o usuário conseguir:
+A versão v1.0 foi considerada concluída porque o usuário consegue:
 
-- Exportar todos os dados principais da aplicação em um arquivo `.json`
-- Guardar esse arquivo como backup
-- Importar um arquivo `.json` válido
-- Restaurar matérias, temas, questões, tentativas, revisões e anotações
-- Ver a interface atualizar após a importação sem precisar recarregar a página
-- Receber avisos claros antes de sobrescrever dados existentes
-- Receber mensagens de erro quando tentar importar um arquivo inválido
-- Usar a aplicação com mais segurança para estudos reais
-- Ter uma base confiável para transformar a aplicação em app instalável posteriormente
+- Exportar todos os dados principais da aplicação em um arquivo `.json` ✅
+- Guardar esse arquivo como backup ✅
+- Importar um arquivo `.json` válido ✅
+- Conferir o conteúdo do backup antes de importar ✅
+- Restaurar matérias, temas, questões, tentativas, revisões e anotações ✅
+- Ver a interface atualizar após a importação sem precisar recarregar a página ✅
+- Receber avisos claros antes de sobrescrever dados existentes ✅
+- Receber mensagens de erro quando tenta importar um arquivo inválido ✅
+- Importar matérias em lote ✅
+- Importar temas em lote ✅
+- Importar questões por texto estruturado ✅
+- Usar o botão “Começar estudos” como atalho inteligente para estudar ou completar a base ✅
+- Excluir conteúdos sem deixar registros órfãos em tentativas, revisões ou Dashboard ✅
+- Usar a aplicação com mais segurança para estudos reais ✅
+- Ter uma base confiável para transformar a aplicação em app instalável posteriormente ✅
 
 ---
 

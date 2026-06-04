@@ -66,7 +66,7 @@ Dashboard
 
 ---
 
-## Funcionalidades implementadas até a v0.8
+## Funcionalidades implementadas até a v1.0
 
 - Tela inicial de apresentação.
 - Navegação visual por grupos: Resumo, Cadastro e Estudo.
@@ -92,6 +92,18 @@ Dashboard
 - Ações rápidas nos cards de anotações.
 - Tooltips nos botões de ações e tags ocultas.
 - Botão para apagar todos os dados com confirmação dupla.
+- Seção Opções para ações gerais da aplicação.
+- Exportação geral dos dados em `.json`.
+- Importação de backup em `.json`.
+- Prévia do conteúdo do backup antes da importação.
+- Importação em lote de matérias.
+- Importação em lote de temas.
+- Importação de questões por texto estruturado.
+- Validação de importações antes de salvar dados.
+- Tratamento de duplicatas com normalização de acentos.
+- Limpeza de registros relacionados ao excluir conteúdos.
+- Botão “Começar estudos” com fluxo inteligente.
+- Modal “Sobre” com informações da aplicação.
 
 ---
 
@@ -182,8 +194,6 @@ Remover borda, fundo e arredondamento herdados dos spans internos.
 
 ## Ideias futuras
 
-- Importação rápida de questões copiadas do ChatGPT.
-- Exportação de dados em `.json`.
 - Exportação de flashcards em `.csv`.
 - Sistema de simulados.
 - Revisão espaçada.
@@ -200,8 +210,8 @@ Remover borda, fundo e arredondamento herdados dos spans internos.
 
 ## Observações
 
-A v0.8 consolidou o Dashboard como uma central de orientação do estudo.
+A v1.0 consolidou a aplicação como uma versão mais segura para uso pessoal, adicionando backup, importação, exportação e mecanismos de integridade dos dados.
 
-O sistema já permite organizar conteúdos, praticar questões, revisar erros, registrar anotações e acompanhar indicadores básicos.
+Com isso, a Central de Estudos Web já pode ser usada de forma mais confiável para estudos reais, desde que o usuário mantenha backups periódicos dos dados.
 
-A próxima etapa natural é revisar a organização visual, responsividade e consistência geral da interface antes da v1.0.
+A próxima etapa natural é transformar a aplicação em instalável com PWA, mantendo a segurança dos dados como prioridade.

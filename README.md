@@ -54,6 +54,18 @@ A proposta é ajudar o estudante a entender não apenas o que já foi cadastrado
 - Alternância entre tema claro e escuro
 - Botão de reset geral dos dados
 - Salvamento local no navegador
+- Exportação geral dos dados em arquivo `.json`
+- Importação de backup em `.json`
+- Validação de estrutura do backup importado
+- Prévia do conteúdo do backup antes da importação
+- Confirmação antes de substituir dados existentes
+- Importação em lote de matérias por texto
+- Importação em lote de temas por texto
+- Importação de questões por formato textual estruturado
+- Tratamento de duplicatas ignorando diferenças entre maiúsculas, minúsculas e acentos
+- Limpeza de registros relacionados ao excluir matérias, temas ou questões
+- Início inteligente de estudos pelo botão “Começar estudos”
+- Modal “Sobre” com resumo, objetivo, propósito e autoria da aplicação
 
 ---
 
@@ -79,13 +91,13 @@ A ideia do Dashboard é ajudar o usuário a decidir o próximo passo de estudo s
 Versão atual:
 
 ```txt
-v0.8 — Dashboard inteligente e indicadores de estudo
+v1.0 — Backup, importação e uso seguro
 ```
 
 Status:
 
 ```txt
-Em revisão final para fechamento
+Concluída
 ```
 
 ---
@@ -165,10 +177,11 @@ O que falta completar?
 
 ## Próximos passos
 
-- Fechar a v0.8 com revisão final da documentação
-- Revisar responsividade e consistência visual na v0.9
-- Preparar a aplicação para a primeira versão base usável na v1.0
-- Avaliar futuramente sistema de simulados, exportação de dados e integração com flashcards
+- Fechar a v1.0 com revisão final da documentação
+- Criar a tag `v1.0`
+- Fazer merge da branch `dev/v1.0` para `main`
+- Iniciar a v1.1 com foco em PWA e instalação da aplicação
+- Planejar `manifest.json`, `service-worker.js` e ícones da aplicação
 
 ---
 
