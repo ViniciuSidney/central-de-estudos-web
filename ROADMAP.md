@@ -836,6 +836,22 @@ Antes de transformar a aplicação em PWA ou app instalável, é importante gara
 
 ---
 
+# v1.0.2 — Ajustes de uso real
+
+## Objetivo:
+
+Corrigir problemas percebidos no uso da aplicação publicada, principalmente em dispositivos móveis, e melhorar fluxos rápidos de revisão e anotação a partir da resolução de questões.
+
+## Escopo:
+
+- Corrigir rolagem de modais em telas menores
+- Corrigir transbordamento do modal de visualização de anotações
+- Permitir revisar erros pelo histórico recente da seção Resolver
+- Permitir transformar acertos em anotações de confirmação
+- Refinar detalhes visuais encontrados durante o uso real
+
+---
+
 # v1.1 — Aplicação instalável com PWA
 
 ### Objetivo

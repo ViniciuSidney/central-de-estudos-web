@@ -1,3 +1,7 @@
+/* =========================================================
+   MODAL — ESTRUTURA BASE COM ÁREA ROLÁVEL
+   ========================================================= */
+
 .modal-overlay {
 	position: fixed;
 	inset: 0;
@@ -7,10 +11,12 @@
 	align-items: center;
 	justify-content: center;
 
-	padding: 24px;
+	padding: 16px;
 
 	background: rgba(0, 0, 0, 0.72);
 	backdrop-filter: blur(8px);
+
+	overflow: auto;
 }
 
 .modal-overlay[hidden] {
@@ -18,12 +24,43 @@
 }
 
 .modal {
-	width: min(460px, 100%);
-	padding: 24px;
+	width: min(860px, 100%);
+	max-height: calc(100dvh - 32px);
+
+	display: flex;
+	flex-direction: column;
+
 	background: var(--surface);
 	border: 1px solid var(--border);
 	border-radius: 20px;
 	box-shadow: var(--shadow);
+
+	overflow: hidden;
+}
+
+.modal__header {
+	flex-shrink: 0;
+	padding: 24px 24px 16px;
+	border-bottom: 1px solid var(--border);
+}
+
+.modal__body {
+	min-height: 0;
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px 24px;
+}
+
+.modal__footer {
+	flex-shrink: 0;
+	padding: 16px 24px 24px;
+	border-top: 1px solid var(--border);
+}
+
+.modal__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
 }
 
 .modal__tag {
@@ -50,6 +87,10 @@
 .modal__description {
 	color: var(--muted);
 	line-height: 1.6;
+
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 4px;
 }
 
 .about-modal__content {
@@ -111,13 +152,6 @@
 	border-radius: 8px;
 
 	overflow-wrap: anywhere;
-}
-
-.modal__actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-	margin-top: 24px;
 }
 
 .modal__tag--danger {
@@ -185,6 +219,17 @@
 .app-confirm-modal__side {
 	display: flex;
 	flex-direction: column;
+}
+
+.app-confirm-modal--split {
+	max-height: calc(100dvh - 48px);
+	overflow: visible;
+}
+
+.app-confirm-modal--split .app-confirm-modal__main,
+.app-confirm-modal--split .app-confirm-modal__side {
+	max-height: calc(100dvh - 48px);
+	overflow-y: auto;
 }
 
 /* =========================================================
@@ -279,4 +324,507 @@
 
 .backup-preview-panel__footer strong {
 	color: var(--accent);
+}
+
+/* =========================================================
+   MODAL DE MOVER QUESTÃO
+   ========================================================= */
+
+.move-question-current {
+	display: grid;
+	gap: 6px;
+
+	padding: 14px;
+	margin: 16px 0;
+
+	color: var(--muted);
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.move-question-current strong {
+	color: var(--text);
+}
+
+/* =========================================================
+   MODAL — VISUALIZAÇÃO DE ANOTAÇÃO
+   ========================================================= */
+
+.note-view-modal {
+	width: min(760px, 100%);
+	max-height: calc(100dvh - 32px);
+}
+
+.note-view-modal__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.note-view-modal__body {
+	min-height: 0;
+	flex: 1;
+
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.note-view-modal__meta {
+	flex-shrink: 0;
+
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.note-view-modal__meta span {
+	padding: 6px 10px;
+
+	color: var(--muted);
+	font-size: 0.85rem;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 999px;
+}
+
+.note-view-modal__content {
+	min-height: 0;
+	flex: 1;
+
+	overflow-y: auto;
+
+	padding: 18px;
+	padding-right: 8px;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+}
+
+#view-note-content {
+	margin: 0;
+
+	color: var(--text);
+	line-height: 1.75;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+#view-note-content-edit {
+	width: 100%;
+	min-height: 320px;
+	max-height: 55dvh;
+
+	resize: vertical;
+	overflow-y: auto;
+
+	color: var(--text);
+	font: inherit;
+	line-height: 1.65;
+
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	outline: none;
+}
+
+#view-note-content-edit:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
+}
+
+/* =========================================================
+   MODAL — REVISÃO DE ERRO
+   ========================================================= */
+
+.review-error-workspace {
+	width: min(1120px, 100%);
+	max-height: calc(100dvh - 48px);
+
+	display: grid;
+	grid-template-columns: minmax(320px, 0.95fr) minmax(320px, 0.85fr);
+	grid-template-areas:
+		'form meta'
+		'form preview';
+	gap: 18px;
+
+	overflow: visible;
+}
+
+.review-error-window {
+	min-height: 0;
+	max-height: 100%;
+
+	display: flex;
+	flex-direction: column;
+
+	padding: 24px;
+
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 20px;
+	box-shadow: var(--shadow);
+
+	overflow: hidden;
+}
+
+.review-error-window--form {
+	grid-area: form;
+}
+
+.review-error-window--meta {
+	grid-area: meta;
+}
+
+.review-error-window--preview {
+	grid-area: preview;
+}
+
+/* Modal de escrita: rolagem dentro da própria janela do formulário */
+.review-error-window--form {
+	overflow-y: auto;
+}
+
+/* Modais/painéis de leitura: rolagem dentro do conteúdo mostrado */
+.review-error-window--meta,
+.review-error-window--preview {
+	overflow-y: auto;
+}
+
+#review-error-current,
+#review-error-preview {
+	min-height: 0;
+	overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   REVISÕES — IDENTIFICAÇÃO DO ERRO
+   ========================================================= */
+
+.review-error-meta {
+	display: grid;
+	gap: 16px;
+}
+
+.review-error-meta__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.review-error-meta__title {
+	color: var(--text);
+	font-size: 1.05rem;
+	font-weight: 800;
+}
+
+.review-error-meta__chip {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	width: fit-content;
+	padding: 6px 12px;
+
+	font-size: 0.82rem;
+	font-weight: 800;
+
+	border-radius: 999px;
+}
+
+.review-error-meta__chip.is-wrong {
+	color: var(--feedback-error-border);
+	background: var(--feedback-inner-error-bg);
+	border: 1px solid var(--feedback-error-border);
+}
+
+.review-error-meta__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.review-error-meta__item {
+	display: grid;
+	gap: 6px;
+
+	padding: 14px;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.review-error-meta__item small {
+	color: var(--muted);
+	font-size: 0.78rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.review-error-meta__item strong,
+.review-error-meta__item span {
+	color: var(--text);
+	line-height: 1.5;
+}
+
+/* =========================================================
+   REVISÕES — PRÉVIA DA RESOLUÇÃO
+   ========================================================= */
+
+.review-error-preview {
+	display: grid;
+	gap: 14px;
+}
+
+.review-error-preview__header {
+	display: grid;
+	gap: 10px;
+}
+
+.review-error-preview__title {
+	color: var(--text);
+	font-size: 1.05rem;
+	font-weight: 800;
+}
+
+.review-error-preview__status {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	width: fit-content;
+	padding: 6px 12px;
+
+	font-size: 0.82rem;
+	font-weight: 800;
+
+	border-radius: 999px;
+}
+
+.review-error-preview__status.is-correct {
+	color: var(--accent);
+	background: var(--feedback-inner-success-bg);
+	border: 1px solid var(--feedback-success-border);
+}
+
+.review-error-preview__status.is-wrong {
+	color: var(--feedback-error-border);
+	background: var(--feedback-inner-error-bg);
+	border: 1px solid var(--feedback-error-border);
+}
+
+.review-error-preview__block {
+	display: grid;
+	gap: 6px;
+
+	padding: 14px;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.review-error-preview__block small {
+	color: var(--muted);
+	font-size: 0.78rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.review-error-preview__block p,
+.review-error-preview__block span {
+	color: var(--text);
+	line-height: 1.6;
+}
+
+.review-error-preview__answers {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+}
+
+.review-error-preview__answer {
+	display: grid;
+	gap: 6px;
+
+	padding: 14px;
+
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.review-error-preview__answer small {
+	font-size: 0.78rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.review-error-preview__answer strong {
+	color: var(--text);
+	line-height: 1.5;
+}
+
+.review-error-preview__answer.is-selected {
+	background: var(--feedback-inner-error-bg);
+	border-color: var(--feedback-error-border);
+}
+
+.review-error-preview__answer.is-correct {
+	background: var(--feedback-inner-success-bg);
+	border-color: var(--feedback-success-border);
+}
+
+/* =========================================================
+   REVISÕES — MODAL DE REVISÃO DE ERRO
+   ========================================================= */
+
+.review-error-workspace {
+	display: grid;
+	grid-template-columns: minmax(420px, 560px) minmax(360px, 500px);
+	grid-template-areas:
+		'form meta'
+		'form preview';
+	gap: 22px 28px;
+	align-items: start;
+	justify-content: center;
+
+	width: min(1220px, calc(100vw - 48px));
+	padding: 8px;
+}
+
+.review-error-window {
+	display: grid;
+	gap: 16px;
+
+	padding: 24px;
+
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 22px;
+	box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+}
+
+.review-error-window--form {
+	grid-area: form;
+	min-height: 640px;
+}
+
+.review-error-window--meta {
+	grid-area: meta;
+	align-self: start;
+}
+
+.review-error-window--preview {
+	grid-area: preview;
+	align-self: start;
+	min-height: 280px;
+}
+
+.review-error-window--preview > div {
+	width: 100%;
+}
+
+.review-error-current {
+	display: grid;
+	gap: 6px;
+
+	padding: 14px;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+}
+
+.review-error-current strong {
+	color: var(--text);
+}
+
+/* =========================================================
+   MODAL — SCROLLBAR CUSTOMIZADA
+   ========================================================= */
+
+.modal__body,
+.note-view-modal__body,
+.review-error-window--form,
+.review-error-window--meta,
+.review-error-window--preview,
+.backup-preview-panel,
+.modal-scrollable {
+	scrollbar-width: thin;
+	scrollbar-color: var(--accent) var(--bg);
+}
+
+.modal__body::-webkit-scrollbar,
+.note-view-modal__body::-webkit-scrollbar,
+.review-error-window--form::-webkit-scrollbar,
+.review-error-window--meta::-webkit-scrollbar,
+.review-error-window--preview::-webkit-scrollbar,
+.backup-preview-panel::-webkit-scrollbar,
+.modal-scrollable::-webkit-scrollbar {
+	width: 10px;
+}
+
+.modal__body::-webkit-scrollbar-track,
+.note-view-modal__body::-webkit-scrollbar-track,
+.review-error-window--form::-webkit-scrollbar-track,
+.review-error-window--meta::-webkit-scrollbar-track,
+.review-error-window--preview::-webkit-scrollbar-track,
+.backup-preview-panel::-webkit-scrollbar-track,
+.modal-scrollable::-webkit-scrollbar-track {
+	background: var(--bg);
+	border-radius: 999px;
+}
+
+.modal__body::-webkit-scrollbar-thumb,
+.note-view-modal__body::-webkit-scrollbar-thumb,
+.review-error-window--form::-webkit-scrollbar-thumb,
+.review-error-window--meta::-webkit-scrollbar-thumb,
+.review-error-window--preview::-webkit-scrollbar-thumb,
+.backup-preview-panel::-webkit-scrollbar-thumb,
+.modal-scrollable::-webkit-scrollbar-thumb {
+	background: var(--accent);
+	border: 2px solid var(--bg);
+	border-radius: 999px;
+}
+
+.modal__body::-webkit-scrollbar-thumb:hover,
+.note-view-modal__body::-webkit-scrollbar-thumb:hover,
+.review-error-window--form::-webkit-scrollbar-thumb:hover,
+.review-error-window--meta::-webkit-scrollbar-thumb:hover,
+.review-error-window--preview::-webkit-scrollbar-thumb:hover,
+.backup-preview-panel::-webkit-scrollbar-thumb:hover,
+.modal-scrollable::-webkit-scrollbar-thumb:hover {
+	filter: brightness(1.08);
+}
+
+/* =========================================================
+   MODAL — FORMULÁRIOS / ESCRITA
+   ========================================================= */
+
+.review-error-window__header {
+	flex-shrink: 0;
+	padding: 24px 24px 16px;
+	border-bottom: 1px solid var(--border);
+}
+
+.review-error-window__body {
+	min-height: 0;
+	flex: 1;
+	overflow-y: auto;
+	padding: 20px 24px;
+}
+
+.review-error-window__footer {
+	flex-shrink: 0;
+	padding: 16px 24px 24px;
+	border-top: 1px solid var(--border);
 }

@@ -1260,7 +1260,8 @@
 							<strong>Versão atual: v1.0 — Backup, importação e uso seguro</strong>
 
 							<span>
-								Adicionar exportação e importação de dados, backup em JSON, importação em lote de matérias, temas e questões, início inteligente dos estudos, integridade dos dados relacionados e uma base mais segura para uso pessoal.<br><strong>Próxima etapa: v1.1, com foco em transformar a aplicação em instalável usando PWA.</strong>
+								Adicionar exportação e importação de dados, backup em JSON, importação em lote de matérias, temas e questões, início inteligente dos estudos, integridade dos dados relacionados
+								e uma base mais segura para uso pessoal.<br /><strong>Próxima etapa: v1.1, com foco em transformar a aplicação em instalável usando PWA.</strong>
 							</span>
 						</div>
 					</article>
@@ -1418,7 +1419,7 @@
 		<!-- Visualizar Anotação -->
 		<div class="modal-overlay" id="view-note-modal" role="dialog" aria-modal="true" aria-labelledby="view-note-title" aria-describedby="view-note-description" hidden>
 			<div class="modal note-view-modal">
-				<div class="note-view-modal__header">
+				<header class="modal__header note-view-modal__header">
 					<div>
 						<p class="modal__tag">🗒️ Anotação</p>
 
@@ -1427,24 +1428,28 @@
 						<p class="modal__description" id="view-note-description">Consulte o conteúdo completo da anotação selecionada.</p>
 					</div>
 
-					<span class="note-card__type" id="view-note-type"> Tipo </span>
+					<span class="note-card__type" id="view-note-type">Tipo</span>
+				</header>
+
+				<div class="modal__body note-view-modal__body">
+					<div class="note-view-modal__meta" id="view-note-meta"></div>
+
+					<div class="note-view-modal__content" id="view-note-content-panel">
+						<p id="view-note-content"></p>
+
+						<textarea id="view-note-content-edit" rows="10" hidden></textarea>
+					</div>
+
+					<p class="form-message" id="view-note-message" aria-live="polite"></p>
 				</div>
 
-				<div class="note-view-modal__meta" id="view-note-meta"></div>
+				<footer class="modal__footer">
+					<div class="modal__actions">
+						<button class="button button--secondary" type="button" id="close-view-note">Fechar</button>
 
-				<div class="note-view-modal__content" id="view-note-content-panel">
-					<p id="view-note-content"></p>
-
-					<textarea id="view-note-content-edit" rows="10" hidden></textarea>
-				</div>
-
-				<p class="form-message" id="view-note-message" aria-live="polite"></p>
-
-				<div class="modal__actions">
-					<button class="button button--secondary" type="button" id="close-view-note">Fechar</button>
-
-					<button class="button button--primary" type="button" id="quick-edit-note">Editar conteúdo</button>
-				</div>
+						<button class="button button--primary" type="button" id="quick-edit-note">Editar conteúdo</button>
+					</div>
+				</footer>
 			</div>
 		</div>
 
@@ -1490,7 +1495,7 @@
 
 				<h3 class="modal__title" id="about-modal-title">Central de Estudos Web</h3>
 
-				<div class="modal__description about-modal__content">
+				<div class="modal__body about-modal__content">
 					<div class="about-modal__highlight-grid">
 						<div class="about-modal__highlight-card">
 							<p class="about-modal__highlight-title">Resumo</p>
@@ -1514,7 +1519,7 @@
 					</div>
 				</div>
 
-				<div class="modal__actions">
+				<div class="modal__footer">
 					<button class="button button--primary" type="button" id="close-about-modal">Legal!</button>
 				</div>
 			</div>

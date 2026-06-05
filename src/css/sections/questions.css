@@ -468,27 +468,6 @@
 }
 
 /* =========================================================
-   MODAL DE MOVER QUESTÃO
-   ========================================================= */
-
-.move-question-current {
-  display: grid;
-  gap: 6px;
-
-  padding: 14px;
-  margin: 16px 0;
-
-  color: var(--muted);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-}
-
-.move-question-current strong {
-  color: var(--text);
-}
-
-/* =========================================================
 	IMPORTAÇÃO DE QUESTÕES
 	========================================================= */
 
