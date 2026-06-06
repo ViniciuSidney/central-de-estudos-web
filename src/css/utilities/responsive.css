@@ -45,6 +45,28 @@
 	}
 }
 
+@media (min-width: 901px) and (max-width: 1430px) {
+	/* hero */
+	.hero {
+		grid-template-columns: minmax(0, 1fr) 220px;
+		align-items: center;
+	}
+
+	.hero__actions {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: center;
+
+		min-width: 0;
+	}
+
+	.hero__actions .button {
+		width: 100%;
+		min-width: 0;
+		justify-content: center;
+	}
+}
+
 @media (max-width: 1200px) {
 	/* solve */
 	.solve-workspace {
