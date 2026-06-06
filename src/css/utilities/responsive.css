@@ -155,7 +155,7 @@
 	/* reviews */
 	.review-error-workspace {
 		width: min(720px, calc(100vw - 32px));
-		max-height: none;
+		max-height: calc(100dvh - 32px);
 
 		grid-template-columns: 1fr;
 		grid-template-areas:
@@ -164,7 +164,7 @@
 			'preview';
 		gap: 18px;
 
-		overflow: visible;
+		overflow-y: auto;
 	}
 
 	.review-error-window {
@@ -297,13 +297,22 @@
 	}
 
 	/* modals */
-	.app-confirm-modal--split {
+	.modal-overlay--split {
+		display: block;
+		padding: 16px;
+		overflow-y: auto;
+		box-sizing: border-box;
+	}
+
+	.modal-overlay--split .app-confirm-modal--split {
 		width: min(520px, 100%);
 		max-height: none;
+		margin: 0 auto 16px;
 	}
 
 	.app-confirm-modal--split .app-confirm-modal__layout {
 		grid-template-columns: 1fr;
+		align-items: stretch;
 	}
 
 	.app-confirm-modal--split .app-confirm-modal__main,
@@ -474,17 +483,27 @@
 		justify-content: center;
 	}
 
+	.about-modal__highlight-grid {
+		grid-template-columns: 1fr;
+	}
+
 	.note-view-modal {
 		max-height: calc(100dvh - 24px);
 	}
 
-	.note-view-modal__content {
-		min-height: 0;
-		overflow-y: auto;
-	}
-
 	.note-view-modal__header {
 		flex-direction: column;
+	}
+
+	.note-view-modal__body {
+		overflow: hidden;
+		padding: 16px;
+		gap: 14px;
+	}
+
+	.note-view-modal__content {
+		overflow-y: auto;
+		padding: 16px;
 	}
 
 	.note-view-modal .modal__actions {
@@ -496,8 +515,9 @@
 	}
 
 	#view-note-content-edit {
-		max-height: 55dvh;
-		overflow-y: auto;
+		min-height: 260px;
+		height: 100%;
+		resize: none;
 	}
 
 	.review-error-workspace {
@@ -509,6 +529,35 @@
 
 	.review-error-window {
 		max-height: calc(100dvh - 24px);
+		padding: 18px;
+		border-radius: 18px;
+	}
+
+	/* SPLIT MODAL */
+	.modal-overlay--split {
+		display: block;
+		padding: 12px;
+		overflow-y: auto;
+		box-sizing: border-box;
+	}
+
+	.modal-overlay--split .app-confirm-modal--split {
+		width: 100%;
+		max-height: none;
+		margin: 0 auto 12px;
+	}
+
+	/* RESET DATA MODAL */
+	.reset-data-modal__body {
+		gap: 14px;
+	}
+
+	.reset-warning {
+		padding: 12px;
+	}
+
+	.reset-confirm-check {
+		align-items: flex-start;
 	}
 }
 

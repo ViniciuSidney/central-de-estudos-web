@@ -230,6 +230,8 @@ export function initDataPortability() {
 				document.body.style.overflow = '';
 
 				modalBox.classList.remove('app-confirm-modal--split');
+				modal.classList.remove('modal-overlay--split');
+				
 				modalSide.hidden = true;
 				modalSide.innerHTML = '';
 
@@ -273,11 +275,15 @@ export function initDataPortability() {
 			if (sideContentHTML) {
 				modalSide.innerHTML = sideContentHTML;
 				modalSide.hidden = false;
+
 				modalBox.classList.add('app-confirm-modal--split');
+				modal.classList.add('modal-overlay--split');
 			} else {
 				modalSide.innerHTML = '';
 				modalSide.hidden = true;
+
 				modalBox.classList.remove('app-confirm-modal--split');
+				modal.classList.remove('modal-overlay--split');
 			}
 
 			cancelButton.textContent = cancelText;

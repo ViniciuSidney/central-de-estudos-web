@@ -1,96 +1,101 @@
 .form-message {
-  min-height: 22px;
-  color: var(--muted);
-  font-size: 0.95rem;
-  line-height: 1.4;
+	min-height: 22px;
+
+	color: var(--muted);
+	font-size: 0.95rem;
+	line-height: 1.4;
 }
 
 .form-message.is-error {
-  color: #b34a4a;
+	color: #b34a4a;
 }
 
 .form-message.is-success {
-  color: var(--accent);
+	color: var(--accent);
 }
 
 .form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
 }
 
 .form-group label {
-  font-size: 0.95rem;
-  font-weight: 700;
+	color: var(--text);
+	font-size: 0.92rem;
+	font-weight: 800;
+	line-height: 1.3;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
-  width: 100%;
-  padding: 13px 14px;
+	width: 100%;
+	padding: 13px 14px;
 
-  color: var(--text);
-  font: inherit;
+	color: var(--text);
+	font: inherit;
 
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  outline: none;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	outline: none;
 
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+	transition:
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
 .form-group textarea {
-  resize: vertical;
+	min-height: 82px;
+	resize: vertical;
+	line-height: 1.5;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(47, 95, 79, 0.12);
 }
 
 .form-grid,
 .alternatives-grid {
-  display: grid;
-  gap: 14px;
+	display: grid;
+	gap: 18px;
 }
 
 .form-grid {
-  grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(2, 1fr);
 }
 
 .alternatives-grid {
-  grid-template-columns: 1fr;
+	grid-template-columns: 1fr;
 }
 
 .subject-form,
 .theme-form,
 .question-form {
-  display: grid;
-  gap: 16px;
+	display: grid;
+	gap: 18px;
 }
 
 .question-form {
-  padding: 20px;
-  margin-top: 12px;
+	padding: 20px;
+	margin-top: 12px;
 
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 16px;
 }
 
 .form-group select:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+	cursor: not-allowed;
+	opacity: 0.65;
 }
