@@ -156,6 +156,11 @@
 	justify-content: center;
 }
 
+.solve-history-card__action:disabled {
+	cursor: not-allowed;
+	opacity: 0.65;
+}
+
 /* =========================================================
    PAINEL PRINCIPAL DA QUESTÃO
    ========================================================= */

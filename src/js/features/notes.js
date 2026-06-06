@@ -300,7 +300,7 @@ export function initNotes() {
 		showNoteTab('gallery');
 	}
 
-	function createNote({title, content, type, status, tags, subjectId, themeId}) {
+	function createNote({title, content, type, status, tags, subjectId, themeId, sourceAttemptId = null, sourceQuestionId = null, origin = null}) {
 		return {
 			id: crypto.randomUUID(),
 			title,
@@ -310,6 +310,9 @@ export function initNotes() {
 			tags,
 			subjectId: subjectId || null,
 			themeId: themeId || null,
+			sourceAttemptId,
+			sourceQuestionId,
+			origin,
 			isFavorite: false,
 			isPinned: false,
 			isArchived: false,
@@ -1439,10 +1442,52 @@ export function initNotes() {
 		setNoteMessage('Crie uma anotação para completar este tema.', 'success');
 	}
 
+	function handleCreateConfirmationNote(event) {
+		const {title, content, type, status, tags, subjectId, themeId, sourceAttemptId, sourceQuestionId, origin} = event.detail || {};
+
+		if (!title || !content || !sourceAttemptId) {
+			return;
+		}
+
+		const alreadyExists = getNotes().some((note) => {
+			return note.sourceAttemptId === sourceAttemptId && note.origin === 'confirmation';
+		});
+
+		if (alreadyExists) {
+			document.dispatchEvent(new CustomEvent('notes:confirmation-note-created'));
+			return;
+		}
+
+		const notes = getNotes();
+
+		const newNote = createNote({
+			title,
+			content,
+			type: type || 'revisao',
+			status: status || 'revisar',
+			tags: Array.isArray(tags) ? tags : ['confirmação'],
+			subjectId,
+			themeId,
+			sourceAttemptId,
+			sourceQuestionId,
+			origin: origin || 'confirmation'
+		});
+
+		notes.push(newNote);
+
+		saveNotes(notes);
+		notifyNotesChanged();
+
+		document.dispatchEvent(new CustomEvent('notes:confirmation-note-created'));
+
+		setNoteMessage('Anotação de confirmação criada com sucesso.', 'success');
+	}
+
 	//-------------------------------------
 
 	document.addEventListener('notes:open-note', handleExternalNoteOpen);
 	document.addEventListener('notes:prepare-create', handleExternalNoteCreate);
+	document.addEventListener('notes:create-confirmation-note', handleCreateConfirmationNote);
 
 	saveNoteButton.addEventListener('click', handleNoteSubmit);
 	clearNoteFormButton.addEventListener('click', clearNoteForm);

@@ -4,6 +4,7 @@ const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
 const QUESTIONS_COLLECTION = 'questions';
 const ATTEMPTS_COLLECTION = 'attempts';
+const NOTES_COLLECTION = 'notes';
 
 const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -62,6 +63,10 @@ export function initSolve() {
 
 	function getAttempts() {
 		return getCollection(ATTEMPTS_COLLECTION);
+	}
+
+	function getNotes() {
+		return getCollection(NOTES_COLLECTION);
 	}
 
 	function saveAttempts(attempts) {
@@ -198,6 +203,8 @@ export function initSolve() {
 
 			attemptCard.classList.add('solve-history-card');
 
+			const alreadyHasConfirmationNote = attempt.isCorrect && hasConfirmationNoteForAttempt(attempt.id);
+
 			attemptCard.innerHTML = `
 				<div class="solve-history-card__content">
 					<strong>Questão ${escapeHTML(questionNumber)}</strong>
@@ -221,7 +228,16 @@ export function initSolve() {
 								Revisar
 							</button>
 						`
-							: ''
+							: `
+							<button
+								class="button button--secondary solve-history-card__action"
+								type="button"
+								data-confirmation-attempt="${escapeHTML(attempt.id)}"
+								${alreadyHasConfirmationNote ? 'disabled' : ''}
+							>
+								${alreadyHasConfirmationNote ? 'Anotada' : 'Criar anotação'}
+							</button>
+						`
 					}
 				</div>
 				`;
@@ -646,24 +662,100 @@ export function initSolve() {
 
 	function handleSolveHistoryActionClick(event) {
 		const reviewButton = event.target.closest('[data-review-attempt]');
+		const confirmationButton = event.target.closest('[data-confirmation-attempt]');
 
-		if (!reviewButton) {
+		if (reviewButton) {
+			const attemptId = reviewButton.dataset.reviewAttempt;
+
+			if (!attemptId) {
+				return;
+			}
+
+			document.dispatchEvent(
+				new CustomEvent('reviews:open-error-modal', {
+					detail: {
+						attemptId
+					}
+				})
+			);
+
 			return;
 		}
 
-		const attemptId = reviewButton.dataset.reviewAttempt;
+		if (confirmationButton) {
+			const attemptId = confirmationButton.dataset.confirmationAttempt;
 
-		if (!attemptId) {
-			return;
+			if (!attemptId) {
+				return;
+			}
+
+			const attempt = getAttempts().find((currentAttempt) => {
+				return currentAttempt.id === attemptId;
+			});
+
+			if (!attempt || !attempt.isCorrect) {
+				return;
+			}
+
+			const payload = createConfirmationNotePayload(attempt);
+
+			if (!payload) {
+				return;
+			}
+
+			document.dispatchEvent(
+				new CustomEvent('notes:create-confirmation-note', {
+					detail: payload
+				})
+			);
+		}
+	}
+
+	function hasConfirmationNoteForAttempt(attemptId) {
+		return getNotes().some((note) => {
+			return note.sourceAttemptId === attemptId && note.origin === 'confirmation';
+		});
+	}
+
+	function createConfirmationNotePayload(attempt) {
+		const subject = getSubjectById(attempt.subjectId);
+		const theme = getThemeById(attempt.themeId);
+		const question = getQuestionById(attempt.questionId);
+
+		if (!subject || !theme || !question) {
+			return null;
 		}
 
-		document.dispatchEvent(
-			new CustomEvent('reviews:open-error-modal', {
-				detail: {
-					attemptId
-				}
-			})
-		);
+		const questionNumber = getQuestionIndexWithinTheme(question);
+		const correctAlternativeKey = question.correctAlternative;
+		const correctVisualAlternative = attempt.correctVisualAlternative || correctAlternativeKey;
+		const correctAlternativeText = question.alternatives?.[correctAlternativeKey] || 'Alternativa não encontrada.';
+		const explanationText = question.explanation || 'Nenhuma explicação cadastrada para esta questão.';
+
+		return {
+			title: `Questão ${questionNumber}`,
+			type: 'revisao',
+			status: 'revisar',
+			tags: ['confirmação'],
+			subjectId: subject.id,
+			themeId: theme.id,
+			sourceAttemptId: attempt.id,
+			sourceQuestionId: question.id,
+			origin: 'confirmation',
+			content: `# Questão ${questionNumber}
+
+			## Enunciado
+
+			${question.statement}
+
+			## Resposta correta
+
+			${correctVisualAlternative}) ${correctAlternativeText}
+
+			## Explicação
+
+			${explanationText}`
+		};
 	}
 
 	// Event listeners
@@ -688,7 +780,8 @@ export function initSolve() {
 
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:changed', renderSubjectOptions);
-
+	document.addEventListener('notes:confirmation-note-created', renderSolveHistory);
+	
 	document.addEventListener('questions:changed', () => {
 		renderSubjectOptions();
 		renderSolveHistory();
