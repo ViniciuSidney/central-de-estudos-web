@@ -5,6 +5,7 @@ const THEMES_COLLECTION = 'themes';
 const QUESTIONS_COLLECTION = 'questions';
 const ATTEMPTS_COLLECTION = 'attempts';
 const NOTES_COLLECTION = 'notes';
+const ERROR_REVIEWS_COLLECTION = 'errorReviews';
 
 const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -67,6 +68,16 @@ export function initSolve() {
 
 	function getNotes() {
 		return getCollection(NOTES_COLLECTION);
+	}
+
+	function getErrorReviews() {
+		return getCollection(ERROR_REVIEWS_COLLECTION);
+	}
+
+	function hasReviewForAttempt(attemptId) {
+		return getErrorReviews().some((review) => {
+			return review.attemptId === attemptId;
+		});
 	}
 
 	function saveAttempts(attempts) {
@@ -203,7 +214,8 @@ export function initSolve() {
 
 			attemptCard.classList.add('solve-history-card');
 
-			const alreadyHasConfirmationNote = attempt.isCorrect && hasConfirmationNoteForAttempt(attempt.id);
+			const alreadyHasConfirmationNote = attempt.isCorrect && hasConfirmationNoteForQuestion(attempt.questionId);
+			const alreadyReviewed = !attempt.isCorrect && hasReviewForAttempt(attempt.id);
 
 			attemptCard.innerHTML = `
 				<div class="solve-history-card__content">
@@ -221,16 +233,17 @@ export function initSolve() {
 						!attempt.isCorrect
 							? `
 							<button
-								class="button button--secondary solve-history-card__action"
+								class="button button--secondary solve-history-card__action ${alreadyReviewed ? 'is-reviewed' : ''}"
 								type="button"
 								data-review-attempt="${escapeHTML(attempt.id)}"
+								${alreadyReviewed ? 'disabled' : ''}
 							>
-								Revisar
+								${alreadyReviewed ? 'Revisado' : 'Revisar'}
 							</button>
 						`
 							: `
 							<button
-								class="button button--secondary solve-history-card__action"
+								class="button button--secondary solve-history-card__action ${alreadyHasConfirmationNote ? 'is-reviewed' : ''}"
 								type="button"
 								data-confirmation-attempt="${escapeHTML(attempt.id)}"
 								${alreadyHasConfirmationNote ? 'disabled' : ''}
@@ -664,6 +677,10 @@ export function initSolve() {
 		const reviewButton = event.target.closest('[data-review-attempt]');
 		const confirmationButton = event.target.closest('[data-confirmation-attempt]');
 
+		if (reviewButton?.disabled || confirmationButton?.disabled) {
+			return;
+		}
+
 		if (reviewButton) {
 			const attemptId = reviewButton.dataset.reviewAttempt;
 
@@ -711,9 +728,9 @@ export function initSolve() {
 		}
 	}
 
-	function hasConfirmationNoteForAttempt(attemptId) {
+	function hasConfirmationNoteForQuestion(questionId) {
 		return getNotes().some((note) => {
-			return note.sourceAttemptId === attemptId && note.origin === 'confirmation';
+			return note.sourceQuestionId === questionId && note.origin === 'confirmation';
 		});
 	}
 
@@ -781,13 +798,14 @@ export function initSolve() {
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:changed', renderSubjectOptions);
 	document.addEventListener('notes:confirmation-note-created', renderSolveHistory);
-	
+
 	document.addEventListener('questions:changed', () => {
 		renderSubjectOptions();
 		renderSolveHistory();
 	});
 
 	document.addEventListener('attempts:changed', renderSolveHistory);
+	document.addEventListener('errorReviews:changed', renderSolveHistory);
 
 	document.addEventListener('solve:select-question', (event) => {
 		const questionId = event.detail?.questionId;

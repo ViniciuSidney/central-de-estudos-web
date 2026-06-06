@@ -1450,7 +1450,7 @@ export function initNotes() {
 		}
 
 		const alreadyExists = getNotes().some((note) => {
-			return note.sourceAttemptId === sourceAttemptId && note.origin === 'confirmation';
+			return note.sourceQuestionId === sourceQuestionId && note.origin === 'confirmation';
 		});
 
 		if (alreadyExists) {
@@ -1558,6 +1558,10 @@ export function initNotes() {
 	document.addEventListener('themes:changed', () => {
 		renderThemeOptions();
 		renderNoteFilterOptions();
+		renderNotes();
+	});
+
+	document.addEventListener('notes:changed', () => {
 		renderNotes();
 	});
 
