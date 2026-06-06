@@ -199,16 +199,32 @@ export function initSolve() {
 			attemptCard.classList.add('solve-history-card');
 
 			attemptCard.innerHTML = `
-			<div class="solve-history-card__content">
-				<strong>Questão ${escapeHTML(questionNumber)}</strong>
-				<span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
-				<small>${escapeHTML(formatDateTime(attempt.answeredAt))}</small>
-			</div>
+				<div class="solve-history-card__content">
+					<strong>Questão ${escapeHTML(questionNumber)}</strong>
+					<span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
+					<small>${escapeHTML(formatDateTime(attempt.answeredAt))}</small>
+				</div>
 
-			<span class="solve-history-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
-				${attempt.isCorrect ? 'Acertou' : 'Errou'}
-			</span>
-		`;
+				<div class="solve-history-card__actions">
+					<span class="solve-history-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
+						${attempt.isCorrect ? 'Acertou' : 'Errou'}
+					</span>
+
+					${
+						!attempt.isCorrect
+							? `
+							<button
+								class="button button--secondary solve-history-card__action"
+								type="button"
+								data-review-attempt="${escapeHTML(attempt.id)}"
+							>
+								Revisar
+							</button>
+						`
+							: ''
+					}
+				</div>
+				`;
 
 			solveHistoryList.appendChild(attemptCard);
 		});
@@ -628,6 +644,28 @@ export function initSolve() {
 		renderSelectedQuestion();
 	}
 
+	function handleSolveHistoryActionClick(event) {
+		const reviewButton = event.target.closest('[data-review-attempt]');
+
+		if (!reviewButton) {
+			return;
+		}
+
+		const attemptId = reviewButton.dataset.reviewAttempt;
+
+		if (!attemptId) {
+			return;
+		}
+
+		document.dispatchEvent(
+			new CustomEvent('reviews:open-error-modal', {
+				detail: {
+					attemptId
+				}
+			})
+		);
+	}
+
 	// Event listeners
 
 	solveSubjectSelect.addEventListener('change', () => {
@@ -646,6 +684,7 @@ export function initSolve() {
 	confirmAnswerButton.addEventListener('click', confirmAnswer);
 	retryQuestionButton.addEventListener('click', retryQuestion);
 	nextQuestionButton.addEventListener('click', goToNextQuestion);
+	solveHistoryList.addEventListener('click', handleSolveHistoryActionClick);
 
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:changed', renderSubjectOptions);

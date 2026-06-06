@@ -559,6 +559,21 @@
 	.reset-confirm-check {
 		align-items: flex-start;
 	}
+
+	/* Card do Histórico */
+	.solve-history-card {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.solve-history-card__actions {
+		align-items: stretch;
+	}
+
+	.solve-history-card__status,
+	.solve-history-card__action {
+		width: 100%;
+	}
 }
 
 @media (max-width: 700px) {
