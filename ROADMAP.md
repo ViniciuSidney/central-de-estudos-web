@@ -852,7 +852,102 @@ Corrigir problemas percebidos no uso da aplicação publicada, principalmente em
 
 ---
 
-# v1.1 — Aplicação instalável com PWA
+# v1.1 — Sistema de assuntos
+
+### Objetivo
+Implementar uma nova camada de organização dentro dos temas, permitindo dividir cada tema em assuntos específicos. Essa versão busca melhorar a organização dos estudos, reduzir repetição nos nomes dos temas e permitir cadastrar, importar, resolver e revisar questões por recortes mais específicos.
+
+### Status
+Planejada.
+
+---
+
+## Previsto para a v1.1
+
+### Estrutura de assuntos
+
+- Criar coleção de assuntos dentro dos temas
+- Vincular cada assunto a uma matéria e a um tema
+- Permitir assuntos com nome, descrição e datas de criação/edição
+- Manter compatibilidade com temas e questões já existentes
+- Permitir questões com assunto opcional
+- Evitar duplicatas de assuntos dentro do mesmo tema
+- Comparar duplicatas ignorando maiúsculas, minúsculas e acentos
+
+### Interface de assuntos
+
+- Exibir assuntos dentro dos temas
+- Criar visual de organização em formato de caixinhas ou lista expansível
+- Permitir abrir e fechar temas para visualizar seus assuntos
+- Exibir contador de assuntos nos cards de temas
+- Destacar temas sem assuntos cadastrados
+- Permitir excluir assuntos
+- Atualizar a interface após criar, importar ou excluir assuntos
+
+### Cadastro e importação
+
+- Cadastro manual de assuntos
+- Importação em lote de assuntos por texto
+- Validação antes da importação
+- Tratamento de duplicatas dentro da lista importada
+- Tratamento de duplicatas já cadastradas
+- Listagem compacta dos assuntos já cadastrados na aba de importação
+
+### Questões por assunto
+
+- Adicionar seletor de assunto no cadastro de questões
+- Permitir vincular uma questão a um assunto específico
+- Permitir questões sem assunto para manter compatibilidade
+- Exibir assunto nos cards de questões quando existir
+- Permitir filtrar questões por matéria, tema e assunto
+- Atualizar contadores de questões por assunto
+
+### Resolução e revisão
+
+- Permitir resolver questões por assunto
+- Atualizar a seção Resolver para considerar o assunto selecionado
+- Exibir assunto no contexto da questão, quando existir
+- Manter histórico de tentativas compatível com assuntos
+- Manter revisões de erro compatíveis com assuntos
+- Manter anotações compatíveis com assuntos, se aplicável
+
+### Backup e integridade
+
+- Incluir assuntos na exportação de dados
+- Incluir assuntos na importação de backup
+- Permitir importar backups antigos sem a coleção de assuntos
+- Limpar assuntos ao excluir temas
+- Limpar assuntos, questões, tentativas e revisões ao excluir matérias
+- Limpar questões, tentativas e revisões ao excluir assuntos
+- Evitar registros órfãos após exclusões
+
+---
+
+## Fechamento da v1.1
+
+A versão v1.1 será considerada concluída quando o usuário conseguir:
+
+- Criar assuntos dentro de um tema
+- Importar assuntos em lote
+- Visualizar assuntos organizados dentro dos temas
+- Cadastrar questões vinculadas a assuntos
+- Resolver questões filtrando por assunto
+- Ver contadores e informações de assuntos na interface
+- Exportar e importar backups contendo assuntos
+- Usar backups antigos sem quebrar a aplicação
+- Excluir matérias, temas e assuntos sem deixar dados órfãos
+
+---
+
+## Observações da v1.1
+
+O sistema de assuntos deve ser implementado sem quebrar a estrutura atual da aplicação. Questões antigas devem continuar funcionando mesmo sem assunto vinculado.
+
+A coleção de assuntos deve funcionar como uma camada intermediária entre temas e questões, permitindo uma organização mais detalhada sem obrigar o usuário a classificar todo conteúdo antigo imediatamente.
+
+---
+
+# v1.2 — Aplicação instalável com PWA
 
 ### Objetivo
 Transformar a Central de Estudos Web em uma aplicação instalável, permitindo uso mais formal no computador e no celular por meio de recursos de PWA.
@@ -862,7 +957,7 @@ Ideia futura.
 
 ---
 
-## Previsto para a v1.1
+## Previsto para a v1.2
 
 - Criar arquivo `manifest.json`
 - Criar arquivo `service-worker.js`
@@ -879,9 +974,9 @@ Ideia futura.
 
 ---
 
-## Fechamento da v1.1
+## Fechamento da v1.2
 
-A versão v1.1 será considerada concluída quando o usuário conseguir:
+A versão v1.2 será considerada concluída quando o usuário conseguir:
 
 - Abrir a aplicação pelo navegador
 - Instalar a aplicação no computador
@@ -892,13 +987,13 @@ A versão v1.1 será considerada concluída quando o usuário conseguir:
 
 ---
 
-## Observações da v1.1
+## Observações da v1.2
 
 A transformação em PWA deve acontecer depois da implementação de backup, exportação e importação, para garantir que o uso da aplicação como app não aumente o risco de perda de dados.
 
 ---
 
-# v1.2 — Sistema de simulados
+# v1.3 — Sistema de simulados
 
 ### Objetivo
 Criar um modo de simulado com questões selecionadas, resolução sem feedback imediato e correção apenas ao final.
@@ -908,7 +1003,7 @@ Ideia futura.
 
 ---
 
-## Previsto para a v1.2
+## Previsto para a v1.3
 
 - Tela de criação de simulado
 - Seleção de matéria
@@ -928,9 +1023,9 @@ Ideia futura.
 
 ---
 
-## Fechamento da v1.2
+## Fechamento da v1.3
 
-A versão v1.1 será considerada concluída quando o usuário conseguir:
+A versão v1.3 será considerada concluída quando o usuário conseguir:
 
 - Criar um simulado com questões já cadastradas
 - Resolver as questões sem feedback imediato

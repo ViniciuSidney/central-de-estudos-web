@@ -248,7 +248,7 @@ export function initSolve() {
 								data-confirmation-attempt="${escapeHTML(attempt.id)}"
 								${alreadyHasConfirmationNote ? 'disabled' : ''}
 							>
-								${alreadyHasConfirmationNote ? 'Anotada' : 'Criar anotação'}
+								${alreadyHasConfirmationNote ? 'Anotada' : 'Anotar'}
 							</button>
 						`
 					}
