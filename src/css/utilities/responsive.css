@@ -514,7 +514,20 @@
 	}
 
 	.note-view-modal__header {
-		flex-direction: column;
+		gap: 10px;
+	}
+
+	.note-view-modal__topline {
+		align-items: center;
+	}
+
+	.note-view-modal__header .modal__description {
+		display: none;
+	}
+
+	.note-view-modal__header .modal__title {
+		font-size: 1.25rem;
+		line-height: 1.2;
 	}
 
 	.note-view-modal__body {

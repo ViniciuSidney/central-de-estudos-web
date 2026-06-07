@@ -404,10 +404,23 @@
 }
 
 .note-view-modal__header {
+	display: grid;
+	gap: 12px;
+}
+
+.note-view-modal__topline {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: space-between;
-	gap: 16px;
+	gap: 12px;
+}
+
+.note-view-modal__topline .modal__tag {
+	margin: 0;
+}
+
+.note-view-modal__topline .note-card__type {
+	flex-shrink: 0;
 }
 
 .note-view-modal__body {
