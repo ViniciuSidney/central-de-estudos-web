@@ -472,6 +472,48 @@
 }
 
 /* =========================================================
+   MODAL — AJUDA MARKDOWN
+   ========================================================= */
+
+.markdown-help-modal {
+	width: min(620px, 100%);
+	max-height: calc(100dvh - 32px);
+}
+
+.markdown-help-modal__body {
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.markdown-help-list {
+	display: grid;
+	gap: 10px;
+}
+
+.markdown-help-list div {
+	display: grid;
+	gap: 4px;
+
+	padding: 12px;
+
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+}
+
+.markdown-help-list strong {
+	color: var(--text);
+	font-family: monospace;
+	font-size: 0.9rem;
+	line-height: 1.4;
+}
+
+.markdown-help-list span {
+	color: var(--muted);
+	line-height: 1.5;
+}
+
+/* =========================================================
    MODAL — REVISÃO DE ERRO
    ========================================================= */
 
@@ -784,7 +826,7 @@
 
 .reset-confirm-check input {
 	flex-shrink: 0;
-	
+
 	margin-top: 4px;
 }
 

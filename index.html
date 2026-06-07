@@ -1272,52 +1272,58 @@
 		<!-- Ajuda Markdown -->
 		<div class="modal-overlay" id="markdown-help-modal" role="dialog" aria-modal="true" aria-labelledby="markdown-help-title" hidden>
 			<div class="modal markdown-help-modal">
-				<p class="modal__tag">📝 Markdown</p>
+				<header class="modal__header">
+					<p class="modal__tag">📝 Markdown</p>
 
-				<h3 class="modal__title" id="markdown-help-title">Como formatar anotações</h3>
+					<h3 class="modal__title" id="markdown-help-title">Como formatar anotações</h3>
 
-				<p class="modal__description">Use marcações simples no conteúdo da anotação para deixar a leitura mais organizada.</p>
+					<p class="modal__description">Use marcações simples no conteúdo da anotação para deixar a leitura mais organizada.</p>
+				</header>
 
-				<div class="markdown-help-list">
-					<div>
-						<strong># Título</strong>
-						<span>Cria um título principal.</span>
-					</div>
+				<div class="modal__body markdown-help-modal__body">
+					<div class="markdown-help-list">
+						<div>
+							<strong># Título</strong>
+							<span>Cria um título principal.</span>
+						</div>
 
-					<div>
-						<strong>## Subtítulo</strong>
-						<span>Cria um subtítulo.</span>
-					</div>
+						<div>
+							<strong>## Subtítulo</strong>
+							<span>Cria um subtítulo.</span>
+						</div>
 
-					<div>
-						<strong>**texto**</strong>
-						<span>Deixa o texto em negrito.</span>
-					</div>
+						<div>
+							<strong>**texto**</strong>
+							<span>Deixa o texto em negrito.</span>
+						</div>
 
-					<div>
-						<strong>*texto*</strong>
-						<span>Deixa o texto em itálico.</span>
-					</div>
+						<div>
+							<strong>*texto*</strong>
+							<span>Deixa o texto em itálico.</span>
+						</div>
 
-					<div>
-						<strong>- item</strong>
-						<span>Cria uma lista simples.</span>
-					</div>
+						<div>
+							<strong>- item</strong>
+							<span>Cria uma lista simples.</span>
+						</div>
 
-					<div>
-						<strong>&gt; observação</strong>
-						<span>Cria uma citação ou aviso.</span>
-					</div>
+						<div>
+							<strong>&gt; observação</strong>
+							<span>Cria uma citação ou aviso.</span>
+						</div>
 
-					<div>
-						<strong>`código`</strong>
-						<span>Destaca um termo técnico ou trecho de código.</span>
+						<div>
+							<strong>`código`</strong>
+							<span>Destaca um termo técnico ou trecho de código.</span>
+						</div>
 					</div>
 				</div>
 
-				<div class="modal__actions">
-					<button class="button button--primary" type="button" id="close-markdown-help">Entendi</button>
-				</div>
+				<footer class="modal__footer">
+					<div class="modal__actions">
+						<button class="button button--primary" type="button" id="close-markdown-help">Entendi</button>
+					</div>
+				</footer>
 			</div>
 		</div>
 

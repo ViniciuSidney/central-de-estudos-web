@@ -545,38 +545,4 @@
 	margin: 0;
 }
 
-/* =========================================================
-   ANOTAÇÕES — AJUDA MARKDOWN
-   ========================================================= */
 
-.markdown-help-modal {
-	width: min(620px, 100%);
-}
-
-.markdown-help-list {
-	display: grid;
-	gap: 10px;
-
-	margin-top: 18px;
-}
-
-.markdown-help-list div {
-	display: grid;
-	gap: 4px;
-
-	padding: 12px;
-
-	background: var(--bg);
-	border: 1px solid var(--border);
-	border-radius: 12px;
-}
-
-.markdown-help-list strong {
-	color: var(--text);
-	font-family: monospace;
-}
-
-.markdown-help-list span {
-	color: var(--muted);
-	line-height: 1.5;
-}
