@@ -542,6 +542,28 @@
 		resize: none;
 	}
 
+	.note-view-modal__details {
+		gap: 8px;
+	}
+
+	.note-view-modal__details:not([open]) {
+		margin-bottom: 0;
+	}
+
+	.note-view-modal__meta {
+		gap: 6px;
+	}
+
+	.note-view-modal__meta span {
+		font-size: 0.78rem;
+		padding: 5px 8px;
+	}
+
+	.note-view-modal__content {
+		padding: 14px;
+	}
+
+	/* REVISÃO DE ERRO */
 	.review-error-workspace {
 		width: 100%;
 		max-height: calc(100dvh - 24px);

@@ -971,6 +971,19 @@ export function initNotes() {
 
 		viewNoteModal.hidden = false;
 		document.body.style.overflow = 'hidden';
+		updateNoteDetailsDefaultState();
+	}
+
+	function updateNoteDetailsDefaultState() {
+		const details = document.querySelector('#view-note-details');
+
+		if (!details) {
+			return;
+		}
+
+		const isSmallScreen = window.matchMedia('(max-width: 720px)').matches;
+
+		details.open = !isSmallScreen;
 	}
 
 	function closeViewNoteModal() {

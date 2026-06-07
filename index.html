@@ -1332,17 +1332,23 @@
 			<div class="modal app-confirm-modal" id="app-confirm-box">
 				<div class="app-confirm-modal__layout">
 					<section class="app-confirm-modal__main">
-						<p class="modal__tag" id="app-confirm-tag">⚠️ Confirmação</p>
+						<header class="modal__header app-confirm-modal__header">
+							<p class="modal__tag" id="app-confirm-tag">⚠️ Confirmação</p>
 
-						<h3 class="modal__title" id="app-confirm-title">Confirmar ação</h3>
+							<h3 class="modal__title" id="app-confirm-title">Confirmar ação</h3>
+						</header>
 
-						<div class="modal__description" id="app-confirm-description">Tem certeza que deseja continuar?</div>
-
-						<div class="modal__actions">
-							<button class="button button--secondary" type="button" id="app-confirm-cancel">Cancelar</button>
-
-							<button class="button button--danger" type="button" id="app-confirm-confirm">Confirmar</button>
+						<div class="modal__body app-confirm-modal__body">
+							<div class="modal__description" id="app-confirm-description">Tem certeza que deseja continuar?</div>
 						</div>
+
+						<footer class="modal__footer">
+							<div class="modal__actions">
+								<button class="button button--secondary" type="button" id="app-confirm-cancel">Cancelar</button>
+
+								<button class="button button--danger" type="button" id="app-confirm-confirm">Confirmar</button>
+							</div>
+						</footer>
 					</section>
 
 					<aside class="app-confirm-modal__side" id="app-confirm-side" hidden></aside>
@@ -1444,7 +1450,11 @@
 				</header>
 
 				<div class="modal__body note-view-modal__body">
-					<div class="note-view-modal__meta" id="view-note-meta"></div>
+					<details class="note-view-modal__details" id="view-note-details" open>
+						<summary>Detalhes da anotação</summary>
+
+						<div class="note-view-modal__meta" id="view-note-meta"></div>
+					</details>
 
 					<div class="note-view-modal__content" id="view-note-content-panel">
 						<p id="view-note-content"></p>
