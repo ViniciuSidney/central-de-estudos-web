@@ -953,6 +953,8 @@ export function initQuestions() {
   function renderQuestions() {
     const selectedSubject = getSelectedSubject();
     const selectedTheme = getSelectedTheme();
+    const selectedSubtopic = getSelectedSubtopic();
+
     const themesFromSubject = getThemesFromSelectedSubject();
     const questionsFromContext = getQuestionsFromSelectedContext();
 
@@ -961,55 +963,73 @@ export function initQuestions() {
     updateQuestionsCount(questionsFromContext);
 
     if (!selectedSubject) {
-      questionsCurrentTheme.textContent = "Selecione uma matéria para carregar os temas.";
+      questionsCurrentTheme.textContent = "Selecione uma matéria para visualizar questões.";
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
-      <strong>Nenhuma matéria selecionada.</strong>
-      <span>Escolha uma matéria para visualizar os temas disponíveis.</span>
-    `;
+			<strong>Nenhuma matéria selecionada.</strong>
+			<span>Escolha uma matéria para listar ou cadastrar questões.</span>
+		`;
 
       return;
     }
 
     if (themesFromSubject.length === 0) {
       questionsCurrentTheme.innerHTML = `
-      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
-    `;
+			Questões da matéria
+			<strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+		`;
 
       questionsEmptyState.hidden = false;
       questionsEmptyState.innerHTML = `
-      <strong>Esta matéria ainda não possui temas.</strong>
-      <span>Cadastre um tema antes de adicionar questões.</span>
-    `;
+			<strong>Esta matéria ainda não possui temas.</strong>
+			<span>Cadastre um tema antes de adicionar questões.</span>
+		`;
 
       return;
     }
 
-    if (selectedTheme) {
+    if (selectedTheme && selectedSubtopic) {
       questionsCurrentTheme.innerHTML = `
-      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
-      com o tema <strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
-    `;
+			Questões da matéria
+			<strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+			com o tema
+			<strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
+			e assunto
+			<strong class="highlighted-subtopic-name">${escapeHTML(selectedSubtopic.name)}</strong>
+		`;
+    } else if (selectedTheme) {
+      questionsCurrentTheme.innerHTML = `
+			Questões da matéria
+			<strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+			com o tema
+			<strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
+		`;
     } else {
       questionsCurrentTheme.innerHTML = `
-      Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
-    `;
+			Questões da matéria
+			<strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
+		`;
     }
 
     if (questionsFromContext.length === 0) {
       questionsEmptyState.hidden = false;
 
-      if (selectedTheme) {
+      if (selectedTheme && selectedSubtopic) {
         questionsEmptyState.innerHTML = `
-        <strong>Nenhuma questão cadastrada neste tema ainda.</strong>
-        <span>Use a aba Cadastro para adicionar a primeira questão deste tema.</span>
-      `;
+				<strong>Nenhuma questão cadastrada neste assunto ainda.</strong>
+				<span>Use a aba Cadastro para adicionar a primeira questão deste assunto.</span>
+			`;
+      } else if (selectedTheme) {
+        questionsEmptyState.innerHTML = `
+				<strong>Nenhuma questão cadastrada neste tema ainda.</strong>
+				<span>Use a aba Cadastro para adicionar a primeira questão deste tema.</span>
+			`;
       } else {
         questionsEmptyState.innerHTML = `
-        <strong>Nenhuma questão cadastrada nesta matéria ainda.</strong>
-        <span>Selecione um tema para liberar o cadastro de novas questões.</span>
-      `;
+				<strong>Nenhuma questão cadastrada nesta matéria ainda.</strong>
+				<span>Selecione um tema para liberar o cadastro de novas questões.</span>
+			`;
       }
 
       return;
@@ -1024,70 +1044,75 @@ export function initQuestions() {
       questionCard.classList.add("question-card");
       questionCard.dataset.questionId = question.id;
 
-      const correctLetter = question.correctAlternative || "?";
+      const questionSubtopicName = getSubtopicNameById(question.subtopicId);
 
       questionCard.innerHTML = `
-        <div class="question-card__content">
-          <div class="question-card__top">
-            <h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
+			<div class="question-card__content">
+				<div class="question-card__top">
+					<h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
+				</div>
 
-            <span class="question-card__answer">
-              <span>Correta:</span>
-              <strong>${escapeHTML(correctLetter)}</strong>
-            </span>
-          </div>
+				<p class="question-card__statement">
+					${escapeHTML(getShortText(question.statement))}
+				</p>
 
-          <p class="question-card__statement">
-            ${escapeHTML(getShortText(question.statement))}
-          </p>
+				<div class="question-card__meta">
+					<span class="question-card__theme">
+						Tema: <strong>${escapeHTML(questionThemeName)}</strong>
+					</span>
 
-          <div class="question-card__meta">
-            <span class="question-card__theme">
-              Tema: <strong>${escapeHTML(questionThemeName)}</strong>
-            </span>
+					${
+            question.subtopicId
+              ? `
+								<span class="question-card__subtopic">
+									Assunto: <strong>${escapeHTML(questionSubtopicName)}</strong>
+								</span>
+							`
+              : `
+								<span class="question-card__subtopic is-empty">
+									Sem assunto
+								</span>
+							`
+          }
 
-				${question.subtopicId ? `<span class="question-card__tag">Assunto: ${escapeHTML(getSubtopicNameById(question.subtopicId))}</span>` : ""}
+					<small class="question-card__date">
+						Criada em ${formatDate(question.createdAt)}
+					</small>
+				</div>
+			</div>
 
-            <small>Criada em ${formatDate(question.createdAt)}</small>
+			<div class="question-card__actions">
+				<button
+					type="button"
+					class="question-card__icon-button"
+					data-edit-question="${question.id}"
+					title="Editar questão"
+					aria-label="Editar questão"
+				>
+					✏️
+				</button>
 
-            <small>
-              ${question.shouldShuffleAlternatives ? "Alternativas serão embaralhadas" : "Ordem fixa das alternativas"}
-            </small>
-          </div>
-        </div>
+				<button
+					type="button"
+					class="question-card__icon-button"
+					data-move-question="${question.id}"
+					title="Mover questão"
+					aria-label="Mover questão"
+				>
+					📂
+				</button>
 
-        <div class="question-card__actions">
-          <button
-            type="button"
-            class="question-card__icon-button"
-            data-edit-question="${question.id}"
-            title="Editar questão"
-            aria-label="Editar questão"
-          >
-            ✏️
-          </button>
-
-          <button
-            type="button"
-            class="question-card__icon-button"
-            data-move-question="${question.id}"
-            title="Mover questão"
-            aria-label="Mover questão"
-          >
-            📂
-          </button>
-
-          <button
-            type="button"
-            class="question-card__icon-button is-danger"
-            data-delete-question="${question.id}"
-            title="Excluir questão"
-            aria-label="Excluir questão"
-          >
-            🗑️
-          </button>
-        </div>
-      `;
+				<button
+					type="button"
+					class="question-card__icon-button is-danger"
+					data-delete-question="${question.id}"
+					title="Excluir questão"
+					aria-label="Excluir questão"
+				>
+					🗑️
+				</button>
+			</div>
+		`;
 
       questionsList.appendChild(questionCard);
     });

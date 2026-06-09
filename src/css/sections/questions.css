@@ -184,6 +184,20 @@
   line-height: 1.4;
 }
 
+.highlighted-subtopic-name {
+	display: inline-flex;
+	align-items: center;
+
+	padding: 2px 7px;
+
+	color: var(--accent);
+	font-weight: 900;
+
+	background: var(--success-soft);
+	border: 1px solid var(--accent);
+	border-radius: 999px;
+}
+
 /* =========================================================
    LISTAGEM DE QUESTÕES EM GALERIA
    ========================================================= */
@@ -219,10 +233,10 @@
 }
 
 .question-card__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 10px;
 }
 
 .question-card__top h3 {
@@ -233,30 +247,6 @@
   line-height: 1.25;
 
   overflow-wrap: anywhere;
-}
-
-.question-card__answer {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-
-  width: fit-content;
-  min-width: max-content;
-  padding: 6px 10px;
-
-  color: var(--accent);
-  font-size: 0.8rem;
-  font-weight: 800;
-
-  background: var(--success-soft);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-}
-
-.question-card__answer strong {
-  color: inherit;
-  font-size: inherit;
-  font-weight: 900;
 }
 
 .question-card__statement {
@@ -276,9 +266,9 @@
 }
 
 .question-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+	display: grid;
+	gap: 8px;
+	align-content: start;
 }
 
 .question-card__meta span,
@@ -347,6 +337,35 @@
 .question-card__icon-button.is-danger:hover {
   background: var(--feedback-inner-error-bg);
   border-color: var(--feedback-error-border);
+}
+
+.question-card__subtopic {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+
+	padding: 6px 10px;
+
+	color: var(--accent);
+	font-size: 0.82rem;
+	font-weight: 800;
+	line-height: 1.2;
+
+	background: var(--success-soft);
+	border: 1px solid var(--accent);
+	border-radius: 999px;
+}
+
+.question-card__subtopic strong {
+	color: inherit;
+	font-size: inherit;
+	font-weight: 900;
+}
+
+.question-card__subtopic.is-empty {
+	color: var(--muted);
+	background: var(--surface);
+	border-color: var(--border);
 }
 
 /* =========================================================
