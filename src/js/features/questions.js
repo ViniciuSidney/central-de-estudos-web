@@ -1062,18 +1062,14 @@ export function initQuestions() {
 					</span>
 
 					${
-            question.subtopicId
-              ? `
+						question.subtopicId
+							? `
 								<span class="question-card__subtopic">
 									Assunto: <strong>${escapeHTML(questionSubtopicName)}</strong>
 								</span>
 							`
-              : `
-								<span class="question-card__subtopic is-empty">
-									Sem assunto
-								</span>
-							`
-          }
+							: ''
+					}
 
 					<small class="question-card__date">
 						Criada em ${formatDate(question.createdAt)}

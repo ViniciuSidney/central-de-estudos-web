@@ -211,11 +211,11 @@
 
 .question-card {
   min-width: 0;
-  min-height: 210px;
+	min-height: 180px;
 
   display: grid;
   grid-template-rows: 1fr auto;
-  gap: 12px;
+  gap: 10px;
 
   padding: 14px;
 
@@ -229,7 +229,7 @@
 
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
 }
 
 .question-card__top {
@@ -249,16 +249,16 @@
   overflow-wrap: anywhere;
 }
 
-.question-card__statement {
+.question-card__content .question-card__statement {
   margin: 0;
 
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.75rem;
+  line-height: 1.3;
 
   display: -webkit-box;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
 
   overflow: hidden;
@@ -267,7 +267,7 @@
 
 .question-card__meta {
 	display: grid;
-	gap: 8px;
+	gap: 6px;
 	align-content: start;
 }
 
@@ -278,7 +278,7 @@
   line-height: 1.35;
 }
 
-.question-card__theme {
+.question-card__content .question-card__theme {
   display: inline;
   padding: 0;
 
@@ -302,12 +302,12 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .question-card__icon-button {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
 
   display: inline-grid;
   place-items: center;
@@ -339,33 +339,24 @@
   border-color: var(--feedback-error-border);
 }
 
-.question-card__subtopic {
-	display: inline-flex;
-	align-items: center;
-	width: fit-content;
+.question-card__content .question-card__subtopic {
+	display: inline;
+	padding: 0;
 
-	padding: 6px 10px;
+	color: var(--muted);
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.35;
 
-	color: var(--accent);
-	font-size: 0.82rem;
-	font-weight: 800;
-	line-height: 1.2;
-
-	background: var(--success-soft);
-	border: 1px solid var(--accent);
-	border-radius: 999px;
+	background: transparent;
+	border: none;
+	border-radius: 0;
 }
 
 .question-card__subtopic strong {
-	color: inherit;
+	color: var(--accent);
 	font-size: inherit;
-	font-weight: 900;
-}
-
-.question-card__subtopic.is-empty {
-	color: var(--muted);
-	background: var(--surface);
-	border-color: var(--border);
+	font-weight: 800;
 }
 
 /* =========================================================
