@@ -1,928 +1,1035 @@
-import {getCollection, saveCollection} from '../core/storage.js';
-import {openConfirmModal} from '../ui/confirmModal.js';
-import {parseQuestionsFromText} from '../systems/questionTextImport.js';
-import {removeAttemptsAndReviewsByQuestionIds} from '../systems/dataIntegrity.js';
+import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
+import { parseQuestionsFromText } from "../systems/questionTextImport.js";
+import { removeAttemptsAndReviewsByQuestionIds } from "../systems/dataIntegrity.js";
 
-const SUBJECTS_COLLECTION = 'subjects';
-const THEMES_COLLECTION = 'themes';
-const QUESTIONS_COLLECTION = 'questions';
+const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
+const SUBTOPICS_COLLECTION = "subtopics";
+const QUESTIONS_COLLECTION = "questions";
 
 export function initQuestions() {
-	const questionForm = document.querySelector('#question-form');
-	const questionSubjectSelect = document.querySelector('#question-subject');
-	const questionThemeSelect = document.querySelector('#question-theme');
-	const questionStatementInput = document.querySelector('#question-statement');
-	const alternativeAInput = document.querySelector('#alternative-a');
-	const alternativeBInput = document.querySelector('#alternative-b');
-	const alternativeCInput = document.querySelector('#alternative-c');
-	const alternativeDInput = document.querySelector('#alternative-d');
-	const alternativeEInput = document.querySelector('#alternative-e');
-	const correctAlternativeSelect = document.querySelector('#correct-alternative');
-	const questionExplanationInput = document.querySelector('#question-explanation');
-	const clearQuestionFormButton = document.querySelector('#clear-question-form');
-	const questionFormMessage = document.querySelector('#question-form-message');
-	const questionNoSubjectWarning = document.querySelector('#question-no-subject-warning');
-	const questionNoThemeWarning = document.querySelector('#question-no-theme-warning');
-	const questionsCurrentTheme = document.querySelector('#questions-current-theme');
-	const questionsCount = document.querySelector('#questions-count');
-	const questionsEmptyState = document.querySelector('#questions-empty-state');
-	const questionsList = document.querySelector('#questions-list');
+  const questionForm = document.querySelector("#question-form");
+  const questionSubjectSelect = document.querySelector("#question-subject");
+  const questionThemeSelect = document.querySelector("#question-theme");
+  const questionSubtopicSelect = document.querySelector("#question-subtopic");
+  const questionSubtopicGroup = document.querySelector("#question-subtopic-group");
+  const questionStatementInput = document.querySelector("#question-statement");
+  const alternativeAInput = document.querySelector("#alternative-a");
+  const alternativeBInput = document.querySelector("#alternative-b");
+  const alternativeCInput = document.querySelector("#alternative-c");
+  const alternativeDInput = document.querySelector("#alternative-d");
+  const alternativeEInput = document.querySelector("#alternative-e");
+  const correctAlternativeSelect = document.querySelector("#correct-alternative");
+  const questionExplanationInput = document.querySelector("#question-explanation");
+  const clearQuestionFormButton = document.querySelector("#clear-question-form");
+  const questionFormMessage = document.querySelector("#question-form-message");
+  const questionNoSubjectWarning = document.querySelector("#question-no-subject-warning");
+  const questionNoThemeWarning = document.querySelector("#question-no-theme-warning");
+  const questionsCurrentTheme = document.querySelector("#questions-current-theme");
+  const questionsCount = document.querySelector("#questions-count");
+  const questionsEmptyState = document.querySelector("#questions-empty-state");
+  const questionsList = document.querySelector("#questions-list");
 
-	const questionTabButtons = document.querySelectorAll('[data-question-tab]');
-	const questionListTab = document.querySelector('#question-list-tab');
-	const questionFormTab = document.querySelector('#question-form-tab');
-	const questionFilters = document.querySelector('#question-filters');
-	const questionTabPanel = document.querySelector('#question-tab-panel');
-	const saveQuestionButton = document.querySelector('#save-question-button');
-	const cancelQuestionEditButton = document.querySelector('#cancel-question-edit');
-	const moveQuestionModal = document.querySelector('#move-question-modal');
-	const moveQuestionCurrent = document.querySelector('#move-question-current');
-	const moveQuestionThemeSelect = document.querySelector('#move-question-theme');
-	const moveQuestionMessage = document.querySelector('#move-question-message');
-	const moveQuestionCancelButton = document.querySelector('#move-question-cancel');
-	const moveQuestionConfirmButton = document.querySelector('#move-question-confirm');
+  const questionTabButtons = document.querySelectorAll("[data-question-tab]");
+  const questionListTab = document.querySelector("#question-list-tab");
+  const questionFormTab = document.querySelector("#question-form-tab");
+  const questionFilters = document.querySelector("#question-filters");
+  const questionTabPanel = document.querySelector("#question-tab-panel");
+  const saveQuestionButton = document.querySelector("#save-question-button");
+  const cancelQuestionEditButton = document.querySelector("#cancel-question-edit");
+  const moveQuestionModal = document.querySelector("#move-question-modal");
+  const moveQuestionCurrent = document.querySelector("#move-question-current");
+  const moveQuestionThemeSelect = document.querySelector("#move-question-theme");
+  const moveQuestionMessage = document.querySelector("#move-question-message");
+  const moveQuestionCancelButton = document.querySelector("#move-question-cancel");
+  const moveQuestionConfirmButton = document.querySelector("#move-question-confirm");
 
-	const questionImportTab = document.querySelector('#question-import-tab');
-	const questionImportTextInput = document.querySelector('#question-import-text');
-	const validateQuestionImportButton = document.querySelector('#validate-question-import');
-	const clearQuestionImportButton = document.querySelector('#clear-question-import');
-	const importValidatedQuestionsButton = document.querySelector('#import-validated-questions');
-	const questionImportSummary = document.querySelector('#question-import-summary');
-	const questionImportErrors = document.querySelector('#question-import-errors');
+  const questionImportTab = document.querySelector("#question-import-tab");
+  const questionImportTextInput = document.querySelector("#question-import-text");
+  const validateQuestionImportButton = document.querySelector("#validate-question-import");
+  const clearQuestionImportButton = document.querySelector("#clear-question-import");
+  const importValidatedQuestionsButton = document.querySelector("#import-validated-questions");
+  const questionImportSummary = document.querySelector("#question-import-summary");
+  const questionImportErrors = document.querySelector("#question-import-errors");
 
-	if (
-		!questionImportTab ||
-		!questionImportTextInput ||
-		!validateQuestionImportButton ||
-		!clearQuestionImportButton ||
-		!importValidatedQuestionsButton ||
-		!questionImportSummary ||
-		!questionImportErrors ||
-		!moveQuestionModal ||
-		!moveQuestionCurrent ||
-		!moveQuestionThemeSelect ||
-		!moveQuestionMessage ||
-		!moveQuestionCancelButton ||
-		!moveQuestionConfirmButton ||
-		!saveQuestionButton ||
-		!cancelQuestionEditButton ||
-		!questionTabPanel ||
-		!questionFilters ||
-		!questionForm ||
-		!questionTabButtons.length ||
-		!questionListTab ||
-		!questionFormTab ||
-		!questionSubjectSelect ||
-		!questionThemeSelect ||
-		!questionStatementInput ||
-		!alternativeAInput ||
-		!alternativeBInput ||
-		!alternativeCInput ||
-		!alternativeDInput ||
-		!alternativeEInput ||
-		!correctAlternativeSelect ||
-		!questionExplanationInput ||
-		!clearQuestionFormButton ||
-		!questionFormMessage ||
-		!questionNoSubjectWarning ||
-		!questionNoThemeWarning ||
-		!questionsCurrentTheme ||
-		!questionsCount ||
-		!questionsEmptyState ||
-		!questionsList
-	) {
-		return;
-	}
+  if (
+    !questionSubtopicSelect ||
+    !questionSubtopicGroup ||
+    !questionImportTab ||
+    !questionImportTextInput ||
+    !validateQuestionImportButton ||
+    !clearQuestionImportButton ||
+    !importValidatedQuestionsButton ||
+    !questionImportSummary ||
+    !questionImportErrors ||
+    !moveQuestionModal ||
+    !moveQuestionCurrent ||
+    !moveQuestionThemeSelect ||
+    !moveQuestionMessage ||
+    !moveQuestionCancelButton ||
+    !moveQuestionConfirmButton ||
+    !saveQuestionButton ||
+    !cancelQuestionEditButton ||
+    !questionTabPanel ||
+    !questionFilters ||
+    !questionForm ||
+    !questionTabButtons.length ||
+    !questionListTab ||
+    !questionFormTab ||
+    !questionSubjectSelect ||
+    !questionThemeSelect ||
+    !questionStatementInput ||
+    !alternativeAInput ||
+    !alternativeBInput ||
+    !alternativeCInput ||
+    !alternativeDInput ||
+    !alternativeEInput ||
+    !correctAlternativeSelect ||
+    !questionExplanationInput ||
+    !clearQuestionFormButton ||
+    !questionFormMessage ||
+    !questionNoSubjectWarning ||
+    !questionNoThemeWarning ||
+    !questionsCurrentTheme ||
+    !questionsCount ||
+    !questionsEmptyState ||
+    !questionsList
+  ) {
+    return;
+  }
 
-	let editingQuestionId = null;
-	let movingQuestionId = null;
-	let importedQuestionsPreview = [];
+  let editingQuestionId = null;
+  let movingQuestionId = null;
+  let importedQuestionsPreview = [];
 
-	function getSubjects() {
-		return getCollection(SUBJECTS_COLLECTION);
-	}
+  function getSubjects() {
+    return getCollection(SUBJECTS_COLLECTION);
+  }
 
-	function getThemes() {
-		return getCollection(THEMES_COLLECTION);
-	}
+  function getThemes() {
+    return getCollection(THEMES_COLLECTION);
+  }
 
-	function getQuestions() {
-		return getCollection(QUESTIONS_COLLECTION);
-	}
+  function getSubtopics() {
+    return getCollection(SUBTOPICS_COLLECTION);
+  }
 
-	function saveQuestions(questions) {
-		saveCollection(QUESTIONS_COLLECTION, questions);
-	}
+  function getSubtopicsFromSelectedTheme() {
+    const selectedThemeId = questionThemeSelect.value;
 
-	function createQuestion({subjectId, themeId, statement, alternatives, correctAlternative, explanation}) {
-		return {
-			id: crypto.randomUUID(),
-			subjectId,
-			themeId,
-			statement,
-			alternatives,
-			correctAlternative,
-			explanation,
-			shouldShuffleAlternatives: true,
-			createdAt: new Date().toISOString()
-		};
-	}
+    if (!selectedThemeId) {
+      return [];
+    }
 
-	function setQuestionContextFieldsEnabled(isEnabled) {
-		questionSubjectSelect.disabled = !isEnabled;
-		questionThemeSelect.disabled = !isEnabled;
-	}
+    return getSubtopics().filter((subtopic) => {
+      return subtopic.themeId === selectedThemeId;
+    });
+  }
 
-	function enterEditMode(question) {
-		editingQuestionId = question.id;
+  function getSelectedSubtopic() {
+    const selectedSubtopicId = questionSubtopicSelect.value;
 
-		questionSubjectSelect.value = question.subjectId;
-		renderThemeOptions();
+    return getSubtopics().find((subtopic) => {
+      return subtopic.id === selectedSubtopicId;
+    });
+  }
 
-		questionThemeSelect.value = question.themeId;
-		renderQuestions();
+  function getSubtopicById(subtopicId) {
+    return getSubtopics().find((subtopic) => {
+      return subtopic.id === subtopicId;
+    });
+  }
 
-		setQuestionContextFieldsEnabled(false);
+  function getSubtopicNameById(subtopicId) {
+    if (!subtopicId) {
+      return "";
+    }
 
-		questionStatementInput.value = question.statement;
-		alternativeAInput.value = question.alternatives.A || '';
-		alternativeBInput.value = question.alternatives.B || '';
-		alternativeCInput.value = question.alternatives.C || '';
-		alternativeDInput.value = question.alternatives.D || '';
-		alternativeEInput.value = question.alternatives.E || '';
-		correctAlternativeSelect.value = question.correctAlternative;
-		questionExplanationInput.value = question.explanation || '';
+    const subtopic = getSubtopicById(subtopicId);
 
-		saveQuestionButton.textContent = 'Salvar alterações';
-		cancelQuestionEditButton.hidden = false;
+    return subtopic ? subtopic.name : "Assunto não encontrado";
+  }
 
-		setQuestionInputTabsEnabled(true);
-		showQuestionTab('form');
+  function getQuestions() {
+    return getCollection(QUESTIONS_COLLECTION);
+  }
 
-		questionForm.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start'
-		});
+  function saveQuestions(questions) {
+    saveCollection(QUESTIONS_COLLECTION, questions);
+  }
 
-		setQuestionFormMessage('Editando questão selecionada.', 'success');
-	}
+  function createQuestion({ subjectId, themeId, subtopicId = null, statement, alternatives, correctAlternative, explanation }) {
+    return {
+      id: crypto.randomUUID(),
+      subjectId,
+      themeId,
+      subtopicId: subtopicId || null,
+      statement,
+      alternatives,
+      correctAlternative,
+      explanation,
+      shouldShuffleAlternatives: true,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
-	function exitEditMode() {
-		editingQuestionId = null;
+  function setQuestionContextFieldsEnabled(isEnabled) {
+    questionSubjectSelect.disabled = !isEnabled;
+    questionThemeSelect.disabled = !isEnabled;
+    questionSubtopicSelect.disabled = !isEnabled || !questionThemeSelect.value;
+  }
 
-		saveQuestionButton.textContent = 'Adicionar questão';
-		cancelQuestionEditButton.hidden = true;
+  function enterEditMode(question) {
+    editingQuestionId = question.id;
 
-		setQuestionContextFieldsEnabled(true);
-		clearQuestionForm();
-	}
+    questionSubjectSelect.value = question.subjectId;
+    renderThemeOptions();
 
-	function updateQuestion(questionId, updatedQuestionData) {
-		const updatedQuestions = getQuestions().map((question) => {
-			if (question.id !== questionId) {
-				return question;
-			}
+    questionThemeSelect.value = question.themeId;
+    renderSubtopicOptions();
 
-			return {
-				...question,
-				...updatedQuestionData,
-				updatedAt: new Date().toISOString()
-			};
-		});
+    questionSubtopicSelect.value = question.subtopicId || "";
 
-		saveQuestions(updatedQuestions);
-		notifyQuestionsChanged();
-	}
+    renderQuestions();
 
-	function deleteQuestion(questionId) {
-		const updatedQuestions = getQuestions().filter((question) => {
-			return question.id !== questionId;
-		});
+    setQuestionContextFieldsEnabled(false);
 
-		saveQuestions(updatedQuestions);
-		removeAttemptsAndReviewsByQuestionIds([questionId]);
+    questionStatementInput.value = question.statement;
+    alternativeAInput.value = question.alternatives.A || "";
+    alternativeBInput.value = question.alternatives.B || "";
+    alternativeCInput.value = question.alternatives.C || "";
+    alternativeDInput.value = question.alternatives.D || "";
+    alternativeEInput.value = question.alternatives.E || "";
+    correctAlternativeSelect.value = question.correctAlternative;
+    questionExplanationInput.value = question.explanation || "";
 
-		if (editingQuestionId === questionId) {
-			exitEditMode();
-		}
+    saveQuestionButton.textContent = "Salvar alterações";
+    cancelQuestionEditButton.hidden = false;
 
-		renderQuestions();
-		notifyQuestionsChanged();
+    setQuestionInputTabsEnabled(true);
+    showQuestionTab("form");
 
-		setQuestionFormMessage('Questão excluída com sucesso.', 'success');
-	}
+    questionForm.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
 
-	function showQuestionTab(tabName) {
-		questionTabButtons.forEach((button) => {
-			const isSelectedTab = button.dataset.questionTab === tabName;
+    setQuestionFormMessage("Editando questão selecionada.", "success");
+  }
 
-			button.classList.toggle('is-active', isSelectedTab);
-		});
+  function exitEditMode() {
+    editingQuestionId = null;
 
-		questionListTab.classList.toggle('is-active', tabName === 'list');
-		questionFormTab.classList.toggle('is-active', tabName === 'form');
-		questionImportTab.classList.toggle('is-active', tabName === 'import');
-	}
+    saveQuestionButton.textContent = "Adicionar questão";
+    cancelQuestionEditButton.hidden = true;
 
-	function notifyQuestionsChanged() {
-		document.dispatchEvent(new CustomEvent('questions:changed'));
-	}
+    setQuestionContextFieldsEnabled(true);
+    clearQuestionForm();
+  }
 
-	function setQuestionInputTabsEnabled(isEnabled) {
-		const inputTabs = Array.from(questionTabButtons).filter((button) => {
-			return ['form', 'import'].includes(button.dataset.questionTab);
-		});
+  function updateQuestion(questionId, updatedQuestionData) {
+    const updatedQuestions = getQuestions().map((question) => {
+      if (question.id !== questionId) {
+        return question;
+      }
 
-		inputTabs.forEach((button) => {
-			button.disabled = !isEnabled;
-		});
+      return {
+        ...question,
+        ...updatedQuestionData,
+        updatedAt: new Date().toISOString(),
+      };
+    });
 
-		if (!isEnabled) {
-			showQuestionTab('list');
-		}
-	}
+    saveQuestions(updatedQuestions);
+    notifyQuestionsChanged();
+  }
 
-	function formatDate(dateValue) {
-		const date = new Date(dateValue);
+  function deleteQuestion(questionId) {
+    const updatedQuestions = getQuestions().filter((question) => {
+      return question.id !== questionId;
+    });
 
-		return date.toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric'
-		});
-	}
+    saveQuestions(updatedQuestions);
+    removeAttemptsAndReviewsByQuestionIds([questionId]);
 
-	function escapeHTML(value) {
-		return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-	}
+    if (editingQuestionId === questionId) {
+      exitEditMode();
+    }
 
-	function getShortText(text, maxLength = 170) {
-		if (text.length <= maxLength) {
-			return text;
-		}
+    renderQuestions();
+    notifyQuestionsChanged();
 
-		return `${text.slice(0, maxLength).trim()}...`;
-	}
+    setQuestionFormMessage("Questão excluída com sucesso.", "success");
+  }
 
-	function setQuestionFormMessage(message, type = 'default') {
-		questionFormMessage.textContent = message;
+  function showQuestionTab(tabName) {
+    questionTabButtons.forEach((button) => {
+      const isSelectedTab = button.dataset.questionTab === tabName;
 
-		questionFormMessage.classList.remove('is-error', 'is-success');
+      button.classList.toggle("is-active", isSelectedTab);
+    });
 
-		if (type === 'error') {
-			questionFormMessage.classList.add('is-error');
-		}
+    questionListTab.classList.toggle("is-active", tabName === "list");
+    questionFormTab.classList.toggle("is-active", tabName === "form");
+    questionImportTab.classList.toggle("is-active", tabName === "import");
+  }
 
-		if (type === 'success') {
-			questionFormMessage.classList.add('is-success');
-		}
-	}
+  function notifyQuestionsChanged() {
+    document.dispatchEvent(new CustomEvent("questions:changed"));
+  }
 
-	function setQuestionImportSummary({title = 'Aguardando validação.', description = 'Cole o texto das questões e clique em Validar questões.', type = 'default'} = {}) {
-		questionImportSummary.innerHTML = `
+  function setQuestionInputTabsEnabled(isEnabled) {
+    const inputTabs = Array.from(questionTabButtons).filter((button) => {
+      return ["form", "import"].includes(button.dataset.questionTab);
+    });
+
+    inputTabs.forEach((button) => {
+      button.disabled = !isEnabled;
+    });
+
+    if (!isEnabled) {
+      showQuestionTab("list");
+    }
+  }
+
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
+
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  function escapeHTML(value) {
+    return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  }
+
+  function getShortText(text, maxLength = 170) {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    return `${text.slice(0, maxLength).trim()}...`;
+  }
+
+  function setQuestionFormMessage(message, type = "default") {
+    questionFormMessage.textContent = message;
+
+    questionFormMessage.classList.remove("is-error", "is-success");
+
+    if (type === "error") {
+      questionFormMessage.classList.add("is-error");
+    }
+
+    if (type === "success") {
+      questionFormMessage.classList.add("is-success");
+    }
+  }
+
+  function setQuestionImportSummary({
+    title = "Aguardando validação.",
+    description = "Cole o texto das questões e clique em Validar questões.",
+    type = "default",
+  } = {}) {
+    questionImportSummary.innerHTML = `
 		<strong>${escapeHTML(title)}</strong>
 		<span>${escapeHTML(description)}</span>
 	`;
 
-		questionImportSummary.classList.remove('is-success', 'is-error');
+    questionImportSummary.classList.remove("is-success", "is-error");
 
-		if (type === 'success') {
-			questionImportSummary.classList.add('is-success');
-		}
+    if (type === "success") {
+      questionImportSummary.classList.add("is-success");
+    }
 
-		if (type === 'error') {
-			questionImportSummary.classList.add('is-error');
-		}
-	}
+    if (type === "error") {
+      questionImportSummary.classList.add("is-error");
+    }
+  }
 
-	function renderQuestionImportErrors(errors = []) {
-		questionImportErrors.innerHTML = '';
+  function renderQuestionImportErrors(errors = []) {
+    questionImportErrors.innerHTML = "";
 
-		errors.forEach((error) => {
-			const errorItem = document.createElement('li');
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
 
-			errorItem.textContent = error;
+      errorItem.textContent = error;
 
-			questionImportErrors.appendChild(errorItem);
-		});
-	}
+      questionImportErrors.appendChild(errorItem);
+    });
+  }
+
+  function clearQuestionImport() {
+    importedQuestionsPreview = [];
+
+    questionImportTextInput.value = "";
+    importValidatedQuestionsButton.disabled = true;
 
-	function clearQuestionImport() {
-		importedQuestionsPreview = [];
+    setQuestionImportSummary();
+    renderQuestionImportErrors();
+
+    questionImportTextInput.focus();
+  }
+
+  function validateQuestionImportContext() {
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
 
-		questionImportTextInput.value = '';
-		importValidatedQuestionsButton.disabled = true;
+    if (!selectedSubjectId) {
+      setQuestionImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de validar a importação.",
+        type: "error",
+      });
+
+      return false;
+    }
+
+    if (!selectedThemeId) {
+      setQuestionImportSummary({
+        title: "Tema não selecionado.",
+        description: "Selecione um tema antes de validar a importação.",
+        type: "error",
+      });
+
+      return false;
+    }
+
+    return true;
+  }
+
+  function validateQuestionImportText() {
+    const hasValidContext = validateQuestionImportContext();
+
+    if (!hasValidContext) {
+      importedQuestionsPreview = [];
+      importValidatedQuestionsButton.disabled = true;
+      renderQuestionImportErrors();
+      return;
+    }
+
+    const importText = questionImportTextInput.value.trim();
+    const result = parseQuestionsFromText(importText);
+
+    importedQuestionsPreview = result.validQuestions;
 
-		setQuestionImportSummary();
-		renderQuestionImportErrors();
-
-		questionImportTextInput.focus();
-	}
-
-	function validateQuestionImportContext() {
-		const selectedSubjectId = questionSubjectSelect.value;
-		const selectedThemeId = questionThemeSelect.value;
+    renderQuestionImportErrors(result.errors);
 
-		if (!selectedSubjectId) {
-			setQuestionImportSummary({
-				title: 'Matéria não selecionada.',
-				description: 'Selecione uma matéria antes de validar a importação.',
-				type: 'error'
-			});
-
-			return false;
-		}
-
-		if (!selectedThemeId) {
-			setQuestionImportSummary({
-				title: 'Tema não selecionado.',
-				description: 'Selecione um tema antes de validar a importação.',
-				type: 'error'
-			});
+    const validCount = result.validQuestions.length;
+    const errorCount = result.errors.length;
 
-			return false;
-		}
-
-		return true;
-	}
-
-	function validateQuestionImportText() {
-		const hasValidContext = validateQuestionImportContext();
-
-		if (!hasValidContext) {
-			importedQuestionsPreview = [];
-			importValidatedQuestionsButton.disabled = true;
-			renderQuestionImportErrors();
-			return;
-		}
+    importValidatedQuestionsButton.disabled = validCount === 0;
 
-		const importText = questionImportTextInput.value.trim();
-		const result = parseQuestionsFromText(importText);
+    if (validCount === 0 && errorCount > 0) {
+      setQuestionImportSummary({
+        title: "Nenhuma questão válida encontrada.",
+        description: `${errorCount} problema(s) encontrado(s). Corrija o texto e valide novamente.`,
+        type: "error",
+      });
 
-		importedQuestionsPreview = result.validQuestions;
+      return;
+    }
+
+    if (validCount > 0 && errorCount > 0) {
+      setQuestionImportSummary({
+        title: `${validCount} questão(ões) válida(s) encontrada(s).`,
+        description: `${errorCount} problema(s) encontrado(s). Apenas as questões válidas serão importadas.`,
+        type: "error",
+      });
 
-		renderQuestionImportErrors(result.errors);
+      return;
+    }
+
+    setQuestionImportSummary({
+      title: `${validCount} questão(ões) pronta(s) para importação.`,
+      description: "Nenhum erro encontrado. Você já pode importar as questões para o tema selecionado.",
+      type: "success",
+    });
+  }
+
+  function importValidatedQuestions() {
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
+    const selectedSubtopicId = questionSubtopicSelect.value || null;
+
+    if (!selectedSubjectId || !selectedThemeId) {
+      setQuestionImportSummary({
+        title: "Contexto incompleto.",
+        description: "Selecione matéria e tema antes de importar as questões.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (importedQuestionsPreview.length === 0) {
+      setQuestionImportSummary({
+        title: "Nenhuma questão validada.",
+        description: "Valide o texto antes de importar.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    const questions = getQuestions();
+
+    const newQuestions = importedQuestionsPreview.map((question) => {
+      return createQuestion({
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        subtopicId: selectedSubtopicId,
+        statement: question.statement,
+        alternatives: question.alternatives,
+        correctAlternative: question.correctAlternative,
+        explanation: question.explanation,
+      });
+    });
+
+    saveQuestions([...questions, ...newQuestions]);
+    notifyQuestionsChanged();
+
+    renderQuestions();
+
+    const importedCount = newQuestions.length;
+
+    importedQuestionsPreview = [];
+    importValidatedQuestionsButton.disabled = true;
+    questionImportTextInput.value = "";
+
+    setQuestionImportSummary({
+      title: `${importedCount} questão(ões) importada(s) com sucesso.`,
+      description: "As questões foram adicionadas ao tema selecionado.",
+      type: "success",
+    });
+
+    renderQuestionImportErrors();
+
+    showQuestionTab("list");
+  }
+
+  function updateQuestionsCount(questions) {
+    const totalQuestions = questions.length;
+
+    questionsCount.textContent = totalQuestions === 1 ? "1 questão" : `${totalQuestions} questões`;
+  }
+
+  function getSelectedSubject() {
+    const selectedSubjectId = questionSubjectSelect.value;
+
+    return getSubjects().find((subject) => {
+      return subject.id === selectedSubjectId;
+    });
+  }
+
+  function getSelectedTheme() {
+    const selectedThemeId = questionThemeSelect.value;
 
-		const validCount = result.validQuestions.length;
-		const errorCount = result.errors.length;
-
-		importValidatedQuestionsButton.disabled = validCount === 0;
-
-		if (validCount === 0 && errorCount > 0) {
-			setQuestionImportSummary({
-				title: 'Nenhuma questão válida encontrada.',
-				description: `${errorCount} problema(s) encontrado(s). Corrija o texto e valide novamente.`,
-				type: 'error'
-			});
-
-			return;
-		}
-
-		if (validCount > 0 && errorCount > 0) {
-			setQuestionImportSummary({
-				title: `${validCount} questão(ões) válida(s) encontrada(s).`,
-				description: `${errorCount} problema(s) encontrado(s). Apenas as questões válidas serão importadas.`,
-				type: 'error'
-			});
-
-			return;
-		}
-
-		setQuestionImportSummary({
-			title: `${validCount} questão(ões) pronta(s) para importação.`,
-			description: 'Nenhum erro encontrado. Você já pode importar as questões para o tema selecionado.',
-			type: 'success'
-		});
-	}
-
-	function importValidatedQuestions() {
-		const selectedSubjectId = questionSubjectSelect.value;
-		const selectedThemeId = questionThemeSelect.value;
-
-		if (!selectedSubjectId || !selectedThemeId) {
-			setQuestionImportSummary({
-				title: 'Contexto incompleto.',
-				description: 'Selecione matéria e tema antes de importar as questões.',
-				type: 'error'
-			});
-
-			return;
-		}
-
-		if (importedQuestionsPreview.length === 0) {
-			setQuestionImportSummary({
-				title: 'Nenhuma questão validada.',
-				description: 'Valide o texto antes de importar.',
-				type: 'error'
-			});
-
-			return;
-		}
-
-		const questions = getQuestions();
-
-		const newQuestions = importedQuestionsPreview.map((question) => {
-			return createQuestion({
-				subjectId: selectedSubjectId,
-				themeId: selectedThemeId,
-				statement: question.statement,
-				alternatives: question.alternatives,
-				correctAlternative: question.correctAlternative,
-				explanation: question.explanation
-			});
-		});
-
-		saveQuestions([...questions, ...newQuestions]);
-		notifyQuestionsChanged();
-
-		renderQuestions();
-
-		const importedCount = newQuestions.length;
-
-		importedQuestionsPreview = [];
-		importValidatedQuestionsButton.disabled = true;
-		questionImportTextInput.value = '';
-
-		setQuestionImportSummary({
-			title: `${importedCount} questão(ões) importada(s) com sucesso.`,
-			description: 'As questões foram adicionadas ao tema selecionado.',
-			type: 'success'
-		});
-
-		renderQuestionImportErrors();
-
-		showQuestionTab('list');
-	}
-
-	function updateQuestionsCount(questions) {
-		const totalQuestions = questions.length;
-
-		questionsCount.textContent = totalQuestions === 1 ? '1 questão' : `${totalQuestions} questões`;
-	}
-
-	function getSelectedSubject() {
-		const selectedSubjectId = questionSubjectSelect.value;
-
-		return getSubjects().find((subject) => {
-			return subject.id === selectedSubjectId;
-		});
-	}
-
-	function getSelectedTheme() {
-		const selectedThemeId = questionThemeSelect.value;
-
-		return getThemes().find((theme) => {
-			return theme.id === selectedThemeId;
-		});
-	}
-
-	function getThemeById(themeId) {
-		return getThemes().find((theme) => {
-			return theme.id === themeId;
-		});
-	}
-
-	function getThemeNameById(themeId) {
-		const theme = getThemeById(themeId);
-
-		return theme ? theme.name : 'Tema não encontrado';
-	}
-
-	function getSubjectById(subjectId) {
-		return getSubjects().find((subject) => {
-			return subject.id === subjectId;
-		});
-	}
-
-	function getSubjectNameById(subjectId) {
-		const subject = getSubjectById(subjectId);
-
-		return subject ? subject.name : 'Matéria não encontrada';
-	}
-
-	function getQuestionsFromSelectedContext() {
-		const selectedSubject = getSelectedSubject();
-		const selectedTheme = getSelectedTheme();
-
-		if (!selectedSubject) {
-			return [];
-		}
-
-		const questionsFromSubject = getQuestions().filter((question) => {
-			return question.subjectId === selectedSubject.id;
-		});
-
-		if (selectedTheme) {
-			return questionsFromSubject.filter((question) => {
-				return question.themeId === selectedTheme.id;
-			});
-		}
-
-		return [...questionsFromSubject].sort((firstQuestion, secondQuestion) => {
-			const firstThemeName = getThemeNameById(firstQuestion.themeId);
-			const secondThemeName = getThemeNameById(secondQuestion.themeId);
-
-			return firstThemeName.localeCompare(secondThemeName, 'pt-BR');
-		});
-	}
-
-	function getThemesFromSelectedSubject() {
-		const selectedSubjectId = questionSubjectSelect.value;
-
-		if (!selectedSubjectId) {
-			return [];
-		}
-
-		return getThemes().filter((theme) => {
-			return theme.subjectId === selectedSubjectId;
-		});
-	}
-
-	function getQuestionsFromSelectedTheme() {
-		const selectedThemeId = questionThemeSelect.value;
-
-		if (!selectedThemeId) {
-			return [];
-		}
-
-		return getQuestions().filter((question) => {
-			return question.themeId === selectedThemeId;
-		});
-	}
-
-	function setMoveQuestionMessage(message, type = 'default') {
-		moveQuestionMessage.textContent = message;
-
-		moveQuestionMessage.classList.remove('is-error', 'is-success');
-
-		if (type === 'error') {
-			moveQuestionMessage.classList.add('is-error');
-		}
-
-		if (type === 'success') {
-			moveQuestionMessage.classList.add('is-success');
-		}
-	}
-
-	function renderMoveThemeOptions(question) {
-		const subjects = getSubjects();
-		const themes = getThemes().filter((theme) => {
-			return theme.id !== question.themeId;
-		});
-
-		moveQuestionThemeSelect.innerHTML = `
+    return getThemes().find((theme) => {
+      return theme.id === selectedThemeId;
+    });
+  }
+
+  function getThemeById(themeId) {
+    return getThemes().find((theme) => {
+      return theme.id === themeId;
+    });
+  }
+
+  function getThemeNameById(themeId) {
+    const theme = getThemeById(themeId);
+
+    return theme ? theme.name : "Tema não encontrado";
+  }
+
+  function getSubjectById(subjectId) {
+    return getSubjects().find((subject) => {
+      return subject.id === subjectId;
+    });
+  }
+
+  function getSubjectNameById(subjectId) {
+    const subject = getSubjectById(subjectId);
+
+    return subject ? subject.name : "Matéria não encontrada";
+  }
+
+  function getQuestionsFromSelectedContext() {
+    const selectedSubject = getSelectedSubject();
+    const selectedTheme = getSelectedTheme();
+
+    if (!selectedSubject) {
+      return [];
+    }
+
+    const questionsFromSubject = getQuestions().filter((question) => {
+      return question.subjectId === selectedSubject.id;
+    });
+
+    if (selectedTheme) {
+      const questionsFromTheme = questionsFromSubject.filter((question) => {
+        return question.themeId === selectedTheme.id;
+      });
+
+      const selectedSubtopic = getSelectedSubtopic();
+
+      if (selectedSubtopic) {
+        return questionsFromTheme.filter((question) => {
+          return question.subtopicId === selectedSubtopic.id;
+        });
+      }
+
+      return questionsFromTheme;
+    }
+
+    return [...questionsFromSubject].sort((firstQuestion, secondQuestion) => {
+      const firstThemeName = getThemeNameById(firstQuestion.themeId);
+      const secondThemeName = getThemeNameById(secondQuestion.themeId);
+
+      return firstThemeName.localeCompare(secondThemeName, "pt-BR");
+    });
+  }
+
+  function getThemesFromSelectedSubject() {
+    const selectedSubjectId = questionSubjectSelect.value;
+
+    if (!selectedSubjectId) {
+      return [];
+    }
+
+    return getThemes().filter((theme) => {
+      return theme.subjectId === selectedSubjectId;
+    });
+  }
+
+  function getQuestionsFromSelectedTheme() {
+    const selectedThemeId = questionThemeSelect.value;
+
+    if (!selectedThemeId) {
+      return [];
+    }
+
+    return getQuestions().filter((question) => {
+      return question.themeId === selectedThemeId;
+    });
+  }
+
+  function setMoveQuestionMessage(message, type = "default") {
+    moveQuestionMessage.textContent = message;
+
+    moveQuestionMessage.classList.remove("is-error", "is-success");
+
+    if (type === "error") {
+      moveQuestionMessage.classList.add("is-error");
+    }
+
+    if (type === "success") {
+      moveQuestionMessage.classList.add("is-success");
+    }
+  }
+
+  function renderMoveThemeOptions(question) {
+    const subjects = getSubjects();
+    const themes = getThemes().filter((theme) => {
+      return theme.id !== question.themeId;
+    });
+
+    moveQuestionThemeSelect.innerHTML = `
     <option value="">Selecione um tema</option>
   `;
 
-		subjects.forEach((subject) => {
-			const themesFromSubject = themes.filter((theme) => {
-				return theme.subjectId === subject.id;
-			});
+    subjects.forEach((subject) => {
+      const themesFromSubject = themes.filter((theme) => {
+        return theme.subjectId === subject.id;
+      });
 
-			if (themesFromSubject.length === 0) {
-				return;
-			}
+      if (themesFromSubject.length === 0) {
+        return;
+      }
 
-			const group = document.createElement('optgroup');
+      const group = document.createElement("optgroup");
 
-			group.label = subject.name;
+      group.label = subject.name;
 
-			themesFromSubject.forEach((theme) => {
-				const option = document.createElement('option');
+      themesFromSubject.forEach((theme) => {
+        const option = document.createElement("option");
 
-				option.value = theme.id;
-				option.textContent = theme.name;
+        option.value = theme.id;
+        option.textContent = theme.name;
 
-				group.appendChild(option);
-			});
+        group.appendChild(option);
+      });
 
-			moveQuestionThemeSelect.appendChild(group);
-		});
+      moveQuestionThemeSelect.appendChild(group);
+    });
 
-		const hasAvailableThemes = themes.length > 0;
+    const hasAvailableThemes = themes.length > 0;
 
-		moveQuestionThemeSelect.disabled = !hasAvailableThemes;
-		moveQuestionConfirmButton.disabled = !hasAvailableThemes;
+    moveQuestionThemeSelect.disabled = !hasAvailableThemes;
+    moveQuestionConfirmButton.disabled = !hasAvailableThemes;
 
-		if (!hasAvailableThemes) {
-			setMoveQuestionMessage('Não existe outro tema disponível para mover esta questão.', 'error');
-		} else {
-			setMoveQuestionMessage('');
-		}
-	}
+    if (!hasAvailableThemes) {
+      setMoveQuestionMessage("Não existe outro tema disponível para mover esta questão.", "error");
+    } else {
+      setMoveQuestionMessage("");
+    }
+  }
 
-	function openMoveQuestionModal(question) {
-		movingQuestionId = question.id;
+  function openMoveQuestionModal(question) {
+    movingQuestionId = question.id;
 
-		const currentSubjectName = getSubjectNameById(question.subjectId);
-		const currentThemeName = getThemeNameById(question.themeId);
+    const currentSubjectName = getSubjectNameById(question.subjectId);
+    const currentThemeName = getThemeNameById(question.themeId);
 
-		moveQuestionCurrent.innerHTML = `
+    moveQuestionCurrent.innerHTML = `
     <span><strong>Matéria atual:</strong> ${escapeHTML(currentSubjectName)}</span>
     <span><strong>Tema atual:</strong> ${escapeHTML(currentThemeName)}</span>
   `;
 
-		renderMoveThemeOptions(question);
+    renderMoveThemeOptions(question);
 
-		moveQuestionModal.hidden = false;
-		moveQuestionThemeSelect.focus();
-	}
+    moveQuestionModal.hidden = false;
+    moveQuestionThemeSelect.focus();
+  }
 
-	function closeMoveQuestionModal() {
-		movingQuestionId = null;
+  function closeMoveQuestionModal() {
+    movingQuestionId = null;
 
-		moveQuestionThemeSelect.value = '';
-		setMoveQuestionMessage('');
+    moveQuestionThemeSelect.value = "";
+    setMoveQuestionMessage("");
 
-		moveQuestionModal.hidden = true;
-	}
+    moveQuestionModal.hidden = true;
+  }
 
-	function moveQuestionToTheme(questionId, targetThemeId) {
-		const targetTheme = getThemeById(targetThemeId);
+  function moveQuestionToTheme(questionId, targetThemeId) {
+    const targetTheme = getThemeById(targetThemeId);
 
-		if (!targetTheme) {
-			setMoveQuestionMessage('Selecione um tema válido para mover a questão.', 'error');
-			return;
-		}
+    if (!targetTheme) {
+      setMoveQuestionMessage("Selecione um tema válido para mover a questão.", "error");
+      return;
+    }
 
-		const updatedQuestions = getQuestions().map((question) => {
-			if (question.id !== questionId) {
-				return question;
-			}
+    const updatedQuestions = getQuestions().map((question) => {
+      if (question.id !== questionId) {
+        return question;
+      }
 
-			return {
-				...question,
-				subjectId: targetTheme.subjectId,
-				themeId: targetTheme.id,
-				updatedAt: new Date().toISOString(),
-				movedAt: new Date().toISOString()
-			};
-		});
+      return {
+        ...question,
+        subjectId: targetTheme.subjectId,
+        themeId: targetTheme.id,
+        updatedAt: new Date().toISOString(),
+        movedAt: new Date().toISOString(),
+      };
+    });
 
-		saveQuestions(updatedQuestions);
-		notifyQuestionsChanged();
+    saveQuestions(updatedQuestions);
+    notifyQuestionsChanged();
 
-		questionSubjectSelect.value = targetTheme.subjectId;
-		renderThemeOptions();
+    questionSubjectSelect.value = targetTheme.subjectId;
+    renderThemeOptions();
 
-		questionThemeSelect.value = targetTheme.id;
-		setQuestionInputTabsEnabled(true);
-		renderQuestions();
+    questionThemeSelect.value = targetTheme.id;
+    setQuestionInputTabsEnabled(true);
+    renderQuestions();
 
-		closeMoveQuestionModal();
-		showQuestionTab('list');
+    closeMoveQuestionModal();
+    showQuestionTab("list");
 
-		setQuestionFormMessage('Questão movida com sucesso.', 'success');
-	}
+    setQuestionFormMessage("Questão movida com sucesso.", "success");
+  }
 
-	function confirmMoveQuestion() {
-		if (!movingQuestionId) {
-			return;
-		}
+  function confirmMoveQuestion() {
+    if (!movingQuestionId) {
+      return;
+    }
 
-		const targetThemeId = moveQuestionThemeSelect.value;
+    const targetThemeId = moveQuestionThemeSelect.value;
 
-		if (!targetThemeId) {
-			setMoveQuestionMessage('Selecione o novo tema da questão.', 'error');
-			moveQuestionThemeSelect.focus();
-			return;
-		}
+    if (!targetThemeId) {
+      setMoveQuestionMessage("Selecione o novo tema da questão.", "error");
+      moveQuestionThemeSelect.focus();
+      return;
+    }
 
-		moveQuestionToTheme(movingQuestionId, targetThemeId);
-	}
+    moveQuestionToTheme(movingQuestionId, targetThemeId);
+  }
 
-	function handleMoveModalOverlayClick(event) {
-		if (event.target === moveQuestionModal) {
-			closeMoveQuestionModal();
-		}
-	}
+  function handleMoveModalOverlayClick(event) {
+    if (event.target === moveQuestionModal) {
+      closeMoveQuestionModal();
+    }
+  }
 
-	function handleMoveModalEscapeKey(event) {
-		if (event.key === 'Escape' && !moveQuestionModal.hidden) {
-			closeMoveQuestionModal();
-		}
-	}
+  function handleMoveModalEscapeKey(event) {
+    if (event.key === "Escape" && !moveQuestionModal.hidden) {
+      closeMoveQuestionModal();
+    }
+  }
 
-	function handleQuestionMove(event) {
-		const moveButton = event.target.closest('[data-move-question]');
+  function handleQuestionMove(event) {
+    const moveButton = event.target.closest("[data-move-question]");
 
-		if (!moveButton) {
-			return;
-		}
+    if (!moveButton) {
+      return;
+    }
 
-		const questionId = moveButton.dataset.moveQuestion;
+    const questionId = moveButton.dataset.moveQuestion;
 
-		const question = getQuestions().find((currentQuestion) => {
-			return currentQuestion.id === questionId;
-		});
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
 
-		if (!question) {
-			return;
-		}
+    if (!question) {
+      return;
+    }
 
-		if (editingQuestionId) {
-			exitEditMode();
-		}
+    if (editingQuestionId) {
+      exitEditMode();
+    }
 
-		openMoveQuestionModal(question);
-	}
+    openMoveQuestionModal(question);
+  }
 
-	function renderSubjectOptions() {
-		const subjects = getSubjects();
-		const previousSelectedSubjectId = questionSubjectSelect.value;
+  function renderSubjectOptions() {
+    const subjects = getSubjects();
+    const previousSelectedSubjectId = questionSubjectSelect.value;
 
-		questionSubjectSelect.innerHTML = `
+    questionSubjectSelect.innerHTML = `
       <option value="">Selecione uma matéria</option>
     `;
 
-		subjects.forEach((subject) => {
-			const option = document.createElement('option');
+    subjects.forEach((subject) => {
+      const option = document.createElement("option");
 
-			option.value = subject.id;
-			option.textContent = subject.name;
+      option.value = subject.id;
+      option.textContent = subject.name;
 
-			questionSubjectSelect.appendChild(option);
-		});
+      questionSubjectSelect.appendChild(option);
+    });
 
-		const hasSubjects = subjects.length > 0;
-		const selectedSubjectStillExists = subjects.some((subject) => {
-			return subject.id === previousSelectedSubjectId;
-		});
+    const hasSubjects = subjects.length > 0;
+    const selectedSubjectStillExists = subjects.some((subject) => {
+      return subject.id === previousSelectedSubjectId;
+    });
 
-		questionNoSubjectWarning.hidden = hasSubjects;
+    questionNoSubjectWarning.hidden = hasSubjects;
 
-		if (!hasSubjects) {
-			questionFilters.hidden = true;
-			questionTabPanel.hidden = true;
+    if (!hasSubjects) {
+      questionFilters.hidden = true;
+      questionTabPanel.hidden = true;
 
-			questionTabButtons.forEach((button) => {
-				button.hidden = true;
-			});
+      questionTabButtons.forEach((button) => {
+        button.hidden = true;
+      });
 
-			setQuestionInputTabsEnabled(false);
+      setQuestionInputTabsEnabled(false);
 
-			questionThemeSelect.innerHTML = `
+      questionThemeSelect.innerHTML = `
     <option value="">Selecione um tema</option>
   `;
 
-			questionNoThemeWarning.hidden = true;
+      questionNoThemeWarning.hidden = true;
 
-			questionsCurrentTheme.textContent = 'Cadastre uma matéria antes de criar questões.';
+      questionsCurrentTheme.textContent = "Cadastre uma matéria antes de criar questões.";
 
-			updateQuestionsCount([]);
+      updateQuestionsCount([]);
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
     <strong>Nenhuma matéria disponível.</strong>
     <span>Cadastre uma matéria antes de criar questões.</span>
   `;
 
-			questionsList.innerHTML = '';
-			return;
-		}
+      questionsList.innerHTML = "";
+      return;
+    }
 
-		questionFilters.hidden = false;
-		questionTabPanel.hidden = false;
+    questionFilters.hidden = false;
+    questionTabPanel.hidden = false;
 
-		questionTabButtons.forEach((button) => {
-			button.hidden = false;
-		});
+    questionTabButtons.forEach((button) => {
+      button.hidden = false;
+    });
 
-		questionListTab.hidden = false;
-		questionFormTab.hidden = false;
+    questionListTab.hidden = false;
+    questionFormTab.hidden = false;
 
-		if (selectedSubjectStillExists) {
-			questionSubjectSelect.value = previousSelectedSubjectId;
-		} else {
-			questionSubjectSelect.value = '';
-		}
+    if (selectedSubjectStillExists) {
+      questionSubjectSelect.value = previousSelectedSubjectId;
+    } else {
+      questionSubjectSelect.value = "";
+    }
 
-		renderThemeOptions();
-	}
+    renderThemeOptions();
+  }
 
-	function renderThemeOptions() {
-		const selectedSubject = getSelectedSubject();
-		const themesFromSubject = getThemesFromSelectedSubject();
-		const previousSelectedThemeId = questionThemeSelect.value;
+  function renderThemeOptions() {
+    const selectedSubject = getSelectedSubject();
+    const themesFromSubject = getThemesFromSelectedSubject();
+    const previousSelectedThemeId = questionThemeSelect.value;
 
-		questionThemeSelect.innerHTML = `
+    questionThemeSelect.innerHTML = `
       <option value="">Selecione um tema</option>
     `;
 
-		if (!selectedSubject) {
-			questionNoThemeWarning.hidden = true;
-			setQuestionInputTabsEnabled(false);
-			renderQuestions();
-			return;
-		}
+    if (!selectedSubject) {
+      questionNoThemeWarning.hidden = true;
+      setQuestionInputTabsEnabled(false);
+      renderQuestions();
+      return;
+    }
 
-		themesFromSubject.forEach((theme) => {
-			const option = document.createElement('option');
+    themesFromSubject.forEach((theme) => {
+      const option = document.createElement("option");
 
-			option.value = theme.id;
-			option.textContent = theme.name;
+      option.value = theme.id;
+      option.textContent = theme.name;
 
-			questionThemeSelect.appendChild(option);
-		});
+      questionThemeSelect.appendChild(option);
+    });
 
-		const hasThemes = themesFromSubject.length > 0;
-		const selectedThemeStillExists = themesFromSubject.some((theme) => {
-			return theme.id === previousSelectedThemeId;
-		});
+    const hasThemes = themesFromSubject.length > 0;
+    const selectedThemeStillExists = themesFromSubject.some((theme) => {
+      return theme.id === previousSelectedThemeId;
+    });
 
-		questionNoThemeWarning.hidden = !selectedSubject || hasThemes;
+    questionNoThemeWarning.hidden = !selectedSubject || hasThemes;
 
-		if (selectedThemeStillExists) {
-			questionThemeSelect.value = previousSelectedThemeId;
-		} else {
-			questionThemeSelect.value = '';
-		}
+    if (selectedThemeStillExists) {
+      questionThemeSelect.value = previousSelectedThemeId;
+    } else {
+      questionThemeSelect.value = "";
+    }
 
-		setQuestionInputTabsEnabled(Boolean(questionThemeSelect.value));
+    setQuestionInputTabsEnabled(Boolean(questionThemeSelect.value));
 
-		renderQuestions();
-	}
+    renderSubtopicOptions();
+    renderQuestions();
+  }
 
-	function renderQuestions() {
-		const selectedSubject = getSelectedSubject();
-		const selectedTheme = getSelectedTheme();
-		const themesFromSubject = getThemesFromSelectedSubject();
-		const questionsFromContext = getQuestionsFromSelectedContext();
+  function renderSubtopicOptions() {
+    const previousSelectedSubtopicId = questionSubtopicSelect.value;
+    const selectedTheme = getSelectedTheme();
+    const subtopicsFromTheme = getSubtopicsFromSelectedTheme();
 
-		questionsList.innerHTML = '';
+    questionSubtopicSelect.innerHTML = `
+		<option value="">Nenhum assunto</option>
+	`;
 
-		updateQuestionsCount(questionsFromContext);
+    if (!selectedTheme || subtopicsFromTheme.length === 0) {
+      questionSubtopicSelect.value = "";
+      questionSubtopicSelect.disabled = true;
+      questionSubtopicGroup.hidden = subtopicsFromTheme.length === 0;
+      return;
+    }
 
-		if (!selectedSubject) {
-			questionsCurrentTheme.textContent = 'Selecione uma matéria para carregar os temas.';
+    subtopicsFromTheme.forEach((subtopic) => {
+      const option = document.createElement("option");
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      option.value = subtopic.id;
+      option.textContent = subtopic.name;
+
+      questionSubtopicSelect.appendChild(option);
+    });
+
+    const selectedSubtopicStillExists = subtopicsFromTheme.some((subtopic) => {
+      return subtopic.id === previousSelectedSubtopicId;
+    });
+
+    if (selectedSubtopicStillExists) {
+      questionSubtopicSelect.value = previousSelectedSubtopicId;
+    } else {
+      questionSubtopicSelect.value = "";
+    }
+
+    questionSubtopicSelect.disabled = false;
+    questionSubtopicGroup.hidden = false;
+  }
+
+  function renderQuestions() {
+    const selectedSubject = getSelectedSubject();
+    const selectedTheme = getSelectedTheme();
+    const themesFromSubject = getThemesFromSelectedSubject();
+    const questionsFromContext = getQuestionsFromSelectedContext();
+
+    questionsList.innerHTML = "";
+
+    updateQuestionsCount(questionsFromContext);
+
+    if (!selectedSubject) {
+      questionsCurrentTheme.textContent = "Selecione uma matéria para carregar os temas.";
+
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
       <strong>Nenhuma matéria selecionada.</strong>
       <span>Escolha uma matéria para visualizar os temas disponíveis.</span>
     `;
 
-			return;
-		}
+      return;
+    }
 
-		if (themesFromSubject.length === 0) {
-			questionsCurrentTheme.innerHTML = `
+    if (themesFromSubject.length === 0) {
+      questionsCurrentTheme.innerHTML = `
       Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
     `;
 
-			questionsEmptyState.hidden = false;
-			questionsEmptyState.innerHTML = `
+      questionsEmptyState.hidden = false;
+      questionsEmptyState.innerHTML = `
       <strong>Esta matéria ainda não possui temas.</strong>
       <span>Cadastre um tema antes de adicionar questões.</span>
     `;
 
-			return;
-		}
+      return;
+    }
 
-		if (selectedTheme) {
-			questionsCurrentTheme.innerHTML = `
+    if (selectedTheme) {
+      questionsCurrentTheme.innerHTML = `
       Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
       com o tema <strong class="highlighted-theme-name">${escapeHTML(selectedTheme.name)}</strong>
     `;
-		} else {
-			questionsCurrentTheme.innerHTML = `
+    } else {
+      questionsCurrentTheme.innerHTML = `
       Questões da matéria <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
     `;
-		}
+    }
 
-		if (questionsFromContext.length === 0) {
-			questionsEmptyState.hidden = false;
+    if (questionsFromContext.length === 0) {
+      questionsEmptyState.hidden = false;
 
-			if (selectedTheme) {
-				questionsEmptyState.innerHTML = `
+      if (selectedTheme) {
+        questionsEmptyState.innerHTML = `
         <strong>Nenhuma questão cadastrada neste tema ainda.</strong>
         <span>Use a aba Cadastro para adicionar a primeira questão deste tema.</span>
       `;
-			} else {
-				questionsEmptyState.innerHTML = `
+      } else {
+        questionsEmptyState.innerHTML = `
         <strong>Nenhuma questão cadastrada nesta matéria ainda.</strong>
         <span>Selecione um tema para liberar o cadastro de novas questões.</span>
       `;
-			}
+      }
 
-			return;
-		}
+      return;
+    }
 
-		questionsEmptyState.hidden = true;
+    questionsEmptyState.hidden = true;
 
-		questionsFromContext.forEach((question, index) => {
-			const questionCard = document.createElement('article');
-			const questionThemeName = getThemeNameById(question.themeId);
+    questionsFromContext.forEach((question, index) => {
+      const questionCard = document.createElement("article");
+      const questionThemeName = getThemeNameById(question.themeId);
 
-			questionCard.classList.add('question-card');
-			questionCard.dataset.questionId = question.id;
+      questionCard.classList.add("question-card");
+      questionCard.dataset.questionId = question.id;
 
-			const correctLetter = question.correctAlternative || '?';
+      const correctLetter = question.correctAlternative || "?";
 
-			questionCard.innerHTML = `
+      questionCard.innerHTML = `
         <div class="question-card__content">
           <div class="question-card__top">
-            <h3>Questão ${String(index + 1).padStart(2, '0')}</h3>
+            <h3>Questão ${String(index + 1).padStart(2, "0")}</h3>
 
             <span class="question-card__answer">
               <span>Correta:</span>
@@ -939,10 +1046,12 @@ export function initQuestions() {
               Tema: <strong>${escapeHTML(questionThemeName)}</strong>
             </span>
 
+				${question.subtopicId ? `<span class="question-card__tag">Assunto: ${escapeHTML(getSubtopicNameById(question.subtopicId))}</span>` : ""}
+
             <small>Criada em ${formatDate(question.createdAt)}</small>
 
             <small>
-              ${question.shouldShuffleAlternatives ? 'Alternativas serão embaralhadas' : 'Ordem fixa das alternativas'}
+              ${question.shouldShuffleAlternatives ? "Alternativas serão embaralhadas" : "Ordem fixa das alternativas"}
             </small>
           </div>
         </div>
@@ -980,288 +1089,312 @@ export function initQuestions() {
         </div>
       `;
 
-			questionsList.appendChild(questionCard);
-		});
-	}
+      questionsList.appendChild(questionCard);
+    });
+  }
 
-	function clearQuestionForm() {
-		questionStatementInput.value = '';
-		alternativeAInput.value = '';
-		alternativeBInput.value = '';
-		alternativeCInput.value = '';
-		alternativeDInput.value = '';
-		alternativeEInput.value = '';
-		correctAlternativeSelect.value = '';
-		questionExplanationInput.value = '';
-		setQuestionFormMessage('');
-		questionStatementInput.focus();
-	}
+  function clearQuestionForm() {
+    questionStatementInput.value = "";
+    alternativeAInput.value = "";
+    alternativeBInput.value = "";
+    alternativeCInput.value = "";
+    alternativeDInput.value = "";
+    alternativeEInput.value = "";
+    correctAlternativeSelect.value = "";
+    questionExplanationInput.value = "";
+    setQuestionFormMessage("");
+    questionStatementInput.focus();
+  }
 
-	function validateQuestionForm({selectedSubjectId, selectedThemeId, statement, alternatives, correctAlternative}) {
-		if (!selectedSubjectId) {
-			setQuestionFormMessage('Selecione uma matéria antes de cadastrar a questão.', 'error');
-			questionSubjectSelect.focus();
-			return false;
-		}
+  function validateQuestionForm({ selectedSubjectId, selectedThemeId, statement, alternatives, correctAlternative }) {
+    if (!selectedSubjectId) {
+      setQuestionFormMessage("Selecione uma matéria antes de cadastrar a questão.", "error");
+      questionSubjectSelect.focus();
+      return false;
+    }
 
-		if (!selectedThemeId) {
-			setQuestionFormMessage('Selecione um tema antes de cadastrar a questão.', 'error');
-			questionThemeSelect.focus();
-			return false;
-		}
+    if (!selectedThemeId) {
+      setQuestionFormMessage("Selecione um tema antes de cadastrar a questão.", "error");
+      questionThemeSelect.focus();
+      return false;
+    }
 
-		if (!statement) {
-			setQuestionFormMessage('Informe o enunciado da questão.', 'error');
-			questionStatementInput.focus();
-			return false;
-		}
+    if (!statement) {
+      setQuestionFormMessage("Informe o enunciado da questão.", "error");
+      questionStatementInput.focus();
+      return false;
+    }
 
-		if (!correctAlternative) {
-			setQuestionFormMessage('Selecione a alternativa correta da questão.', 'error');
-			correctAlternativeSelect.focus();
-			return false;
-		}
+    if (!correctAlternative) {
+      setQuestionFormMessage("Selecione a alternativa correta da questão.", "error");
+      correctAlternativeSelect.focus();
+      return false;
+    }
 
-		const correctAlternativeText = alternatives[correctAlternative];
+    const correctAlternativeText = alternatives[correctAlternative];
 
-		if (!correctAlternativeText) {
-			setQuestionFormMessage(`Preencha o texto da alternativa ${correctAlternative}.`, 'error');
+    if (!correctAlternativeText) {
+      setQuestionFormMessage(`Preencha o texto da alternativa ${correctAlternative}.`, "error");
 
-			const alternativeInputs = {
-				A: alternativeAInput,
-				B: alternativeBInput,
-				C: alternativeCInput,
-				D: alternativeDInput,
-				E: alternativeEInput
-			};
+      const alternativeInputs = {
+        A: alternativeAInput,
+        B: alternativeBInput,
+        C: alternativeCInput,
+        D: alternativeDInput,
+        E: alternativeEInput,
+      };
 
-			alternativeInputs[correctAlternative].focus();
-			return false;
-		}
+      alternativeInputs[correctAlternative].focus();
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	function handleQuestionSubmit(event) {
-		event.preventDefault();
+  function handleQuestionSubmit(event) {
+    event.preventDefault();
 
-		const selectedSubjectId = questionSubjectSelect.value;
-		const selectedThemeId = questionThemeSelect.value;
-		const statement = questionStatementInput.value.trim();
+    const selectedSubjectId = questionSubjectSelect.value;
+    const selectedThemeId = questionThemeSelect.value;
+    const selectedSubtopicId = questionSubtopicSelect.value || null;
+    const statement = questionStatementInput.value.trim();
 
-		const alternatives = {
-			A: alternativeAInput.value.trim(),
-			B: alternativeBInput.value.trim(),
-			C: alternativeCInput.value.trim(),
-			D: alternativeDInput.value.trim(),
-			E: alternativeEInput.value.trim()
-		};
+    const alternatives = {
+      A: alternativeAInput.value.trim(),
+      B: alternativeBInput.value.trim(),
+      C: alternativeCInput.value.trim(),
+      D: alternativeDInput.value.trim(),
+      E: alternativeEInput.value.trim(),
+    };
 
-		const correctAlternative = correctAlternativeSelect.value;
-		const explanation = questionExplanationInput.value.trim();
+    const correctAlternative = correctAlternativeSelect.value;
+    const explanation = questionExplanationInput.value.trim();
 
-		const isValidQuestion = validateQuestionForm({
-			selectedSubjectId,
-			selectedThemeId,
-			statement,
-			alternatives,
-			correctAlternative
-		});
+    const isValidQuestion = validateQuestionForm({
+      selectedSubjectId,
+      selectedThemeId,
+      statement,
+      alternatives,
+      correctAlternative,
+    });
 
-		if (!isValidQuestion) {
-			return;
-		}
+    if (!isValidQuestion) {
+      return;
+    }
 
-		if (editingQuestionId) {
-			updateQuestion(editingQuestionId, {
-				subjectId: selectedSubjectId,
-				themeId: selectedThemeId,
-				statement,
-				alternatives,
-				correctAlternative,
-				explanation
-			});
+    if (editingQuestionId) {
+      updateQuestion(editingQuestionId, {
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        subtopicId: selectedSubtopicId,
+        statement,
+        alternatives,
+        correctAlternative,
+        explanation,
+      });
 
-			renderQuestions();
-			exitEditMode();
-			showQuestionTab('list');
+      renderQuestions();
+      exitEditMode();
+      showQuestionTab("list");
 
-			setQuestionFormMessage('Questão atualizada com sucesso.', 'success');
-		} else {
-			const questions = getQuestions();
+      setQuestionFormMessage("Questão atualizada com sucesso.", "success");
+    } else {
+      const questions = getQuestions();
 
-			const newQuestion = createQuestion({
-				subjectId: selectedSubjectId,
-				themeId: selectedThemeId,
-				statement,
-				alternatives,
-				correctAlternative,
-				explanation
-			});
+      const newQuestion = createQuestion({
+        subjectId: selectedSubjectId,
+        themeId: selectedThemeId,
+        subtopicId: selectedSubtopicId,
+        statement,
+        alternatives,
+        correctAlternative,
+        explanation,
+      });
 
-			questions.push(newQuestion);
+      questions.push(newQuestion);
 
-			saveQuestions(questions);
-			notifyQuestionsChanged();
-			renderQuestions();
-			clearQuestionForm();
-			showQuestionTab('list');
+      saveQuestions(questions);
+      notifyQuestionsChanged();
+      renderQuestions();
+      clearQuestionForm();
+      showQuestionTab("list");
 
-			setQuestionFormMessage('Questão cadastrada com sucesso.', 'success');
-		}
+      setQuestionFormMessage("Questão cadastrada com sucesso.", "success");
+    }
 
-		questionsList.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start'
-		});
-	}
+    questionsList.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 
-	function handleQuestionDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-question]');
+  function handleQuestionDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-question]");
 
-		if (!deleteButton) {
-			return;
-		}
+    if (!deleteButton) {
+      return;
+    }
 
-		const questionId = deleteButton.dataset.deleteQuestion;
+    const questionId = deleteButton.dataset.deleteQuestion;
 
-		const question = getQuestions().find((currentQuestion) => {
-			return currentQuestion.id === questionId;
-		});
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
 
-		if (!question) {
-			return;
-		}
+    if (!question) {
+      return;
+    }
 
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir questão',
-			message: 'Tem certeza que deseja excluir esta questão?',
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteQuestion(question.id);
-			}
-		});
-	}
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir questão",
+      message: "Tem certeza que deseja excluir esta questão?",
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteQuestion(question.id);
+      },
+    });
+  }
 
-	function handleQuestionEdit(event) {
-		const editButton = event.target.closest('[data-edit-question]');
+  function handleQuestionEdit(event) {
+    const editButton = event.target.closest("[data-edit-question]");
 
-		if (!editButton) {
-			return;
-		}
+    if (!editButton) {
+      return;
+    }
 
-		const questionId = editButton.dataset.editQuestion;
+    const questionId = editButton.dataset.editQuestion;
 
-		const question = getQuestions().find((currentQuestion) => {
-			return currentQuestion.id === questionId;
-		});
+    const question = getQuestions().find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
 
-		if (!question) {
-			return;
-		}
+    if (!question) {
+      return;
+    }
 
-		enterEditMode(question);
-	}
+    enterEditMode(question);
+  }
 
-	function handleSubjectChange() {
-		setQuestionFormMessage('');
-		clearQuestionImport();
-		questionThemeSelect.value = '';
-		renderThemeOptions();
-	}
+  function handleSubjectChange() {
+    setQuestionFormMessage("");
+    clearQuestionImport();
+    questionThemeSelect.value = "";
+    renderThemeOptions();
+  }
 
-	function handleThemeChange() {
-		setQuestionFormMessage('');
-		clearQuestionImport();
-		setQuestionInputTabsEnabled(Boolean(questionThemeSelect.value));
-		renderQuestions();
-	}
+  function handleSubtopicChange() {
+    setQuestionFormMessage("");
+    renderQuestions();
+  }
 
-	function handleExternalQuestionCreate(event) {
-		const subjectId = event.detail?.subjectId;
-		const themeId = event.detail?.themeId;
+  function handleThemeChange() {
+    setQuestionFormMessage("");
+    clearQuestionImport();
+    renderSubtopicOptions();
+    setQuestionInputTabsEnabled(Boolean(questionThemeSelect.value));
+    renderQuestions();
+  }
 
-		if (!subjectId || !themeId) {
-			return;
-		}
+  function handleExternalQuestionCreate(event) {
+    const subjectId = event.detail?.subjectId;
+    const themeId = event.detail?.themeId;
+    const subtopicId = event.detail?.subtopicId || "";
 
-		const subjectExists = getSubjects().some((subject) => {
-			return subject.id === subjectId;
-		});
+    if (!subjectId || !themeId) {
+      return;
+    }
 
-		const themeExists = getThemes().some((theme) => {
-			return theme.id === themeId && theme.subjectId === subjectId;
-		});
+    const subjectExists = getSubjects().some((subject) => {
+      return subject.id === subjectId;
+    });
 
-		if (!subjectExists || !themeExists) {
-			return;
-		}
+    const themeExists = getThemes().some((theme) => {
+      return theme.id === themeId && theme.subjectId === subjectId;
+    });
 
-		if (editingQuestionId) {
-			exitEditMode();
-		}
+    if (!subjectExists || !themeExists) {
+      return;
+    }
 
-		questionSubjectSelect.value = subjectId;
-		renderThemeOptions();
+    if (editingQuestionId) {
+      exitEditMode();
+    }
 
-		questionThemeSelect.value = themeId;
-		setQuestionInputTabsEnabled(true);
-		showQuestionTab('form');
-		renderQuestions();
+    questionSubjectSelect.value = subjectId;
+    renderThemeOptions();
 
-		questionStatementInput.focus();
+    questionThemeSelect.value = themeId;
 
-		setQuestionFormMessage('Cadastre uma questão para completar este tema.', 'success');
-	}
+    renderSubtopicOptions();
 
-	//-----------------------------------------------------
+    if (subtopicId) {
+      const subtopicExists = getSubtopics().some((subtopic) => {
+        return subtopic.id === subtopicId && subtopic.themeId === themeId;
+      });
 
-	questionForm.addEventListener('submit', handleQuestionSubmit);
-	questionSubjectSelect.addEventListener('change', handleSubjectChange);
-	questionThemeSelect.addEventListener('change', handleThemeChange);
-	clearQuestionFormButton.addEventListener('click', clearQuestionForm);
-	cancelQuestionEditButton.addEventListener('click', exitEditMode);
+      if (subtopicExists) {
+        questionSubtopicSelect.value = subtopicId;
+      }
+    }
 
-	validateQuestionImportButton.addEventListener('click', validateQuestionImportText);
-	clearQuestionImportButton.addEventListener('click', clearQuestionImport);
-	importValidatedQuestionsButton.addEventListener('click', importValidatedQuestions);
+    setQuestionInputTabsEnabled(true);
+    showQuestionTab("form");
+    renderQuestions();
 
-	questionsList.addEventListener('click', handleQuestionEdit);
-	questionsList.addEventListener('click', handleQuestionMove);
-	questionsList.addEventListener('click', handleQuestionDelete);
+    questionStatementInput.focus();
 
-	moveQuestionCancelButton.addEventListener('click', closeMoveQuestionModal);
-	moveQuestionConfirmButton.addEventListener('click', confirmMoveQuestion);
-	moveQuestionModal.addEventListener('click', handleMoveModalOverlayClick);
-	document.addEventListener('keydown', handleMoveModalEscapeKey);
-	document.addEventListener('questions:prepare-create', handleExternalQuestionCreate);
+    setQuestionFormMessage(subtopicId ? "Cadastre uma questão para completar este assunto." : "Cadastre uma questão para completar este tema.", "success");
+  }
 
-	questionTabButtons.forEach((button) => {
-		button.addEventListener('click', () => {
-			if (button.disabled) {
-				return;
-			}
+  //-----------------------------------------------------
 
-			showQuestionTab(button.dataset.questionTab);
-		});
-	});
+  questionForm.addEventListener("submit", handleQuestionSubmit);
+  questionSubjectSelect.addEventListener("change", handleSubjectChange);
+  questionSubtopicSelect.addEventListener("change", handleSubtopicChange);
+  questionThemeSelect.addEventListener("change", handleThemeChange);
+  clearQuestionFormButton.addEventListener("click", clearQuestionForm);
+  cancelQuestionEditButton.addEventListener("click", exitEditMode);
 
-	document.addEventListener('subjects:changed', renderSubjectOptions);
-	document.addEventListener('themes:changed', renderThemeOptions);
+  validateQuestionImportButton.addEventListener("click", validateQuestionImportText);
+  clearQuestionImportButton.addEventListener("click", clearQuestionImport);
+  importValidatedQuestionsButton.addEventListener("click", importValidatedQuestions);
 
-	document.addEventListener('questions:set-tab', (event) => {
-		const tabName = event.detail?.tabName;
+  questionsList.addEventListener("click", handleQuestionEdit);
+  questionsList.addEventListener("click", handleQuestionMove);
+  questionsList.addEventListener("click", handleQuestionDelete);
 
-		if (!tabName) {
-			return;
-		}
+  moveQuestionCancelButton.addEventListener("click", closeMoveQuestionModal);
+  moveQuestionConfirmButton.addEventListener("click", confirmMoveQuestion);
+  moveQuestionModal.addEventListener("click", handleMoveModalOverlayClick);
+  document.addEventListener("keydown", handleMoveModalEscapeKey);
+  document.addEventListener("questions:prepare-create", handleExternalQuestionCreate);
 
-		showQuestionTab(tabName);
-	});
+  questionTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.disabled) {
+        return;
+      }
 
-	renderSubjectOptions();
+      showQuestionTab(button.dataset.questionTab);
+    });
+  });
 
-	console.log('Sistema de questões carregado.');
+  document.addEventListener("subjects:changed", renderSubjectOptions);
+  document.addEventListener("themes:changed", renderThemeOptions);
+
+  document.addEventListener("questions:set-tab", (event) => {
+    const tabName = event.detail?.tabName;
+
+    if (!tabName) {
+      return;
+    }
+
+    showQuestionTab(tabName);
+  });
+
+  renderSubjectOptions();
+
+  console.log("Sistema de questões carregado.");
 }
