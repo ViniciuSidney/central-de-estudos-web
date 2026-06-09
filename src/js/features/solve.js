@@ -1,223 +1,250 @@
-import {getCollection, saveCollection} from '../core/storage.js';
+import { getCollection, saveCollection } from "../core/storage.js";
 
-const SUBJECTS_COLLECTION = 'subjects';
-const THEMES_COLLECTION = 'themes';
-const QUESTIONS_COLLECTION = 'questions';
-const ATTEMPTS_COLLECTION = 'attempts';
-const NOTES_COLLECTION = 'notes';
-const ERROR_REVIEWS_COLLECTION = 'errorReviews';
+const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
+const SUBTOPICS_COLLECTION = "subtopics";
+const QUESTIONS_COLLECTION = "questions";
+const ATTEMPTS_COLLECTION = "attempts";
+const NOTES_COLLECTION = "notes";
+const ERROR_REVIEWS_COLLECTION = "errorReviews";
 
-const VISUAL_ALTERNATIVE_LABELS = ['A', 'B', 'C', 'D', 'E'];
+const VISUAL_ALTERNATIVE_LABELS = ["A", "B", "C", "D", "E"];
 
 export function initSolve() {
-	const solveSubjectSelect = document.querySelector('#solve-subject-select');
-	const solveThemeSelect = document.querySelector('#solve-theme-select');
-	const solveQuestionSelect = document.querySelector('#solve-question-select');
+  const solveSubjectSelect = document.querySelector("#solve-subject-select");
+  const solveThemeSelect = document.querySelector("#solve-theme-select");
+  const solveQuestionSelect = document.querySelector("#solve-question-select");
 
-	const solveQuestionContext = document.querySelector('#solve-question-context');
-	const solveQuestionTitle = document.querySelector('#solve-question-title');
-	const solveQuestionStatus = document.querySelector('#solve-question-status');
-	const solveQuestionStatement = document.querySelector('#solve-question-statement');
-	const solveAlternatives = document.querySelector('#solve-alternatives-list');
-	const solveFeedback = document.querySelector('#solve-feedback-panel');
+  const solveQuestionContext = document.querySelector("#solve-question-context");
+  const solveQuestionTitle = document.querySelector("#solve-question-title");
+  const solveQuestionStatus = document.querySelector("#solve-question-status");
+  const solveQuestionStatement = document.querySelector("#solve-question-statement");
+  const solveAlternatives = document.querySelector("#solve-alternatives-list");
+  const solveFeedback = document.querySelector("#solve-feedback-panel");
 
-	const confirmAnswerButton = document.querySelector('#solve-confirm-button');
-	const retryQuestionButton = document.querySelector('#solve-retry-button');
-	const nextQuestionButton = document.querySelector('#solve-next-button');
+  const confirmAnswerButton = document.querySelector("#solve-confirm-button");
+  const retryQuestionButton = document.querySelector("#solve-retry-button");
+  const nextQuestionButton = document.querySelector("#solve-next-button");
 
-	const solveHistoryList = document.querySelector('#solve-history-list');
-	const solveHistoryPanel = document.querySelector('.solve-history-panel');
+  const solveHistoryList = document.querySelector("#solve-history-list");
+  const solveHistoryPanel = document.querySelector(".solve-history-panel");
 
-	if (
-		!solveSubjectSelect ||
-		!solveThemeSelect ||
-		!solveQuestionSelect ||
-		!solveQuestionContext ||
-		!solveQuestionTitle ||
-		!solveQuestionStatus ||
-		!solveQuestionStatement ||
-		!solveAlternatives ||
-		!solveFeedback ||
-		!confirmAnswerButton ||
-		!retryQuestionButton ||
-		!nextQuestionButton ||
-		!solveHistoryList
-	) {
-		return;
-	}
+  if (
+    !solveSubjectSelect ||
+    !solveThemeSelect ||
+    !solveQuestionSelect ||
+    !solveQuestionContext ||
+    !solveQuestionTitle ||
+    !solveQuestionStatus ||
+    !solveQuestionStatement ||
+    !solveAlternatives ||
+    !solveFeedback ||
+    !confirmAnswerButton ||
+    !retryQuestionButton ||
+    !nextQuestionButton ||
+    !solveHistoryList
+  ) {
+    return;
+  }
 
-	let selectedOriginalAlternative = null;
-	let selectedVisualAlternative = null;
-	let hasAnsweredCurrentQuestion = false;
+  let selectedOriginalAlternative = null;
+  let selectedVisualAlternative = null;
+  let hasAnsweredCurrentQuestion = false;
+  let activeSolveSubtopicId = null;
 
-	function getSubjects() {
-		return getCollection(SUBJECTS_COLLECTION);
-	}
+  function getSubjects() {
+    return getCollection(SUBJECTS_COLLECTION);
+  }
 
-	function getThemes() {
-		return getCollection(THEMES_COLLECTION);
-	}
+  function getThemes() {
+    return getCollection(THEMES_COLLECTION);
+  }
 
-	function getQuestions() {
-		return getCollection(QUESTIONS_COLLECTION);
-	}
+  function getSubtopics() {
+    return getCollection(SUBTOPICS_COLLECTION);
+  }
 
-	function getAttempts() {
-		return getCollection(ATTEMPTS_COLLECTION);
-	}
+  function getSubtopicById(subtopicId) {
+    return getSubtopics().find((subtopic) => {
+      return subtopic.id === subtopicId;
+    });
+  }
 
-	function getNotes() {
-		return getCollection(NOTES_COLLECTION);
-	}
+  function getQuestions() {
+    return getCollection(QUESTIONS_COLLECTION);
+  }
 
-	function getErrorReviews() {
-		return getCollection(ERROR_REVIEWS_COLLECTION);
-	}
+  function getAttempts() {
+    return getCollection(ATTEMPTS_COLLECTION);
+  }
 
-	function hasReviewForAttempt(attemptId) {
-		return getErrorReviews().some((review) => {
-			return review.attemptId === attemptId;
-		});
-	}
+  function getNotes() {
+    return getCollection(NOTES_COLLECTION);
+  }
 
-	function saveAttempts(attempts) {
-		saveCollection(ATTEMPTS_COLLECTION, attempts);
-	}
+  function getErrorReviews() {
+    return getCollection(ERROR_REVIEWS_COLLECTION);
+  }
 
-	function getSelectedSubject() {
-		const selectedSubjectId = solveSubjectSelect.value;
+  function hasReviewForAttempt(attemptId) {
+    return getErrorReviews().some((review) => {
+      return review.attemptId === attemptId;
+    });
+  }
 
-		return getSubjects().find((subject) => {
-			return subject.id === selectedSubjectId;
-		});
-	}
+  function saveAttempts(attempts) {
+    saveCollection(ATTEMPTS_COLLECTION, attempts);
+  }
 
-	function getSelectedTheme() {
-		const selectedThemeId = solveThemeSelect.value;
+  function getSelectedSubject() {
+    const selectedSubjectId = solveSubjectSelect.value;
 
-		return getThemes().find((theme) => {
-			return theme.id === selectedThemeId;
-		});
-	}
+    return getSubjects().find((subject) => {
+      return subject.id === selectedSubjectId;
+    });
+  }
 
-	function getSelectedQuestion() {
-		const selectedQuestionId = solveQuestionSelect.value;
+  function getSelectedTheme() {
+    const selectedThemeId = solveThemeSelect.value;
 
-		return getQuestions().find((question) => {
-			return question.id === selectedQuestionId;
-		});
-	}
+    return getThemes().find((theme) => {
+      return theme.id === selectedThemeId;
+    });
+  }
 
-	function getThemesFromSelectedSubject() {
-		const selectedSubject = getSelectedSubject();
+  function getSelectedQuestion() {
+    const selectedQuestionId = solveQuestionSelect.value;
 
-		if (!selectedSubject) {
-			return [];
-		}
+    return getQuestions().find((question) => {
+      return question.id === selectedQuestionId;
+    });
+  }
 
-		return getThemes().filter((theme) => {
-			return theme.subjectId === selectedSubject.id;
-		});
-	}
+  function getThemesFromSelectedSubject() {
+    const selectedSubject = getSelectedSubject();
 
-	function getQuestionsFromSelectedTheme() {
-		const selectedTheme = getSelectedTheme();
+    if (!selectedSubject) {
+      return [];
+    }
 
-		if (!selectedTheme) {
-			return [];
-		}
+    return getThemes().filter((theme) => {
+      return theme.subjectId === selectedSubject.id;
+    });
+  }
 
-		return getQuestions().filter((question) => {
-			return question.themeId === selectedTheme.id;
-		});
-	}
+  function getQuestionsFromSelectedTheme() {
+    const selectedTheme = getSelectedTheme();
 
-	function getSubjectById(subjectId) {
-		return getSubjects().find((subject) => {
-			return subject.id === subjectId;
-		});
-	}
+    if (!selectedTheme) {
+      return [];
+    }
 
-	function getThemeById(themeId) {
-		return getThemes().find((theme) => {
-			return theme.id === themeId;
-		});
-	}
+    const questionsFromTheme = getQuestions().filter((question) => {
+      return question.themeId === selectedTheme.id;
+    });
 
-	function getQuestionById(questionId) {
-		return getQuestions().find((question) => {
-			return question.id === questionId;
-		});
-	}
+    if (!activeSolveSubtopicId) {
+      return questionsFromTheme;
+    }
 
-	function formatDateTime(dateValue) {
-		const date = new Date(dateValue);
+    return questionsFromTheme.filter((question) => {
+      return question.subtopicId === activeSolveSubtopicId;
+    });
+  }
 
-		return date.toLocaleString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
-	}
+  function getSubjectById(subjectId) {
+    return getSubjects().find((subject) => {
+      return subject.id === subjectId;
+    });
+  }
 
-	function getQuestionIndexWithinTheme(question) {
-		const questionsFromTheme = getQuestions().filter((currentQuestion) => {
-			return currentQuestion.themeId === question.themeId;
-		});
+  function getThemeById(themeId) {
+    return getThemes().find((theme) => {
+      return theme.id === themeId;
+    });
+  }
 
-		const questionIndex = questionsFromTheme.findIndex((currentQuestion) => {
-			return currentQuestion.id === question.id;
-		});
+  function getQuestionById(questionId) {
+    return getQuestions().find((question) => {
+      return question.id === questionId;
+    });
+  }
 
-		return questionIndex === -1 ? '-' : String(questionIndex + 1).padStart(2, '0');
-	}
+  function formatDateTime(dateValue) {
+    const date = new Date(dateValue);
 
-	function renderSolveHistory() {
-		const allAttempts = getAttempts().sort((firstAttempt, secondAttempt) => {
-			return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
-		});
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
-		const recentAttempts = allAttempts.slice(0, 3);
+  function getQuestionIndexWithinTheme(question) {
+    const questionsFromContext = getQuestions().filter((currentQuestion) => {
+      if (question.subtopicId) {
+        return currentQuestion.subtopicId === question.subtopicId;
+      }
 
-		if (solveHistoryPanel) {
-			const description = solveHistoryPanel.querySelector('.solve-panel__header p');
+      return currentQuestion.themeId === question.themeId;
+    });
 
-			if (description) {
-				description.textContent = allAttempts.length === 1 ? '1 resolução registrada. Exibindo a mais recente.' : `${allAttempts.length} resoluções registradas. Exibindo as 3 mais recentes.`;
-			}
-		}
+    const questionIndex = questionsFromContext.findIndex((currentQuestion) => {
+      return currentQuestion.id === question.id;
+    });
 
-		if (recentAttempts.length === 0) {
-			solveHistoryList.innerHTML = `
+    return questionIndex === -1 ? "-" : String(questionIndex + 1).padStart(2, "0");
+  }
+
+  function renderSolveHistory() {
+    const allAttempts = getAttempts().sort((firstAttempt, secondAttempt) => {
+      return new Date(secondAttempt.answeredAt) - new Date(firstAttempt.answeredAt);
+    });
+
+    const recentAttempts = allAttempts.slice(0, 3);
+
+    if (solveHistoryPanel) {
+      const description = solveHistoryPanel.querySelector(".solve-panel__header p");
+
+      if (description) {
+        description.textContent =
+          allAttempts.length === 1
+            ? "1 resolução registrada. Exibindo a mais recente."
+            : `${allAttempts.length} resoluções registradas. Exibindo as 3 mais recentes.`;
+      }
+    }
+
+    if (recentAttempts.length === 0) {
+      solveHistoryList.innerHTML = `
 			<div class="solve-empty-state">
 				<strong>Nenhuma resolução registrada ainda.</strong>
 				<span>Resolva uma questão para que ela apareça aqui.</span>
 			</div>
 		`;
-			return;
-		}
+      return;
+    }
 
-		solveHistoryList.innerHTML = '';
+    solveHistoryList.innerHTML = "";
 
-		recentAttempts.forEach((attempt) => {
-			const subject = getSubjectById(attempt.subjectId);
-			const theme = getThemeById(attempt.themeId);
-			const question = getQuestionById(attempt.questionId);
+    recentAttempts.forEach((attempt) => {
+      const subject = getSubjectById(attempt.subjectId);
+      const theme = getThemeById(attempt.themeId);
+      const question = getQuestionById(attempt.questionId);
 
-			const subjectName = subject ? subject.name : 'Matéria removida';
-			const themeName = theme ? theme.name : 'Tema removido';
-			const questionNumber = question ? getQuestionIndexWithinTheme(question) : '-';
+      const subjectName = subject ? subject.name : "Matéria removida";
+      const themeName = theme ? theme.name : "Tema removido";
+      const questionNumber = question ? getQuestionIndexWithinTheme(question) : "-";
 
-			const attemptCard = document.createElement('article');
+      const attemptCard = document.createElement("article");
 
-			attemptCard.classList.add('solve-history-card');
+      attemptCard.classList.add("solve-history-card");
 
-			const alreadyHasConfirmationNote = attempt.isCorrect && hasConfirmationNoteForQuestion(attempt.questionId);
-			const alreadyReviewed = !attempt.isCorrect && hasReviewForAttempt(attempt.id);
+      const alreadyHasConfirmationNote = attempt.isCorrect && hasConfirmationNoteForQuestion(attempt.questionId);
+      const alreadyReviewed = !attempt.isCorrect && hasReviewForAttempt(attempt.id);
 
-			attemptCard.innerHTML = `
+      attemptCard.innerHTML = `
 				<div class="solve-history-card__content">
 					<strong>Questão ${escapeHTML(questionNumber)}</strong>
 					<span>${escapeHTML(subjectName)} • ${escapeHTML(themeName)}</span>
@@ -225,223 +252,224 @@ export function initSolve() {
 				</div>
 
 				<div class="solve-history-card__actions">
-					<span class="solve-history-card__status ${attempt.isCorrect ? 'is-correct' : 'is-wrong'}">
-						${attempt.isCorrect ? 'Acertou' : 'Errou'}
+					<span class="solve-history-card__status ${attempt.isCorrect ? "is-correct" : "is-wrong"}">
+						${attempt.isCorrect ? "Acertou" : "Errou"}
 					</span>
 
 					${
-						!attempt.isCorrect
-							? `
+            !attempt.isCorrect
+              ? `
 							<button
-								class="button button--secondary solve-history-card__action ${alreadyReviewed ? 'is-reviewed' : ''}"
+								class="button button--secondary solve-history-card__action ${alreadyReviewed ? "is-reviewed" : ""}"
 								type="button"
 								data-review-attempt="${escapeHTML(attempt.id)}"
-								${alreadyReviewed ? 'disabled' : ''}
+								${alreadyReviewed ? "disabled" : ""}
 							>
-								${alreadyReviewed ? 'Revisado' : 'Revisar'}
+								${alreadyReviewed ? "Revisado" : "Revisar"}
 							</button>
 						`
-							: `
+              : `
 							<button
-								class="button button--secondary solve-history-card__action ${alreadyHasConfirmationNote ? 'is-reviewed' : ''}"
+								class="button button--secondary solve-history-card__action ${alreadyHasConfirmationNote ? "is-reviewed" : ""}"
 								type="button"
 								data-confirmation-attempt="${escapeHTML(attempt.id)}"
-								${alreadyHasConfirmationNote ? 'disabled' : ''}
+								${alreadyHasConfirmationNote ? "disabled" : ""}
 							>
-								${alreadyHasConfirmationNote ? 'Anotada' : 'Anotar'}
+								${alreadyHasConfirmationNote ? "Anotada" : "Anotar"}
 							</button>
 						`
-					}
+          }
 				</div>
 				`;
 
-			solveHistoryList.appendChild(attemptCard);
-		});
-	}
+      solveHistoryList.appendChild(attemptCard);
+    });
+  }
 
-	function escapeHTML(value) {
-		return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-	}
+  function escapeHTML(value) {
+    return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  }
 
-	function shuffleArray(items) {
-		const shuffledItems = [...items];
+  function shuffleArray(items) {
+    const shuffledItems = [...items];
 
-		for (let index = shuffledItems.length - 1; index > 0; index--) {
-			const randomIndex = Math.floor(Math.random() * (index + 1));
+    for (let index = shuffledItems.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
 
-			const currentItem = shuffledItems[index];
-			shuffledItems[index] = shuffledItems[randomIndex];
-			shuffledItems[randomIndex] = currentItem;
-		}
+      const currentItem = shuffledItems[index];
+      shuffledItems[index] = shuffledItems[randomIndex];
+      shuffledItems[randomIndex] = currentItem;
+    }
 
-		return shuffledItems;
-	}
+    return shuffledItems;
+  }
 
-	function getRenderableAlternatives(question) {
-		const alternatives = Object.entries(question.alternatives)
-			.filter(([, text]) => {
-				return text.trim() !== '';
-			})
-			.map(([originalLetter, text]) => {
-				return {
-					originalLetter,
-					text
-				};
-			});
+  function getRenderableAlternatives(question) {
+    const alternatives = Object.entries(question.alternatives)
+      .filter(([, text]) => {
+        return text.trim() !== "";
+      })
+      .map(([originalLetter, text]) => {
+        return {
+          originalLetter,
+          text,
+        };
+      });
 
-		if (question.shouldShuffleAlternatives) {
-			return shuffleArray(alternatives);
-		}
+    if (question.shouldShuffleAlternatives) {
+      return shuffleArray(alternatives);
+    }
 
-		return alternatives;
-	}
+    return alternatives;
+  }
 
-	function createAttempt({question, selectedOriginalAlternative, selectedVisualAlternative, correctVisualAlternative, isCorrect}) {
-		return {
-			id: crypto.randomUUID(),
-			questionId: question.id,
-			subjectId: question.subjectId,
-			themeId: question.themeId,
-			selectedOriginalAlternative,
-			selectedVisualAlternative,
-			correctAlternative: question.correctAlternative,
-			correctVisualAlternative,
-			isCorrect,
-			answeredAt: new Date().toISOString()
-		};
-	}
+  function createAttempt({ question, selectedOriginalAlternative, selectedVisualAlternative, correctVisualAlternative, isCorrect }) {
+    return {
+      id: crypto.randomUUID(),
+      questionId: question.id,
+      subjectId: question.subjectId,
+      themeId: question.themeId,
+      subtopicId: question.subtopicId || null,
+      selectedOriginalAlternative,
+      selectedVisualAlternative,
+      correctAlternative: question.correctAlternative,
+      correctVisualAlternative,
+      isCorrect,
+      answeredAt: new Date().toISOString(),
+    };
+  }
 
-	function saveAttempt(attempt) {
-		const attempts = getAttempts();
+  function saveAttempt(attempt) {
+    const attempts = getAttempts();
 
-		attempts.push(attempt);
+    attempts.push(attempt);
 
-		saveAttempts(attempts);
-		document.dispatchEvent(new CustomEvent('attempts:changed'));
+    saveAttempts(attempts);
+    document.dispatchEvent(new CustomEvent("attempts:changed"));
 
-		renderSolveHistory();
-	}
+    renderSolveHistory();
+  }
 
-	function resetSelectedAlternative() {
-		selectedOriginalAlternative = null;
-		selectedVisualAlternative = null;
+  function resetSelectedAlternative() {
+    selectedOriginalAlternative = null;
+    selectedVisualAlternative = null;
 
-		document.querySelectorAll('.solve-alternative').forEach((button) => {
-			button.classList.remove('is-selected');
-		});
-	}
+    document.querySelectorAll(".solve-alternative").forEach((button) => {
+      button.classList.remove("is-selected");
+    });
+  }
 
-	function resetSolveCard() {
-		selectedOriginalAlternative = null;
-		selectedVisualAlternative = null;
-		hasAnsweredCurrentQuestion = false;
+  function resetSolveCard() {
+    selectedOriginalAlternative = null;
+    selectedVisualAlternative = null;
+    hasAnsweredCurrentQuestion = false;
 
-		solveQuestionContext.textContent = 'Matéria • Tema';
-		solveQuestionTitle.textContent = 'Resolva a questão';
-		solveQuestionStatement.textContent = 'Selecione uma matéria, um tema e uma questão para iniciar a resolução.';
-		solveQuestionStatus.textContent = 'Aguardando resposta';
-		solveQuestionStatus.className = '';
+    solveQuestionContext.textContent = "Matéria • Tema";
+    solveQuestionTitle.textContent = "Resolva a questão";
+    solveQuestionStatement.textContent = "Selecione uma matéria, um tema e uma questão para iniciar a resolução.";
+    solveQuestionStatus.textContent = "Aguardando resposta";
+    solveQuestionStatus.className = "";
 
-		solveAlternatives.innerHTML = '';
-		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback-panel';
-		solveFeedback.innerHTML = '';
+    solveAlternatives.innerHTML = "";
+    solveFeedback.hidden = true;
+    solveFeedback.className = "solve-feedback-panel";
+    solveFeedback.innerHTML = "";
 
-		confirmAnswerButton.disabled = true;
-		retryQuestionButton.disabled = true;
-		nextQuestionButton.disabled = true;
-	}
+    confirmAnswerButton.disabled = true;
+    retryQuestionButton.disabled = true;
+    nextQuestionButton.disabled = true;
+  }
 
-	function renderSubjectOptions() {
-		const subjects = getSubjects();
-		const hasQuestions = getQuestions().length > 0;
+  function renderSubjectOptions() {
+    const subjects = getSubjects();
+    const hasQuestions = getQuestions().length > 0;
 
-		solveSubjectSelect.innerHTML = `
+    solveSubjectSelect.innerHTML = `
 		<option value="">Selecione uma matéria</option>
 	`;
 
-		subjects.forEach((subject) => {
-			const option = document.createElement('option');
+    subjects.forEach((subject) => {
+      const option = document.createElement("option");
 
-			option.value = subject.id;
-			option.textContent = subject.name;
+      option.value = subject.id;
+      option.textContent = subject.name;
 
-			solveSubjectSelect.appendChild(option);
-		});
+      solveSubjectSelect.appendChild(option);
+    });
 
-		if (!hasQuestions) {
-			solveThemeSelect.innerHTML = `
+    if (!hasQuestions) {
+      solveThemeSelect.innerHTML = `
 			<option value="">Selecione um tema</option>
 		`;
 
-			solveQuestionSelect.innerHTML = `
+      solveQuestionSelect.innerHTML = `
 			<option value="">Selecione uma questão</option>
 		`;
 
-			resetSolveCard();
+      resetSolveCard();
 
-			solveQuestionStatement.textContent = 'Cadastre questões primeiro para começar a praticar.';
-			return;
-		}
+      solveQuestionStatement.textContent = "Cadastre questões primeiro para começar a praticar.";
+      return;
+    }
 
-		renderThemeOptions();
-	}
+    renderThemeOptions();
+  }
 
-	function renderThemeOptions() {
-		const themes = getThemesFromSelectedSubject();
+  function renderThemeOptions() {
+    const themes = getThemesFromSelectedSubject();
 
-		solveThemeSelect.innerHTML = `
+    solveThemeSelect.innerHTML = `
       <option value="">Selecione um tema</option>
     `;
 
-		themes.forEach((theme) => {
-			const option = document.createElement('option');
+    themes.forEach((theme) => {
+      const option = document.createElement("option");
 
-			option.value = theme.id;
-			option.textContent = theme.name;
+      option.value = theme.id;
+      option.textContent = theme.name;
 
-			solveThemeSelect.appendChild(option);
-		});
+      solveThemeSelect.appendChild(option);
+    });
 
-		renderQuestionOptions();
-	}
+    renderQuestionOptions();
+  }
 
-	function renderQuestionOptions() {
-		const questions = getQuestionsFromSelectedTheme();
+  function renderQuestionOptions() {
+    const questions = getQuestionsFromSelectedTheme();
 
-		solveQuestionSelect.innerHTML = `
+    solveQuestionSelect.innerHTML = `
     <option value="">Selecione uma questão</option>
   	 `;
 
-		questions.forEach((question, index) => {
-			const option = document.createElement('option');
+    questions.forEach((question, index) => {
+      const option = document.createElement("option");
 
-			option.value = question.id;
-			option.textContent = `Questão ${String(index + 1).padStart(2, '0')}`;
+      option.value = question.id;
+      option.textContent = `Questão ${String(index + 1).padStart(2, "0")}`;
 
-			solveQuestionSelect.appendChild(option);
-		});
+      solveQuestionSelect.appendChild(option);
+    });
 
-		updateNextQuestionButtonText();
-		resetSolveCard();
-	}
+    updateNextQuestionButtonText();
+    resetSolveCard();
+  }
 
-	function renderAlternativeButtons(question) {
-		const renderableAlternatives = getRenderableAlternatives(question);
+  function renderAlternativeButtons(question) {
+    const renderableAlternatives = getRenderableAlternatives(question);
 
-		solveAlternatives.innerHTML = '';
+    solveAlternatives.innerHTML = "";
 
-		renderableAlternatives.forEach((alternative, index) => {
-			const visualLetter = VISUAL_ALTERNATIVE_LABELS[index];
-			const alternativeButton = document.createElement('button');
+    renderableAlternatives.forEach((alternative, index) => {
+      const visualLetter = VISUAL_ALTERNATIVE_LABELS[index];
+      const alternativeButton = document.createElement("button");
 
-			alternativeButton.classList.add('solve-alternative');
-			alternativeButton.type = 'button';
+      alternativeButton.classList.add("solve-alternative");
+      alternativeButton.type = "button";
 
-			alternativeButton.dataset.originalAlternative = alternative.originalLetter;
-			alternativeButton.dataset.visualAlternative = visualLetter;
+      alternativeButton.dataset.originalAlternative = alternative.originalLetter;
+      alternativeButton.dataset.visualAlternative = visualLetter;
 
-			alternativeButton.innerHTML = `
+      alternativeButton.innerHTML = `
 			<span class="solve-alternative__letter">
 				${escapeHTML(visualLetter)})
 			</span>
@@ -451,126 +479,131 @@ export function initSolve() {
 			</span>
 		`;
 
-			alternativeButton.addEventListener('click', () => {
-				if (hasAnsweredCurrentQuestion) {
-					return;
-				}
+      alternativeButton.addEventListener("click", () => {
+        if (hasAnsweredCurrentQuestion) {
+          return;
+        }
 
-				resetSelectedAlternative();
+        resetSelectedAlternative();
 
-				selectedOriginalAlternative = alternative.originalLetter;
-				selectedVisualAlternative = visualLetter;
+        selectedOriginalAlternative = alternative.originalLetter;
+        selectedVisualAlternative = visualLetter;
 
-				alternativeButton.classList.add('is-selected');
-			});
+        alternativeButton.classList.add("is-selected");
+      });
 
-			solveAlternatives.appendChild(alternativeButton);
-		});
-	}
+      solveAlternatives.appendChild(alternativeButton);
+    });
+  }
 
-	function renderSelectedQuestion() {
-		const selectedSubject = getSelectedSubject();
-		const selectedTheme = getSelectedTheme();
-		const selectedQuestion = getSelectedQuestion();
+  function renderSelectedQuestion() {
+    const selectedSubject = getSelectedSubject();
+    const selectedTheme = getSelectedTheme();
+    const selectedQuestion = getSelectedQuestion();
 
-		if (!selectedSubject || !selectedTheme || !selectedQuestion) {
-			resetSolveCard();
-			return;
-		}
+    if (!selectedSubject || !selectedTheme || !selectedQuestion) {
+      resetSolveCard();
+      return;
+    }
 
-		selectedOriginalAlternative = null;
-		selectedVisualAlternative = null;
-		hasAnsweredCurrentQuestion = false;
+    selectedOriginalAlternative = null;
+    selectedVisualAlternative = null;
+    hasAnsweredCurrentQuestion = false;
 
-		solveQuestionContext.textContent = `${selectedSubject.name} • ${selectedTheme.name}`;
-		solveQuestionTitle.textContent = `Questão ${getQuestionIndexWithinTheme(selectedQuestion)}`;
+    const selectedSubtopic = getSubtopicById(selectedQuestion.subtopicId);
 
-		solveQuestionStatus.textContent = 'Aguardando resposta';
-		solveQuestionStatus.className = '';
-		solveQuestionStatement.textContent = selectedQuestion.statement;
+    solveQuestionContext.textContent = selectedSubtopic
+      ? `${selectedSubject.name} • ${selectedTheme.name} • ${selectedSubtopic.name}`
+      : `${selectedSubject.name} • ${selectedTheme.name}`;
 
-		renderAlternativeButtons(selectedQuestion);
+    solveQuestionTitle.textContent = `Questão ${getQuestionIndexWithinTheme(selectedQuestion)}`;
 
-		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback-panel';
-		solveFeedback.innerHTML = '';
+    solveQuestionStatus.textContent = "Aguardando resposta";
+    solveQuestionStatus.className = "";
+    solveQuestionStatement.textContent = selectedQuestion.statement;
 
-		confirmAnswerButton.disabled = false;
-		retryQuestionButton.disabled = true;
-		nextQuestionButton.disabled = true;
-	}
+    renderAlternativeButtons(selectedQuestion);
 
-	function revealCorrection(question) {
-		document.querySelectorAll('.solve-alternative').forEach((button) => {
-			const originalAlternative = button.dataset.originalAlternative;
+    solveFeedback.hidden = true;
+    solveFeedback.className = "solve-feedback-panel";
+    solveFeedback.innerHTML = "";
 
-			button.disabled = true;
+    confirmAnswerButton.disabled = false;
+    retryQuestionButton.disabled = true;
+    nextQuestionButton.disabled = true;
+  }
 
-			if (originalAlternative === question.correctAlternative) {
-				button.classList.add('is-correct');
-			}
+  function revealCorrection(question) {
+    document.querySelectorAll(".solve-alternative").forEach((button) => {
+      const originalAlternative = button.dataset.originalAlternative;
 
-			if (originalAlternative === selectedOriginalAlternative && selectedOriginalAlternative !== question.correctAlternative) {
-				button.classList.add('is-wrong');
-			}
-		});
-	}
+      button.disabled = true;
 
-	function confirmAnswer() {
-		const selectedQuestion = getSelectedQuestion();
+      if (originalAlternative === question.correctAlternative) {
+        button.classList.add("is-correct");
+      }
 
-		if (!selectedQuestion || hasAnsweredCurrentQuestion) {
-			return;
-		}
+      if (originalAlternative === selectedOriginalAlternative && selectedOriginalAlternative !== question.correctAlternative) {
+        button.classList.add("is-wrong");
+      }
+    });
+  }
 
-		if (!selectedOriginalAlternative) {
-			solveFeedback.hidden = false;
-			solveFeedback.className = 'solve-feedback is-warning';
-			solveFeedback.innerHTML = `
+  function confirmAnswer() {
+    const selectedQuestion = getSelectedQuestion();
+
+    if (!selectedQuestion || hasAnsweredCurrentQuestion) {
+      return;
+    }
+
+    if (!selectedOriginalAlternative) {
+      solveFeedback.hidden = false;
+      solveFeedback.className = "solve-feedback is-warning";
+      solveFeedback.innerHTML = `
         <strong>Selecione uma alternativa antes de confirmar.</strong>
       `;
-			return;
-		}
+      return;
+    }
 
-		const isCorrect = selectedOriginalAlternative === selectedQuestion.correctAlternative;
+    const isCorrect = selectedOriginalAlternative === selectedQuestion.correctAlternative;
 
-		const correctAlternativeButton = document.querySelector(`[data-original-alternative="${selectedQuestion.correctAlternative}"]`);
+    const correctAlternativeButton = document.querySelector(`[data-original-alternative="${selectedQuestion.correctAlternative}"]`);
 
-		const correctVisualAlternative = correctAlternativeButton?.dataset.visualAlternative || selectedQuestion.correctAlternative;
+    const correctVisualAlternative = correctAlternativeButton?.dataset.visualAlternative || selectedQuestion.correctAlternative;
 
-		const attempt = createAttempt({
-			question: selectedQuestion,
-			selectedOriginalAlternative,
-			selectedVisualAlternative,
-			correctVisualAlternative,
-			isCorrect
-		});
+    const attempt = createAttempt({
+      question: selectedQuestion,
+      selectedOriginalAlternative,
+      selectedVisualAlternative,
+      correctVisualAlternative,
+      isCorrect,
+    });
 
-		saveAttempt(attempt);
+    saveAttempt(attempt);
 
-		hasAnsweredCurrentQuestion = true;
+    hasAnsweredCurrentQuestion = true;
 
-		revealCorrection(selectedQuestion);
+    revealCorrection(selectedQuestion);
 
-		solveQuestionStatus.textContent = isCorrect ? 'Acertou' : 'Errou';
-		solveQuestionStatus.className = isCorrect ? 'is-correct' : 'is-wrong';
+    solveQuestionStatus.textContent = isCorrect ? "Acertou" : "Errou";
+    solveQuestionStatus.className = isCorrect ? "is-correct" : "is-wrong";
 
-		solveFeedback.hidden = false;
-		solveFeedback.className = isCorrect ? 'solve-feedback is-correct' : 'solve-feedback is-wrong';
+    solveFeedback.hidden = false;
+    solveFeedback.className = isCorrect ? "solve-feedback is-correct" : "solve-feedback is-wrong";
 
-		const selectedAlternativeText = selectedQuestion.alternatives[selectedOriginalAlternative];
-		const correctAlternativeText = selectedQuestion.alternatives[selectedQuestion.correctAlternative];
+    const selectedAlternativeText = selectedQuestion.alternatives[selectedOriginalAlternative];
+    const correctAlternativeText = selectedQuestion.alternatives[selectedQuestion.correctAlternative];
 
-		const feedbackTitle = isCorrect ? 'Resposta correta!' : 'Resposta incorreta.';
+    const feedbackTitle = isCorrect ? "Resposta correta!" : "Resposta incorreta.";
 
-		solveFeedback.innerHTML = `
+    solveFeedback.innerHTML = `
 		<div class="solve-feedback__header">
 			<strong>${feedbackTitle}</strong>
-			<span>${isCorrect ? 'Você acertou esta questão.' : 'Compare sua resposta com o gabarito abaixo.'}</span>
+			<span>${isCorrect ? "Você acertou esta questão." : "Compare sua resposta com o gabarito abaixo."}</span>
 		</div>
 
 		<div class="solve-feedback__grid">
-			<div class="solve-feedback__item ${isCorrect ? 'is-correct' : 'is-wrong'}">
+			<div class="solve-feedback__item ${isCorrect ? "is-correct" : "is-wrong"}">
 				<small>Sua resposta</small>
 				<strong>
 				${escapeHTML(selectedVisualAlternative)}) ${escapeHTML(selectedAlternativeText)}
@@ -588,178 +621,178 @@ export function initSolve() {
 		<div class="solve-feedback__explanation">
 			<small>Explicação da Questão</small>
 			<p>
-				${escapeHTML(selectedQuestion.explanation || 'Nenhuma explicação foi cadastrada para esta questão.')}
+				${escapeHTML(selectedQuestion.explanation || "Nenhuma explicação foi cadastrada para esta questão.")}
 			</p>
 		</div>
 		`;
 
-		confirmAnswerButton.disabled = true;
-		retryQuestionButton.disabled = false;
-		nextQuestionButton.disabled = false;
-	}
+    confirmAnswerButton.disabled = true;
+    retryQuestionButton.disabled = false;
+    nextQuestionButton.disabled = false;
+  }
 
-	function goToNextQuestion() {
-		const questionOptions = Array.from(solveQuestionSelect.options).filter((option) => {
-			return option.value !== '';
-		});
+  function goToNextQuestion() {
+    const questionOptions = Array.from(solveQuestionSelect.options).filter((option) => {
+      return option.value !== "";
+    });
 
-		if (questionOptions.length === 0) {
-			return;
-		}
+    if (questionOptions.length === 0) {
+      return;
+    }
 
-		const currentQuestionIndex = questionOptions.findIndex((option) => {
-			return option.value === solveQuestionSelect.value;
-		});
+    const currentQuestionIndex = questionOptions.findIndex((option) => {
+      return option.value === solveQuestionSelect.value;
+    });
 
-		const nextQuestionIndex = currentQuestionIndex === -1 || currentQuestionIndex === questionOptions.length - 1 ? 0 : currentQuestionIndex + 1;
+    const nextQuestionIndex = currentQuestionIndex === -1 || currentQuestionIndex === questionOptions.length - 1 ? 0 : currentQuestionIndex + 1;
 
-		const nextQuestion = questionOptions[nextQuestionIndex];
+    const nextQuestion = questionOptions[nextQuestionIndex];
 
-		solveQuestionSelect.value = nextQuestion.value;
-		renderSelectedQuestion();
-	}
+    solveQuestionSelect.value = nextQuestion.value;
+    renderSelectedQuestion();
+  }
 
-	function updateNextQuestionButtonText() {
-		const questionOptions = Array.from(solveQuestionSelect.options).filter((option) => {
-			return option.value !== '';
-		});
+  function updateNextQuestionButtonText() {
+    const questionOptions = Array.from(solveQuestionSelect.options).filter((option) => {
+      return option.value !== "";
+    });
 
-		nextQuestionButton.textContent = questionOptions.length === 1 ? 'Recarregar questão' : 'Próxima questão';
-	}
+    nextQuestionButton.textContent = questionOptions.length === 1 ? "Recarregar questão" : "Próxima questão";
+  }
 
-	function retryQuestion() {
-		const selectedQuestion = getSelectedQuestion();
+  function retryQuestion() {
+    const selectedQuestion = getSelectedQuestion();
 
-		if (!selectedQuestion) {
-			return;
-		}
+    if (!selectedQuestion) {
+      return;
+    }
 
-		selectedOriginalAlternative = null;
-		selectedVisualAlternative = null;
-		hasAnsweredCurrentQuestion = false;
+    selectedOriginalAlternative = null;
+    selectedVisualAlternative = null;
+    hasAnsweredCurrentQuestion = false;
 
-		solveQuestionStatus.textContent = 'Aguardando resposta';
-		solveQuestionStatus.className = '';
+    solveQuestionStatus.textContent = "Aguardando resposta";
+    solveQuestionStatus.className = "";
 
-		renderAlternativeButtons(selectedQuestion);
+    renderAlternativeButtons(selectedQuestion);
 
-		solveFeedback.hidden = true;
-		solveFeedback.className = 'solve-feedback-panel';
-		solveFeedback.innerHTML = '';
+    solveFeedback.hidden = true;
+    solveFeedback.className = "solve-feedback-panel";
+    solveFeedback.innerHTML = "";
 
-		confirmAnswerButton.disabled = false;
-		retryQuestionButton.disabled = true;
-		nextQuestionButton.disabled = true;
-	}
+    confirmAnswerButton.disabled = false;
+    retryQuestionButton.disabled = true;
+    nextQuestionButton.disabled = true;
+  }
 
-	function selectQuestionById(questionId) {
-		const questions = getCollection('questions');
-		const question = questions.find((currentQuestion) => {
-			return currentQuestion.id === questionId;
-		});
+  function selectQuestionById(questionId) {
+    const questions = getCollection("questions");
+    const question = questions.find((currentQuestion) => {
+      return currentQuestion.id === questionId;
+    });
 
-		if (!question) {
-			return;
-		}
+    if (!question) {
+      return;
+    }
 
-		solveSubjectSelect.value = question.subjectId;
+    solveSubjectSelect.value = question.subjectId;
 
-		renderThemeOptions();
-		solveThemeSelect.value = question.themeId;
+    renderThemeOptions();
+    solveThemeSelect.value = question.themeId;
 
-		renderQuestionOptions();
-		solveQuestionSelect.value = question.id;
+    renderQuestionOptions();
+    solveQuestionSelect.value = question.id;
 
-		renderSelectedQuestion();
-	}
+    renderSelectedQuestion();
+  }
 
-	function handleSolveHistoryActionClick(event) {
-		const reviewButton = event.target.closest('[data-review-attempt]');
-		const confirmationButton = event.target.closest('[data-confirmation-attempt]');
+  function handleSolveHistoryActionClick(event) {
+    const reviewButton = event.target.closest("[data-review-attempt]");
+    const confirmationButton = event.target.closest("[data-confirmation-attempt]");
 
-		if (reviewButton?.disabled || confirmationButton?.disabled) {
-			return;
-		}
+    if (reviewButton?.disabled || confirmationButton?.disabled) {
+      return;
+    }
 
-		if (reviewButton) {
-			const attemptId = reviewButton.dataset.reviewAttempt;
+    if (reviewButton) {
+      const attemptId = reviewButton.dataset.reviewAttempt;
 
-			if (!attemptId) {
-				return;
-			}
+      if (!attemptId) {
+        return;
+      }
 
-			document.dispatchEvent(
-				new CustomEvent('reviews:open-error-modal', {
-					detail: {
-						attemptId
-					}
-				})
-			);
+      document.dispatchEvent(
+        new CustomEvent("reviews:open-error-modal", {
+          detail: {
+            attemptId,
+          },
+        }),
+      );
 
-			return;
-		}
+      return;
+    }
 
-		if (confirmationButton) {
-			const attemptId = confirmationButton.dataset.confirmationAttempt;
+    if (confirmationButton) {
+      const attemptId = confirmationButton.dataset.confirmationAttempt;
 
-			if (!attemptId) {
-				return;
-			}
+      if (!attemptId) {
+        return;
+      }
 
-			const attempt = getAttempts().find((currentAttempt) => {
-				return currentAttempt.id === attemptId;
-			});
+      const attempt = getAttempts().find((currentAttempt) => {
+        return currentAttempt.id === attemptId;
+      });
 
-			if (!attempt || !attempt.isCorrect) {
-				return;
-			}
+      if (!attempt || !attempt.isCorrect) {
+        return;
+      }
 
-			const payload = createConfirmationNotePayload(attempt);
+      const payload = createConfirmationNotePayload(attempt);
 
-			if (!payload) {
-				return;
-			}
+      if (!payload) {
+        return;
+      }
 
-			document.dispatchEvent(
-				new CustomEvent('notes:create-confirmation-note', {
-					detail: payload
-				})
-			);
-		}
-	}
+      document.dispatchEvent(
+        new CustomEvent("notes:create-confirmation-note", {
+          detail: payload,
+        }),
+      );
+    }
+  }
 
-	function hasConfirmationNoteForQuestion(questionId) {
-		return getNotes().some((note) => {
-			return note.sourceQuestionId === questionId && note.origin === 'confirmation';
-		});
-	}
+  function hasConfirmationNoteForQuestion(questionId) {
+    return getNotes().some((note) => {
+      return note.sourceQuestionId === questionId && note.origin === "confirmation";
+    });
+  }
 
-	function createConfirmationNotePayload(attempt) {
-		const subject = getSubjectById(attempt.subjectId);
-		const theme = getThemeById(attempt.themeId);
-		const question = getQuestionById(attempt.questionId);
+  function createConfirmationNotePayload(attempt) {
+    const subject = getSubjectById(attempt.subjectId);
+    const theme = getThemeById(attempt.themeId);
+    const question = getQuestionById(attempt.questionId);
 
-		if (!subject || !theme || !question) {
-			return null;
-		}
+    if (!subject || !theme || !question) {
+      return null;
+    }
 
-		const questionNumber = getQuestionIndexWithinTheme(question);
-		const correctAlternativeKey = question.correctAlternative;
-		const correctVisualAlternative = attempt.correctVisualAlternative || correctAlternativeKey;
-		const correctAlternativeText = question.alternatives?.[correctAlternativeKey] || 'Alternativa não encontrada.';
-		const explanationText = question.explanation || 'Nenhuma explicação cadastrada para esta questão.';
+    const questionNumber = getQuestionIndexWithinTheme(question);
+    const correctAlternativeKey = question.correctAlternative;
+    const correctVisualAlternative = attempt.correctVisualAlternative || correctAlternativeKey;
+    const correctAlternativeText = question.alternatives?.[correctAlternativeKey] || "Alternativa não encontrada.";
+    const explanationText = question.explanation || "Nenhuma explicação cadastrada para esta questão.";
 
-		return {
-			title: `Questão ${questionNumber}`,
-			type: 'revisao',
-			status: 'revisar',
-			tags: ['confirmação'],
-			subjectId: subject.id,
-			themeId: theme.id,
-			sourceAttemptId: attempt.id,
-			sourceQuestionId: question.id,
-			origin: 'confirmation',
-			content: `# Questão ${questionNumber}
+    return {
+      title: `Questão ${questionNumber}`,
+      type: "revisao",
+      status: "revisar",
+      tags: ["confirmação"],
+      subjectId: subject.id,
+      themeId: theme.id,
+      sourceAttemptId: attempt.id,
+      sourceQuestionId: question.id,
+      origin: "confirmation",
+      content: `# Questão ${questionNumber}
 
 			## Enunciado
 
@@ -771,55 +804,100 @@ export function initSolve() {
 
 			## Explicação
 
-			${explanationText}`
-		};
-	}
+			${explanationText}`,
+    };
+  }
 
-	// Event listeners
+  function selectSubtopicForStudy(subtopicId) {
+    const subtopic = getSubtopicById(subtopicId);
 
-	solveSubjectSelect.addEventListener('change', () => {
-		solveThemeSelect.value = '';
-		solveQuestionSelect.value = '';
-		renderThemeOptions();
-	});
+    if (!subtopic) {
+      return;
+    }
 
-	solveThemeSelect.addEventListener('change', () => {
-		solveQuestionSelect.value = '';
-		renderQuestionOptions();
-	});
+    const questionsFromSubtopic = getQuestions().filter((question) => {
+      return question.subtopicId === subtopic.id;
+    });
 
-	solveQuestionSelect.addEventListener('change', renderSelectedQuestion);
+    if (questionsFromSubtopic.length === 0) {
+      return;
+    }
 
-	confirmAnswerButton.addEventListener('click', confirmAnswer);
-	retryQuestionButton.addEventListener('click', retryQuestion);
-	nextQuestionButton.addEventListener('click', goToNextQuestion);
-	solveHistoryList.addEventListener('click', handleSolveHistoryActionClick);
+    activeSolveSubtopicId = subtopic.id;
 
-	document.addEventListener('subjects:changed', renderSubjectOptions);
-	document.addEventListener('themes:changed', renderSubjectOptions);
-	document.addEventListener('notes:confirmation-note-created', renderSolveHistory);
+    solveSubjectSelect.value = subtopic.subjectId;
 
-	document.addEventListener('questions:changed', () => {
-		renderSubjectOptions();
-		renderSolveHistory();
-	});
+    renderThemeOptions();
 
-	document.addEventListener('attempts:changed', renderSolveHistory);
-	document.addEventListener('errorReviews:changed', renderSolveHistory);
+    solveThemeSelect.value = subtopic.themeId;
 
-	document.addEventListener('solve:select-question', (event) => {
-		const questionId = event.detail?.questionId;
+    renderQuestionOptions();
 
-		if (!questionId) {
-			return;
-		}
+    const randomQuestion = questionsFromSubtopic[Math.floor(Math.random() * questionsFromSubtopic.length)];
 
-		selectQuestionById(questionId);
-	});
+    solveQuestionSelect.value = randomQuestion.id;
 
-	renderSubjectOptions();
-	renderSolveHistory();
-	resetSolveCard();
+    renderSelectedQuestion();
+  }
 
-	console.log('Modo de resolução carregado.');
+  // Event listeners
+
+  solveSubjectSelect.addEventListener("change", () => {
+    activeSolveSubtopicId = null;
+
+    solveThemeSelect.value = "";
+    solveQuestionSelect.value = "";
+    renderThemeOptions();
+  });
+
+  solveThemeSelect.addEventListener("change", () => {
+    activeSolveSubtopicId = null;
+
+    solveQuestionSelect.value = "";
+    renderQuestionOptions();
+  });
+
+  solveQuestionSelect.addEventListener("change", renderSelectedQuestion);
+
+  confirmAnswerButton.addEventListener("click", confirmAnswer);
+  retryQuestionButton.addEventListener("click", retryQuestion);
+  nextQuestionButton.addEventListener("click", goToNextQuestion);
+  solveHistoryList.addEventListener("click", handleSolveHistoryActionClick);
+
+  document.addEventListener("subjects:changed", renderSubjectOptions);
+  document.addEventListener("themes:changed", renderSubjectOptions);
+  document.addEventListener("notes:confirmation-note-created", renderSolveHistory);
+
+  document.addEventListener("questions:changed", () => {
+    renderSubjectOptions();
+    renderSolveHistory();
+  });
+
+  document.addEventListener("attempts:changed", renderSolveHistory);
+  document.addEventListener("errorReviews:changed", renderSolveHistory);
+
+  document.addEventListener("solve:select-question", (event) => {
+    const questionId = event.detail?.questionId;
+
+    if (!questionId) {
+      return;
+    }
+
+    selectQuestionById(questionId);
+  });
+  document.addEventListener("solve:prepare-subtopic", (event) => {
+    const subtopicId = event.detail?.subtopicId;
+
+    if (!subtopicId) {
+      return;
+    }
+
+    selectSubtopicForStudy(subtopicId);
+  });
+
+  renderSubjectOptions();
+  renderSolveHistory();
+  resetSolveCard();
+
+  console.log("Modo de resolução carregado.");
 }
