@@ -341,13 +341,13 @@ export function initThemes() {
 
 		<div class="theme-card__actions">
 			<button
-				class="management-icon-button"
+				class="button button--secondary theme-card__subtopics-button"
 				type="button"
 				data-toggle-subtopics="${theme.id}"
 				aria-label="Ver assuntos de ${escapeHTML(theme.name)}"
 				title="Assuntos"
 			>
-				${isExpanded ? '▲' : '▾'}
+				${isExpanded ? 'Ocultar assuntos ▲' : 'Assuntos ▾'}
 			</button>
 
 			<button
