@@ -2,6 +2,7 @@ import {getCollection, saveCollection} from '../core/storage.js';
 import {openConfirmModal} from '../ui/confirmModal.js';
 import {compareNames, parseItemsFromListText} from '../systems/listTextImport.js';
 import {removeQuestionsAndRelatedDataByThemeIds, removeSubtopicsQuestionsAndRelatedDataByThemeIds} from '../systems/dataIntegrity.js';
+import {addSubtopic, deleteSubtopic, getSubtopics, getSubtopicsByThemeId} from '../features/subtopics.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
@@ -63,6 +64,8 @@ export function initThemes() {
 	}
 
 	let importedThemesPreview = [];
+	let expandedThemeId = null;
+	let activeSubtopicFormThemeId = null;
 
 	function getSubjects() {
 		return getCollection(SUBJECTS_COLLECTION);
@@ -163,6 +166,111 @@ export function initThemes() {
 		});
 	}
 
+	function renderSubtopicsPanel(theme) {
+		const subtopics = getSubtopicsByThemeId(theme.id);
+		const isFormActive = activeSubtopicFormThemeId === theme.id;
+
+		const subtopicFormHTML = isFormActive
+			? `
+			<form class="subtopic-inline-form" data-subtopic-form="${escapeHTML(theme.id)}">
+				<input
+					type="text"
+					name="subtopicName"
+					placeholder="Nome do assunto"
+					autocomplete="off"
+					required
+				/>
+
+				<button class="button button--primary" type="submit">
+					Adicionar
+				</button>
+
+				<button
+					class="button button--secondary"
+					type="button"
+					data-cancel-subtopic-form="${escapeHTML(theme.id)}"
+				>
+					Cancelar
+				</button>
+			</form>
+		`
+			: `
+			<button
+				class="button button--secondary subtopics-panel__add-button"
+				type="button"
+				data-show-subtopic-form="${escapeHTML(theme.id)}"
+			>
+				+ Adicionar assunto
+			</button>
+		`;
+
+		const subtopicsHTML =
+			subtopics.length === 0
+				? `
+				<div class="empty-state subtopics-panel__empty">
+					<strong>Nenhum assunto cadastrado.</strong>
+					<span>Use o botão acima para dividir este tema em assuntos menores.</span>
+				</div>
+			`
+				: subtopics
+						.map((subtopic) => {
+							const questionsCount = getSubtopicQuestionsCount(subtopic.id);
+							const hasQuestions = questionsCount > 0;
+
+							return `
+							<article class="subtopic-card" data-subtopic-id="${escapeHTML(subtopic.id)}">
+								<div class="subtopic-card__content">
+									<strong>${escapeHTML(subtopic.name)}</strong>
+
+									<span>${formatSubtopicQuestionsCount(questionsCount)}</span>
+								</div>
+
+								<div class="subtopic-card__actions">
+									<button
+										class="button button--secondary subtopic-card__study-action"
+										type="button"
+										data-${hasQuestions ? 'study' : 'create'}-subtopic="${escapeHTML(subtopic.id)}"
+									>
+										${hasQuestions ? 'Estudar 🧠' : 'Cadastrar ✏️'}
+									</button>
+
+									<button
+										class="management-icon-button management-icon-button--danger"
+										type="button"
+										data-delete-subtopic="${escapeHTML(subtopic.id)}"
+										aria-label="Excluir assunto ${escapeHTML(subtopic.name)}"
+										title="Excluir assunto"
+									>
+										🗑️
+									</button>
+								</div>
+							</article>
+						`;
+						})
+						.join('');
+
+		return `
+		<section class="subtopics-panel" data-subtopics-panel="${escapeHTML(theme.id)}">
+			<header class="subtopics-panel__header">
+				<div>
+					<strong>Assuntos de ${escapeHTML(theme.name)}</strong>
+					<span>Organize este tema em partes menores para estudar com mais precisão.</span>
+				</div>
+
+				<span>${formatSubtopicsCount(subtopics.length)}</span>
+			</header>
+
+			<div class="subtopics-panel__actions">
+				${subtopicFormHTML}
+			</div>
+
+			<div class="subtopics-gallery">
+				${subtopicsHTML}
+			</div>
+		</section>
+	`;
+	}
+
 	function renderThemes() {
 		const selectedSubject = getSelectedSubject();
 		const selectedSubjectThemes = getThemesFromSelectedSubject();
@@ -202,37 +310,68 @@ export function initThemes() {
 
 		selectedSubjectThemes.forEach((theme) => {
 			const themeCard = document.createElement('article');
+			const questionsCount = getThemeQuestionsCount(theme.id);
+			const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+			const isExpanded = expandedThemeId === theme.id;
 
 			themeCard.classList.add('theme-card');
+
+			if (isExpanded) {
+				themeCard.classList.add('is-expanded');
+			}
+
 			themeCard.dataset.themeId = theme.id;
 
-			const questionsCount = getThemeQuestionsCount(theme.id);
-
 			themeCard.innerHTML = `
-        <div class="theme-card__content">
-          <strong>${escapeHTML(theme.name)}</strong>
+		<div class="theme-card__content">
+			<strong>${escapeHTML(theme.name)}</strong>
 
-          <span>${escapeHTML(theme.description || 'Sem descrição adicionada.')}</span>
+			<span>${escapeHTML(theme.description || 'Sem descrição adicionada.')}</span>
 
-          <span class="theme-card__questions-count ${questionsCount === 0 ? 'is-empty' : ''}">
-            ${formatThemeQuestionsCount(questionsCount)}
-          </span>
+			<span class="theme-card__questions-count ${questionsCount === 0 ? 'is-empty' : ''}">
+				${formatThemeQuestionsCount(questionsCount)}
+			</span>
 
-          <small>Criado em ${formatDate(theme.createdAt)}</small>
-        </div>
+			<span class="theme-card__subtopics-count ${subtopicsCount === 0 ? 'is-empty' : ''}">
+				${formatSubtopicsCount(subtopicsCount)}
+			</span>
 
-        <button
-          class="management-icon-button management-icon-button--danger"
-          type="button"
-          data-delete-theme="${theme.id}"
-          aria-label="Excluir tema ${escapeHTML(theme.name)}"
-          title="Excluir tema"
-        >
-          🗑️
-        </button>
-      `;
+			<small>Criado em ${formatDate(theme.createdAt)}</small>
+		</div>
+
+		<div class="theme-card__actions">
+			<button
+				class="management-icon-button"
+				type="button"
+				data-toggle-subtopics="${theme.id}"
+				aria-label="Ver assuntos de ${escapeHTML(theme.name)}"
+				title="Assuntos"
+			>
+				${isExpanded ? '▲' : '▾'}
+			</button>
+
+			<button
+				class="management-icon-button management-icon-button--danger"
+				type="button"
+				data-delete-theme="${theme.id}"
+				aria-label="Excluir tema ${escapeHTML(theme.name)}"
+				title="Excluir tema"
+			>
+				🗑️
+			</button>
+		</div>
+	`;
 
 			themesList.appendChild(themeCard);
+
+			if (isExpanded) {
+				const subtopicsPanelWrapper = document.createElement('div');
+
+				subtopicsPanelWrapper.classList.add('subtopics-panel-wrapper');
+				subtopicsPanelWrapper.innerHTML = renderSubtopicsPanel(theme);
+
+				themesList.appendChild(subtopicsPanelWrapper);
+			}
 		});
 	}
 
@@ -377,16 +516,25 @@ export function initThemes() {
 		});
 
 		saveThemes(updatedThemes);
-		removeQuestionsAndRelatedDataByThemeIds([themeId]);
+
 		removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
+		removeQuestionsAndRelatedDataByThemeIds([themeId]);
+
+		if (expandedThemeId === themeId) {
+			expandedThemeId = null;
+			activeSubtopicFormThemeId = null;
+		}
 
 		renderThemes();
 		notifyThemesChanged();
 
-		setThemeFormMessage('Tema e questões relacionadas excluídos com sucesso.', 'success');
+		setThemeFormMessage('Tema, assuntos e questões relacionadas excluídos com sucesso.', 'success');
 	}
 
 	function handleSubjectChange() {
+		expandedThemeId = null;
+		activeSubtopicFormThemeId = null;
+
 		setThemeFormMessage('');
 		clearThemeImport();
 		renderThemes();
@@ -648,14 +796,489 @@ export function initThemes() {
 		showThemeTab('list');
 	}
 
+	function getSubtopicQuestionsCount(subtopicId) {
+		return getQuestions().filter((question) => {
+			return question.subtopicId === subtopicId;
+		}).length;
+	}
+
+	function getSubtopicById(subtopicId) {
+		return getSubtopics().find((subtopic) => {
+			return subtopic.id === subtopicId;
+		});
+	}
+
+	function formatSubtopicsCount(total) {
+		return total === 1 ? '1 assunto' : `${total} assuntos`;
+	}
+
+	function formatSubtopicQuestionsCount(total) {
+		return total === 1 ? '1 questão' : `${total} questões`;
+	}
+
+	function renderSubtopicsPanel(theme) {
+		const subtopics = getSubtopicsByThemeId(theme.id);
+		const isFormActive = activeSubtopicFormThemeId === theme.id;
+
+		const subtopicFormHTML = isFormActive
+			? `
+			<form class="subtopic-inline-form" data-subtopic-form="${escapeHTML(theme.id)}">
+				<input
+					type="text"
+					name="subtopicName"
+					placeholder="Nome do assunto"
+					autocomplete="off"
+					required
+				/>
+
+				<button class="button button--primary" type="submit">
+					Adicionar
+				</button>
+
+				<button
+					class="button button--secondary"
+					type="button"
+					data-cancel-subtopic-form="${escapeHTML(theme.id)}"
+				>
+					Cancelar
+				</button>
+			</form>
+		`
+			: `
+			<button
+				class="button button--secondary subtopics-panel__add-button"
+				type="button"
+				data-show-subtopic-form="${escapeHTML(theme.id)}"
+			>
+				+ Adicionar assunto
+			</button>
+		`;
+
+		const subtopicsHTML =
+			subtopics.length === 0
+				? `
+				<div class="empty-state subtopics-panel__empty">
+					<strong>Nenhum assunto cadastrado.</strong>
+					<span>Adicione assuntos para dividir este tema em partes menores.</span>
+				</div>
+			`
+				: subtopics
+						.map((subtopic) => {
+							const questionsCount = getSubtopicQuestionsCount(subtopic.id);
+							const hasQuestions = questionsCount > 0;
+
+							return `
+							<article class="subtopic-card" data-subtopic-id="${escapeHTML(subtopic.id)}">
+								<div class="subtopic-card__content">
+									<strong>${escapeHTML(subtopic.name)}</strong>
+
+									<span>${formatSubtopicQuestionsCount(questionsCount)}</span>
+								</div>
+
+								<div class="subtopic-card__actions">
+									<button
+										class="button button--secondary subtopic-card__study-action"
+										type="button"
+										data-${hasQuestions ? 'study' : 'create'}-subtopic="${escapeHTML(subtopic.id)}"
+										title="${hasQuestions ? 'Estudar assunto' : 'Cadastrar questão'}"
+									>
+										${hasQuestions ? 'Estudar 🧠' : 'Cadastrar ✏️'}
+									</button>
+
+									<button
+										class="management-icon-button management-icon-button--danger"
+										type="button"
+										data-delete-subtopic="${escapeHTML(subtopic.id)}"
+										aria-label="Excluir assunto ${escapeHTML(subtopic.name)}"
+										title="Excluir assunto"
+									>
+										🗑️
+									</button>
+								</div>
+							</article>
+						`;
+						})
+						.join('');
+
+		return `
+		<section class="subtopics-panel">
+			<header class="subtopics-panel__header">
+				<div>
+					<strong>Assuntos de ${escapeHTML(theme.name)}</strong>
+					<span>Organize este tema em partes menores.</span>
+				</div>
+
+				<span>${formatSubtopicsCount(subtopics.length)}</span>
+			</header>
+
+			<div class="subtopics-panel__actions">
+				${subtopicFormHTML}
+			</div>
+
+			<div class="subtopics-gallery">
+				${subtopicsHTML}
+			</div>
+		</section>
+	`;
+	}
+
+	function handleSubtopicsToggle(event) {
+		const toggleButton = event.target.closest('[data-toggle-subtopics]');
+
+		if (!toggleButton) {
+			return;
+		}
+
+		const themeId = toggleButton.dataset.toggleSubtopics;
+
+		expandedThemeId = expandedThemeId === themeId ? null : themeId;
+		activeSubtopicFormThemeId = null;
+
+		renderThemes();
+	}
+
+	function handleShowSubtopicForm(event) {
+		const button = event.target.closest('[data-show-subtopic-form]');
+
+		if (!button) {
+			return;
+		}
+
+		activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
+		renderThemes();
+
+		const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
+
+		if (input) {
+			input.focus();
+		}
+	}
+
+	function handleCancelSubtopicForm(event) {
+		const button = event.target.closest('[data-cancel-subtopic-form]');
+
+		if (!button) {
+			return;
+		}
+
+		activeSubtopicFormThemeId = null;
+		renderThemes();
+	}
+
+	function handleSubtopicSubmit(event) {
+		const form = event.target.closest('[data-subtopic-form]');
+
+		if (!form) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const themeId = form.dataset.subtopicForm;
+		const nameInput = form.elements.subtopicName;
+		const name = nameInput.value.trim();
+
+		const theme = getThemes().find((currentTheme) => {
+			return currentTheme.id === themeId;
+		});
+
+		if (!theme) {
+			return;
+		}
+
+		const result = addSubtopic({
+			subjectId: theme.subjectId,
+			themeId: theme.id,
+			name
+		});
+
+		if (!result.ok) {
+			setThemeFormMessage(result.message, 'error');
+			nameInput.focus();
+			return;
+		}
+
+		activeSubtopicFormThemeId = null;
+		setThemeFormMessage(result.message, 'success');
+		renderThemes();
+	}
+
+	function handleSubtopicDelete(event) {
+		const deleteButton = event.target.closest('[data-delete-subtopic]');
+
+		if (!deleteButton) {
+			return;
+		}
+
+		const subtopicId = deleteButton.dataset.deleteSubtopic;
+		const subtopic = getSubtopicsByThemeId(expandedThemeId || '').find((currentSubtopic) => {
+			return currentSubtopic.id === subtopicId;
+		});
+
+		if (!subtopic) {
+			return;
+		}
+
+		openConfirmModal({
+			tag: '⚠️ Confirmação',
+			title: 'Excluir assunto',
+			message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
+			confirmText: 'Excluir',
+			cancelText: 'Cancelar',
+			onConfirm: () => {
+				deleteSubtopic(subtopic.id);
+				setThemeFormMessage('Assunto excluído com sucesso.', 'success');
+				renderThemes();
+			}
+		});
+	}
+
+	function handleSubtopicCreateQuestion(event) {
+		const button = event.target.closest('[data-create-subtopic]');
+
+		if (!button) {
+			return;
+		}
+
+		const subtopicId = button.dataset.createSubtopic;
+		const subtopic = getSubtopicsByThemeId(expandedThemeId || '').find((currentSubtopic) => {
+			return currentSubtopic.id === subtopicId;
+		});
+
+		if (!subtopic) {
+			return;
+		}
+
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId,
+					subtopicId: subtopic.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function handleSubtopicStudy(event) {
+		const button = event.target.closest('[data-study-subtopic]');
+
+		if (!button) {
+			return;
+		}
+
+		const subtopicId = button.dataset.studySubtopic;
+
+		document.dispatchEvent(
+			new CustomEvent('solve:prepare-subtopic', {
+				detail: {
+					subtopicId
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'solve'
+				}
+			})
+		);
+	}
+
+	function handleSubtopicsToggle(event) {
+		const toggleButton = event.target.closest('[data-toggle-subtopics]');
+
+		if (!toggleButton) {
+			return;
+		}
+
+		const themeId = toggleButton.dataset.toggleSubtopics;
+
+		expandedThemeId = expandedThemeId === themeId ? null : themeId;
+		activeSubtopicFormThemeId = null;
+
+		renderThemes();
+	}
+
+	function handleShowSubtopicForm(event) {
+		const button = event.target.closest('[data-show-subtopic-form]');
+
+		if (!button) {
+			return;
+		}
+
+		activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
+		renderThemes();
+
+		const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
+
+		if (input) {
+			input.focus();
+		}
+	}
+
+	function handleCancelSubtopicForm(event) {
+		const button = event.target.closest('[data-cancel-subtopic-form]');
+
+		if (!button) {
+			return;
+		}
+
+		activeSubtopicFormThemeId = null;
+		renderThemes();
+	}
+
+	function handleSubtopicSubmit(event) {
+		const form = event.target.closest('[data-subtopic-form]');
+
+		if (!form) {
+			return;
+		}
+
+		event.preventDefault();
+
+		const themeId = form.dataset.subtopicForm;
+		const nameInput = form.elements.subtopicName;
+		const name = nameInput.value.trim();
+
+		const theme = getThemes().find((currentTheme) => {
+			return currentTheme.id === themeId;
+		});
+
+		if (!theme) {
+			return;
+		}
+
+		const result = addSubtopic({
+			subjectId: theme.subjectId,
+			themeId: theme.id,
+			name
+		});
+
+		if (!result.ok) {
+			setThemeFormMessage(result.message, 'error');
+			nameInput.focus();
+			return;
+		}
+
+		activeSubtopicFormThemeId = null;
+
+		setThemeFormMessage(result.message, 'success');
+		renderThemes();
+	}
+
+	function handleSubtopicDelete(event) {
+		const deleteButton = event.target.closest('[data-delete-subtopic]');
+
+		if (!deleteButton) {
+			return;
+		}
+
+		const subtopicId = deleteButton.dataset.deleteSubtopic;
+		const subtopic = getSubtopicById(subtopicId);
+
+		if (!subtopic) {
+			return;
+		}
+
+		openConfirmModal({
+			tag: '⚠️ Confirmação',
+			title: 'Excluir assunto',
+			message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
+			confirmText: 'Excluir',
+			cancelText: 'Cancelar',
+			onConfirm: () => {
+				deleteSubtopic(subtopic.id);
+				setThemeFormMessage('Assunto excluído com sucesso.', 'success');
+				renderThemes();
+			}
+		});
+	}
+
+	function handleSubtopicCreateQuestion(event) {
+		const button = event.target.closest('[data-create-subtopic]');
+
+		if (!button) {
+			return;
+		}
+
+		const subtopicId = button.dataset.createSubtopic;
+		const subtopic = getSubtopicById(subtopicId);
+
+		if (!subtopic) {
+			return;
+		}
+
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId,
+					subtopicId: subtopic.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function handleSubtopicStudy(event) {
+		const button = event.target.closest('[data-study-subtopic]');
+
+		if (!button) {
+			return;
+		}
+
+		const subtopicId = button.dataset.studySubtopic;
+
+		document.dispatchEvent(
+			new CustomEvent('solve:prepare-subtopic', {
+				detail: {
+					subtopicId
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'solve'
+				}
+			})
+		);
+	}
+
 	//-----------------------------------------------------
 
 	themeForm.addEventListener('submit', handleThemeSubmit);
 	themeSubjectSelect.addEventListener('change', handleSubjectChange);
+
 	clearThemeFormButton.addEventListener('click', clearThemeForm);
 	themesList.addEventListener('click', handleThemeDelete);
-	themeImportAddedList.addEventListener('click', handleThemeDelete);
+	themesList.addEventListener('click', handleSubtopicsToggle);
+	themesList.addEventListener('click', handleShowSubtopicForm);
+	themesList.addEventListener('click', handleCancelSubtopicForm);
+	themesList.addEventListener('submit', handleSubtopicSubmit);
+	themesList.addEventListener('click', handleSubtopicDelete);
+	themesList.addEventListener('click', handleSubtopicCreateQuestion);
+	themesList.addEventListener('click', handleSubtopicStudy);
 
+	themeImportAddedList.addEventListener('click', handleThemeDelete);
 	validateThemeImportButton.addEventListener('click', validateThemeImport);
 	clearThemeImportButton.addEventListener('click', clearThemeImport);
 	importValidatedThemesButton.addEventListener('click', importValidatedThemes);
@@ -663,6 +1286,8 @@ export function initThemes() {
 	document.addEventListener('questions:changed', renderThemes);
 	document.addEventListener('subjects:changed', renderSubjectOptions);
 	document.addEventListener('themes:prepare-create', handleExternalThemeCreate);
+	document.addEventListener('subtopics:changed', renderThemes);
+
 	themeTabButtons.forEach((button) => {
 		button.addEventListener('click', () => {
 			showThemeTab(button.dataset.themeTab);

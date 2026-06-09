@@ -631,6 +631,62 @@
 	.solve-history-card__action {
 		width: 100%;
 	}
+
+	/* TEMAS */
+	.theme-card.is-expanded {
+		grid-column: auto;
+	}
+
+	.theme-card__main,
+	.subtopic-card {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.theme-card__actions,
+	.subtopic-card__actions {
+		justify-content: flex-end;
+	}
+
+	.subtopic-inline-form {
+		grid-template-columns: 1fr;
+	}
+
+	.subtopics-panel__header {
+		flex-direction: column;
+	}
+
+		.theme-card.is-expanded {
+		grid-column: 1 / -1;
+		width: 100%;
+	}
+
+	/* Painel de Assuntos */
+	.subtopics-panel-wrapper {
+		grid-column: 1 / -1;
+	}
+
+	.subtopics-panel__header {
+		flex-direction: column;
+	}
+
+	.subtopic-inline-form {
+		grid-template-columns: 1fr;
+	}
+
+	.subtopic-card {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.subtopic-card__actions {
+		justify-content: flex-end;
+	}
+
+	.subtopic-card__study-action {
+		width: 100%;
+		justify-content: center;
+	}
 }
 
 @media (max-width: 700px) {
