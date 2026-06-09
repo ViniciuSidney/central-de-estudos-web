@@ -1,177 +1,177 @@
-import {getCollection, saveCollection} from '../core/storage.js';
-import {openConfirmModal} from '../ui/confirmModal.js';
-import {compareNames, parseItemsFromListText} from '../systems/listTextImport.js';
-import {removeQuestionsAndRelatedDataByThemeIds, removeSubtopicsQuestionsAndRelatedDataByThemeIds} from '../systems/dataIntegrity.js';
-import {addSubtopic, deleteSubtopic, getSubtopics, getSubtopicsByThemeId} from '../features/subtopics.js';
+import { getCollection, saveCollection } from "../core/storage.js";
+import { openConfirmModal } from "../ui/confirmModal.js";
+import { compareNames, parseItemsFromListText } from "../systems/listTextImport.js";
+import { removeQuestionsAndRelatedDataByThemeIds, removeSubtopicsQuestionsAndRelatedDataByThemeIds } from "../systems/dataIntegrity.js";
+import { addSubtopic, deleteSubtopic, getSubtopics, getSubtopicsByThemeId } from "../features/subtopics.js";
 
-const SUBJECTS_COLLECTION = 'subjects';
-const THEMES_COLLECTION = 'themes';
-const QUESTIONS_COLLECTION = 'questions';
+const SUBJECTS_COLLECTION = "subjects";
+const THEMES_COLLECTION = "themes";
+const QUESTIONS_COLLECTION = "questions";
 
 export function initThemes() {
-	const themeForm = document.querySelector('#theme-form');
-	const themeSubjectSelect = document.querySelector('#theme-subject');
-	const themeNameInput = document.querySelector('#theme-name');
-	const themeDescriptionInput = document.querySelector('#theme-description');
-	const clearThemeFormButton = document.querySelector('#clear-theme-form');
-	const themeFormMessage = document.querySelector('#theme-form-message');
-	const themeNoSubjectWarning = document.querySelector('#theme-no-subject-warning');
-	const themesCurrentSubject = document.querySelector('#themes-current-subject');
-	const themesCount = document.querySelector('#themes-count');
-	const themesEmptyState = document.querySelector('#themes-empty-state');
-	const themesList = document.querySelector('#themes-list');
-	const themeTabButtons = document.querySelectorAll('[data-theme-tab]');
-	const themeListTab = document.querySelector('#theme-list-tab');
-	const themeImportTab = document.querySelector('#theme-import-tab');
-	const themeImportAddedList = document.querySelector('#theme-import-added-list');
-	const themeImportAddedCount = document.querySelector('#theme-import-added-count');
-	const themeImportAddedEmpty = document.querySelector('#theme-import-added-empty');
-	const themeImportTextInput = document.querySelector('#theme-import-text');
-	const validateThemeImportButton = document.querySelector('#validate-theme-import');
-	const clearThemeImportButton = document.querySelector('#clear-theme-import');
-	const importValidatedThemesButton = document.querySelector('#import-validated-themes');
-	const themeImportSummary = document.querySelector('#theme-import-summary');
-	const themeImportList = document.querySelector('#theme-import-list');
-	const themeImportErrors = document.querySelector('#theme-import-errors');
+  const themeForm = document.querySelector("#theme-form");
+  const themeSubjectSelect = document.querySelector("#theme-subject");
+  const themeNameInput = document.querySelector("#theme-name");
+  const themeDescriptionInput = document.querySelector("#theme-description");
+  const clearThemeFormButton = document.querySelector("#clear-theme-form");
+  const themeFormMessage = document.querySelector("#theme-form-message");
+  const themeNoSubjectWarning = document.querySelector("#theme-no-subject-warning");
+  const themesCurrentSubject = document.querySelector("#themes-current-subject");
+  const themesCount = document.querySelector("#themes-count");
+  const themesEmptyState = document.querySelector("#themes-empty-state");
+  const themesList = document.querySelector("#themes-list");
+  const themeTabButtons = document.querySelectorAll("[data-theme-tab]");
+  const themeListTab = document.querySelector("#theme-list-tab");
+  const themeImportTab = document.querySelector("#theme-import-tab");
+  const themeImportAddedList = document.querySelector("#theme-import-added-list");
+  const themeImportAddedCount = document.querySelector("#theme-import-added-count");
+  const themeImportAddedEmpty = document.querySelector("#theme-import-added-empty");
+  const themeImportTextInput = document.querySelector("#theme-import-text");
+  const validateThemeImportButton = document.querySelector("#validate-theme-import");
+  const clearThemeImportButton = document.querySelector("#clear-theme-import");
+  const importValidatedThemesButton = document.querySelector("#import-validated-themes");
+  const themeImportSummary = document.querySelector("#theme-import-summary");
+  const themeImportList = document.querySelector("#theme-import-list");
+  const themeImportErrors = document.querySelector("#theme-import-errors");
 
-	if (
-		!themeImportTextInput ||
-		!validateThemeImportButton ||
-		!clearThemeImportButton ||
-		!importValidatedThemesButton ||
-		!themeImportSummary ||
-		!themeImportList ||
-		!themeImportErrors ||
-		!themeImportAddedList ||
-		!themeImportAddedCount ||
-		!themeImportAddedEmpty ||
-		!themeTabButtons.length ||
-		!themeListTab ||
-		!themeImportTab ||
-		!themeForm ||
-		!themeSubjectSelect ||
-		!themeNameInput ||
-		!themeDescriptionInput ||
-		!clearThemeFormButton ||
-		!themeFormMessage ||
-		!themeNoSubjectWarning ||
-		!themesCurrentSubject ||
-		!themesCount ||
-		!themesEmptyState ||
-		!themesList
-	) {
-		return;
-	}
+  if (
+    !themeImportTextInput ||
+    !validateThemeImportButton ||
+    !clearThemeImportButton ||
+    !importValidatedThemesButton ||
+    !themeImportSummary ||
+    !themeImportList ||
+    !themeImportErrors ||
+    !themeImportAddedList ||
+    !themeImportAddedCount ||
+    !themeImportAddedEmpty ||
+    !themeTabButtons.length ||
+    !themeListTab ||
+    !themeImportTab ||
+    !themeForm ||
+    !themeSubjectSelect ||
+    !themeNameInput ||
+    !themeDescriptionInput ||
+    !clearThemeFormButton ||
+    !themeFormMessage ||
+    !themeNoSubjectWarning ||
+    !themesCurrentSubject ||
+    !themesCount ||
+    !themesEmptyState ||
+    !themesList
+  ) {
+    return;
+  }
 
-	let importedThemesPreview = [];
-	let expandedThemeId = null;
-	let activeSubtopicFormThemeId = null;
+  let importedThemesPreview = [];
+  let expandedThemeId = null;
+  let activeSubtopicFormThemeId = null;
 
-	function getSubjects() {
-		return getCollection(SUBJECTS_COLLECTION);
-	}
+  function getSubjects() {
+    return getCollection(SUBJECTS_COLLECTION);
+  }
 
-	function getThemes() {
-		return getCollection(THEMES_COLLECTION);
-	}
+  function getThemes() {
+    return getCollection(THEMES_COLLECTION);
+  }
 
-	function getQuestions() {
-		return getCollection(QUESTIONS_COLLECTION);
-	}
+  function getQuestions() {
+    return getCollection(QUESTIONS_COLLECTION);
+  }
 
-	function getThemeQuestionsCount(themeId) {
-		return getQuestions().filter((question) => {
-			return question.themeId === themeId;
-		}).length;
-	}
+  function getThemeQuestionsCount(themeId) {
+    return getQuestions().filter((question) => {
+      return question.themeId === themeId;
+    }).length;
+  }
 
-	function formatThemeQuestionsCount(total) {
-		return total === 1 ? '1 questão cadastrada' : `${total} questões cadastradas`;
-	}
+  function formatThemeQuestionsCount(total) {
+    return total === 1 ? "1 questão cadastrada" : `${total} questões cadastradas`;
+  }
 
-	function saveThemes(themes) {
-		saveCollection(THEMES_COLLECTION, themes);
-	}
+  function saveThemes(themes) {
+    saveCollection(THEMES_COLLECTION, themes);
+  }
 
-	function createTheme(subjectId, name, description) {
-		return {
-			id: crypto.randomUUID(),
-			subjectId,
-			name,
-			description,
-			createdAt: new Date().toISOString()
-		};
-	}
+  function createTheme(subjectId, name, description) {
+    return {
+      id: crypto.randomUUID(),
+      subjectId,
+      name,
+      description,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
-	function notifyThemesChanged() {
-		document.dispatchEvent(new CustomEvent('themes:changed'));
-	}
+  function notifyThemesChanged() {
+    document.dispatchEvent(new CustomEvent("themes:changed"));
+  }
 
-	function formatDate(dateValue) {
-		const date = new Date(dateValue);
+  function formatDate(dateValue) {
+    const date = new Date(dateValue);
 
-		return date.toLocaleDateString('pt-BR', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric'
-		});
-	}
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }
 
-	function formatCount(total, singular, plural) {
-		return total === 1 ? `1 ${singular}` : `${total} ${plural}`;
-	}
+  function formatCount(total, singular, plural) {
+    return total === 1 ? `1 ${singular}` : `${total} ${plural}`;
+  }
 
-	function escapeHTML(value) {
-		return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
-	}
+  function escapeHTML(value) {
+    return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  }
 
-	function setThemeFormMessage(message, type = 'default') {
-		themeFormMessage.textContent = message;
+  function setThemeFormMessage(message, type = "default") {
+    themeFormMessage.textContent = message;
 
-		themeFormMessage.classList.remove('is-error', 'is-success');
+    themeFormMessage.classList.remove("is-error", "is-success");
 
-		if (type === 'error') {
-			themeFormMessage.classList.add('is-error');
-		}
+    if (type === "error") {
+      themeFormMessage.classList.add("is-error");
+    }
 
-		if (type === 'success') {
-			themeFormMessage.classList.add('is-success');
-		}
-	}
+    if (type === "success") {
+      themeFormMessage.classList.add("is-success");
+    }
+  }
 
-	function updateThemesCount(themes) {
-		const totalThemes = themes.length;
+  function updateThemesCount(themes) {
+    const totalThemes = themes.length;
 
-		themesCount.textContent = totalThemes === 1 ? '1 tema' : `${totalThemes} temas`;
-	}
+    themesCount.textContent = totalThemes === 1 ? "1 tema" : `${totalThemes} temas`;
+  }
 
-	function getSelectedSubject() {
-		const selectedSubjectId = themeSubjectSelect.value;
-		const subjects = getSubjects();
+  function getSelectedSubject() {
+    const selectedSubjectId = themeSubjectSelect.value;
+    const subjects = getSubjects();
 
-		return subjects.find((subject) => {
-			return subject.id === selectedSubjectId;
-		});
-	}
+    return subjects.find((subject) => {
+      return subject.id === selectedSubjectId;
+    });
+  }
 
-	function getThemesFromSelectedSubject() {
-		const selectedSubjectId = themeSubjectSelect.value;
+  function getThemesFromSelectedSubject() {
+    const selectedSubjectId = themeSubjectSelect.value;
 
-		if (!selectedSubjectId) {
-			return [];
-		}
+    if (!selectedSubjectId) {
+      return [];
+    }
 
-		return getThemes().filter((theme) => {
-			return theme.subjectId === selectedSubjectId;
-		});
-	}
+    return getThemes().filter((theme) => {
+      return theme.subjectId === selectedSubjectId;
+    });
+  }
 
-	function renderSubtopicsPanel(theme) {
-		const subtopics = getSubtopicsByThemeId(theme.id);
-		const isFormActive = activeSubtopicFormThemeId === theme.id;
+  function renderSubtopicsPanel(theme) {
+    const subtopics = getSubtopicsByThemeId(theme.id);
+    const isFormActive = activeSubtopicFormThemeId === theme.id;
 
-		const subtopicFormHTML = isFormActive
-			? `
+    const subtopicFormHTML = isFormActive
+      ? `
 			<form class="subtopic-inline-form" data-subtopic-form="${escapeHTML(theme.id)}">
 				<input
 					type="text"
@@ -194,7 +194,7 @@ export function initThemes() {
 				</button>
 			</form>
 		`
-			: `
+      : `
 			<button
 				class="button button--secondary subtopics-panel__add-button"
 				type="button"
@@ -204,20 +204,20 @@ export function initThemes() {
 			</button>
 		`;
 
-		const subtopicsHTML =
-			subtopics.length === 0
-				? `
+    const subtopicsHTML =
+      subtopics.length === 0
+        ? `
 				<div class="empty-state subtopics-panel__empty">
 					<strong>Nenhum assunto cadastrado.</strong>
 					<span>Use o botão acima para dividir este tema em assuntos menores.</span>
 				</div>
 			`
-				: subtopics
-						.map((subtopic) => {
-							const questionsCount = getSubtopicQuestionsCount(subtopic.id);
-							const hasQuestions = questionsCount > 0;
+        : subtopics
+            .map((subtopic) => {
+              const questionsCount = getSubtopicQuestionsCount(subtopic.id);
+              const hasQuestions = questionsCount > 0;
 
-							return `
+              return `
 							<article class="subtopic-card" data-subtopic-id="${escapeHTML(subtopic.id)}">
 								<div class="subtopic-card__content">
 									<strong>${escapeHTML(subtopic.name)}</strong>
@@ -229,9 +229,9 @@ export function initThemes() {
 									<button
 										class="button button--secondary subtopic-card__study-action"
 										type="button"
-										data-${hasQuestions ? 'study' : 'create'}-subtopic="${escapeHTML(subtopic.id)}"
+										data-${hasQuestions ? "study" : "create"}-subtopic="${escapeHTML(subtopic.id)}"
 									>
-										${hasQuestions ? 'Estudar 🧠' : 'Cadastrar ✏️'}
+										${hasQuestions ? "Estudar 🧠" : "Cadastrar ✏️"}
 									</button>
 
 									<button
@@ -246,10 +246,10 @@ export function initThemes() {
 								</div>
 							</article>
 						`;
-						})
-						.join('');
+            })
+            .join("");
 
-		return `
+    return `
 		<section class="subtopics-panel" data-subtopics-panel="${escapeHTML(theme.id)}">
 			<header class="subtopics-panel__header">
 				<div>
@@ -269,70 +269,70 @@ export function initThemes() {
 			</div>
 		</section>
 	`;
-	}
+  }
 
-	function renderThemes() {
-		const selectedSubject = getSelectedSubject();
-		const selectedSubjectThemes = getThemesFromSelectedSubject();
+  function renderThemes() {
+    const selectedSubject = getSelectedSubject();
+    const selectedSubjectThemes = getThemesFromSelectedSubject();
 
-		themesList.innerHTML = '';
+    themesList.innerHTML = "";
 
-		updateThemesCount(selectedSubjectThemes);
-		renderThemeImportAddedList(selectedSubjectThemes);
+    updateThemesCount(selectedSubjectThemes);
+    renderThemeImportAddedList(selectedSubjectThemes);
 
-		if (!selectedSubject) {
-			themesCurrentSubject.textContent = 'Selecione uma matéria para visualizar seus temas.';
+    if (!selectedSubject) {
+      themesCurrentSubject.textContent = "Selecione uma matéria para visualizar seus temas.";
 
-			themesEmptyState.hidden = false;
-			themesEmptyState.innerHTML = `
+      themesEmptyState.hidden = false;
+      themesEmptyState.innerHTML = `
 			<strong>Nenhum tema selecionado.</strong>
 			<span>Escolha uma matéria para visualizar ou cadastrar seus temas.</span>
 			`;
 
-			return;
-		}
+      return;
+    }
 
-		themesCurrentSubject.innerHTML = `
+    themesCurrentSubject.innerHTML = `
 	Temas de <strong class="highlighted-subject-name">${escapeHTML(selectedSubject.name)}</strong>
 	`;
 
-		if (selectedSubjectThemes.length === 0) {
-			themesEmptyState.hidden = false;
-			themesEmptyState.innerHTML = `
+    if (selectedSubjectThemes.length === 0) {
+      themesEmptyState.hidden = false;
+      themesEmptyState.innerHTML = `
 			<strong>Nenhum tema cadastrado ainda.</strong>
 			<span>Use o formulário acima para adicionar o primeiro tema desta matéria.</span>
 			`;
 
-			return;
-		}
+      return;
+    }
 
-		themesEmptyState.hidden = true;
+    themesEmptyState.hidden = true;
 
-		selectedSubjectThemes.forEach((theme) => {
-			const themeCard = document.createElement('article');
-			const questionsCount = getThemeQuestionsCount(theme.id);
-			const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
-			const isExpanded = expandedThemeId === theme.id;
+    selectedSubjectThemes.forEach((theme) => {
+      const themeCard = document.createElement("article");
+      const questionsCount = getThemeQuestionsCount(theme.id);
+      const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+      const isExpanded = expandedThemeId === theme.id;
 
-			themeCard.classList.add('theme-card');
+      themeCard.classList.add("theme-card");
 
-			if (isExpanded) {
-				themeCard.classList.add('is-expanded');
-			}
+      if (isExpanded) {
+        themeCard.classList.add("is-expanded");
+      }
 
-			themeCard.dataset.themeId = theme.id;
+      themeCard.dataset.themeId = theme.id;
 
-			themeCard.innerHTML = `
+      themeCard.innerHTML = `
 		<div class="theme-card__content">
 			<strong>${escapeHTML(theme.name)}</strong>
 
-			<span>${escapeHTML(theme.description || 'Sem descrição adicionada.')}</span>
+			<span>${escapeHTML(theme.description || "Sem descrição adicionada.")}</span>
 
-			<span class="theme-card__questions-count ${questionsCount === 0 ? 'is-empty' : ''}">
+			<span class="theme-card__questions-count ${questionsCount === 0 ? "is-empty" : ""}">
 				${formatThemeQuestionsCount(questionsCount)}
 			</span>
 
-			<span class="theme-card__subtopics-count ${subtopicsCount === 0 ? 'is-empty' : ''}">
+			<span class="theme-card__subtopics-count ${subtopicsCount === 0 ? "is-empty" : ""}">
 				${formatSubtopicsCount(subtopicsCount)}
 			</span>
 
@@ -347,7 +347,7 @@ export function initThemes() {
 				aria-label="Ver assuntos de ${escapeHTML(theme.name)}"
 				title="Assuntos"
 			>
-				${isExpanded ? 'Ocultar assuntos ▲' : 'Assuntos ▾'}
+				${isExpanded ? "Ocultar assuntos ▲" : "Assuntos ▾"}
 			</button>
 
 			<button
@@ -362,236 +362,244 @@ export function initThemes() {
 		</div>
 	`;
 
-			themesList.appendChild(themeCard);
+      if (isExpanded) {
+        const expandedRow = document.createElement("div");
+        const subtopicsPanelWrapper = document.createElement("div");
 
-			if (isExpanded) {
-				const subtopicsPanelWrapper = document.createElement('div');
+        expandedRow.classList.add("theme-expanded-row");
+        subtopicsPanelWrapper.classList.add("subtopics-panel-wrapper");
 
-				subtopicsPanelWrapper.classList.add('subtopics-panel-wrapper');
-				subtopicsPanelWrapper.innerHTML = renderSubtopicsPanel(theme);
+        subtopicsPanelWrapper.innerHTML = renderSubtopicsPanel(theme);
 
-				themesList.appendChild(subtopicsPanelWrapper);
-			}
-		});
-	}
+        expandedRow.appendChild(themeCard);
+        expandedRow.appendChild(subtopicsPanelWrapper);
 
-	function renderSubjectOptions() {
-		const subjects = getSubjects();
-		const previousSelectedSubjectId = themeSubjectSelect.value;
+        themesList.appendChild(expandedRow);
 
-		themeSubjectSelect.innerHTML = `
+        return;
+      }
+
+      themesList.appendChild(themeCard);
+    });
+  }
+
+  function renderSubjectOptions() {
+    const subjects = getSubjects();
+    const previousSelectedSubjectId = themeSubjectSelect.value;
+
+    themeSubjectSelect.innerHTML = `
       <option value="">Selecione uma matéria</option>
     `;
 
-		subjects.forEach((subject) => {
-			const option = document.createElement('option');
+    subjects.forEach((subject) => {
+      const option = document.createElement("option");
 
-			option.value = subject.id;
-			option.textContent = subject.name;
+      option.value = subject.id;
+      option.textContent = subject.name;
 
-			themeSubjectSelect.appendChild(option);
-		});
+      themeSubjectSelect.appendChild(option);
+    });
 
-		const hasSubjects = subjects.length > 0;
-		const selectedSubjectStillExists = subjects.some((subject) => {
-			return subject.id === previousSelectedSubjectId;
-		});
+    const hasSubjects = subjects.length > 0;
+    const selectedSubjectStillExists = subjects.some((subject) => {
+      return subject.id === previousSelectedSubjectId;
+    });
 
-		themeNoSubjectWarning.hidden = hasSubjects;
-		themeForm.hidden = !hasSubjects;
+    themeNoSubjectWarning.hidden = hasSubjects;
+    themeForm.hidden = !hasSubjects;
 
-		if (!hasSubjects) {
-			themeSubjectSelect.value = '';
-			themesCurrentSubject.textContent = 'Cadastre uma matéria antes de criar temas.';
+    if (!hasSubjects) {
+      themeSubjectSelect.value = "";
+      themesCurrentSubject.textContent = "Cadastre uma matéria antes de criar temas.";
 
-			themesCount.textContent = '0 temas';
+      themesCount.textContent = "0 temas";
 
-			themesEmptyState.hidden = false;
-			themesEmptyState.innerHTML = `
+      themesEmptyState.hidden = false;
+      themesEmptyState.innerHTML = `
         <strong>Nenhuma matéria disponível.</strong>
         <span>Cadastre uma matéria antes de criar temas.</span>
       `;
 
-			themesList.innerHTML = '';
+      themesList.innerHTML = "";
 
-			return;
-		}
+      return;
+    }
 
-		if (selectedSubjectStillExists) {
-			themeSubjectSelect.value = previousSelectedSubjectId;
-		} else {
-			themeSubjectSelect.value = '';
-		}
+    if (selectedSubjectStillExists) {
+      themeSubjectSelect.value = previousSelectedSubjectId;
+    } else {
+      themeSubjectSelect.value = "";
+    }
 
-		renderThemes();
-	}
+    renderThemes();
+  }
 
-	function clearThemeForm() {
-		themeNameInput.value = '';
-		themeDescriptionInput.value = '';
-		setThemeFormMessage('');
-		themeNameInput.focus();
-	}
+  function clearThemeForm() {
+    themeNameInput.value = "";
+    themeDescriptionInput.value = "";
+    setThemeFormMessage("");
+    themeNameInput.focus();
+  }
 
-	function handleThemeSubmit(event) {
-		event.preventDefault();
+  function handleThemeSubmit(event) {
+    event.preventDefault();
 
-		const selectedSubjectId = themeSubjectSelect.value;
-		const themeName = themeNameInput.value.trim();
-		const themeDescription = themeDescriptionInput.value.trim();
+    const selectedSubjectId = themeSubjectSelect.value;
+    const themeName = themeNameInput.value.trim();
+    const themeDescription = themeDescriptionInput.value.trim();
 
-		if (!selectedSubjectId) {
-			setThemeFormMessage('Selecione uma matéria antes de cadastrar o tema.', 'error');
-			themeSubjectSelect.focus();
-			return;
-		}
+    if (!selectedSubjectId) {
+      setThemeFormMessage("Selecione uma matéria antes de cadastrar o tema.", "error");
+      themeSubjectSelect.focus();
+      return;
+    }
 
-		if (!themeName) {
-			setThemeFormMessage('Informe o nome do tema antes de cadastrar.', 'error');
-			themeNameInput.focus();
-			return;
-		}
+    if (!themeName) {
+      setThemeFormMessage("Informe o nome do tema antes de cadastrar.", "error");
+      themeNameInput.focus();
+      return;
+    }
 
-		const selectedSubjectThemes = getThemesFromSelectedSubject();
+    const selectedSubjectThemes = getThemesFromSelectedSubject();
 
-		const duplicatedTheme = selectedSubjectThemes.find((theme) => {
-			return compareNames(theme.name, themeName);
-		});
+    const duplicatedTheme = selectedSubjectThemes.find((theme) => {
+      return compareNames(theme.name, themeName);
+    });
 
-		if (duplicatedTheme) {
-			setThemeFormMessage(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`, 'error');
+    if (duplicatedTheme) {
+      setThemeFormMessage(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`, "error");
 
-			themeNameInput.focus();
-			return;
-		}
+      themeNameInput.focus();
+      return;
+    }
 
-		const themes = getThemes();
-		const newTheme = createTheme(selectedSubjectId, themeName, themeDescription);
+    const themes = getThemes();
+    const newTheme = createTheme(selectedSubjectId, themeName, themeDescription);
 
-		themes.push(newTheme);
+    themes.push(newTheme);
 
-		saveThemes(themes);
-		renderThemes();
-		notifyThemesChanged();
+    saveThemes(themes);
+    renderThemes();
+    notifyThemesChanged();
 
-		themeNameInput.value = '';
-		themeDescriptionInput.value = '';
-		themeNameInput.focus();
+    themeNameInput.value = "";
+    themeDescriptionInput.value = "";
+    themeNameInput.focus();
 
-		setThemeFormMessage('Tema cadastrado com sucesso.', 'success');
-	}
+    setThemeFormMessage("Tema cadastrado com sucesso.", "success");
+  }
 
-	function handleThemeDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-theme]');
+  function handleThemeDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-theme]");
 
-		if (!deleteButton) {
-			return;
-		}
+    if (!deleteButton) {
+      return;
+    }
 
-		const themeId = deleteButton.dataset.deleteTheme;
+    const themeId = deleteButton.dataset.deleteTheme;
 
-		const theme = getThemes().find((currentTheme) => {
-			return currentTheme.id === themeId;
-		});
+    const theme = getThemes().find((currentTheme) => {
+      return currentTheme.id === themeId;
+    });
 
-		if (!theme) {
-			return;
-		}
+    if (!theme) {
+      return;
+    }
 
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir tema',
-			message: `Tem certeza que deseja excluir o tema "${theme.name}"?`,
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteTheme(theme.id);
-			}
-		});
-	}
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir tema",
+      message: `Tem certeza que deseja excluir o tema "${theme.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteTheme(theme.id);
+      },
+    });
+  }
 
-	function deleteTheme(themeId) {
-		const updatedThemes = getThemes().filter((theme) => {
-			return theme.id !== themeId;
-		});
+  function deleteTheme(themeId) {
+    const updatedThemes = getThemes().filter((theme) => {
+      return theme.id !== themeId;
+    });
 
-		saveThemes(updatedThemes);
+    saveThemes(updatedThemes);
 
-		removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
-		removeQuestionsAndRelatedDataByThemeIds([themeId]);
+    removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
+    removeQuestionsAndRelatedDataByThemeIds([themeId]);
 
-		if (expandedThemeId === themeId) {
-			expandedThemeId = null;
-			activeSubtopicFormThemeId = null;
-		}
+    if (expandedThemeId === themeId) {
+      expandedThemeId = null;
+      activeSubtopicFormThemeId = null;
+    }
 
-		renderThemes();
-		notifyThemesChanged();
+    renderThemes();
+    notifyThemesChanged();
 
-		setThemeFormMessage('Tema, assuntos e questões relacionadas excluídos com sucesso.', 'success');
-	}
+    setThemeFormMessage("Tema, assuntos e questões relacionadas excluídos com sucesso.", "success");
+  }
 
-	function handleSubjectChange() {
-		expandedThemeId = null;
-		activeSubtopicFormThemeId = null;
+  function handleSubjectChange() {
+    expandedThemeId = null;
+    activeSubtopicFormThemeId = null;
 
-		setThemeFormMessage('');
-		clearThemeImport();
-		renderThemes();
-	}
+    setThemeFormMessage("");
+    clearThemeImport();
+    renderThemes();
+  }
 
-	function handleExternalThemeCreate(event) {
-		const subjectId = event.detail?.subjectId;
+  function handleExternalThemeCreate(event) {
+    const subjectId = event.detail?.subjectId;
 
-		if (!subjectId) {
-			return;
-		}
+    if (!subjectId) {
+      return;
+    }
 
-		const subjectExists = getSubjects().some((subject) => {
-			return subject.id === subjectId;
-		});
+    const subjectExists = getSubjects().some((subject) => {
+      return subject.id === subjectId;
+    });
 
-		if (!subjectExists) {
-			return;
-		}
+    if (!subjectExists) {
+      return;
+    }
 
-		themeSubjectSelect.value = subjectId;
-		renderThemes();
+    themeSubjectSelect.value = subjectId;
+    renderThemes();
 
-		themeNameInput.focus();
+    themeNameInput.focus();
 
-		setThemeFormMessage('Cadastre um tema para completar esta matéria.', 'success');
-	}
+    setThemeFormMessage("Cadastre um tema para completar esta matéria.", "success");
+  }
 
-	function showThemeTab(tabName) {
-		themeTabButtons.forEach((button) => {
-			const isActive = button.dataset.themeTab === tabName;
+  function showThemeTab(tabName) {
+    themeTabButtons.forEach((button) => {
+      const isActive = button.dataset.themeTab === tabName;
 
-			button.classList.toggle('is-active', isActive);
-		});
+      button.classList.toggle("is-active", isActive);
+    });
 
-		themeListTab.classList.toggle('is-active', tabName === 'list');
-		themeImportTab.classList.toggle('is-active', tabName === 'import');
-	}
+    themeListTab.classList.toggle("is-active", tabName === "list");
+    themeImportTab.classList.toggle("is-active", tabName === "import");
+  }
 
-	function renderThemeImportAddedList(themes) {
-		themeImportAddedList.innerHTML = '';
+  function renderThemeImportAddedList(themes) {
+    themeImportAddedList.innerHTML = "";
 
-		themeImportAddedCount.textContent = formatCount(themes.length, 'tema', 'temas');
+    themeImportAddedCount.textContent = formatCount(themes.length, "tema", "temas");
 
-		if (themes.length === 0) {
-			themeImportAddedEmpty.hidden = false;
-			return;
-		}
+    if (themes.length === 0) {
+      themeImportAddedEmpty.hidden = false;
+      return;
+    }
 
-		themeImportAddedEmpty.hidden = true;
+    themeImportAddedEmpty.hidden = true;
 
-		themes.forEach((theme) => {
-			const item = document.createElement('li');
+    themes.forEach((theme) => {
+      const item = document.createElement("li");
 
-			item.classList.add('theme-import-added-item');
+      item.classList.add("theme-import-added-item");
 
-			item.innerHTML = `
+      item.innerHTML = `
         <strong class="theme-import-added-item__title">
           ${escapeHTML(theme.name)}
         </strong>
@@ -607,221 +615,225 @@ export function initThemes() {
         </button>
       `;
 
-			themeImportAddedList.appendChild(item);
-		});
-	}
+      themeImportAddedList.appendChild(item);
+    });
+  }
 
-	function setThemeImportSummary({title = 'Aguardando validação.', description = 'Selecione uma matéria, cole a lista e clique em Validar temas.', type = 'default'} = {}) {
-		themeImportSummary.innerHTML = `
+  function setThemeImportSummary({
+    title = "Aguardando validação.",
+    description = "Selecione uma matéria, cole a lista e clique em Validar temas.",
+    type = "default",
+  } = {}) {
+    themeImportSummary.innerHTML = `
     <strong>${escapeHTML(title)}</strong>
     <span>${escapeHTML(description)}</span>
   `;
 
-		themeImportSummary.classList.remove('is-success', 'is-error');
+    themeImportSummary.classList.remove("is-success", "is-error");
 
-		if (type === 'success') {
-			themeImportSummary.classList.add('is-success');
-		}
+    if (type === "success") {
+      themeImportSummary.classList.add("is-success");
+    }
 
-		if (type === 'error') {
-			themeImportSummary.classList.add('is-error');
-		}
-	}
+    if (type === "error") {
+      themeImportSummary.classList.add("is-error");
+    }
+  }
 
-	function renderThemeImportList(items = []) {
-		themeImportList.innerHTML = '';
+  function renderThemeImportList(items = []) {
+    themeImportList.innerHTML = "";
 
-		items.forEach((item) => {
-			const listItem = document.createElement('li');
+    items.forEach((item) => {
+      const listItem = document.createElement("li");
 
-			listItem.textContent = item;
+      listItem.textContent = item;
 
-			themeImportList.appendChild(listItem);
-		});
-	}
+      themeImportList.appendChild(listItem);
+    });
+  }
 
-	function renderThemeImportErrors(errors = []) {
-		themeImportErrors.innerHTML = '';
+  function renderThemeImportErrors(errors = []) {
+    themeImportErrors.innerHTML = "";
 
-		errors.forEach((error) => {
-			const errorItem = document.createElement('li');
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
 
-			errorItem.textContent = error;
+      errorItem.textContent = error;
 
-			themeImportErrors.appendChild(errorItem);
-		});
-	}
+      themeImportErrors.appendChild(errorItem);
+    });
+  }
 
-	function clearThemeImport() {
-		importedThemesPreview = [];
+  function clearThemeImport() {
+    importedThemesPreview = [];
 
-		themeImportTextInput.value = '';
-		importValidatedThemesButton.disabled = true;
+    themeImportTextInput.value = "";
+    importValidatedThemesButton.disabled = true;
 
-		setThemeImportSummary();
-		renderThemeImportList();
-		renderThemeImportErrors();
+    setThemeImportSummary();
+    renderThemeImportList();
+    renderThemeImportErrors();
 
-		themeImportTextInput.focus();
-	}
+    themeImportTextInput.focus();
+  }
 
-	function validateThemeImport() {
-		const selectedSubjectId = themeSubjectSelect.value;
+  function validateThemeImport() {
+    const selectedSubjectId = themeSubjectSelect.value;
 
-		if (!selectedSubjectId) {
-			importedThemesPreview = [];
-			importValidatedThemesButton.disabled = true;
+    if (!selectedSubjectId) {
+      importedThemesPreview = [];
+      importValidatedThemesButton.disabled = true;
 
-			setThemeImportSummary({
-				title: 'Matéria não selecionada.',
-				description: 'Selecione uma matéria antes de validar a importação.',
-				type: 'error'
-			});
+      setThemeImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de validar a importação.",
+        type: "error",
+      });
 
-			renderThemeImportList();
-			renderThemeImportErrors();
-			themeSubjectSelect.focus();
-			return;
-		}
+      renderThemeImportList();
+      renderThemeImportErrors();
+      themeSubjectSelect.focus();
+      return;
+    }
 
-		const result = parseItemsFromListText(themeImportTextInput.value);
-		const currentThemes = getThemesFromSelectedSubject();
+    const result = parseItemsFromListText(themeImportTextInput.value);
+    const currentThemes = getThemesFromSelectedSubject();
 
-		const duplicatedInStorage = [];
-		const validThemes = [];
+    const duplicatedInStorage = [];
+    const validThemes = [];
 
-		result.items.forEach((themeName) => {
-			const alreadyExists = currentThemes.some((theme) => {
-				return compareNames(theme.name, themeName);
-			});
+    result.items.forEach((themeName) => {
+      const alreadyExists = currentThemes.some((theme) => {
+        return compareNames(theme.name, themeName);
+      });
 
-			if (alreadyExists) {
-				duplicatedInStorage.push(themeName);
-				return;
-			}
+      if (alreadyExists) {
+        duplicatedInStorage.push(themeName);
+        return;
+      }
 
-			validThemes.push(themeName);
-		});
+      validThemes.push(themeName);
+    });
 
-		importedThemesPreview = validThemes;
+    importedThemesPreview = validThemes;
 
-		const errors = [...result.errors];
+    const errors = [...result.errors];
 
-		result.duplicatedItems.forEach((item) => {
-			errors.push(`"${item}" aparece repetido na lista e será ignorado.`);
-		});
+    result.duplicatedItems.forEach((item) => {
+      errors.push(`"${item}" aparece repetido na lista e será ignorado.`);
+    });
 
-		duplicatedInStorage.forEach((item) => {
-			errors.push(`"${item}" já está cadastrado nesta matéria e será ignorado.`);
-		});
+    duplicatedInStorage.forEach((item) => {
+      errors.push(`"${item}" já está cadastrado nesta matéria e será ignorado.`);
+    });
 
-		renderThemeImportList(validThemes);
-		renderThemeImportErrors(errors);
+    renderThemeImportList(validThemes);
+    renderThemeImportErrors(errors);
 
-		importValidatedThemesButton.disabled = validThemes.length === 0;
+    importValidatedThemesButton.disabled = validThemes.length === 0;
 
-		if (validThemes.length === 0 && errors.length > 0) {
-			setThemeImportSummary({
-				title: 'Nenhum tema novo encontrado.',
-				description: `${formatCount(errors.length, 'aviso encontrado', 'avisos encontrados')}. Ajuste a lista e valide novamente.`,
-				type: 'error'
-			});
+    if (validThemes.length === 0 && errors.length > 0) {
+      setThemeImportSummary({
+        title: "Nenhum tema novo encontrado.",
+        description: `${formatCount(errors.length, "aviso encontrado", "avisos encontrados")}. Ajuste a lista e valide novamente.`,
+        type: "error",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		if (validThemes.length > 0 && errors.length > 0) {
-			setThemeImportSummary({
-				title: `${formatCount(validThemes.length, 'tema pronto', 'temas prontos')} para importação.`,
-				description: `${formatCount(errors.length, 'item será ignorado', 'itens serão ignorados')} por repetição ou duplicidade.`,
-				type: 'success'
-			});
+    if (validThemes.length > 0 && errors.length > 0) {
+      setThemeImportSummary({
+        title: `${formatCount(validThemes.length, "tema pronto", "temas prontos")} para importação.`,
+        description: `${formatCount(errors.length, "item será ignorado", "itens serão ignorados")} por repetição ou duplicidade.`,
+        type: "success",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		setThemeImportSummary({
-			title: `${formatCount(validThemes.length, 'tema pronto', 'temas prontos')} para importação.`,
-			description: 'Nenhum problema encontrado. Você já pode importar os temas.',
-			type: 'success'
-		});
-	}
+    setThemeImportSummary({
+      title: `${formatCount(validThemes.length, "tema pronto", "temas prontos")} para importação.`,
+      description: "Nenhum problema encontrado. Você já pode importar os temas.",
+      type: "success",
+    });
+  }
 
-	function importValidatedThemes() {
-		const selectedSubjectId = themeSubjectSelect.value;
+  function importValidatedThemes() {
+    const selectedSubjectId = themeSubjectSelect.value;
 
-		if (!selectedSubjectId) {
-			setThemeImportSummary({
-				title: 'Matéria não selecionada.',
-				description: 'Selecione uma matéria antes de importar os temas.',
-				type: 'error'
-			});
+    if (!selectedSubjectId) {
+      setThemeImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de importar os temas.",
+        type: "error",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		if (importedThemesPreview.length === 0) {
-			setThemeImportSummary({
-				title: 'Nenhum tema validado.',
-				description: 'Valide uma lista antes de importar.',
-				type: 'error'
-			});
+    if (importedThemesPreview.length === 0) {
+      setThemeImportSummary({
+        title: "Nenhum tema validado.",
+        description: "Valide uma lista antes de importar.",
+        type: "error",
+      });
 
-			return;
-		}
+      return;
+    }
 
-		const themes = getThemes();
+    const themes = getThemes();
 
-		const newThemes = importedThemesPreview.map((themeName) => {
-			return createTheme(selectedSubjectId, themeName, '');
-		});
+    const newThemes = importedThemesPreview.map((themeName) => {
+      return createTheme(selectedSubjectId, themeName, "");
+    });
 
-		saveThemes([...themes, ...newThemes]);
-		notifyThemesChanged();
+    saveThemes([...themes, ...newThemes]);
+    notifyThemesChanged();
 
-		importedThemesPreview = [];
-		themeImportTextInput.value = '';
-		importValidatedThemesButton.disabled = true;
+    importedThemesPreview = [];
+    themeImportTextInput.value = "";
+    importValidatedThemesButton.disabled = true;
 
-		setThemeImportSummary({
-			title: `${formatCount(newThemes.length, 'tema importado', 'temas importados')} com sucesso.`,
-			description: 'Os temas foram adicionados à matéria selecionada.',
-			type: 'success'
-		});
+    setThemeImportSummary({
+      title: `${formatCount(newThemes.length, "tema importado", "temas importados")} com sucesso.`,
+      description: "Os temas foram adicionados à matéria selecionada.",
+      type: "success",
+    });
 
-		renderThemeImportList();
-		renderThemeImportErrors();
-		renderThemes();
+    renderThemeImportList();
+    renderThemeImportErrors();
+    renderThemes();
 
-		showThemeTab('list');
-	}
+    showThemeTab("list");
+  }
 
-	function getSubtopicQuestionsCount(subtopicId) {
-		return getQuestions().filter((question) => {
-			return question.subtopicId === subtopicId;
-		}).length;
-	}
+  function getSubtopicQuestionsCount(subtopicId) {
+    return getQuestions().filter((question) => {
+      return question.subtopicId === subtopicId;
+    }).length;
+  }
 
-	function getSubtopicById(subtopicId) {
-		return getSubtopics().find((subtopic) => {
-			return subtopic.id === subtopicId;
-		});
-	}
+  function getSubtopicById(subtopicId) {
+    return getSubtopics().find((subtopic) => {
+      return subtopic.id === subtopicId;
+    });
+  }
 
-	function formatSubtopicsCount(total) {
-		return total === 1 ? '1 assunto' : `${total} assuntos`;
-	}
+  function formatSubtopicsCount(total) {
+    return total === 1 ? "1 assunto" : `${total} assuntos`;
+  }
 
-	function formatSubtopicQuestionsCount(total) {
-		return total === 1 ? '1 questão' : `${total} questões`;
-	}
+  function formatSubtopicQuestionsCount(total) {
+    return total === 1 ? "1 questão" : `${total} questões`;
+  }
 
-	function renderSubtopicsPanel(theme) {
-		const subtopics = getSubtopicsByThemeId(theme.id);
-		const isFormActive = activeSubtopicFormThemeId === theme.id;
+  function renderSubtopicsPanel(theme) {
+    const subtopics = getSubtopicsByThemeId(theme.id);
+    const isFormActive = activeSubtopicFormThemeId === theme.id;
 
-		const subtopicFormHTML = isFormActive
-			? `
+    const subtopicFormHTML = isFormActive
+      ? `
 			<form class="subtopic-inline-form" data-subtopic-form="${escapeHTML(theme.id)}">
 				<input
 					type="text"
@@ -844,7 +856,7 @@ export function initThemes() {
 				</button>
 			</form>
 		`
-			: `
+      : `
 			<button
 				class="button button--secondary subtopics-panel__add-button"
 				type="button"
@@ -854,20 +866,20 @@ export function initThemes() {
 			</button>
 		`;
 
-		const subtopicsHTML =
-			subtopics.length === 0
-				? `
+    const subtopicsHTML =
+      subtopics.length === 0
+        ? `
 				<div class="empty-state subtopics-panel__empty">
 					<strong>Nenhum assunto cadastrado.</strong>
 					<span>Adicione assuntos para dividir este tema em partes menores.</span>
 				</div>
 			`
-				: subtopics
-						.map((subtopic) => {
-							const questionsCount = getSubtopicQuestionsCount(subtopic.id);
-							const hasQuestions = questionsCount > 0;
+        : subtopics
+            .map((subtopic) => {
+              const questionsCount = getSubtopicQuestionsCount(subtopic.id);
+              const hasQuestions = questionsCount > 0;
 
-							return `
+              return `
 							<article class="subtopic-card" data-subtopic-id="${escapeHTML(subtopic.id)}">
 								<div class="subtopic-card__content">
 									<strong>${escapeHTML(subtopic.name)}</strong>
@@ -879,10 +891,10 @@ export function initThemes() {
 									<button
 										class="button button--secondary subtopic-card__study-action"
 										type="button"
-										data-${hasQuestions ? 'study' : 'create'}-subtopic="${escapeHTML(subtopic.id)}"
-										title="${hasQuestions ? 'Estudar assunto' : 'Cadastrar questão'}"
+										data-${hasQuestions ? "study" : "create"}-subtopic="${escapeHTML(subtopic.id)}"
+										title="${hasQuestions ? "Estudar assunto" : "Cadastrar questão"}"
 									>
-										${hasQuestions ? 'Estudar 🧠' : 'Cadastrar ✏️'}
+										${hasQuestions ? "Estudar 🧠" : "Cadastrar ✏️"}
 									</button>
 
 									<button
@@ -897,10 +909,10 @@ export function initThemes() {
 								</div>
 							</article>
 						`;
-						})
-						.join('');
+            })
+            .join("");
 
-		return `
+    return `
 		<section class="subtopics-panel">
 			<header class="subtopics-panel__header">
 				<div>
@@ -920,382 +932,382 @@ export function initThemes() {
 			</div>
 		</section>
 	`;
-	}
+  }
 
-	function handleSubtopicsToggle(event) {
-		const toggleButton = event.target.closest('[data-toggle-subtopics]');
+  function handleSubtopicsToggle(event) {
+    const toggleButton = event.target.closest("[data-toggle-subtopics]");
 
-		if (!toggleButton) {
-			return;
-		}
+    if (!toggleButton) {
+      return;
+    }
 
-		const themeId = toggleButton.dataset.toggleSubtopics;
-
-		expandedThemeId = expandedThemeId === themeId ? null : themeId;
-		activeSubtopicFormThemeId = null;
-
-		renderThemes();
-	}
+    const themeId = toggleButton.dataset.toggleSubtopics;
+
+    expandedThemeId = expandedThemeId === themeId ? null : themeId;
+    activeSubtopicFormThemeId = null;
+
+    renderThemes();
+  }
 
-	function handleShowSubtopicForm(event) {
-		const button = event.target.closest('[data-show-subtopic-form]');
-
-		if (!button) {
-			return;
-		}
-
-		activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
-		renderThemes();
-
-		const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
-
-		if (input) {
-			input.focus();
-		}
-	}
-
-	function handleCancelSubtopicForm(event) {
-		const button = event.target.closest('[data-cancel-subtopic-form]');
-
-		if (!button) {
-			return;
-		}
-
-		activeSubtopicFormThemeId = null;
-		renderThemes();
-	}
-
-	function handleSubtopicSubmit(event) {
-		const form = event.target.closest('[data-subtopic-form]');
-
-		if (!form) {
-			return;
-		}
-
-		event.preventDefault();
-
-		const themeId = form.dataset.subtopicForm;
-		const nameInput = form.elements.subtopicName;
-		const name = nameInput.value.trim();
-
-		const theme = getThemes().find((currentTheme) => {
-			return currentTheme.id === themeId;
-		});
-
-		if (!theme) {
-			return;
-		}
-
-		const result = addSubtopic({
-			subjectId: theme.subjectId,
-			themeId: theme.id,
-			name
-		});
-
-		if (!result.ok) {
-			setThemeFormMessage(result.message, 'error');
-			nameInput.focus();
-			return;
-		}
-
-		activeSubtopicFormThemeId = null;
-		setThemeFormMessage(result.message, 'success');
-		renderThemes();
-	}
-
-	function handleSubtopicDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-subtopic]');
-
-		if (!deleteButton) {
-			return;
-		}
-
-		const subtopicId = deleteButton.dataset.deleteSubtopic;
-		const subtopic = getSubtopicsByThemeId(expandedThemeId || '').find((currentSubtopic) => {
-			return currentSubtopic.id === subtopicId;
-		});
-
-		if (!subtopic) {
-			return;
-		}
-
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir assunto',
-			message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteSubtopic(subtopic.id);
-				setThemeFormMessage('Assunto excluído com sucesso.', 'success');
-				renderThemes();
-			}
-		});
-	}
-
-	function handleSubtopicCreateQuestion(event) {
-		const button = event.target.closest('[data-create-subtopic]');
-
-		if (!button) {
-			return;
-		}
-
-		const subtopicId = button.dataset.createSubtopic;
-		const subtopic = getSubtopicsByThemeId(expandedThemeId || '').find((currentSubtopic) => {
-			return currentSubtopic.id === subtopicId;
-		});
-
-		if (!subtopic) {
-			return;
-		}
-
-		document.dispatchEvent(
-			new CustomEvent('questions:prepare-create', {
-				detail: {
-					subjectId: subtopic.subjectId,
-					themeId: subtopic.themeId,
-					subtopicId: subtopic.id
-				}
-			})
-		);
-
-		document.dispatchEvent(
-			new CustomEvent('app:navigate', {
-				detail: {
-					sectionId: 'questions'
-				}
-			})
-		);
-	}
-
-	function handleSubtopicStudy(event) {
-		const button = event.target.closest('[data-study-subtopic]');
-
-		if (!button) {
-			return;
-		}
-
-		const subtopicId = button.dataset.studySubtopic;
-
-		document.dispatchEvent(
-			new CustomEvent('solve:prepare-subtopic', {
-				detail: {
-					subtopicId
-				}
-			})
-		);
-
-		document.dispatchEvent(
-			new CustomEvent('app:navigate', {
-				detail: {
-					sectionId: 'solve'
-				}
-			})
-		);
-	}
-
-	function handleSubtopicsToggle(event) {
-		const toggleButton = event.target.closest('[data-toggle-subtopics]');
-
-		if (!toggleButton) {
-			return;
-		}
-
-		const themeId = toggleButton.dataset.toggleSubtopics;
-
-		expandedThemeId = expandedThemeId === themeId ? null : themeId;
-		activeSubtopicFormThemeId = null;
-
-		renderThemes();
-	}
-
-	function handleShowSubtopicForm(event) {
-		const button = event.target.closest('[data-show-subtopic-form]');
-
-		if (!button) {
-			return;
-		}
-
-		activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
-		renderThemes();
-
-		const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
-
-		if (input) {
-			input.focus();
-		}
-	}
-
-	function handleCancelSubtopicForm(event) {
-		const button = event.target.closest('[data-cancel-subtopic-form]');
-
-		if (!button) {
-			return;
-		}
-
-		activeSubtopicFormThemeId = null;
-		renderThemes();
-	}
-
-	function handleSubtopicSubmit(event) {
-		const form = event.target.closest('[data-subtopic-form]');
-
-		if (!form) {
-			return;
-		}
-
-		event.preventDefault();
-
-		const themeId = form.dataset.subtopicForm;
-		const nameInput = form.elements.subtopicName;
-		const name = nameInput.value.trim();
-
-		const theme = getThemes().find((currentTheme) => {
-			return currentTheme.id === themeId;
-		});
-
-		if (!theme) {
-			return;
-		}
-
-		const result = addSubtopic({
-			subjectId: theme.subjectId,
-			themeId: theme.id,
-			name
-		});
-
-		if (!result.ok) {
-			setThemeFormMessage(result.message, 'error');
-			nameInput.focus();
-			return;
-		}
-
-		activeSubtopicFormThemeId = null;
-
-		setThemeFormMessage(result.message, 'success');
-		renderThemes();
-	}
-
-	function handleSubtopicDelete(event) {
-		const deleteButton = event.target.closest('[data-delete-subtopic]');
-
-		if (!deleteButton) {
-			return;
-		}
-
-		const subtopicId = deleteButton.dataset.deleteSubtopic;
-		const subtopic = getSubtopicById(subtopicId);
-
-		if (!subtopic) {
-			return;
-		}
-
-		openConfirmModal({
-			tag: '⚠️ Confirmação',
-			title: 'Excluir assunto',
-			message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
-			confirmText: 'Excluir',
-			cancelText: 'Cancelar',
-			onConfirm: () => {
-				deleteSubtopic(subtopic.id);
-				setThemeFormMessage('Assunto excluído com sucesso.', 'success');
-				renderThemes();
-			}
-		});
-	}
-
-	function handleSubtopicCreateQuestion(event) {
-		const button = event.target.closest('[data-create-subtopic]');
-
-		if (!button) {
-			return;
-		}
-
-		const subtopicId = button.dataset.createSubtopic;
-		const subtopic = getSubtopicById(subtopicId);
-
-		if (!subtopic) {
-			return;
-		}
-
-		document.dispatchEvent(
-			new CustomEvent('questions:prepare-create', {
-				detail: {
-					subjectId: subtopic.subjectId,
-					themeId: subtopic.themeId,
-					subtopicId: subtopic.id
-				}
-			})
-		);
-
-		document.dispatchEvent(
-			new CustomEvent('app:navigate', {
-				detail: {
-					sectionId: 'questions'
-				}
-			})
-		);
-	}
-
-	function handleSubtopicStudy(event) {
-		const button = event.target.closest('[data-study-subtopic]');
-
-		if (!button) {
-			return;
-		}
-
-		const subtopicId = button.dataset.studySubtopic;
-
-		document.dispatchEvent(
-			new CustomEvent('solve:prepare-subtopic', {
-				detail: {
-					subtopicId
-				}
-			})
-		);
-
-		document.dispatchEvent(
-			new CustomEvent('app:navigate', {
-				detail: {
-					sectionId: 'solve'
-				}
-			})
-		);
-	}
-
-	//-----------------------------------------------------
-
-	themeForm.addEventListener('submit', handleThemeSubmit);
-	themeSubjectSelect.addEventListener('change', handleSubjectChange);
-
-	clearThemeFormButton.addEventListener('click', clearThemeForm);
-	themesList.addEventListener('click', handleThemeDelete);
-	themesList.addEventListener('click', handleSubtopicsToggle);
-	themesList.addEventListener('click', handleShowSubtopicForm);
-	themesList.addEventListener('click', handleCancelSubtopicForm);
-	themesList.addEventListener('submit', handleSubtopicSubmit);
-	themesList.addEventListener('click', handleSubtopicDelete);
-	themesList.addEventListener('click', handleSubtopicCreateQuestion);
-	themesList.addEventListener('click', handleSubtopicStudy);
-
-	themeImportAddedList.addEventListener('click', handleThemeDelete);
-	validateThemeImportButton.addEventListener('click', validateThemeImport);
-	clearThemeImportButton.addEventListener('click', clearThemeImport);
-	importValidatedThemesButton.addEventListener('click', importValidatedThemes);
-
-	document.addEventListener('questions:changed', renderThemes);
-	document.addEventListener('subjects:changed', renderSubjectOptions);
-	document.addEventListener('themes:prepare-create', handleExternalThemeCreate);
-	document.addEventListener('subtopics:changed', renderThemes);
-
-	themeTabButtons.forEach((button) => {
-		button.addEventListener('click', () => {
-			showThemeTab(button.dataset.themeTab);
-		});
-	});
-
-	renderSubjectOptions();
-	showThemeTab('list');
-
-	console.log('Sistema de temas carregado.');
+  function handleShowSubtopicForm(event) {
+    const button = event.target.closest("[data-show-subtopic-form]");
+
+    if (!button) {
+      return;
+    }
+
+    activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
+    renderThemes();
+
+    const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
+
+    if (input) {
+      input.focus();
+    }
+  }
+
+  function handleCancelSubtopicForm(event) {
+    const button = event.target.closest("[data-cancel-subtopic-form]");
+
+    if (!button) {
+      return;
+    }
+
+    activeSubtopicFormThemeId = null;
+    renderThemes();
+  }
+
+  function handleSubtopicSubmit(event) {
+    const form = event.target.closest("[data-subtopic-form]");
+
+    if (!form) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const themeId = form.dataset.subtopicForm;
+    const nameInput = form.elements.subtopicName;
+    const name = nameInput.value.trim();
+
+    const theme = getThemes().find((currentTheme) => {
+      return currentTheme.id === themeId;
+    });
+
+    if (!theme) {
+      return;
+    }
+
+    const result = addSubtopic({
+      subjectId: theme.subjectId,
+      themeId: theme.id,
+      name,
+    });
+
+    if (!result.ok) {
+      setThemeFormMessage(result.message, "error");
+      nameInput.focus();
+      return;
+    }
+
+    activeSubtopicFormThemeId = null;
+    setThemeFormMessage(result.message, "success");
+    renderThemes();
+  }
+
+  function handleSubtopicDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-subtopic]");
+
+    if (!deleteButton) {
+      return;
+    }
+
+    const subtopicId = deleteButton.dataset.deleteSubtopic;
+    const subtopic = getSubtopicsByThemeId(expandedThemeId || "").find((currentSubtopic) => {
+      return currentSubtopic.id === subtopicId;
+    });
+
+    if (!subtopic) {
+      return;
+    }
+
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir assunto",
+      message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteSubtopic(subtopic.id);
+        setThemeFormMessage("Assunto excluído com sucesso.", "success");
+        renderThemes();
+      },
+    });
+  }
+
+  function handleSubtopicCreateQuestion(event) {
+    const button = event.target.closest("[data-create-subtopic]");
+
+    if (!button) {
+      return;
+    }
+
+    const subtopicId = button.dataset.createSubtopic;
+    const subtopic = getSubtopicsByThemeId(expandedThemeId || "").find((currentSubtopic) => {
+      return currentSubtopic.id === subtopicId;
+    });
+
+    if (!subtopic) {
+      return;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent("questions:prepare-create", {
+        detail: {
+          subjectId: subtopic.subjectId,
+          themeId: subtopic.themeId,
+          subtopicId: subtopic.id,
+        },
+      }),
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("app:navigate", {
+        detail: {
+          sectionId: "questions",
+        },
+      }),
+    );
+  }
+
+  function handleSubtopicStudy(event) {
+    const button = event.target.closest("[data-study-subtopic]");
+
+    if (!button) {
+      return;
+    }
+
+    const subtopicId = button.dataset.studySubtopic;
+
+    document.dispatchEvent(
+      new CustomEvent("solve:prepare-subtopic", {
+        detail: {
+          subtopicId,
+        },
+      }),
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("app:navigate", {
+        detail: {
+          sectionId: "solve",
+        },
+      }),
+    );
+  }
+
+  function handleSubtopicsToggle(event) {
+    const toggleButton = event.target.closest("[data-toggle-subtopics]");
+
+    if (!toggleButton) {
+      return;
+    }
+
+    const themeId = toggleButton.dataset.toggleSubtopics;
+
+    expandedThemeId = expandedThemeId === themeId ? null : themeId;
+    activeSubtopicFormThemeId = null;
+
+    renderThemes();
+  }
+
+  function handleShowSubtopicForm(event) {
+    const button = event.target.closest("[data-show-subtopic-form]");
+
+    if (!button) {
+      return;
+    }
+
+    activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
+    renderThemes();
+
+    const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
+
+    if (input) {
+      input.focus();
+    }
+  }
+
+  function handleCancelSubtopicForm(event) {
+    const button = event.target.closest("[data-cancel-subtopic-form]");
+
+    if (!button) {
+      return;
+    }
+
+    activeSubtopicFormThemeId = null;
+    renderThemes();
+  }
+
+  function handleSubtopicSubmit(event) {
+    const form = event.target.closest("[data-subtopic-form]");
+
+    if (!form) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const themeId = form.dataset.subtopicForm;
+    const nameInput = form.elements.subtopicName;
+    const name = nameInput.value.trim();
+
+    const theme = getThemes().find((currentTheme) => {
+      return currentTheme.id === themeId;
+    });
+
+    if (!theme) {
+      return;
+    }
+
+    const result = addSubtopic({
+      subjectId: theme.subjectId,
+      themeId: theme.id,
+      name,
+    });
+
+    if (!result.ok) {
+      setThemeFormMessage(result.message, "error");
+      nameInput.focus();
+      return;
+    }
+
+    activeSubtopicFormThemeId = null;
+
+    setThemeFormMessage(result.message, "success");
+    renderThemes();
+  }
+
+  function handleSubtopicDelete(event) {
+    const deleteButton = event.target.closest("[data-delete-subtopic]");
+
+    if (!deleteButton) {
+      return;
+    }
+
+    const subtopicId = deleteButton.dataset.deleteSubtopic;
+    const subtopic = getSubtopicById(subtopicId);
+
+    if (!subtopic) {
+      return;
+    }
+
+    openConfirmModal({
+      tag: "⚠️ Confirmação",
+      title: "Excluir assunto",
+      message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
+      confirmText: "Excluir",
+      cancelText: "Cancelar",
+      onConfirm: () => {
+        deleteSubtopic(subtopic.id);
+        setThemeFormMessage("Assunto excluído com sucesso.", "success");
+        renderThemes();
+      },
+    });
+  }
+
+  function handleSubtopicCreateQuestion(event) {
+    const button = event.target.closest("[data-create-subtopic]");
+
+    if (!button) {
+      return;
+    }
+
+    const subtopicId = button.dataset.createSubtopic;
+    const subtopic = getSubtopicById(subtopicId);
+
+    if (!subtopic) {
+      return;
+    }
+
+    document.dispatchEvent(
+      new CustomEvent("questions:prepare-create", {
+        detail: {
+          subjectId: subtopic.subjectId,
+          themeId: subtopic.themeId,
+          subtopicId: subtopic.id,
+        },
+      }),
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("app:navigate", {
+        detail: {
+          sectionId: "questions",
+        },
+      }),
+    );
+  }
+
+  function handleSubtopicStudy(event) {
+    const button = event.target.closest("[data-study-subtopic]");
+
+    if (!button) {
+      return;
+    }
+
+    const subtopicId = button.dataset.studySubtopic;
+
+    document.dispatchEvent(
+      new CustomEvent("solve:prepare-subtopic", {
+        detail: {
+          subtopicId,
+        },
+      }),
+    );
+
+    document.dispatchEvent(
+      new CustomEvent("app:navigate", {
+        detail: {
+          sectionId: "solve",
+        },
+      }),
+    );
+  }
+
+  //-----------------------------------------------------
+
+  themeForm.addEventListener("submit", handleThemeSubmit);
+  themeSubjectSelect.addEventListener("change", handleSubjectChange);
+
+  clearThemeFormButton.addEventListener("click", clearThemeForm);
+  themesList.addEventListener("click", handleThemeDelete);
+  themesList.addEventListener("click", handleSubtopicsToggle);
+  themesList.addEventListener("click", handleShowSubtopicForm);
+  themesList.addEventListener("click", handleCancelSubtopicForm);
+  themesList.addEventListener("submit", handleSubtopicSubmit);
+  themesList.addEventListener("click", handleSubtopicDelete);
+  themesList.addEventListener("click", handleSubtopicCreateQuestion);
+  themesList.addEventListener("click", handleSubtopicStudy);
+
+  themeImportAddedList.addEventListener("click", handleThemeDelete);
+  validateThemeImportButton.addEventListener("click", validateThemeImport);
+  clearThemeImportButton.addEventListener("click", clearThemeImport);
+  importValidatedThemesButton.addEventListener("click", importValidatedThemes);
+
+  document.addEventListener("questions:changed", renderThemes);
+  document.addEventListener("subjects:changed", renderSubjectOptions);
+  document.addEventListener("themes:prepare-create", handleExternalThemeCreate);
+  document.addEventListener("subtopics:changed", renderThemes);
+
+  themeTabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      showThemeTab(button.dataset.themeTab);
+    });
+  });
+
+  renderSubjectOptions();
+  showThemeTab("list");
+
+  console.log("Sistema de temas carregado.");
 }
