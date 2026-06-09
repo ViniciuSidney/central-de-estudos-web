@@ -444,3 +444,11 @@
   width: 36px;
   height: 36px;
 }
+
+#subtopic-import-theme {
+	width: 100%;
+}
+
+#subtopic-import-tab .import-panel--editor .form-group {
+	margin-bottom: 2px;
+}

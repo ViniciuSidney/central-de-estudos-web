@@ -33,8 +33,32 @@ export function initThemes() {
   const themeImportSummary = document.querySelector("#theme-import-summary");
   const themeImportList = document.querySelector("#theme-import-list");
   const themeImportErrors = document.querySelector("#theme-import-errors");
+  const subtopicImportTab = document.querySelector("#subtopic-import-tab");
+  const subtopicImportThemeSelect = document.querySelector("#subtopic-import-theme");
+  const subtopicImportAddedList = document.querySelector("#subtopic-import-added-list");
+  const subtopicImportAddedCount = document.querySelector("#subtopic-import-added-count");
+  const subtopicImportAddedEmpty = document.querySelector("#subtopic-import-added-empty");
+  const subtopicImportTextInput = document.querySelector("#subtopic-import-text");
+  const validateSubtopicImportButton = document.querySelector("#validate-subtopic-import");
+  const clearSubtopicImportButton = document.querySelector("#clear-subtopic-import");
+  const importValidatedSubtopicsButton = document.querySelector("#import-validated-subtopics");
+  const subtopicImportSummary = document.querySelector("#subtopic-import-summary");
+  const subtopicImportList = document.querySelector("#subtopic-import-list");
+  const subtopicImportErrors = document.querySelector("#subtopic-import-errors");
 
   if (
+    !subtopicImportTab ||
+    !subtopicImportThemeSelect ||
+    !subtopicImportAddedList ||
+    !subtopicImportAddedCount ||
+    !subtopicImportAddedEmpty ||
+    !subtopicImportTextInput ||
+    !validateSubtopicImportButton ||
+    !clearSubtopicImportButton ||
+    !importValidatedSubtopicsButton ||
+    !subtopicImportSummary ||
+    !subtopicImportList ||
+    !subtopicImportErrors ||
     !themeImportTextInput ||
     !validateThemeImportButton ||
     !clearThemeImportButton ||
@@ -64,6 +88,7 @@ export function initThemes() {
   }
 
   let importedThemesPreview = [];
+  let importedSubtopicsPreview = [];
   let expandedThemeId = null;
   let activeSubtopicFormThemeId = null;
 
@@ -164,6 +189,309 @@ export function initThemes() {
     return getThemes().filter((theme) => {
       return theme.subjectId === selectedSubjectId;
     });
+  }
+
+  function getSubtopicImportSelectedTheme() {
+    const selectedThemeId = subtopicImportThemeSelect.value;
+
+    return getThemes().find((theme) => {
+      return theme.id === selectedThemeId;
+    });
+  }
+
+  function getSubtopicsFromSelectedImportTheme() {
+    const selectedTheme = getSubtopicImportSelectedTheme();
+
+    if (!selectedTheme) {
+      return [];
+    }
+
+    return getSubtopicsByThemeId(selectedTheme.id);
+  }
+
+  function renderSubtopicImportThemeOptions() {
+    const selectedSubjectThemes = getThemesFromSelectedSubject();
+    const previousSelectedThemeId = subtopicImportThemeSelect.value;
+
+    subtopicImportThemeSelect.innerHTML = `
+		<option value="">Selecione um tema</option>
+	`;
+
+    selectedSubjectThemes.forEach((theme) => {
+      const option = document.createElement("option");
+
+      option.value = theme.id;
+      option.textContent = theme.name;
+
+      subtopicImportThemeSelect.appendChild(option);
+    });
+
+    const selectedThemeStillExists = selectedSubjectThemes.some((theme) => {
+      return theme.id === previousSelectedThemeId;
+    });
+
+    subtopicImportThemeSelect.value = selectedThemeStillExists ? previousSelectedThemeId : "";
+
+    renderSubtopicImportAddedList();
+  }
+
+  function renderSubtopicImportAddedList() {
+    const subtopics = getSubtopicsFromSelectedImportTheme();
+
+    subtopicImportAddedList.innerHTML = "";
+    subtopicImportAddedCount.textContent = formatCount(subtopics.length, "assunto", "assuntos");
+
+    if (subtopics.length === 0) {
+      subtopicImportAddedEmpty.hidden = false;
+      return;
+    }
+
+    subtopicImportAddedEmpty.hidden = true;
+
+    subtopics.forEach((subtopic) => {
+      const item = document.createElement("li");
+
+      item.classList.add("theme-import-added-item");
+
+      item.innerHTML = `
+			<strong class="theme-import-added-item__title">
+				${escapeHTML(subtopic.name)}
+			</strong>
+
+			<button
+				class="management-icon-button management-icon-button--danger"
+				type="button"
+				data-delete-subtopic="${subtopic.id}"
+				aria-label="Excluir assunto ${escapeHTML(subtopic.name)}"
+				title="Excluir assunto"
+			>
+				🗑️
+			</button>
+		`;
+
+      subtopicImportAddedList.appendChild(item);
+    });
+  }
+
+  function setSubtopicImportSummary({
+    title = "Aguardando validação.",
+    description = "Selecione uma matéria, um tema, cole a lista e clique em Validar assuntos.",
+    type = "default",
+  } = {}) {
+    subtopicImportSummary.innerHTML = `
+		<strong>${escapeHTML(title)}</strong>
+		<span>${escapeHTML(description)}</span>
+	`;
+
+    subtopicImportSummary.classList.remove("is-success", "is-error");
+
+    if (type === "success") {
+      subtopicImportSummary.classList.add("is-success");
+    }
+
+    if (type === "error") {
+      subtopicImportSummary.classList.add("is-error");
+    }
+  }
+
+  function renderSubtopicImportList(items = []) {
+    subtopicImportList.innerHTML = "";
+
+    items.forEach((item) => {
+      const listItem = document.createElement("li");
+
+      listItem.textContent = item;
+
+      subtopicImportList.appendChild(listItem);
+    });
+  }
+
+  function renderSubtopicImportErrors(errors = []) {
+    subtopicImportErrors.innerHTML = "";
+
+    errors.forEach((error) => {
+      const errorItem = document.createElement("li");
+
+      errorItem.textContent = error;
+
+      subtopicImportErrors.appendChild(errorItem);
+    });
+  }
+
+  function clearSubtopicImport() {
+    importedSubtopicsPreview = [];
+
+    subtopicImportTextInput.value = "";
+    importValidatedSubtopicsButton.disabled = true;
+
+    setSubtopicImportSummary();
+    renderSubtopicImportList();
+    renderSubtopicImportErrors();
+
+    subtopicImportTextInput.focus();
+  }
+
+  function validateSubtopicImport() {
+    const selectedSubjectId = themeSubjectSelect.value;
+    const selectedTheme = getSubtopicImportSelectedTheme();
+
+    if (!selectedSubjectId) {
+      importedSubtopicsPreview = [];
+      importValidatedSubtopicsButton.disabled = true;
+
+      setSubtopicImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de validar a importação.",
+        type: "error",
+      });
+
+      renderSubtopicImportList();
+      renderSubtopicImportErrors();
+      themeSubjectSelect.focus();
+      return;
+    }
+
+    if (!selectedTheme) {
+      importedSubtopicsPreview = [];
+      importValidatedSubtopicsButton.disabled = true;
+
+      setSubtopicImportSummary({
+        title: "Tema não selecionado.",
+        description: "Selecione um tema antes de validar a importação.",
+        type: "error",
+      });
+
+      renderSubtopicImportList();
+      renderSubtopicImportErrors();
+      subtopicImportThemeSelect.focus();
+      return;
+    }
+
+    const result = parseItemsFromListText(subtopicImportTextInput.value);
+    const currentSubtopics = getSubtopicsByThemeId(selectedTheme.id);
+
+    const duplicatedInStorage = [];
+    const validSubtopics = [];
+
+    result.items.forEach((subtopicName) => {
+      const alreadyExists = currentSubtopics.some((subtopic) => {
+        return compareNames(subtopic.name, subtopicName);
+      });
+
+      if (alreadyExists) {
+        duplicatedInStorage.push(subtopicName);
+        return;
+      }
+
+      validSubtopics.push(subtopicName);
+    });
+
+    importedSubtopicsPreview = validSubtopics;
+
+    const errors = [...result.errors];
+
+    result.duplicatedItems.forEach((item) => {
+      errors.push(`"${item}" aparece repetido na lista e será ignorado.`);
+    });
+
+    duplicatedInStorage.forEach((item) => {
+      errors.push(`"${item}" já está cadastrado neste tema e será ignorado.`);
+    });
+
+    renderSubtopicImportList(validSubtopics);
+    renderSubtopicImportErrors(errors);
+
+    importValidatedSubtopicsButton.disabled = validSubtopics.length === 0;
+
+    if (validSubtopics.length === 0 && errors.length > 0) {
+      setSubtopicImportSummary({
+        title: "Nenhum assunto novo encontrado.",
+        description: `${formatCount(errors.length, "aviso encontrado", "avisos encontrados")}. Ajuste a lista e valide novamente.`,
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (validSubtopics.length > 0 && errors.length > 0) {
+      setSubtopicImportSummary({
+        title: `${formatCount(validSubtopics.length, "assunto pronto", "assuntos prontos")} para importação.`,
+        description: `${formatCount(errors.length, "item será ignorado", "itens serão ignorados")} por repetição ou duplicidade.`,
+        type: "success",
+      });
+
+      return;
+    }
+
+    setSubtopicImportSummary({
+      title: `${formatCount(validSubtopics.length, "assunto pronto", "assuntos prontos")} para importação.`,
+      description: "Nenhum problema encontrado. Você já pode importar os assuntos.",
+      type: "success",
+    });
+  }
+
+  function importValidatedSubtopics() {
+    const selectedSubjectId = themeSubjectSelect.value;
+    const selectedTheme = getSubtopicImportSelectedTheme();
+
+    if (!selectedSubjectId) {
+      setSubtopicImportSummary({
+        title: "Matéria não selecionada.",
+        description: "Selecione uma matéria antes de importar os assuntos.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (!selectedTheme) {
+      setSubtopicImportSummary({
+        title: "Tema não selecionado.",
+        description: "Selecione um tema antes de importar os assuntos.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    if (importedSubtopicsPreview.length === 0) {
+      setSubtopicImportSummary({
+        title: "Nenhum assunto validado.",
+        description: "Valide uma lista antes de importar.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    let importedCount = 0;
+
+    importedSubtopicsPreview.forEach((subtopicName) => {
+      const result = addSubtopic({
+        subjectId: selectedSubjectId,
+        themeId: selectedTheme.id,
+        name: subtopicName,
+      });
+
+      if (result.ok) {
+        importedCount += 1;
+      }
+    });
+
+    importedSubtopicsPreview = [];
+    subtopicImportTextInput.value = "";
+    importValidatedSubtopicsButton.disabled = true;
+
+    setSubtopicImportSummary({
+      title: `${formatCount(importedCount, "assunto importado", "assuntos importados")} com sucesso.`,
+      description: `Os assuntos foram adicionados ao tema "${selectedTheme.name}".`,
+      type: "success",
+    });
+
+    renderSubtopicImportList();
+    renderSubtopicImportErrors();
+    renderSubtopicImportAddedList();
+    renderThemes();
   }
 
   function renderSubtopicsPanel(theme) {
@@ -545,6 +873,8 @@ export function initThemes() {
 
     setThemeFormMessage("");
     clearThemeImport();
+    clearSubtopicImport();
+    renderSubtopicImportThemeOptions();
     renderThemes();
   }
 
@@ -580,6 +910,12 @@ export function initThemes() {
 
     themeListTab.classList.toggle("is-active", tabName === "list");
     themeImportTab.classList.toggle("is-active", tabName === "import");
+    subtopicImportTab.classList.toggle("is-active", tabName === "subtopic-import");
+
+    if (tabName === "subtopic-import") {
+      renderSubtopicImportThemeOptions();
+      renderSubtopicImportAddedList();
+    }
   }
 
   function renderThemeImportAddedList(themes) {
@@ -1129,6 +1465,10 @@ export function initThemes() {
 
   themeForm.addEventListener("submit", handleThemeSubmit);
   themeSubjectSelect.addEventListener("change", handleSubjectChange);
+  subtopicImportThemeSelect.addEventListener("change", () => {
+    clearSubtopicImport();
+    renderSubtopicImportAddedList();
+  });
 
   clearThemeFormButton.addEventListener("click", clearThemeForm);
   themesList.addEventListener("click", handleThemeDelete);
@@ -1144,12 +1484,19 @@ export function initThemes() {
   validateThemeImportButton.addEventListener("click", validateThemeImport);
   clearThemeImportButton.addEventListener("click", clearThemeImport);
   importValidatedThemesButton.addEventListener("click", importValidatedThemes);
+  validateSubtopicImportButton.addEventListener("click", validateSubtopicImport);
+  clearSubtopicImportButton.addEventListener("click", clearSubtopicImport);
+  importValidatedSubtopicsButton.addEventListener("click", importValidatedSubtopics);
+  subtopicImportAddedList.addEventListener("click", handleSubtopicDelete);
 
   document.addEventListener("questions:changed", renderThemes);
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:prepare-create", handleExternalThemeCreate);
-  document.addEventListener("subtopics:changed", renderThemes);
-
+  document.addEventListener("subtopics:changed", () => {
+    renderSubtopicImportAddedList();
+    renderThemes();
+  });
+  
   themeTabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       showThemeTab(button.dataset.themeTab);

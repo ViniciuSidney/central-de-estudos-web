@@ -473,7 +473,9 @@
                 <div class="theme-mode-tabs">
                   <button class="theme-tab-button is-active" type="button" data-theme-tab="list">Listagem</button>
 
-                  <button class="theme-tab-button" type="button" data-theme-tab="import">Importação</button>
+                  <button class="theme-tab-button" type="button" data-theme-tab="import">Importar temas</button>
+
+                  <button class="theme-tab-button" type="button" data-theme-tab="subtopic-import">Importar assuntos</button>
                 </div>
 
                 <div class="theme-warning" id="theme-no-subject-warning" hidden>
@@ -597,6 +599,77 @@
                       <div class="empty-state" id="theme-import-added-empty">
                         <strong>Nenhum tema cadastrado.</strong>
                         <span> Os temas da matéria selecionada aparecerão aqui. </span>
+                      </div>
+                    </aside>
+                  </div>
+                </section>
+
+                <section class="theme-tab-content" id="subtopic-import-tab">
+                  <div class="import-workspace theme-import-workspace">
+                    <article class="import-panel import-panel--editor">
+                      <div>
+                        <h3>Importar assuntos em lote</h3>
+
+                        <p>Selecione uma matéria e um tema, depois cole uma lista de assuntos separados por vírgula, ponto e vírgula ou quebra de linha.</p>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="subtopic-import-theme">Tema relacionado</label>
+
+                        <select id="subtopic-import-theme">
+                          <option value="">Selecione um tema</option>
+                        </select>
+                      </div>
+
+                      <textarea
+                        class="import-textarea"
+                        id="subtopic-import-text"
+                        rows="12"
+                        placeholder="Espaço Amostral,&#10;Evento Simples,&#10;União de Eventos"
+                      ></textarea>
+
+                      <div class="import-actions">
+                        <button class="button button--primary" type="button" id="validate-subtopic-import">Validar assuntos</button>
+
+                        <button class="button button--secondary" type="button" id="clear-subtopic-import">Limpar</button>
+                      </div>
+                    </article>
+
+                    <article class="import-panel import-panel--validation">
+                      <div>
+                        <h3>Validação</h3>
+
+                        <p>Confira se a lista está pronta antes de importar.</p>
+                      </div>
+
+                      <div class="import-summary" id="subtopic-import-summary">
+                        <strong>Aguardando validação.</strong>
+                        <span>Selecione uma matéria, um tema, cole a lista e clique em Validar assuntos.</span>
+                      </div>
+
+                      <ul class="import-list" id="subtopic-import-list"></ul>
+
+                      <ul class="import-errors" id="subtopic-import-errors"></ul>
+
+                      <button class="button button--primary import-button" type="button" id="import-validated-subtopics" disabled>Importar assuntos</button>
+                    </article>
+
+                    <aside class="import-panel import-panel--list">
+                      <div class="theme-import-added-header">
+                        <div>
+                          <h3>Assuntos adicionados</h3>
+
+                          <p>Veja uma versão compacta dos assuntos do tema selecionado.</p>
+                        </div>
+
+                        <span id="subtopic-import-added-count">0 assuntos</span>
+                      </div>
+
+                      <ul class="import-list" id="subtopic-import-added-list"></ul>
+
+                      <div class="empty-state" id="subtopic-import-added-empty">
+                        <strong>Nenhum assunto cadastrado.</strong>
+                        <span>Os assuntos do tema selecionado aparecerão aqui.</span>
                       </div>
                     </aside>
                   </div>
