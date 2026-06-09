@@ -297,6 +297,11 @@
    TEMAS — ASSUNTOS EXPANSÍVEIS
    ========================================================= */
 
+.subtopics-panel-wrapper,
+.subtopics-panel {
+	scroll-margin-top: 24px;
+}
+
 .subtopics-panel-wrapper {
   min-width: 0;
   width: 100%;

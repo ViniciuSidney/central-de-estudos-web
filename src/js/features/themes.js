@@ -942,11 +942,30 @@ export function initThemes() {
     }
 
     const themeId = toggleButton.dataset.toggleSubtopics;
+    const isClosingCurrentPanel = expandedThemeId === themeId;
 
-    expandedThemeId = expandedThemeId === themeId ? null : themeId;
+    expandedThemeId = isClosingCurrentPanel ? null : themeId;
     activeSubtopicFormThemeId = null;
 
     renderThemes();
+
+    if (isClosingCurrentPanel) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      const expandedRow = themesList.querySelector(".theme-expanded-row");
+
+      if (!expandedRow) {
+        return;
+      }
+
+      expandedRow.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
+    });
   }
 
   function handleShowSubtopicForm(event) {
@@ -1056,175 +1075,6 @@ export function initThemes() {
     const subtopic = getSubtopicsByThemeId(expandedThemeId || "").find((currentSubtopic) => {
       return currentSubtopic.id === subtopicId;
     });
-
-    if (!subtopic) {
-      return;
-    }
-
-    document.dispatchEvent(
-      new CustomEvent("questions:prepare-create", {
-        detail: {
-          subjectId: subtopic.subjectId,
-          themeId: subtopic.themeId,
-          subtopicId: subtopic.id,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "questions",
-        },
-      }),
-    );
-  }
-
-  function handleSubtopicStudy(event) {
-    const button = event.target.closest("[data-study-subtopic]");
-
-    if (!button) {
-      return;
-    }
-
-    const subtopicId = button.dataset.studySubtopic;
-
-    document.dispatchEvent(
-      new CustomEvent("solve:prepare-subtopic", {
-        detail: {
-          subtopicId,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "solve",
-        },
-      }),
-    );
-  }
-
-  function handleSubtopicsToggle(event) {
-    const toggleButton = event.target.closest("[data-toggle-subtopics]");
-
-    if (!toggleButton) {
-      return;
-    }
-
-    const themeId = toggleButton.dataset.toggleSubtopics;
-
-    expandedThemeId = expandedThemeId === themeId ? null : themeId;
-    activeSubtopicFormThemeId = null;
-
-    renderThemes();
-  }
-
-  function handleShowSubtopicForm(event) {
-    const button = event.target.closest("[data-show-subtopic-form]");
-
-    if (!button) {
-      return;
-    }
-
-    activeSubtopicFormThemeId = button.dataset.showSubtopicForm;
-    renderThemes();
-
-    const input = themesList.querySelector(`[data-subtopic-form="${activeSubtopicFormThemeId}"] input`);
-
-    if (input) {
-      input.focus();
-    }
-  }
-
-  function handleCancelSubtopicForm(event) {
-    const button = event.target.closest("[data-cancel-subtopic-form]");
-
-    if (!button) {
-      return;
-    }
-
-    activeSubtopicFormThemeId = null;
-    renderThemes();
-  }
-
-  function handleSubtopicSubmit(event) {
-    const form = event.target.closest("[data-subtopic-form]");
-
-    if (!form) {
-      return;
-    }
-
-    event.preventDefault();
-
-    const themeId = form.dataset.subtopicForm;
-    const nameInput = form.elements.subtopicName;
-    const name = nameInput.value.trim();
-
-    const theme = getThemes().find((currentTheme) => {
-      return currentTheme.id === themeId;
-    });
-
-    if (!theme) {
-      return;
-    }
-
-    const result = addSubtopic({
-      subjectId: theme.subjectId,
-      themeId: theme.id,
-      name,
-    });
-
-    if (!result.ok) {
-      setThemeFormMessage(result.message, "error");
-      nameInput.focus();
-      return;
-    }
-
-    activeSubtopicFormThemeId = null;
-
-    setThemeFormMessage(result.message, "success");
-    renderThemes();
-  }
-
-  function handleSubtopicDelete(event) {
-    const deleteButton = event.target.closest("[data-delete-subtopic]");
-
-    if (!deleteButton) {
-      return;
-    }
-
-    const subtopicId = deleteButton.dataset.deleteSubtopic;
-    const subtopic = getSubtopicById(subtopicId);
-
-    if (!subtopic) {
-      return;
-    }
-
-    openConfirmModal({
-      tag: "⚠️ Confirmação",
-      title: "Excluir assunto",
-      message: `Tem certeza que deseja excluir o assunto "${subtopic.name}"?`,
-      confirmText: "Excluir",
-      cancelText: "Cancelar",
-      onConfirm: () => {
-        deleteSubtopic(subtopic.id);
-        setThemeFormMessage("Assunto excluído com sucesso.", "success");
-        renderThemes();
-      },
-    });
-  }
-
-  function handleSubtopicCreateQuestion(event) {
-    const button = event.target.closest("[data-create-subtopic]");
-
-    if (!button) {
-      return;
-    }
-
-    const subtopicId = button.dataset.createSubtopic;
-    const subtopic = getSubtopicById(subtopicId);
 
     if (!subtopic) {
       return;
