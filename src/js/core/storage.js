@@ -1,12 +1,13 @@
 const STORAGE_KEY = "central-estudos-web-data";
 
 const defaultAppData = {
-  subjects: [],
-  themes: [],
-  questions: [],
-  notes: [],
-  attempts: [],
-  reviews: []
+	subjects: [],
+	themes: [],
+	subtopics: [],
+	questions: [],
+	notes: [],
+	attempts: [],
+	reviews: []
 };
 
 export function loadAppData() {

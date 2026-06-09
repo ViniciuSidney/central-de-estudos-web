@@ -1,6 +1,6 @@
 import {saveCollection} from '../core/storage.js';
 
-const COLLECTIONS_TO_RESET = ['subjects', 'themes', 'questions', 'attempts', 'errorReviews', 'notes'];
+const COLLECTIONS_TO_RESET = ['subjects', 'themes', 'subtopics', 'questions', 'attempts', 'errorReviews', 'notes'];
 
 export function initResetData() {
 	const openResetButton = document.querySelector('#open-reset-data-modal');
@@ -69,6 +69,7 @@ export function initResetData() {
 	function dispatchDataResetEvents() {
 		document.dispatchEvent(new CustomEvent('subjects:changed'));
 		document.dispatchEvent(new CustomEvent('themes:changed'));
+		document.dispatchEvent(new CustomEvent('subtopics:changed'));
 		document.dispatchEvent(new CustomEvent('questions:changed'));
 		document.dispatchEvent(new CustomEvent('attempts:changed'));
 		document.dispatchEvent(new CustomEvent('errorReviews:changed'));

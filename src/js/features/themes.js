@@ -1,7 +1,7 @@
 import {getCollection, saveCollection} from '../core/storage.js';
 import {openConfirmModal} from '../ui/confirmModal.js';
 import {compareNames, parseItemsFromListText} from '../systems/listTextImport.js';
-import {removeQuestionsAndRelatedDataByThemeIds} from '../systems/dataIntegrity.js';
+import {removeQuestionsAndRelatedDataByThemeIds, removeSubtopicsQuestionsAndRelatedDataByThemeIds} from '../systems/dataIntegrity.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
@@ -378,6 +378,7 @@ export function initThemes() {
 
 		saveThemes(updatedThemes);
 		removeQuestionsAndRelatedDataByThemeIds([themeId]);
+		removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
 
 		renderThemes();
 		notifyThemesChanged();

@@ -2,11 +2,11 @@ import {getCollection, saveCollection} from '../core/storage.js';
 import {openConfirmModal} from '../ui/confirmModal.js';
 
 const APP_BACKUP_NAME = 'central-de-estudos-web';
-const APP_VERSION = '1.0';
+const APP_VERSION = '1.1';
 const SCHEMA_VERSION = 1;
 const EMPTY_BACKUP_FILE_NAME = 'Nenhum arquivo selecionado.';
 
-const BACKUP_COLLECTIONS = ['subjects', 'themes', 'questions', 'attempts', 'errorReviews', 'notes'];
+const BACKUP_COLLECTIONS = ['subjects', 'themes', 'subtopics', 'questions', 'attempts', 'errorReviews', 'notes'];
 
 export function initDataPortability() {
 	const exportButton = document.querySelector('#export-data-button');
@@ -161,11 +161,19 @@ export function initDataPortability() {
 		}
 
 		const missingCollection = BACKUP_COLLECTIONS.find((collectionName) => {
+			if (collectionName === 'subtopics') {
+				return false;
+			}
+
 			return !Array.isArray(payload.data[collectionName]);
 		});
 
 		if (missingCollection) {
 			return `A coleção "${missingCollection}" está ausente ou inválida.`;
+		}
+
+		if (payload.data.subtopics && !Array.isArray(payload.data.subtopics)) {
+			return 'A coleção "subtopics" está inválida.';
 		}
 
 		return null;
@@ -174,6 +182,7 @@ export function initDataPortability() {
 	function dispatchDataImportedEvents() {
 		document.dispatchEvent(new CustomEvent('subjects:changed'));
 		document.dispatchEvent(new CustomEvent('themes:changed'));
+		document.dispatchEvent(new CustomEvent('subtopics:changed'));
 		document.dispatchEvent(new CustomEvent('questions:changed'));
 		document.dispatchEvent(new CustomEvent('attempts:changed'));
 		document.dispatchEvent(new CustomEvent('errorReviews:changed'));
@@ -184,7 +193,7 @@ export function initDataPortability() {
 
 	function restoreBackupPayload(payload) {
 		BACKUP_COLLECTIONS.forEach((collectionName) => {
-			saveCollection(collectionName, payload.data[collectionName]);
+			saveCollection(collectionName, payload.data[collectionName] || []);
 		});
 
 		dispatchDataImportedEvents();
@@ -231,7 +240,7 @@ export function initDataPortability() {
 
 				modalBox.classList.remove('app-confirm-modal--split');
 				modal.classList.remove('modal-overlay--split');
-				
+
 				modalSide.hidden = true;
 				modalSide.innerHTML = '';
 

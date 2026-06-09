@@ -1,7 +1,7 @@
 import {getCollection, saveCollection} from '../core/storage.js';
 import {openConfirmModal} from '../ui/confirmModal.js';
 import {compareNames, parseItemsFromListText} from '../systems/listTextImport.js';
-import {removeThemesQuestionsAndRelatedDataBySubjectIds} from '../systems/dataIntegrity.js';
+import {removeThemesQuestionsAndRelatedDataBySubjectIds, removeSubtopicsQuestionsAndRelatedDataBySubjectIds} from '../systems/dataIntegrity.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
