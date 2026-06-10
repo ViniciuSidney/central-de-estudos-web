@@ -298,6 +298,7 @@
   gap: 8px;
 
   padding: 12px;
+  margin-top: 0;
 
   background: var(--bg);
   border: 1px solid var(--border);
@@ -605,4 +606,8 @@
 .dashboard-subject-performance-card__chip {
   align-self: center;
   justify-self: end;
+}
+
+.dashboard-grid--rail .dashboard-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
