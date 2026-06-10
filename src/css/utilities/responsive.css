@@ -27,11 +27,20 @@
 
 @media (max-width: 1300px) {
   .dashboard-tab-layout {
-    grid-template-columns: minmax(420px, 0.95fr) minmax(0, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid--rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .dashboard-workspace {
     grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  .dashboard-metrics-rail,
+  .dashboard-tab-main {
+    overflow-y: visible;
   }
 }
 
@@ -125,10 +134,6 @@
     justify-content: center;
   }
 
-  .dashboard-tab-layout {
-    grid-template-columns: 1fr;
-  }
-
   .dashboard-grid--rail {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -139,10 +144,6 @@
 
   .questions-workspace {
     grid-template-columns: 260px minmax(0, 1fr);
-  }
-
-  .question-form--compact {
-    grid-template-columns: 1fr;
   }
 }
 
