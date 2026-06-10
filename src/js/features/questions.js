@@ -155,6 +155,60 @@ export function initQuestions() {
     return getCollection(QUESTIONS_COLLECTION);
   }
 
+  function getFirstQuestionContext() {
+    const subjects = getSubjects();
+    const themes = getThemes();
+    const questions = getQuestions();
+
+    for (const subject of subjects) {
+      const questionFromSubject = questions.find((question) => {
+        return question.subjectId === subject.id;
+      });
+
+      if (!questionFromSubject) {
+        continue;
+      }
+
+      const theme = themes.find((currentTheme) => {
+        return currentTheme.id === questionFromSubject.themeId && currentTheme.subjectId === subject.id;
+      });
+
+      if (!theme) {
+        continue;
+      }
+
+      return {
+        subjectId: subject.id,
+        themeId: theme.id,
+      };
+    }
+
+    return null;
+  }
+
+  function selectInitialQuestionContext() {
+    if (questionSubjectSelect.value || questionThemeSelect.value) {
+      return false;
+    }
+
+    const firstQuestionContext = getFirstQuestionContext();
+
+    if (!firstQuestionContext) {
+      return false;
+    }
+
+    questionSubjectSelect.value = firstQuestionContext.subjectId;
+    renderThemeOptions();
+
+    questionThemeSelect.value = firstQuestionContext.themeId;
+    renderSubtopicOptions();
+
+    setQuestionInputTabsEnabled(true);
+    renderQuestions();
+
+    return true;
+  }
+
   function saveQuestions(questions) {
     saveCollection(QUESTIONS_COLLECTION, questions);
   }
@@ -864,7 +918,11 @@ export function initQuestions() {
       questionSubjectSelect.value = "";
     }
 
-    renderThemeOptions();
+    const hasSelectedInitialContext = selectInitialQuestionContext();
+
+    if (!hasSelectedInitialContext) {
+      renderThemeOptions();
+    }
   }
 
   function renderThemeOptions() {
@@ -1410,7 +1468,7 @@ export function initQuestions() {
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:changed", renderThemeOptions);
   document.addEventListener("subtopics:changed", handleSubtopicsChanged);
-  
+
   document.addEventListener("questions:set-tab", (event) => {
     const tabName = event.detail?.tabName;
 
