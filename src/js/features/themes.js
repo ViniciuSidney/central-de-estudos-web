@@ -199,6 +199,32 @@ export function initThemes() {
     });
   }
 
+  function getFirstSubjectWithThemes() {
+    const subjects = getSubjects();
+    const themes = getThemes();
+
+    return subjects.find((subject) => {
+      return themes.some((theme) => {
+        return theme.subjectId === subject.id;
+      });
+    });
+  }
+
+  function selectInitialSubjectWithThemes() {
+    // Evita abrir a seção de temas em estado vazio quando já existem temas cadastrados.
+    if (themeSubjectSelect.value) {
+      return;
+    }
+
+    const firstSubjectWithThemes = getFirstSubjectWithThemes();
+
+    if (!firstSubjectWithThemes) {
+      return;
+    }
+
+    themeSubjectSelect.value = firstSubjectWithThemes.id;
+  }
+
   function getSubtopicsFromSelectedImportTheme() {
     const selectedTheme = getSubtopicImportSelectedTheme();
 
@@ -758,6 +784,8 @@ export function initThemes() {
     } else {
       themeSubjectSelect.value = "";
     }
+
+    selectInitialSubjectWithThemes();
 
     renderThemes();
   }
