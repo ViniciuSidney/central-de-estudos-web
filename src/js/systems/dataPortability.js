@@ -475,6 +475,11 @@ export function initDataPortability() {
 				description: 'Conteúdos divididos por matéria.'
 			},
 			{
+				value: data.subtopics?.length || 0,
+				label: 'Assuntos',
+				description: 'Recortes específicos dentro dos temas.'
+			},
+			{
 				value: data.questions?.length || 0,
 				label: 'Questões',
 				description: 'Exercícios disponíveis para prática.'

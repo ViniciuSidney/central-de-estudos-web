@@ -2,6 +2,7 @@ import {getCollection} from '../core/storage.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
+const SUBTOPICS_COLLECTION = 'subtopics';
 const QUESTIONS_COLLECTION = 'questions';
 const ATTEMPTS_COLLECTION = 'attempts';
 const ERROR_REVIEWS_COLLECTION = 'errorReviews';
@@ -50,6 +51,10 @@ export function initDashboard() {
 
 	function getThemes() {
 		return getCollection(THEMES_COLLECTION);
+	}
+
+	function getSubtopics() {
+		return getCollection(SUBTOPICS_COLLECTION);
 	}
 
 	function getQuestions() {
@@ -299,6 +304,7 @@ export function initDashboard() {
 	function getGeneralStats() {
 		const subjects = getSubjects();
 		const themes = getThemes();
+		const subtopics = getSubtopics();
 		const questions = getQuestions();
 		const attempts = getAttempts();
 		const errorReviews = getErrorReviews();
@@ -323,6 +329,7 @@ export function initDashboard() {
 		return {
 			subjects,
 			themes,
+			subtopics,
 			questions,
 			attempts,
 			errorReviews,
@@ -365,6 +372,11 @@ export function initDashboard() {
 				title: 'Temas',
 				value: stats.themes.length,
 				description: 'Conteúdos divididos por matéria.'
+			}),
+			createCard({
+				title: 'Assuntos',
+				value: stats.subtopics.length,
+				description: 'Recortes específicos dentro dos temas.'
 			}),
 			createCard({
 				title: 'Questões',
@@ -1295,6 +1307,7 @@ export function initDashboard() {
 
 	document.addEventListener('subjects:changed', renderDashboard);
 	document.addEventListener('themes:changed', renderDashboard);
+	document.addEventListener('subtopics:changed', renderDashboard);
 	document.addEventListener('questions:changed', renderDashboard);
 	document.addEventListener('attempts:changed', renderDashboard);
 	document.addEventListener('errorReviews:changed', renderDashboard);
