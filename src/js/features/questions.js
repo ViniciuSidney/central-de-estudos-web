@@ -1062,14 +1062,14 @@ export function initQuestions() {
 					</span>
 
 					${
-						question.subtopicId
-							? `
+            question.subtopicId
+              ? `
 								<span class="question-card__subtopic">
 									Assunto: <strong>${escapeHTML(questionSubtopicName)}</strong>
 								</span>
 							`
-							: ''
-					}
+              : ""
+          }
 
 					<small class="question-card__date">
 						Criada em ${formatDate(question.createdAt)}
@@ -1318,6 +1318,11 @@ export function initQuestions() {
     renderQuestions();
   }
 
+  function handleSubtopicsChanged() {
+    renderSubtopicOptions();
+    renderQuestions();
+  }
+
   function handleExternalQuestionCreate(event) {
     const subjectId = event.detail?.subjectId;
     const themeId = event.detail?.themeId;
@@ -1404,7 +1409,8 @@ export function initQuestions() {
 
   document.addEventListener("subjects:changed", renderSubjectOptions);
   document.addEventListener("themes:changed", renderThemeOptions);
-
+  document.addEventListener("subtopics:changed", handleSubtopicsChanged);
+  
   document.addEventListener("questions:set-tab", (event) => {
     const tabName = event.detail?.tabName;
 
