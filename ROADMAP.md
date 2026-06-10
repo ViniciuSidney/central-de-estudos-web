@@ -855,99 +855,224 @@ Corrigir problemas percebidos no uso da aplicação publicada, principalmente em
 # v1.1 — Sistema de assuntos
 
 ### Objetivo
-Implementar uma nova camada de organização dentro dos temas, permitindo dividir cada tema em assuntos específicos. Essa versão busca melhorar a organização dos estudos, reduzir repetição nos nomes dos temas e permitir cadastrar, importar, resolver e revisar questões por recortes mais específicos.
+
+Implementar uma nova camada de organização dentro dos temas, permitindo dividir cada tema em assuntos específicos. Essa versão buscou melhorar a organização dos estudos, reduzir repetição nos nomes dos temas e permitir cadastrar, importar, resolver e revisar questões por recortes mais específicos.
 
 ### Status
-Planejada.
+
+Concluída.
 
 ---
 
-## Previsto para a v1.1
+## Implementado na v1.1
 
 ### Estrutura de assuntos
 
-- Criar coleção de assuntos dentro dos temas
-- Vincular cada assunto a uma matéria e a um tema
-- Permitir assuntos com nome, descrição e datas de criação/edição
-- Manter compatibilidade com temas e questões já existentes
-- Permitir questões com assunto opcional
-- Evitar duplicatas de assuntos dentro do mesmo tema
-- Comparar duplicatas ignorando maiúsculas, minúsculas e acentos
+- Criação da coleção de assuntos.
+- Vinculação de cada assunto a uma matéria e a um tema.
+- Estrutura de assunto com nome, descrição, data de criação e data de edição.
+- Compatibilidade com temas e questões já existentes.
+- Questões com vínculo opcional a um assunto.
+- Validação de assuntos com matéria, tema e nome obrigatórios.
+- Bloqueio de assuntos duplicados dentro do mesmo tema.
+- Comparação de duplicatas ignorando maiúsculas, minúsculas e acentos.
+- Funções base para listar, criar, buscar e excluir assuntos.
 
 ### Interface de assuntos
 
-- Exibir assuntos dentro dos temas
-- Criar visual de organização em formato de caixinhas ou lista expansível
-- Permitir abrir e fechar temas para visualizar seus assuntos
-- Exibir contador de assuntos nos cards de temas
-- Destacar temas sem assuntos cadastrados
-- Permitir excluir assuntos
-- Atualizar a interface após criar, importar ou excluir assuntos
+- Exibição de assuntos vinculados aos temas.
+- Botão “Assuntos” nos cards de temas.
+- Painel expandido de assuntos ao abrir um tema.
+- Painel de assuntos posicionado ao lado do card selecionado em telas maiores.
+- Painel de assuntos abaixo do card selecionado em telas menores.
+- Card do tema selecionado mantendo destaque visual durante a expansão.
+- Scroll automático até o painel de assuntos ao abrir um tema.
+- Estado vazio para temas sem assuntos cadastrados.
+- Cadastro rápido de assunto dentro do painel do tema.
+- Exclusão de assunto pelo painel de assuntos.
+- Exibição de contador de assuntos nos cards de temas.
+- Destaque visual para temas sem assuntos cadastrados.
+- Atualização automática da interface após criar, importar ou excluir assuntos.
 
-### Cadastro e importação
+### Cadastro e importação de assuntos
 
-- Cadastro manual de assuntos
-- Importação em lote de assuntos por texto
-- Validação antes da importação
-- Tratamento de duplicatas dentro da lista importada
-- Tratamento de duplicatas já cadastradas
-- Listagem compacta dos assuntos já cadastrados na aba de importação
+- Cadastro manual de assuntos pelo painel expandido do tema.
+- Importação em lote de assuntos por texto.
+- Aba “Importar assuntos” dentro da seção de Temas e Assuntos.
+- Seletor de tema relacionado para importar assuntos.
+- Validação antes da importação.
+- Tratamento de duplicatas dentro da lista importada.
+- Tratamento de duplicatas já cadastradas no tema selecionado.
+- Mensagens de sucesso, erro e aviso na validação da importação.
+- Listagem compacta dos assuntos já cadastrados na aba de importação.
+- Exclusão rápida de assuntos pela listagem compacta da aba “Importar assuntos”.
+- Atualização da listagem compacta após importar ou excluir assuntos.
 
 ### Questões por assunto
 
-- Adicionar seletor de assunto no cadastro de questões
-- Permitir vincular uma questão a um assunto específico
-- Permitir questões sem assunto para manter compatibilidade
-- Exibir assunto nos cards de questões quando existir
-- Permitir filtrar questões por matéria, tema e assunto
-- Atualizar contadores de questões por assunto
+- Adição de seletor de assunto no cadastro de questões.
+- Seletor de assunto carregado de acordo com o tema selecionado.
+- Permissão para cadastrar questões sem assunto, mantendo compatibilidade com dados antigos.
+- Cadastro de questões vinculadas a um assunto específico.
+- Edição de questões preservando, alterando ou removendo o assunto vinculado.
+- Importação de questões vinculada ao assunto selecionado, quando existir.
+- Botão “Cadastrar” no card do assunto levando para o cadastro de questões.
+- Seleção automática de matéria, tema e assunto ao cadastrar questão a partir do painel de assuntos.
+- Exibição do assunto nos cards de questões.
+- Ajuste visual dos cards de questões para dar mais destaque ao assunto sem poluir o card.
+- Destaque do filtro de assunto no cabeçalho da listagem de questões.
+- Contador de questões por assunto nos cards de assuntos.
+- Alteração automática do botão do assunto entre “Cadastrar” e “Estudar” conforme existência de questões.
+- Atualização automática da aba de Questões após criação, importação ou exclusão de assuntos.
+- Desvinculação segura de questões ao excluir um assunto, evitando exibição de “Assunto não encontrado”.
 
-### Resolução e revisão
+### Resolução por assunto
 
-- Permitir resolver questões por assunto
-- Atualizar a seção Resolver para considerar o assunto selecionado
-- Exibir assunto no contexto da questão, quando existir
-- Manter histórico de tentativas compatível com assuntos
-- Manter revisões de erro compatíveis com assuntos
-- Manter anotações compatíveis com assuntos, se aplicável
+- Botão “Estudar” nos cards de assuntos com questões cadastradas.
+- Abertura da seção Resolver a partir de um assunto.
+- Seleção automática de matéria e tema ao estudar um assunto.
+- Filtro interno de questões por assunto na seção Resolver.
+- Escolha automática de questão válida do assunto selecionado.
+- Exibição do assunto no contexto da questão em Resolver.
+- Salvamento de `subtopicId` nas tentativas registradas.
+- Compatibilidade do histórico de tentativas com questões vinculadas a assuntos.
+- Seleção automática de contexto inicial na seção Resolver quando houver questões cadastradas.
 
-### Backup e integridade
+### Backup, importação geral e integridade
 
-- Incluir assuntos na exportação de dados
-- Incluir assuntos na importação de backup
-- Permitir importar backups antigos sem a coleção de assuntos
-- Limpar assuntos ao excluir temas
-- Limpar assuntos, questões, tentativas e revisões ao excluir matérias
-- Limpar questões, tentativas e revisões ao excluir assuntos
-- Evitar registros órfãos após exclusões
+- Inclusão da coleção de assuntos na estrutura de dados da aplicação.
+- Inclusão de assuntos na exportação geral de backup.
+- Inclusão de assuntos na importação geral de backup.
+- Compatibilidade com backups antigos sem coleção de assuntos.
+- Validação de assuntos em arquivos de backup.
+- Restauração de assuntos ao importar backup.
+- Disparo de eventos de atualização após importação.
+- Inclusão de assuntos na prévia do conteúdo do backup.
+- Limpeza de assuntos ao excluir temas.
+- Limpeza de assuntos ao excluir matérias.
+- Preparação da integridade para questões vinculadas a assuntos.
+- Remoção de registros órfãos relacionados a assuntos.
+- Manutenção de questões vinculadas ao tema ao excluir um assunto.
+
+### Dashboard e contagens gerais
+
+- Inclusão de assuntos nas contagens gerais do Dashboard.
+- Inclusão de assuntos na prévia do backup antes da importação.
+- Atualização do Dashboard ao criar, importar ou excluir assuntos.
+- Reconhecimento de assuntos como parte oficial da estrutura principal da aplicação.
+- Ajustes visuais nos cards de contadores do Dashboard.
+- Melhoria da responsividade do resumo geral do Dashboard.
+- Ajuste do último card ímpar para ocupar a linha inteira quando necessário.
+
+### Usabilidade e refinamentos visuais
+
+- Seleção automática de matéria inicial com temas cadastrados na seção de Temas e Assuntos.
+- Seleção automática de contexto inicial na seção de Questões.
+- Seleção automática de questão inicial na seção Resolver.
+- Ajuste visual dos cards de temas com ações abaixo das informações.
+- Melhoria dos cards pequenos de assuntos.
+- Ajuste do painel de assuntos para telas grandes.
+- Ajuste do painel de assuntos para telas menores.
+- Redução de informações secundárias nos cards de questões.
+- Destaque mais limpo para o assunto nos cards de questões.
+- Ajustes de espaçamento e hierarquia visual na listagem de temas e assuntos.
+- Ajustes de responsividade e organização visual no Dashboard.
 
 ---
 
 ## Fechamento da v1.1
 
-A versão v1.1 será considerada concluída quando o usuário conseguir:
+A versão v1.1 foi considerada concluída porque o usuário consegue:
 
-- Criar assuntos dentro de um tema
-- Importar assuntos em lote
-- Visualizar assuntos organizados dentro dos temas
-- Cadastrar questões vinculadas a assuntos
-- Resolver questões filtrando por assunto
-- Ver contadores e informações de assuntos na interface
-- Exportar e importar backups contendo assuntos
-- Usar backups antigos sem quebrar a aplicação
-- Excluir matérias, temas e assuntos sem deixar dados órfãos
+- Criar assuntos dentro de um tema.
+- Importar assuntos em lote.
+- Visualizar assuntos organizados dentro dos temas.
+- Excluir assuntos pelo painel do tema.
+- Excluir assuntos pela listagem compacta da importação.
+- Cadastrar questões vinculadas a assuntos.
+- Editar questões mantendo, alterando ou removendo o assunto vinculado.
+- Resolver questões filtrando por assunto.
+- Ver o assunto no contexto da questão em Resolver.
+- Ver o assunto nos cards de questões.
+- Ver contadores de assuntos nos cards de temas.
+- Ver contadores de questões nos cards de assuntos.
+- Ver assuntos nas contagens gerais do Dashboard.
+- Exportar backups contendo assuntos.
+- Importar backups contendo assuntos.
+- Importar backups antigos sem quebrar a aplicação.
+- Excluir matérias, temas e assuntos sem deixar dados órfãos.
+- Usar a camada Matéria → Tema → Assunto → Questão de forma estável.
 
 ---
 
 ## Observações da v1.1
 
-O sistema de assuntos deve ser implementado sem quebrar a estrutura atual da aplicação. Questões antigas devem continuar funcionando mesmo sem assunto vinculado.
+O sistema de assuntos foi implementado sem quebrar a estrutura anterior da aplicação. Questões antigas continuam funcionando mesmo sem assunto vinculado.
 
-A coleção de assuntos deve funcionar como uma camada intermediária entre temas e questões, permitindo uma organização mais detalhada sem obrigar o usuário a classificar todo conteúdo antigo imediatamente.
+A coleção de assuntos funciona como uma camada intermediária entre temas e questões, permitindo uma organização mais detalhada sem obrigar o usuário a classificar todo conteúdo antigo imediatamente.
+
+A v1.1 também recebeu ajustes de usabilidade e responsividade para tornar o fluxo mais natural, especialmente nas seções de Temas e Assuntos, Questões, Resolver e Dashboard.
+
+A reestruturação visual completa das seções de conteúdo, reunindo Matérias, Temas e Assuntos em uma seção única de Organização, não fez parte do escopo principal da v1.1 e será planejada para a v1.2.
 
 ---
 
-# v1.2 — Aplicação instalável com PWA
+# v1.2 — Organização unificada dos conteúdos
+
+### Objetivo
+
+Reestruturar as seções relacionadas à organização dos estudos, reunindo Matérias, Temas e Assuntos em uma única área de Organização. Essa versão deve melhorar a navegação entre os níveis de conteúdo e reduzir a fragmentação visual da aplicação.
+
+### Status
+
+Próxima versão planejada.
+
+---
+
+## Previsto para a v1.2
+
+### Organização geral
+
+- Criar uma seção principal chamada “Organização”.
+- Reunir Matérias, Temas e Assuntos em um único fluxo visual.
+- Reduzir a fragmentação entre seções de cadastro.
+- Reorganizar o menu lateral para deixar a navegação mais simples.
+- Manter a estrutura Matéria → Tema → Assunto como eixo principal da organização.
+
+### Estrutura visual
+
+- Criar abas principais para Matérias, Temas e Assuntos.
+- Manter sub-abas internas de Listagem e Importação em cada nível.
+- Reaproveitar os sistemas de cadastro, listagem e importação já existentes.
+- Melhorar a leitura dos painéis de organização.
+- Evitar excesso de formulários visíveis ao mesmo tempo.
+- Melhorar a experiência em telas menores.
+
+### Fluxo de navegação
+
+- Facilitar a troca entre Matérias, Temas e Assuntos.
+- Permitir visualizar rapidamente os conteúdos relacionados.
+- Melhorar o caminho para criar temas a partir de matérias.
+- Melhorar o caminho para criar assuntos a partir de temas.
+- Preparar a base visual para futuras expansões, como simulados, flashcards ou revisões por conteúdo.
+
+### Compatibilidade
+
+- Manter a lógica de dados criada na v1.1.
+- Evitar mudanças profundas na estrutura das coleções.
+- Preservar compatibilidade com backups da v1.1.
+- Reaproveitar eventos e funções já existentes sempre que possível.
+
+---
+
+## Observações da v1.2
+
+A v1.2 deve focar principalmente em reorganização visual e estrutural, sem alterar profundamente a lógica de dados criada na v1.1.
+
+A separação entre v1.1 e v1.2 evita misturar a implementação funcional dos assuntos com uma grande reestruturação de interface.
+
+A v1.2 deve transformar a organização dos conteúdos em uma experiência mais fluida, mantendo a base estável já construída na v1.1.
+
 
 ### Objetivo
 Transformar a Central de Estudos Web em uma aplicação instalável, permitindo uso mais formal no computador e no celular por meio de recursos de PWA.
