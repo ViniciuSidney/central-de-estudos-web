@@ -170,6 +170,62 @@ export function initSolve() {
     });
   }
 
+  function getFirstValidQuestionContext() {
+    const subjects = getSubjects();
+    const themes = getThemes();
+    const questions = getQuestions();
+
+    for (const question of questions) {
+      const subjectExists = subjects.some((subject) => {
+        return subject.id === question.subjectId;
+      });
+
+      const themeExists = themes.some((theme) => {
+        return theme.id === question.themeId && theme.subjectId === question.subjectId;
+      });
+
+      if (!subjectExists || !themeExists) {
+        continue;
+      }
+
+      return {
+        subjectId: question.subjectId,
+        themeId: question.themeId,
+        questionId: question.id,
+      };
+    }
+
+    return null;
+  }
+
+  function selectInitialSolveContext() {
+    if (solveSubjectSelect.value || solveThemeSelect.value || solveQuestionSelect.value) {
+      return false;
+    }
+
+    const firstValidQuestionContext = getFirstValidQuestionContext();
+
+    if (!firstValidQuestionContext) {
+      return false;
+    }
+
+    activeSolveSubtopicId = null;
+
+    solveSubjectSelect.value = firstValidQuestionContext.subjectId;
+
+    renderThemeOptions();
+
+    solveThemeSelect.value = firstValidQuestionContext.themeId;
+
+    renderQuestionOptions();
+
+    solveQuestionSelect.value = firstValidQuestionContext.questionId;
+
+    renderSelectedQuestion();
+
+    return true;
+  }
+
   function formatDateTime(dateValue) {
     const date = new Date(dateValue);
 
@@ -412,7 +468,11 @@ export function initSolve() {
       return;
     }
 
-    renderThemeOptions();
+    const hasSelectedInitialContext = selectInitialSolveContext();
+
+    if (!hasSelectedInitialContext) {
+      renderThemeOptions();
+    }
   }
 
   function renderThemeOptions() {
@@ -897,7 +957,6 @@ export function initSolve() {
 
   renderSubjectOptions();
   renderSolveHistory();
-  resetSolveCard();
 
   console.log("Modo de resolução carregado.");
 }
