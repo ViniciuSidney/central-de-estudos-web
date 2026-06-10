@@ -53,6 +53,14 @@
   border-radius: 16px;
 }
 
+.dashboard-tab-main .dashboard-list-panel {
+  align-content: start;
+}
+
+.dashboard-tab-main .dashboard-list {
+  align-content: start;
+}
+
 .dashboard-card strong {
   color: var(--accent);
   font-size: 1.8rem;
@@ -72,6 +80,7 @@
 
 .dashboard-list-panel {
   display: grid;
+  align-content: start;
   gap: 12px;
 
   padding: 14px;
@@ -82,6 +91,7 @@
 
 .dashboard-list {
   display: grid;
+  align-content: start;
   gap: 8px;
 }
 
