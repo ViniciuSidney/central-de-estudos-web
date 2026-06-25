@@ -1017,104 +1017,789 @@ A reestruturação visual completa das seções de conteúdo, reunindo Matérias
 
 ---
 
-# v1.2 — Organização unificada dos conteúdos
+# v1.2 — Nova navegação e Organização
 
-### Objetivo
+## Objetivo
 
-Reestruturar as seções relacionadas à organização dos estudos, reunindo Matérias, Temas e Assuntos em uma única área de Organização. Essa versão deve melhorar a navegação entre os níveis de conteúdo e reduzir a fragmentação visual da aplicação.
+Reestruturar a experiência visual e funcional da Central de Estudos Web, transformando a aplicação em uma central mais organizada, navegável e orientada a fluxos de estudo.
 
-### Status
+A v1.2 terá como foco principal a criação de uma nova experiência para a seção **Organização**, tornando a estrutura de conteúdos mais visual, dinâmica e intuitiva. A seção deixará de funcionar apenas como um conjunto de cadastros separados e passará a funcionar como um **mapa interativo da base de estudos**, permitindo navegar, criar, editar, visualizar e agir sobre Matérias, Temas e Assuntos.
 
-Próxima versão planejada.
+A estrutura central da organização continuará sendo:
 
----
+```txt
+Matéria → Tema → Assunto
+```
 
-## Previsto para a v1.2
-
-### Organização geral
-
-- Criar uma seção principal chamada “Organização”.
-- Reunir Matérias, Temas e Assuntos em um único fluxo visual.
-- Reduzir a fragmentação entre seções de cadastro.
-- Reorganizar o menu lateral para deixar a navegação mais simples.
-- Manter a estrutura Matéria → Tema → Assunto como eixo principal da organização.
-
-### Estrutura visual
-
-- Criar abas principais para Matérias, Temas e Assuntos.
-- Manter sub-abas internas de Listagem e Importação em cada nível.
-- Reaproveitar os sistemas de cadastro, listagem e importação já existentes.
-- Melhorar a leitura dos painéis de organização.
-- Evitar excesso de formulários visíveis ao mesmo tempo.
-- Melhorar a experiência em telas menores.
-
-### Fluxo de navegação
-
-- Facilitar a troca entre Matérias, Temas e Assuntos.
-- Permitir visualizar rapidamente os conteúdos relacionados.
-- Melhorar o caminho para criar temas a partir de matérias.
-- Melhorar o caminho para criar assuntos a partir de temas.
-- Preparar a base visual para futuras expansões, como simulados, flashcards ou revisões por conteúdo.
-
-### Compatibilidade
-
-- Manter a lógica de dados criada na v1.1.
-- Evitar mudanças profundas na estrutura das coleções.
-- Preservar compatibilidade com backups da v1.1.
-- Reaproveitar eventos e funções já existentes sempre que possível.
+A versão deve reaproveitar a lógica de dados construída na v1.1, sem quebrar compatibilidade com questões, anotações, revisões, tentativas e backups existentes.
 
 ---
 
-## Observações da v1.2
+## Status
 
-A v1.2 deve focar principalmente em reorganização visual e estrutural, sem alterar profundamente a lógica de dados criada na v1.1.
-
-A separação entre v1.1 e v1.2 evita misturar a implementação funcional dos assuntos com uma grande reestruturação de interface.
-
-A v1.2 deve transformar a organização dos conteúdos em uma experiência mais fluida, mantendo a base estável já construída na v1.1.
-
-
-### Objetivo
-Transformar a Central de Estudos Web em uma aplicação instalável, permitindo uso mais formal no computador e no celular por meio de recursos de PWA.
-
-### Status
-Ideia futura.
+Planejada.
 
 ---
 
-## Previsto para a v1.2
+## 1. Ideia geral da v1.2
 
-- Criar arquivo `manifest.json`
-- Criar arquivo `service-worker.js`
-- Definir nome, descrição e ícones da aplicação
-- Permitir instalação pelo navegador
-- Preparar uso em janela própria no desktop
-- Preparar uso pela tela inicial do celular
-- Configurar cache básico dos arquivos principais
-- Melhorar experiência offline inicial
-- Testar instalação no computador
-- Testar instalação no celular
-- Revisar responsividade em formato de app
-- Ajustar ícone e identidade visual da aplicação
+A v1.2 deve mudar a experiência da aplicação de uma navegação baseada em módulos isolados para uma navegação mais próxima de fluxos reais de estudo.
 
----
+A nova estrutura visual da aplicação deve priorizar áreas como:
 
-## Fechamento da v1.2
+* Organização
+* Estudos
+* Revisões
+* Anotações
+* Dashboard
+* Opções
+* Roadmap
 
-A versão v1.2 será considerada concluída quando o usuário conseguir:
-
-- Abrir a aplicação pelo navegador
-- Instalar a aplicação no computador
-- Adicionar a aplicação à tela inicial do celular
-- Usar a aplicação com aparência mais próxima de um app
-- Acessar a aplicação mesmo sem depender diretamente do ambiente de desenvolvimento
-- Manter os dados protegidos usando o sistema de exportação/importação da v1.0
+A seção **Organização** será o principal foco inicial da versão.
 
 ---
 
-## Observações da v1.2
+## 2. Nova seção Organização
 
-A transformação em PWA deve acontecer depois da implementação de backup, exportação e importação, para garantir que o uso da aplicação como app não aumente o risco de perda de dados.
+### 2.1 Função da seção
+
+A seção Organização será responsável por permitir que o usuário gerencie visualmente a estrutura dos seus estudos.
+
+Ela deve permitir:
+
+* visualizar matérias;
+* criar matérias;
+* editar matérias;
+* excluir matérias;
+* visualizar temas de uma matéria;
+* criar temas dentro de uma matéria;
+* editar temas;
+* excluir temas;
+* visualizar assuntos de um tema;
+* criar assuntos dentro de um tema;
+* editar assuntos;
+* excluir assuntos;
+* acessar ações relacionadas ao conteúdo selecionado.
+
+A seção deve funcionar como um mapa dinâmico da base de estudos.
+
+---
+
+## 3. Estrutura visual da Organização
+
+### 3.1 Layout principal
+
+A tela principal da Organização deve conter:
+
+* navegação superior da aplicação;
+* título da seção atual;
+* subnavegação lateral em árvore;
+* barra de pesquisa contextual;
+* card de adição;
+* card grande de criação, edição ou visualização;
+* galeria/listagem rolável de cards.
+
+A estrutura geral será:
+
+```txt
+Organização
+├── Subnavegação lateral
+├── Pesquisa contextual
+├── Card de adição
+├── Card grande ativo
+└── Galeria/listagem do nível atual
+```
+
+---
+
+### 3.2 Subnavegação lateral
+
+A subnavegação lateral deve exibir a estrutura hierárquica da base:
+
+```txt
+Matéria
+└── Tema
+    └── Assunto
+```
+
+Ela deve permitir:
+
+* expandir/recolher matérias;
+* expandir/recolher temas;
+* abrir uma matéria ao clicar no nome dela;
+* abrir um tema ao clicar no nome dele;
+* abrir um assunto ao clicar no nome dele;
+* destacar o item atualmente ativo.
+
+As setas da subnavegação devem servir apenas para expandir ou recolher matérias e temas.
+
+Ao abrir um item pelo botão de visualização dos cards, a subnavegação também deve atualizar internamente o item ativo.
+
+Mesmo que o fundo fique escurecido durante a abertura de modais, o estado ativo da subnavegação deve ser mantido para que a interface permaneça coerente ao fechar o modal.
+
+---
+
+## 4. Pesquisa contextual
+
+A seção Organização deve ter pesquisa contextual.
+
+### 4.1 Pesquisa na tela principal
+
+Na tela principal da Organização, a pesquisa deve filtrar apenas matérias.
+
+### 4.2 Pesquisa no painel de Matéria
+
+Dentro do painel de uma matéria, a pesquisa deve filtrar apenas os temas daquela matéria.
+
+### 4.3 Pesquisa no painel de Tema
+
+Dentro do painel de um tema, a pesquisa deve filtrar apenas os assuntos daquele tema.
+
+### 4.4 Estado sem resultados
+
+Quando a pesquisa não encontrar resultados, a interface deve exibir uma mensagem informando que nenhum resultado foi encontrado.
+
+Texto sugerido:
+
+```txt
+Nenhum resultado encontrado.
+Tente outro termo ou limpe a pesquisa.
+```
+
+---
+
+## 5. Cards principais
+
+### 5.1 Card de adição
+
+Cada nível deve possuir um card de adição:
+
+* Adicionar Matéria
+* Adicionar Tema
+* Adicionar Assunto
+
+O card de adição deve ficar fixo no topo da área correspondente.
+
+A listagem ou galeria deve possuir rolagem própria, sem fazer o card de adição desaparecer.
+
+---
+
+### 5.2 Card grande
+
+O card grande será usado para representar o item ativo ou o estado atual do nível.
+
+Ele poderá representar:
+
+* estado vazio;
+* criação;
+* visualização;
+* edição;
+* preparação para ações;
+* contexto selecionado.
+
+O card grande deve existir para Matéria e Tema.
+
+Para Assunto, o card expandido ou modal de detalhe assume essa função.
+
+---
+
+## 6. Estados vazios
+
+### 6.1 Card grande vazio de Matéria
+
+Quando nenhuma matéria estiver selecionada, o card grande deve exibir:
+
+```txt
+Primeiro selecione uma matéria para editá-la ou acessar suas ações.
+```
+
+### 6.2 Card grande vazio de Tema
+
+Quando nenhum tema estiver selecionado, o card grande deve exibir:
+
+```txt
+Primeiro selecione um tema para editá-lo ou acessar suas ações.
+```
+
+### 6.3 Painel vazio de Assuntos
+
+Quando nenhum tema estiver selecionado, o painel de assuntos deve exibir:
+
+```txt
+Selecione um tema para visualizar ou adicionar assuntos.
+```
+
+### 6.4 Nenhuma matéria cadastrada
+
+Quando não houver matérias cadastradas, a seção deve exibir um estado vazio com chamada para adicionar a primeira matéria.
+
+Texto sugerido:
+
+```txt
+Nenhuma matéria cadastrada ainda.
+Adicione sua primeira matéria para começar a organizar seus estudos.
+```
+
+### 6.5 Matéria sem temas
+
+Quando uma matéria não tiver temas cadastrados, o painel da matéria deve exibir um estado vazio específico.
+
+Texto sugerido:
+
+```txt
+Esta matéria ainda não possui temas.
+Adicione um tema para começar a dividir o conteúdo.
+```
+
+### 6.6 Tema sem assuntos
+
+Quando um tema não tiver assuntos cadastrados, o painel de assuntos deve exibir um estado vazio específico.
+
+Texto sugerido:
+
+```txt
+Este tema ainda não possui assuntos.
+Adicione assuntos para detalhar melhor o conteúdo.
+```
+
+---
+
+## 7. Criação de Matérias, Temas e Assuntos
+
+### 7.1 Criar Matéria
+
+Ao clicar em **Adicionar Matéria**, o card grande deve entrar em modo de criação de matéria.
+
+O usuário deve informar o nome da matéria e confirmar ou cancelar a criação.
+
+A confirmação deve usar o botão:
+
+```txt
+✅
+```
+
+O cancelamento deve usar o botão:
+
+```txt
+❌
+```
+
+Após salvar uma nova matéria, ela deve ser automaticamente selecionada no card grande.
+
+---
+
+### 7.2 Criar Tema
+
+Ao clicar em **Adicionar Tema**, o card grande do painel de matéria deve entrar em modo de criação de tema.
+
+O usuário deve informar o nome do tema e confirmar ou cancelar a criação.
+
+Após salvar um novo tema, ele deve ser automaticamente selecionado e o painel de assuntos deve ser atualizado para o tema criado.
+
+---
+
+### 7.3 Criar Assunto
+
+Ao clicar em **Adicionar Assunto**, deve aparecer um novo card dentro da lista de assuntos.
+
+Esse card deve parecer com os outros cards de assunto, mas deve possuir:
+
+* campo de nome ativo;
+* botão de confirmar;
+* botão de cancelar.
+
+Estrutura esperada:
+
+```txt
+[Nome do assunto] [✅] [❌]
+```
+
+Ao confirmar, o assunto deve ser criado dentro do tema selecionado.
+
+Ao cancelar, o card temporário deve desaparecer.
+
+---
+
+## 8. Edição
+
+### 8.1 Edição de nome
+
+Matérias, Temas e Assuntos devem permitir edição de nome.
+
+No desktop:
+
+* ao passar o mouse sobre o nome, deve aparecer a opção de edição;
+* a edição só deve começar quando o usuário acionar o controle de edição.
+
+Em dispositivos móveis:
+
+* deve existir um botão de edição ao lado do nome.
+
+Ícone sugerido:
+
+```txt
+✏️
+```
+
+### 8.2 Evitar edição acidental
+
+A edição não deve começar apenas ao clicar diretamente no texto.
+
+O usuário deve demonstrar intenção clara de editar, acionando o botão ou controle de edição.
+
+### 8.3 Confirmação de edição
+
+Os modos de criação e edição devem possuir confirmação e cancelamento explícitos.
+
+Botões sugeridos:
+
+```txt
+✅ Confirmar
+❌ Cancelar
+```
+
+---
+
+## 9. Botões e ações
+
+### 9.1 Substituição de “Cadastrar”
+
+O botão **Cadastrar** deve ser substituído definitivamente por:
+
+```txt
++ Questão
+```
+
+Isso evita ambiguidade, já que “cadastrar” poderia se referir a matéria, tema, assunto, anotação ou questão.
+
+### 9.2 Substituição da lupa
+
+O ícone de lupa deve ser substituído por um ícone de olho.
+
+Função do olho:
+
+```txt
+Ver detalhes
+```
+
+Tooltip sugerido:
+
+```txt
+Ver detalhes
+```
+
+### 9.3 Botão Resolver
+
+O botão **Resolver** deve ficar ativo somente quando houver pelo menos uma questão vinculada ao item selecionado ou aos seus níveis internos.
+
+Exemplos:
+
+* matéria com questões em seus temas ou assuntos: Resolver ativo;
+* tema com questões próprias ou nos assuntos: Resolver ativo;
+* assunto com questões: Resolver ativo;
+* item sem questões: Resolver desativado.
+
+Quando desativado, deve exibir uma explicação.
+
+Texto sugerido:
+
+```txt
+Cadastre uma questão para resolver.
+```
+
+### 9.4 Botão Revisar
+
+O botão **Revisar** deve ficar ativo somente quando houver pelo menos um erro pendente revisável relacionado ao item selecionado.
+
+Quando não houver erros pendentes, o botão deve ficar desativado.
+
+Texto sugerido:
+
+```txt
+Nenhum erro pendente para revisar.
+```
+
+### 9.5 Botão + Questão
+
+O botão **+ Questão** deve ficar ativo sempre que houver contexto válido para criar uma questão vinculada.
+
+Exemplos:
+
+* matéria selecionada;
+* tema selecionado;
+* assunto selecionado.
+
+### 9.6 Botão Anotar
+
+O botão **Anotar** deve ficar ativo sempre que houver uma matéria, tema ou assunto selecionado.
+
+### 9.7 Botão Excluir
+
+O botão de excluir deve aparecer apenas no card grande ou no card expandido.
+
+Ele não deve aparecer nos cards pequenos da galeria, evitando exclusões acidentais.
+
+---
+
+## 10. Cards pequenos da galeria
+
+Os cards pequenos devem representar os itens do nível atual.
+
+Na tela principal:
+
+* cards de matérias.
+
+Dentro de uma matéria:
+
+* cards de temas.
+
+Dentro de um tema:
+
+* cards de assuntos.
+
+Cada card deve possuir:
+
+* nome do item;
+* informações resumidas;
+* botão de olho para visualizar detalhes.
+
+O clique no botão de olho deve abrir ou selecionar o item.
+
+Em dispositivos móveis, o clique no próprio card também pode abrir o item para facilitar a interação.
+
+---
+
+## 11. Painéis e modais
+
+### 11.1 Painel de Matéria
+
+No desktop, uma matéria pode abrir como um modal grande sobre a seção Organização.
+
+O título do modal deve ser o nome da matéria.
+
+Dentro do painel de matéria deve haver:
+
+* pesquisa de temas;
+* card Adicionar Tema;
+* card grande do tema ativo;
+* galeria de temas;
+* painel de assuntos do tema selecionado.
+
+### 11.2 Painel de Tema/Assuntos
+
+No desktop, o painel de Tema/Assuntos pode abrir como painel lateral ao lado do painel de Matéria.
+
+O título do painel deve ser o nome do tema.
+
+Dentro do painel deve haver:
+
+* pesquisa de assuntos;
+* card Adicionar Assunto;
+* lista de assuntos do tema selecionado;
+* cards de assunto;
+* card de assunto expandido quando aberto.
+
+### 11.3 Abertura direta de Tema
+
+Quando o usuário clicar diretamente em um tema pela subnavegação, o painel de Tema pode abrir centralizado, sem exigir que a matéria seja aberta primeiro.
+
+O painel deve indicar o caminho do tema.
+
+Formato de caminho:
+
+```txt
+Matéria › Tema
+```
+
+### 11.4 Abertura direta de Assunto
+
+Quando o usuário clicar diretamente em um assunto pela subnavegação, o modal do Assunto pode abrir centralizado.
+
+O modal deve exibir o caminho completo:
+
+```txt
+Matéria › Tema › Assunto
+```
+
+---
+
+## 12. Breadcrumb
+
+Os painéis e modais devem usar breadcrumb quando necessário.
+
+Formato definido:
+
+```txt
+Matéria › Tema › Assunto
+```
+
+Exemplos:
+
+```txt
+Matemática › Probabilidade
+```
+
+```txt
+Matemática › Probabilidade › União de Eventos
+```
+
+O breadcrumb deve ajudar o usuário a entender onde está, principalmente quando abrir um tema ou assunto diretamente pela subnavegação.
+
+---
+
+## 13. Exclusão
+
+### 13.1 Excluir Matéria
+
+Ao excluir uma matéria, deve ser exibida uma confirmação forte.
+
+A confirmação deve avisar que a exclusão removerá:
+
+* temas;
+* assuntos;
+* questões;
+* tentativas;
+* revisões relacionadas;
+* vínculos associados.
+
+Texto sugerido:
+
+```txt
+Excluir esta matéria também removerá seus temas, assuntos, questões, tentativas e revisões relacionadas.
+```
+
+Para excluir matéria, deve haver confirmação extra, como marcar uma caixa:
+
+```txt
+Entendo que esta ação não pode ser desfeita.
+```
+
+### 13.2 Excluir Tema
+
+Ao excluir um tema, deve ser exibida confirmação avisando que a exclusão removerá:
+
+* assuntos;
+* questões;
+* tentativas;
+* revisões relacionadas.
+
+Texto sugerido:
+
+```txt
+Excluir este tema também removerá seus assuntos, questões, tentativas e revisões relacionadas.
+```
+
+Para excluir tema, também deve haver confirmação extra além do botão de excluir.
+
+### 13.3 Excluir Assunto
+
+Ao excluir um assunto, deve ser exibido modal comum de confirmação.
+
+A exclusão de assunto deve manter as questões no tema e apenas remover o vínculo com o assunto.
+
+Texto sugerido:
+
+```txt
+Excluir este assunto manterá as questões no tema, mas removerá o vínculo com o assunto.
+```
+
+---
+
+## 14. Importação contextual
+
+A importação deve ser contextual, aparecendo dentro do nível relacionado.
+
+### 14.1 Importar Temas
+
+Dentro de uma matéria, deve existir opção para importar temas.
+
+### 14.2 Importar Assuntos
+
+Dentro de um tema, deve existir opção para importar assuntos.
+
+### 14.3 Importar Questões
+
+Dentro de um tema ou assunto, deve existir opção para importar questões já vinculadas ao contexto selecionado.
+
+### 14.4 Backup geral
+
+A importação geral de backup deve continuar em:
+
+```txt
+Opções / Backup
+```
+
+A seção Organização deve lidar com importações de conteúdo específico, enquanto Opções/Backup continua responsável pelos dados gerais da aplicação.
+
+---
+
+## 15. Responsividade
+
+### 15.1 Telas menores
+
+Em telas menores, o painel de Tema deve deixar de ficar ao lado do painel de Matéria.
+
+Ele deve abrir como tela ou modal separado.
+
+### 15.2 Dispositivos móveis
+
+Em dispositivos móveis:
+
+* a subnavegação lateral deve virar um painel recolhível ou drawer;
+* os cards da galeria devem ficar em uma única coluna;
+* os botões Resolver, Revisar, + Questão e Anotar devem ficar empilhados;
+* os painéis devem abrir em tela cheia ou quase tela cheia;
+* não deve haver modal duplo lado a lado.
+
+---
+
+## 16. Integração com outras seções
+
+A seção Organização deve funcionar como ponto de partida para outras áreas da aplicação.
+
+### 16.1 Resolver
+
+Ao clicar em **Resolver** em uma matéria, a aplicação deve abrir Estudos/Resolver filtrado por aquela matéria.
+
+Ao clicar em **Resolver** em um tema, a aplicação deve abrir Estudos/Resolver filtrado por aquele tema.
+
+Ao clicar em **Resolver** em um assunto, a aplicação deve abrir Estudos/Resolver filtrado por aquele assunto.
+
+### 16.2 Revisar
+
+Ao clicar em **Revisar**, a aplicação deve abrir Revisões filtradas pelo item selecionado.
+
+### 16.3 + Questão
+
+Ao clicar em **+ Questão**, a aplicação deve abrir a criação de questão com o contexto já preenchido.
+
+Exemplos:
+
+* matéria preenchida;
+* matéria e tema preenchidos;
+* matéria, tema e assunto preenchidos.
+
+### 16.4 Anotar
+
+Ao clicar em **Anotar**, a aplicação deve abrir a criação de anotação já vinculada ao item selecionado.
+
+---
+
+## 17. Acessibilidade e detalhes finais
+
+### 17.1 Tooltips
+
+Todos os botões com ícone devem possuir tooltip.
+
+Exemplos:
+
+* Ver detalhes;
+* Excluir;
+* Adicionar;
+* Editar;
+* Confirmar;
+* Cancelar.
+
+### 17.2 Botões desativados
+
+Botões desativados devem exibir motivo.
+
+Exemplos:
+
+```txt
+Cadastre uma questão para resolver.
+```
+
+```txt
+Nenhum erro pendente para revisar.
+```
+
+### 17.3 Tecla Esc
+
+A tecla `Esc` deve fechar modais e painéis abertos.
+
+### 17.4 Foco de teclado
+
+Enquanto um modal estiver aberto, o foco do teclado deve permanecer dentro do modal.
+
+### 17.5 Estados padronizados
+
+Os cards da Organização devem seguir estados padronizados:
+
+```txt
+vazio
+criação
+visualização
+edição
+exclusão
+```
+
+---
+
+## 18. Fora do escopo inicial da Organização v1.2
+
+A v1.2 pode preparar espaço para melhorias futuras, mas não precisa implementar agora:
+
+* cronômetro de resolução;
+* fila automática de questões;
+* quadro de resolução;
+* spoiler em anotações;
+* arrastar anotações para ordenação manual;
+* sistema avançado de blocos de anotações;
+* importação avançada de anotações por tópicos;
+* importação de questões para múltiplos temas no mesmo arquivo.
+
+Essas funcionalidades podem ser planejadas para versões futuras.
+
+---
+
+## 19. Critérios de fechamento da Organização v1.2
+
+A seção Organização será considerada concluída quando o usuário conseguir:
+
+* visualizar matérias em galeria;
+* pesquisar matérias;
+* criar matéria pelo card de adição;
+* selecionar matéria pelo card ou pela subnavegação;
+* editar matéria;
+* excluir matéria com confirmação forte;
+* abrir uma matéria e visualizar seus temas;
+* pesquisar temas dentro de uma matéria;
+* criar tema dentro de uma matéria;
+* selecionar tema pelo card ou pela subnavegação;
+* editar tema;
+* excluir tema com confirmação forte;
+* visualizar assuntos de um tema;
+* pesquisar assuntos dentro de um tema;
+* criar assunto dentro de um tema;
+* selecionar assunto pelo card ou pela subnavegação;
+* editar assunto;
+* excluir assunto mantendo questões no tema;
+* abrir diretamente matéria, tema ou assunto pela subnavegação;
+* usar breadcrumbs para entender o contexto aberto;
+* usar botões Resolver, Revisar, + Questão e Anotar com contexto correto;
+* ver botões desativados quando não houver ação disponível;
+* receber explicação do motivo quando uma ação estiver desativada;
+* usar a seção em telas menores sem quebra grave de layout;
+* usar a seção em dispositivos móveis com painéis adaptados;
+* manter compatibilidade com os dados da v1.1.
+
+---
+
+## 20. Resumo da v1.2
+
+A v1.2 deve transformar a Organização em uma experiência central da aplicação.
+
+A seção deixará de ser apenas um espaço de cadastro e passará a funcionar como um mapa navegável da estrutura dos estudos.
+
+A principal ideia da versão é:
+
+```txt
+Organizar melhor para estudar melhor.
+```
+
+A base da v1.1 será preservada, mas a experiência de uso será redesenhada para ser mais visual, clara, dinâmica e preparada para futuras funcionalidades.
+
 
 ---
 
