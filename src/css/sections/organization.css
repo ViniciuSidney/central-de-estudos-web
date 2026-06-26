@@ -239,19 +239,40 @@
 
 .organization-feature-card {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.7fr);
   grid-template-areas:
-    "delete name actions"
-    "delete stats actions";
-  align-items: center;
-  gap: 10px 14px;
+    "top"
+    "bottom";
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
 
-  padding: 16px;
+  padding: 14px;
+}
+
+.organization-feature-card__topline {
+  grid-area: top;
+  min-width: 0;
+}
+
+.organization-feature-card__bottomline {
+  grid-area: bottom;
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.75fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.organization-feature-card__name-wrap {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
 }
 
 .organization-feature-card__name {
-  grid-area: name;
-
   min-width: 0;
 
   padding: 8px 12px;
@@ -261,17 +282,22 @@
   font-weight: 900;
   text-align: center;
 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
 }
 
 .organization-feature-card__delete {
-  grid-area: delete;
+  width: 42px;
+  height: 42px;
 }
 
 .organization-feature-card__stats {
-  grid-area: stats;
+  min-width: 0;
 
   display: flex;
   flex-wrap: wrap;
@@ -294,7 +320,7 @@
 }
 
 .organization-feature-card__actions {
-  grid-area: actions;
+  min-width: 0;
 
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -302,6 +328,8 @@
 }
 
 .organization-feature-card__actions button {
+  min-width: 0;
+  max-width: 100%;
   min-height: 38px;
 
   cursor: pointer;
@@ -352,14 +380,31 @@
   min-height: 116px;
 
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    "name name"
-    "meta action";
+    "name"
+    "meta";
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
   gap: 10px;
 
   padding: 14px;
+}
+
+.organization-card--clickable {
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.organization-card--clickable:hover,
+.organization-card--clickable:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+  background: var(--success-soft);
+  outline: none;
 }
 
 .organization-card__name {
@@ -374,13 +419,24 @@
   font-weight: 900;
   text-align: center;
 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 10px;
 }
 
-.organization-card span {
+.organization-card__meta {
   grid-area: meta;
+
+  min-width: 0;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 12px;
 
   color: var(--muted);
   font-size: 0.86rem;
@@ -388,23 +444,14 @@
   text-align: center;
 }
 
-.organization-card button {
-  grid-area: action;
+.organization-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 
-  width: 44px;
-  height: 44px;
-
-  display: inline-grid;
-  place-items: center;
-
-  cursor: pointer;
+.organization-card__meta strong {
   color: var(--text);
-  font: inherit;
-  font-size: 1.1rem;
-
-  background: var(--success-soft);
-  border: 1px solid var(--border);
-  border-radius: 12px;
 }
 
 /* =========================================================
@@ -625,6 +672,7 @@
 .organization-subtopic-card__icons {
   display: inline-flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
 }
 
@@ -679,6 +727,21 @@
   background: var(--accent);
   border: 0;
   border-radius: 10px;
+}
+
+.organization-subtopic-card--clickable {
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.organization-subtopic-card--clickable:hover,
+.organization-subtopic-card--clickable:focus-within {
+  transform: translateY(-1px);
+  border-color: var(--accent);
 }
 
 /* =========================================================
@@ -964,21 +1027,6 @@
 /* =========================================================
    6. ESTADOS DE CRIAÇÃO E EDIÇÃO
    ========================================================= */
-
-.organization-feature-card__name-wrap {
-  grid-area: name;
-
-  min-width: 0;
-
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-}
-
-.organization-feature-card__name-wrap .organization-feature-card__name {
-  grid-area: auto;
-}
 
 .organization-edit-button {
   width: 38px;
@@ -1789,12 +1837,8 @@
     min-height: 120px;
   }
 
-  .organization-feature-card {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-      "delete name"
-      "stats stats"
-      "actions actions";
+  .organization-feature-card__bottomline {
+    grid-template-columns: auto minmax(0, 1fr) minmax(240px, 0.75fr);
   }
 
   .organization-feature-card__actions {
@@ -1846,17 +1890,23 @@
   }
 
   .organization-feature-card {
-    grid-template-columns: 1fr;
     grid-template-areas:
-      "name"
-      "stats"
-      "actions"
-      "delete";
+      "top"
+      "bottom";
+    grid-template-columns: 1fr;
+  }
+
+  .organization-feature-card__bottomline {
+    grid-template-columns: 1fr;
   }
 
   .organization-feature-card__delete,
   .organization-icon-button {
     width: 100%;
+  }
+
+  .organization-feature-card__stats {
+    justify-content: center;
   }
 
   .organization-feature-card__actions {
