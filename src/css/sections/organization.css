@@ -395,6 +395,363 @@
 	border-radius: 12px;
 }
 
+/* =========================================================
+   ORGANIZAÇÃO v1.2 — PAINÉIS / MODAIS ESTÁTICOS
+   ========================================================= */
+
+.organization-modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+
+  display: grid;
+  place-items: center;
+
+  padding: 28px;
+
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.organization-modal-layer[hidden] {
+  display: none;
+}
+
+.organization-subject-modal {
+  width: min(1180px, calc(100vw - 56px));
+  height: min(760px, calc(100dvh - 56px));
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 14px;
+
+  padding: 18px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.organization-modal-header {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  position: relative;
+}
+
+.organization-modal-header h3 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.organization-modal-header--compact h3 {
+  font-size: 1.3rem;
+}
+
+.organization-modal-close {
+  position: absolute;
+  right: 0;
+
+  width: 38px;
+  height: 38px;
+
+  display: inline-grid;
+  place-items: center;
+
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-weight: 900;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.organization-subject-modal__layout {
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+}
+
+.organization-subject-content,
+.organization-topic-panel {
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  align-content: start;
+  gap: 14px;
+
+  padding: 16px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.organization-subject-content {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.organization-topic-panel {
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+}
+
+.organization-search--compact {
+  padding: 6px;
+}
+
+.organization-search--compact input {
+  padding: 8px 10px;
+  font-size: 0.92rem;
+}
+
+.organization-search--compact button {
+  width: 36px;
+  height: 36px;
+}
+
+.organization-fixed-row--modal {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.organization-add-card--compact {
+  min-height: 110px;
+  padding: 14px;
+}
+
+.organization-add-card--horizontal {
+  min-height: auto;
+
+  grid-template-columns: minmax(0, 1fr) auto;
+  place-items: center;
+  align-content: center;
+
+  padding: 14px;
+}
+
+.organization-add-card--horizontal strong {
+  justify-self: start;
+}
+
+.organization-modal-gallery {
+  min-height: 0;
+  overflow-y: auto;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  align-content: start;
+  gap: 14px;
+
+  padding-right: 6px;
+}
+
+.organization-subtopic-list {
+  min-height: 0;
+  overflow-y: auto;
+
+  display: grid;
+  align-content: start;
+  gap: 12px;
+
+  padding-right: 6px;
+}
+
+.organization-subtopic-card {
+  min-width: 0;
+
+  display: grid;
+  gap: 10px;
+
+  padding: 12px;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.organization-subtopic-card__top {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.organization-subtopic-card__top strong {
+  min-width: 0;
+
+  padding: 8px 10px;
+
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 900;
+  line-height: 1.25;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  overflow-wrap: anywhere;
+}
+
+.organization-subtopic-card__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.organization-subtopic-card__icons button {
+  width: 34px;
+  height: 34px;
+
+  display: inline-grid;
+  place-items: center;
+
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+
+  background: var(--success-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.organization-subtopic-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.organization-subtopic-card__stats strong {
+  color: var(--text);
+}
+
+.organization-subtopic-card__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.organization-subtopic-card__actions button {
+  min-height: 34px;
+
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+
+  background: var(--accent);
+  border: 0;
+  border-radius: 10px;
+}
+
+@media (max-width: 1300px) {
+  .organization-subject-modal__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-subject-modal {
+    overflow-y: auto;
+  }
+
+  .organization-subject-content,
+  .organization-topic-panel {
+    min-height: auto;
+  }
+
+  .organization-topic-panel {
+    max-height: none;
+  }
+
+  .organization-fixed-row--modal {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-modal-gallery,
+  .organization-subtopic-list {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 760px) {
+  .organization-modal-layer {
+    padding: 12px;
+  }
+
+  .organization-subject-modal {
+    width: 100%;
+    height: calc(100dvh - 24px);
+
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .organization-modal-header h3 {
+    font-size: 1.2rem;
+  }
+
+  .organization-modal-close {
+    position: static;
+    width: 100%;
+    border-radius: 12px;
+  }
+
+  .organization-modal-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .organization-subject-content,
+  .organization-topic-panel {
+    padding: 12px;
+  }
+
+  .organization-modal-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-subtopic-card__top {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-subtopic-card__icons {
+    justify-content: stretch;
+  }
+
+  .organization-subtopic-card__icons button {
+    width: 100%;
+  }
+
+  .organization-subtopic-card__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1600px) {
 	.organization-shell {
 		grid-template-columns: 220px minmax(0, 1fr);

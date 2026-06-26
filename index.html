@@ -400,6 +400,165 @@
 								</div>
 							</section>
 						</div>
+
+						<!-- Organização v1.2 — Painel de Matéria + Assuntos -->
+						<div class="organization-modal-layer" id="organization-subject-panel-preview" hidden>
+							<section class="organization-subject-modal" role="dialog" aria-modal="true" aria-labelledby="organization-subject-modal-title">
+								<header class="organization-modal-header">
+									<h3 id="organization-subject-modal-title">Matéria</h3>
+
+									<button class="organization-modal-close" type="button" aria-label="Fechar painel de matéria">✕</button>
+								</header>
+
+								<div class="organization-subject-modal__layout">
+									<section class="organization-subject-content">
+										<form class="organization-search organization-search--compact" role="search">
+											<input type="search" placeholder="Pesquisar temas..." aria-label="Pesquisar temas" />
+											<button type="submit" aria-label="Pesquisar temas">🔍</button>
+										</form>
+
+										<div class="organization-fixed-row organization-fixed-row--modal">
+											<article class="organization-add-card organization-add-card--compact">
+												<strong>Adicionar Tema</strong>
+												<button type="button" aria-label="Adicionar tema">+</button>
+											</article>
+
+											<article class="organization-feature-card organization-feature-card--active">
+												<div class="organization-feature-card__name">Nome do Tema</div>
+
+												<button class="organization-icon-button organization-feature-card__delete" type="button" aria-label="Excluir tema" title="Excluir">🗑️</button>
+
+												<div class="organization-feature-card__stats">
+													<span><strong>x</strong> Questões</span>
+													<span><strong>x</strong> Anotações</span>
+													<span><strong>x</strong> Erros</span>
+												</div>
+
+												<div class="organization-feature-card__actions">
+													<button type="button">Resolver</button>
+													<button type="button">+ Questão</button>
+													<button type="button">Revisar</button>
+													<button type="button">Anotar</button>
+												</div>
+											</article>
+										</div>
+
+										<div class="organization-modal-gallery" aria-label="Temas da matéria">
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+
+											<article class="organization-card organization-card--topic">
+												<div class="organization-card__name">Tema</div>
+												<span>x atualizações</span>
+												<button type="button" aria-label="Ver detalhes do tema" title="Ver detalhes">👁️</button>
+											</article>
+										</div>
+									</section>
+
+									<aside class="organization-topic-panel">
+										<header class="organization-modal-header organization-modal-header--compact">
+											<h3>Tema</h3>
+										</header>
+
+										<form class="organization-search organization-search--compact" role="search">
+											<input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
+											<button type="submit" aria-label="Pesquisar assuntos">🔍</button>
+										</form>
+
+										<article class="organization-add-card organization-add-card--horizontal">
+											<strong>Adicionar Assunto</strong>
+											<button type="button" aria-label="Adicionar assunto">+</button>
+										</article>
+
+										<div class="organization-subtopic-list" aria-label="Assuntos do tema">
+											<article class="organization-subtopic-card">
+												<div class="organization-subtopic-card__top">
+													<strong>Nome do Assunto</strong>
+
+													<div class="organization-subtopic-card__icons">
+														<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+														<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+													</div>
+												</div>
+											</article>
+
+											<article class="organization-subtopic-card">
+												<div class="organization-subtopic-card__top">
+													<strong>Nome do Assunto</strong>
+
+													<div class="organization-subtopic-card__icons">
+														<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+														<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+													</div>
+												</div>
+											</article>
+
+											<article class="organization-subtopic-card is-expanded">
+												<div class="organization-subtopic-card__top">
+													<strong>Nome do Assunto</strong>
+
+													<div class="organization-subtopic-card__icons">
+														<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+														<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+													</div>
+												</div>
+
+												<div class="organization-subtopic-card__stats">
+													<span><strong>x</strong> Questões</span>
+													<span><strong>x</strong> Anotações</span>
+													<span><strong>x</strong> Erros</span>
+												</div>
+
+												<div class="organization-subtopic-card__actions">
+													<button type="button">+ Questão</button>
+													<button type="button">Anotar</button>
+													<button type="button">Revisar</button>
+													<button type="button">Resolver</button>
+												</div>
+											</article>
+
+											<article class="organization-subtopic-card">
+												<div class="organization-subtopic-card__top">
+													<strong>Nome do Assunto</strong>
+
+													<div class="organization-subtopic-card__icons">
+														<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+														<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+													</div>
+												</div>
+											</article>
+										</div>
+									</aside>
+								</div>
+							</section>
+						</div>
 					</article>
 
 					<article class="app-section" id="subjects">
