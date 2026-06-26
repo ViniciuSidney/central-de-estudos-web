@@ -354,7 +354,11 @@
 									</article>
 
 									<article class="organization-feature-card organization-feature-card--active">
-										<div class="organization-feature-card__name">Nome da Matéria</div>
+										<div class="organization-feature-card__name-wrap">
+											<div class="organization-feature-card__name">Nome da Matéria</div>
+
+											<button class="organization-edit-button" type="button" aria-label="Editar nome da matéria" title="Editar">✏️</button>
+										</div>
 
 										<button class="organization-icon-button organization-feature-card__delete" type="button" aria-label="Excluir matéria" title="Excluir">🗑️</button>
 
@@ -441,6 +445,24 @@
 													<button type="button">Anotar</button>
 												</div>
 											</article>
+
+											<article class="organization-feature-card organization-feature-card--empty" hidden>
+												<p>Primeiro selecione uma matéria para editá-la ou acessar suas ações.</p>
+											</article>
+
+											<article class="organization-feature-card organization-feature-card--form" hidden>
+												<div class="organization-feature-card__field">
+													<label for="organization-subject-name-preview">Nome da matéria</label>
+
+													<input id="organization-subject-name-preview" type="text" placeholder="Ex: Matemática" value="Nova matéria" />
+												</div>
+
+												<div class="organization-inline-actions">
+													<button class="organization-confirm-button" type="button" aria-label="Confirmar" title="Confirmar">✅</button>
+
+													<button class="organization-cancel-button" type="button" aria-label="Cancelar" title="Cancelar">❌</button>
+												</div>
+											</article>
 										</div>
 
 										<div class="organization-modal-gallery" aria-label="Temas da matéria">
@@ -498,6 +520,16 @@
 										</article>
 
 										<div class="organization-subtopic-list" aria-label="Assuntos do tema">
+											<article class="organization-subtopic-card organization-subtopic-card--form" hidden>
+												<input class="organization-subtopic-card__input" type="text" placeholder="Nome do assunto" value="Novo assunto" aria-label="Nome do assunto" />
+
+												<div class="organization-inline-actions organization-inline-actions--compact">
+													<button class="organization-confirm-button" type="button" aria-label="Confirmar assunto" title="Confirmar">✅</button>
+
+													<button class="organization-cancel-button" type="button" aria-label="Cancelar criação de assunto" title="Cancelar">❌</button>
+												</div>
+											</article>
+
 											<article class="organization-subtopic-card">
 												<div class="organization-subtopic-card__top">
 													<strong>Nome do Assunto</strong>
