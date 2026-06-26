@@ -239,28 +239,16 @@
 
 .organization-feature-card {
   display: grid;
-  grid-template-areas:
-    "top"
-    "bottom";
-  grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+  grid-template-rows: auto auto auto;
+  gap: 10px;
 
   padding: 14px;
 }
 
-.organization-feature-card__topline {
-  grid-area: top;
+.organization-feature-card__topline,
+.organization-feature-card__statsline,
+.organization-feature-card__actionline {
   min-width: 0;
-}
-
-.organization-feature-card__bottomline {
-  grid-area: bottom;
-  min-width: 0;
-
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(260px, 0.75fr);
-  align-items: center;
-  gap: 12px;
 }
 
 .organization-feature-card__name-wrap {
@@ -291,9 +279,9 @@
   border-radius: 10px;
 }
 
-.organization-feature-card__delete {
-  width: 42px;
-  height: 42px;
+.organization-feature-card__statsline {
+  display: grid;
+  place-items: center;
 }
 
 .organization-feature-card__stats {
@@ -302,7 +290,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: 10px 16px;
 
   color: var(--muted);
   font-size: 0.85rem;
@@ -319,11 +307,23 @@
   color: var(--text);
 }
 
+.organization-feature-card__actionline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.organization-feature-card__delete {
+  width: 42px;
+  height: 42px;
+}
+
 .organization-feature-card__actions {
   min-width: 0;
 
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -1673,11 +1673,11 @@
 
 @media (max-width: 760px) {
   .organization-feature-card__name-wrap {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .organization-edit-button {
-    width: 100%;
+    width: 38px;
     opacity: 1;
     pointer-events: auto;
   }
@@ -1851,6 +1851,12 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .organization-feature-card__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 1100px) {
   .organization-shell {
     grid-template-columns: 1fr;
@@ -1889,24 +1895,17 @@
     min-height: auto;
   }
 
-  .organization-feature-card {
-    grid-template-areas:
-      "top"
-      "bottom";
+  .organization-feature-card__name-wrap {
     grid-template-columns: 1fr;
   }
 
-  .organization-feature-card__bottomline {
+  .organization-feature-card__actionline {
     grid-template-columns: 1fr;
   }
 
   .organization-feature-card__delete,
   .organization-icon-button {
     width: 100%;
-  }
-
-  .organization-feature-card__stats {
-    justify-content: center;
   }
 
   .organization-feature-card__actions {
