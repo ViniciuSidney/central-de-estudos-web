@@ -391,10 +391,16 @@
               </aside>
 
               <section class="organization-main-panel">
-                <form class="organization-search" role="search">
-                  <input type="search" placeholder="Pesquisar matérias..." aria-label="Pesquisar matérias" />
-                  <button type="submit" aria-label="Pesquisar">🔍</button>
-                </form>
+                <div class="organization-toolbar">
+                  <form class="organization-search" role="search">
+                    <input type="search" placeholder="Pesquisar matérias..." aria-label="Pesquisar matérias" />
+                    <button type="submit" aria-label="Pesquisar">🔍</button>
+                  </form>
+
+                  <button class="organization-import-button" type="button" data-organization-import="subjects" aria-label="Importar matérias">
+                    📥 Importar matérias
+                  </button>
+                </div>
 
                 <div class="organization-fixed-row">
                   <article class="organization-add-card">
@@ -469,7 +475,7 @@
             </div>
 
             <!-- Organização v1.2 — Painel de Matéria + Assuntos -->
-            <div class="organization-modal-layer" id="organization-subject-panel-preview">
+            <div class="organization-modal-layer" id="organization-subject-panel-preview" hidden>
               <section class="organization-subject-modal" role="dialog" aria-modal="true" aria-labelledby="organization-subject-modal-title">
                 <header class="organization-modal-header">
                   <h3 id="organization-subject-modal-title">Matéria</h3>
@@ -479,10 +485,21 @@
 
                 <div class="organization-subject-modal__layout">
                   <section class="organization-subject-content">
-                    <form class="organization-search organization-search--compact" role="search">
-                      <input type="search" placeholder="Pesquisar temas..." aria-label="Pesquisar temas" />
-                      <button type="submit" aria-label="Pesquisar temas">🔍</button>
-                    </form>
+                    <div class="organization-toolbar organization-toolbar--compact">
+                      <form class="organization-search organization-search--compact" role="search">
+                        <input type="search" placeholder="Pesquisar temas..." aria-label="Pesquisar temas" />
+                        <button type="submit" aria-label="Pesquisar temas">🔍</button>
+                      </form>
+
+                      <button
+                        class="organization-import-button organization-import-button--compact"
+                        type="button"
+                        data-organization-import="themes"
+                        aria-label="Importar temas"
+                      >
+                        📥 Importar temas
+                      </button>
+                    </div>
 
                     <div class="organization-fixed-row organization-fixed-row--modal">
                       <article class="organization-add-card organization-add-card--compact">
@@ -586,10 +603,21 @@
                       <h3>Tema</h3>
                     </header>
 
-                    <form class="organization-search organization-search--compact" role="search">
-                      <input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
-                      <button type="submit" aria-label="Pesquisar assuntos">🔍</button>
-                    </form>
+                    <div class="organization-toolbar organization-toolbar--compact">
+                      <form class="organization-search organization-search--compact" role="search">
+                        <input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
+                        <button type="submit" aria-label="Pesquisar assuntos">🔍</button>
+                      </form>
+
+                      <button
+                        class="organization-import-button organization-import-button--compact"
+                        type="button"
+                        data-organization-import="topic"
+                        aria-label="Importar assuntos ou questões"
+                      >
+                        📥 Importar
+                      </button>
+                    </div>
 
                     <article class="organization-add-card organization-add-card--horizontal">
                       <strong>Adicionar Assunto</strong>
@@ -710,10 +738,21 @@
                 </header>
 
                 <div class="organization-direct-modal__body">
-                  <form class="organization-search organization-search--compact" role="search">
-                    <input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
-                    <button type="submit" aria-label="Pesquisar assuntos">🔍</button>
-                  </form>
+                  <div class="organization-toolbar organization-toolbar--compact">
+                    <form class="organization-search organization-search--compact" role="search">
+                      <input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
+                      <button type="submit" aria-label="Pesquisar assuntos">🔍</button>
+                    </form>
+
+                    <button
+                      class="organization-import-button organization-import-button--compact"
+                      type="button"
+                      data-organization-import="topic"
+                      aria-label="Importar assuntos ou questões"
+                    >
+                      📥 Importar
+                    </button>
+                  </div>
 
                   <article class="organization-add-card organization-add-card--horizontal">
                     <strong>Adicionar Assunto</strong>
@@ -817,6 +856,7 @@
                     <button type="button">Anotar</button>
                     <button type="button">Revisar</button>
                     <button type="button">Resolver</button>
+                    <button type="button" data-organization-import="subtopic">📥 Importar questões</button>
                   </div>
                 </div>
               </section>
@@ -864,6 +904,88 @@
                     <button class="organization-delete-modal__cancel" type="button">Cancelar</button>
                   </div>
                 </div>
+              </section>
+            </div>
+
+            <!-- Organização v1.2 — Modal de Importação Contextual -->
+            <div class="organization-modal-layer" id="organization-import-modal" >
+              <section
+                class="organization-import-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="organization-import-title"
+                aria-describedby="organization-import-description"
+              >
+                <header class="organization-modal-header">
+                  <div class="organization-modal-title-group">
+                    <span class="organization-import-modal__tag">📥 Importação contextual</span>
+                    <h3 id="organization-import-title">Importar conteúdos</h3>
+                  </div>
+
+                  <button class="organization-modal-close" type="button" id="organization-import-close" aria-label="Fechar modal de importação">✕</button>
+                </header>
+
+                <div class="organization-import-modal__body">
+                  <section class="organization-import-context">
+                    <strong>Destino</strong>
+                    <span id="organization-import-context">Matéria › Tema › Assunto</span>
+                  </section>
+
+                  <p class="organization-import-modal__description" id="organization-import-description">
+                    Cole uma lista ou um bloco de questões para importar diretamente no contexto selecionado.
+                  </p>
+
+                  <div class="organization-import-type-tabs" aria-label="Tipo de importação">
+                    <button class="organization-import-type-button is-active" type="button" data-import-kind="subjects">Matérias</button>
+
+                    <button class="organization-import-type-button" type="button" data-import-kind="themes">Temas</button>
+
+                    <button class="organization-import-type-button" type="button" data-import-kind="subtopics">Assuntos</button>
+
+                    <button class="organization-import-type-button" type="button" data-import-kind="questions">Questões</button>
+                  </div>
+
+                  <div class="organization-import-editor">
+                    <label for="organization-import-text">Conteúdo para importação</label>
+
+                    <textarea
+                      id="organization-import-text"
+                      rows="10"
+                      placeholder="Exemplo para lista simples:&#10;Probabilidade&#10;Estatística&#10;Geometria&#10;&#10;Exemplo para questões:&#10;@questao&#10;enunciado: ...&#10;a: ...&#10;b: ...&#10;c: ...&#10;d: ...&#10;e: ...&#10;correta: A&#10;explicacao: ...&#10;+++"
+                    ></textarea>
+
+                    <small id="organization-import-format-help">
+                      Para matérias, temas e assuntos, use uma lista separada por quebra de linha, vírgula ou ponto e vírgula. Para questões, use o formato CEW
+                      Questions.
+                    </small>
+                  </div>
+
+                  <section class="organization-import-validation">
+                    <header>
+                      <strong>Validação</strong>
+                      <span id="organization-import-validation-status">Aguardando validação.</span>
+                    </header>
+
+                    <div class="organization-import-validation__grid">
+                      <span><strong id="organization-import-valid-count">0</strong> válidos</span>
+                      <span><strong id="organization-import-duplicate-count">0</strong> duplicados</span>
+                      <span><strong id="organization-import-error-count">0</strong> erros</span>
+                    </div>
+
+                    <ul class="organization-import-result-list" id="organization-import-result-list"></ul>
+                    <ul class="organization-import-error-list" id="organization-import-error-list"></ul>
+                  </section>
+                </div>
+
+                <footer class="organization-import-modal__footer">
+                  <button class="organization-import-secondary-button" type="button" id="organization-import-cancel">Cancelar</button>
+
+                  <button class="organization-import-secondary-button" type="button" id="organization-import-clear">Limpar</button>
+
+                  <button class="organization-import-secondary-button" type="button" id="organization-import-validate">Validar</button>
+
+                  <button class="organization-import-primary-button" type="button" id="organization-import-confirm" disabled>Importar</button>
+                </footer>
               </section>
             </div>
           </article>

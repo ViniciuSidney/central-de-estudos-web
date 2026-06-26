@@ -1215,6 +1215,368 @@
   display: none;
 }
 
+/* =========================================================
+   ORGANIZAÇÃO v1.2 — IMPORTAÇÃO CONTEXTUAL
+   ========================================================= */
+
+.organization-toolbar {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.organization-toolbar .organization-search {
+  min-width: 0;
+}
+
+.organization-import-button {
+  min-height: 100%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 10px 14px;
+
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 900;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.organization-import-button:hover {
+  border-color: var(--accent);
+  background: var(--success-soft);
+}
+
+.organization-import-button--compact {
+  min-height: auto;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  border-radius: 12px;
+}
+
+/* Modal */
+
+.organization-import-modal {
+  width: min(760px, calc(100vw - 56px));
+  max-height: min(820px, calc(100dvh - 56px));
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+
+  padding: 18px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.organization-import-modal__tag {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.organization-import-modal__body {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+
+  display: grid;
+  align-content: start;
+  gap: 14px;
+
+  padding: 16px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.organization-import-context {
+  display: grid;
+  gap: 4px;
+
+  padding: 12px;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.organization-import-context strong {
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.organization-import-context span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.organization-import-modal__description {
+  margin: 0;
+
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.organization-import-type-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.organization-import-type-button {
+  min-height: 36px;
+
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.organization-import-type-button:hover,
+.organization-import-type-button.is-active {
+  border-color: var(--accent);
+  background: var(--success-soft);
+}
+
+.organization-import-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.organization-import-editor label {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.organization-import-editor textarea {
+  width: 100%;
+  min-width: 0;
+  resize: vertical;
+  scrollbar-width: thin;
+
+  padding: 12px;
+
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  outline: none;
+}
+
+.organization-import-editor textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(143, 204, 172, 0.18);
+}
+
+.organization-import-editor small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.organization-import-validation {
+  display: grid;
+  gap: 10px;
+
+  padding: 12px;
+
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.organization-import-validation header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.organization-import-validation header strong {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.organization-import-validation header span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.organization-import-validation__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.organization-import-validation__grid span {
+  display: grid;
+  gap: 2px;
+
+  padding: 10px;
+
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.organization-import-validation__grid strong {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.organization-import-result-list,
+.organization-import-error-list {
+  display: grid;
+  gap: 6px;
+
+  margin: 0;
+  padding-left: 18px;
+
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.organization-import-error-list {
+  color: var(--feedback-error-border);
+}
+
+.organization-import-modal__footer {
+  display: grid;
+  grid-template-columns: auto auto auto minmax(150px, .9fr);
+  gap: 10px;
+}
+
+.organization-import-modal__footer button {
+  min-height: 40px;
+
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 900;
+
+  border-radius: 12px;
+}
+
+.organization-import-secondary-button {
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.organization-import-primary-button {
+  color: var(--text);
+  background: var(--accent);
+  border: 0;
+}
+
+.organization-import-primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+
+.organization-subtopic-detail-card__actions button[data-organization-import='subtopic'] {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+  .organization-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-import-button {
+    width: 100%;
+  }
+
+  .organization-import-modal {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .organization-import-modal__body {
+    padding: 12px;
+  }
+
+  .organization-import-type-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .organization-import-validation header {
+    display: grid;
+  }
+
+  .organization-import-validation header span {
+    text-align: left;
+  }
+
+  .organization-import-validation__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .organization-import-modal__footer {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .organization-import-type-tabs {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .organization-state {
     min-height: 140px;
