@@ -559,6 +559,165 @@
 								</div>
 							</section>
 						</div>
+
+						<!-- Organização v1.2 — Modal direto de Tema -->
+						<div class="organization-modal-layer" id="organization-topic-direct-modal" hidden>
+							<section class="organization-direct-modal organization-direct-modal--topic" role="dialog" aria-modal="true" aria-labelledby="organization-topic-direct-title">
+								<header class="organization-modal-header">
+									<div class="organization-modal-title-group">
+										<span class="organization-breadcrumb">Matéria › Tema</span>
+										<h3 id="organization-topic-direct-title">Tema</h3>
+									</div>
+
+									<button class="organization-modal-close" type="button" aria-label="Fechar modal de tema">✕</button>
+								</header>
+
+								<div class="organization-direct-modal__body">
+									<form class="organization-search organization-search--compact" role="search">
+										<input type="search" placeholder="Pesquisar assuntos..." aria-label="Pesquisar assuntos" />
+										<button type="submit" aria-label="Pesquisar assuntos">🔍</button>
+									</form>
+
+									<article class="organization-add-card organization-add-card--horizontal">
+										<strong>Adicionar Assunto</strong>
+										<button type="button" aria-label="Adicionar assunto">+</button>
+									</article>
+
+									<div class="organization-subtopic-list" aria-label="Assuntos do tema">
+										<article class="organization-subtopic-card">
+											<div class="organization-subtopic-card__top">
+												<strong>Nome do Assunto</strong>
+
+												<div class="organization-subtopic-card__icons">
+													<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+													<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+												</div>
+											</div>
+										</article>
+
+										<article class="organization-subtopic-card">
+											<div class="organization-subtopic-card__top">
+												<strong>Nome do Assunto</strong>
+
+												<div class="organization-subtopic-card__icons">
+													<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+													<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+												</div>
+											</div>
+										</article>
+
+										<article class="organization-subtopic-card is-expanded">
+											<div class="organization-subtopic-card__top">
+												<strong>Nome do Assunto</strong>
+
+												<div class="organization-subtopic-card__icons">
+													<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+													<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+												</div>
+											</div>
+
+											<div class="organization-subtopic-card__stats">
+												<span><strong>x</strong> Questões</span>
+												<span><strong>x</strong> Anotações</span>
+												<span><strong>x</strong> Erros</span>
+											</div>
+
+											<div class="organization-subtopic-card__actions">
+												<button type="button">+ Questão</button>
+												<button type="button">Anotar</button>
+												<button type="button">Revisar</button>
+												<button type="button">Resolver</button>
+											</div>
+										</article>
+
+										<article class="organization-subtopic-card">
+											<div class="organization-subtopic-card__top">
+												<strong>Nome do Assunto</strong>
+
+												<div class="organization-subtopic-card__icons">
+													<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+													<button type="button" aria-label="Ver detalhes do assunto" title="Ver detalhes">👁️</button>
+												</div>
+											</div>
+										</article>
+									</div>
+								</div>
+							</section>
+						</div>
+
+						<!-- Organização v1.2 — Modal direto de Assunto -->
+						<div class="organization-modal-layer" id="organization-subtopic-direct-modal" hidden>
+							<section class="organization-direct-modal organization-direct-modal--subtopic" role="dialog" aria-modal="true" aria-labelledby="organization-subtopic-direct-title">
+								<header class="organization-modal-header">
+									<div class="organization-modal-title-group">
+										<span class="organization-breadcrumb">Matéria › Tema › Assunto</span>
+										<h3 id="organization-subtopic-direct-title">Assunto</h3>
+									</div>
+
+									<button class="organization-modal-close" type="button" aria-label="Fechar modal de assunto">✕</button>
+								</header>
+
+								<div class="organization-subtopic-detail-card">
+									<div class="organization-subtopic-detail-card__top">
+										<div class="organization-subtopic-detail-card__name">Nome do Assunto</div>
+
+										<button type="button" aria-label="Excluir assunto" title="Excluir">🗑️</button>
+									</div>
+
+									<div class="organization-subtopic-detail-card__stats">
+										<span><strong>x</strong> Questões</span>
+										<span><strong>x</strong> Anotações</span>
+										<span><strong>x</strong> Erros</span>
+									</div>
+
+									<div class="organization-subtopic-detail-card__actions">
+										<button type="button">+ Questão</button>
+										<button type="button">Anotar</button>
+										<button type="button">Revisar</button>
+										<button type="button">Resolver</button>
+									</div>
+								</div>
+							</section>
+						</div>
+
+						<!-- Organização v1.2 — Modal de Exclusão -->
+						<div class="organization-modal-layer" id="organization-delete-modal" hidden>
+							<section class="organization-delete-modal" role="dialog" aria-modal="true" aria-labelledby="organization-delete-title" aria-describedby="organization-delete-description">
+								<header class="organization-modal-header">
+									<div class="organization-modal-title-group">
+										<span class="organization-modal-danger-tag">Ação perigosa</span>
+										<h3 id="organization-delete-title">Excluir item</h3>
+									</div>
+
+									<button class="organization-modal-close" type="button" aria-label="Fechar modal de exclusão">✕</button>
+								</header>
+
+								<div class="organization-delete-modal__body">
+									<div class="organization-delete-modal__name">Nome do/a item</div>
+
+									<p class="organization-delete-modal__description" id="organization-delete-description">
+										Esta ação pode remover dados relacionados. Confira as informações antes de confirmar.
+									</p>
+
+									<div class="organization-delete-modal__stats">
+										<span><strong>x</strong> Questões</span>
+										<span><strong>x</strong> Anotações</span>
+										<span><strong>x</strong> Erros</span>
+									</div>
+
+									<label class="organization-delete-modal__check">
+										<input type="checkbox" />
+										<span>Entendo que esta ação não pode ser desfeita.</span>
+									</label>
+
+									<div class="organization-delete-modal__actions">
+										<button class="organization-delete-modal__confirm" type="button">Excluir</button>
+
+										<button class="organization-delete-modal__cancel" type="button">Cancelar</button>
+									</div>
+								</div>
+							</section>
+						</div>
 					</article>
 
 					<article class="app-section" id="subjects">
