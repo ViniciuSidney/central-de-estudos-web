@@ -33,6 +33,12 @@
 							<small>Visão geral dos estudos</small>
 						</button>
 
+						<button class="nav-card" type="button" data-section="organization">
+							<span>🗂️</span>
+							<strong>Organização</strong>
+							<small>Matérias, temas e assuntos</small>
+						</button>
+
 						<button class="nav-card is-hidden-by-group" type="button" data-section="subjects" data-section-target="subjects" data-nav-card-group="management" data-nav-category="management">
 							<span>📘</span>
 							<strong>Matérias</strong>
@@ -284,6 +290,113 @@
 											</div>
 										</section>
 									</div>
+								</div>
+							</section>
+						</div>
+					</article>
+
+					<article class="app-section organization-section" id="organization">
+						<header class="app-section__header organization-page-header">
+							<h2 class="organization-page-header__title">🗂️ Organização</h2>
+							<p>Gerencie matérias, temas, assuntos e ações relacionadas aos seus estudos.</p>
+						</header>
+
+						<div class="organization-shell">
+							<aside class="organization-tree-panel">
+								<div class="organization-tree-panel__header">
+									<strong>Subnavegação</strong>
+									<span>Estrutura dos estudos</span>
+								</div>
+
+								<nav class="organization-tree" aria-label="Mapa de conteúdos">
+									<div class="organization-tree__group is-open">
+										<button class="organization-tree__item organization-tree__item--subject is-active" type="button">
+											<span>Matéria 1</span>
+											<span aria-hidden="true">▾</span>
+										</button>
+
+										<div class="organization-tree__children">
+											<button class="organization-tree__item organization-tree__item--theme" type="button">
+												<span>Tema 1</span>
+												<span aria-hidden="true">▾</span>
+											</button>
+
+											<div class="organization-tree__children organization-tree__children--subtopics">
+												<button class="organization-tree__item organization-tree__item--subtopic" type="button">Assunto 1</button>
+											</div>
+
+											<button class="organization-tree__item organization-tree__item--theme" type="button">
+												<span>Tema 2</span>
+												<span aria-hidden="true">▸</span>
+											</button>
+										</div>
+									</div>
+
+									<div class="organization-tree__group">
+										<button class="organization-tree__item organization-tree__item--subject" type="button">
+											<span>Matéria 2</span>
+											<span aria-hidden="true">▸</span>
+										</button>
+									</div>
+								</nav>
+							</aside>
+
+							<section class="organization-main-panel">
+								<form class="organization-search" role="search">
+									<input type="search" placeholder="Pesquisar matérias..." aria-label="Pesquisar matérias" />
+									<button type="submit" aria-label="Pesquisar">🔍</button>
+								</form>
+
+								<div class="organization-fixed-row">
+									<article class="organization-add-card">
+										<strong>Adicionar Matéria</strong>
+										<button type="button" aria-label="Adicionar matéria">+</button>
+									</article>
+
+									<article class="organization-feature-card organization-feature-card--active">
+										<div class="organization-feature-card__name">Nome da Matéria</div>
+
+										<button class="organization-icon-button organization-feature-card__delete" type="button" aria-label="Excluir matéria" title="Excluir">🗑️</button>
+
+										<div class="organization-feature-card__stats">
+											<span><strong>x</strong> Questões</span>
+											<span><strong>x</strong> Anotações</span>
+											<span><strong>x</strong> Erros</span>
+										</div>
+
+										<div class="organization-feature-card__actions">
+											<button type="button">Resolver</button>
+											<button type="button">+ Questão</button>
+											<button type="button">Revisar</button>
+											<button type="button">Anotar</button>
+										</div>
+									</article>
+								</div>
+
+								<div class="organization-gallery" aria-label="Matérias cadastradas">
+									<article class="organization-card">
+										<div class="organization-card__name">Matéria</div>
+										<span>x atualizações</span>
+										<button type="button" aria-label="Ver detalhes da matéria" title="Ver detalhes">👁️</button>
+									</article>
+
+									<article class="organization-card">
+										<div class="organization-card__name">Matéria</div>
+										<span>x atualizações</span>
+										<button type="button" aria-label="Ver detalhes da matéria" title="Ver detalhes">👁️</button>
+									</article>
+
+									<article class="organization-card">
+										<div class="organization-card__name">Matéria</div>
+										<span>x atualizações</span>
+										<button type="button" aria-label="Ver detalhes da matéria" title="Ver detalhes">👁️</button>
+									</article>
+
+									<article class="organization-card">
+										<div class="organization-card__name">Matéria</div>
+										<span>x atualizações</span>
+										<button type="button" aria-label="Ver detalhes da matéria" title="Ver detalhes">👁️</button>
+									</article>
 								</div>
 							</section>
 						</div>
