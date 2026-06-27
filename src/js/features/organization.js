@@ -1,4 +1,6 @@
-import {getCollection} from '../core/storage.js';
+import {getCollection, saveCollection} from '../core/storage.js';
+import {compareNames} from '../systems/listTextImport.js';
+import {addSubtopic} from './subtopics.js';
 
 const SUBJECTS_COLLECTION = 'subjects';
 const THEMES_COLLECTION = 'themes';
@@ -20,6 +22,7 @@ export function initOrganization() {
 	const subjectSearchInput = organizationMainPanel?.querySelector('.organization-search input[type="search"]');
 	const subjectGallery = organizationMainPanel?.querySelector('.organization-gallery');
 	const subjectFeatureCard = organizationMainPanel?.querySelector('.organization-feature-card--active, .organization-feature-card--empty');
+	const subjectAddCard = organizationMainPanel?.querySelector('.organization-fixed-row > .organization-add-card');
 	const emptySubjectsState = organizationSection.querySelector('#organization-empty-subjects');
 	const noSubjectResultsState = organizationSection.querySelector('#organization-no-subject-results');
 
@@ -31,6 +34,7 @@ export function initOrganization() {
 	const themeSearchForm = subjectModalContent?.querySelector('.organization-search--compact');
 	const themeSearchInput = themeSearchForm?.querySelector('input[type="search"]');
 	const themeFeatureCard = subjectModalContent?.querySelector('.organization-fixed-row--modal .organization-feature-card--active');
+	const themeAddCard = subjectModalContent?.querySelector('.organization-fixed-row--modal .organization-add-card');
 	const themeGallery = subjectModalContent?.querySelector('.organization-modal-gallery');
 	const emptyThemesState = subjectModalContent?.querySelector('#organization-empty-themes');
 	const noThemeResultsState = subjectModalContent?.querySelector('#organization-no-theme-results');
@@ -52,6 +56,7 @@ export function initOrganization() {
 		!subjectSearchInput ||
 		!subjectGallery ||
 		!subjectFeatureCard ||
+		!subjectAddCard ||
 		!emptySubjectsState ||
 		!noSubjectResultsState ||
 		!subjectModalLayer ||
@@ -61,6 +66,7 @@ export function initOrganization() {
 		!themeSearchForm ||
 		!themeSearchInput ||
 		!themeFeatureCard ||
+		!themeAddCard ||
 		!themeGallery ||
 		!emptyThemesState ||
 		!noThemeResultsState ||
@@ -87,6 +93,9 @@ export function initOrganization() {
 	let subtopicSearchText = '';
 
 	let isSubjectModalOpen = false;
+	let subjectCardMode = 'view';
+	let themeCardMode = 'view';
+	let isSubtopicFormOpen = false;
 
 	function getSubjects() {
 		return getCollection(SUBJECTS_COLLECTION);
@@ -110,6 +119,53 @@ export function initOrganization() {
 
 	function getErrorReviews() {
 		return getCollection(ERROR_REVIEWS_COLLECTION);
+	}
+
+	function saveSubjects(subjects) {
+		saveCollection(SUBJECTS_COLLECTION, subjects);
+	}
+
+	function saveThemes(themes) {
+		saveCollection(THEMES_COLLECTION, themes);
+	}
+
+	function notifySubjectsChanged() {
+		document.dispatchEvent(new CustomEvent('subjects:changed'));
+	}
+
+	function notifyThemesChanged() {
+		document.dispatchEvent(new CustomEvent('themes:changed'));
+	}
+
+	function createSubject(name) {
+		return {
+			id: crypto.randomUUID(),
+			name,
+			description: '',
+			createdAt: new Date().toISOString()
+		};
+	}
+
+	function createTheme({subjectId, name}) {
+		return {
+			id: crypto.randomUUID(),
+			subjectId,
+			name,
+			description: '',
+			createdAt: new Date().toISOString()
+		};
+	}
+
+	function findDuplicatedSubject(name) {
+		return getSubjects().find((subject) => {
+			return compareNames(subject.name, name);
+		});
+	}
+
+	function findDuplicatedTheme({subjectId, name}) {
+		return getThemesBySubjectId(subjectId).find((theme) => {
+			return compareNames(theme.name, name);
+		});
 	}
 
 	function getSubjectById(subjectId) {
@@ -340,6 +396,10 @@ export function initOrganization() {
 		selectedThemeId = null;
 		selectedSubtopicId = null;
 
+		subjectCardMode = 'view';
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
 		renderOrganization();
 	}
 
@@ -354,6 +414,9 @@ export function initOrganization() {
 		selectedThemeId = theme.id;
 		selectedSubtopicId = null;
 
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
 		renderOrganization();
 	}
 
@@ -367,6 +430,9 @@ export function initOrganization() {
 		selectedSubjectId = subtopic.subjectId;
 		selectedThemeId = subtopic.themeId;
 		selectedSubtopicId = subtopic.id;
+
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
 
 		renderOrganization();
 	}
@@ -513,6 +579,51 @@ export function initOrganization() {
 	}
 
 	function renderSubjectFeatureCard() {
+		if (subjectCardMode === 'create') {
+			subjectFeatureCard.className = 'organization-feature-card organization-feature-card--form';
+
+			subjectFeatureCard.innerHTML = `
+		<div class="organization-feature-card__field">
+			<label for="organization-new-subject-name">Nome da matéria</label>
+
+			<input
+				id="organization-new-subject-name"
+				type="text"
+				placeholder="Ex: Matemática"
+				data-organization-subject-name-input
+			/>
+		</div>
+
+		<div class="organization-inline-actions">
+			<button
+				class="organization-confirm-button"
+				type="button"
+				data-organization-action="confirm-create-subject"
+				aria-label="Confirmar matéria"
+				title="Confirmar"
+			>
+				✅
+			</button>
+
+			<button
+				class="organization-cancel-button"
+				type="button"
+				data-organization-action="cancel-create-subject"
+				aria-label="Cancelar criação de matéria"
+				title="Cancelar"
+			>
+				❌
+			</button>
+		</div>
+	`;
+
+			requestAnimationFrame(() => {
+				subjectFeatureCard.querySelector('[data-organization-subject-name-input]')?.focus();
+			});
+
+			return;
+		}
+
 		const subject = getSubjectById(selectedSubjectId);
 
 		if (!subject) {
@@ -655,6 +766,51 @@ export function initOrganization() {
 	}
 
 	function renderThemeFeatureCard() {
+		if (themeCardMode === 'create') {
+			themeFeatureCard.className = 'organization-feature-card organization-feature-card--form';
+
+			themeFeatureCard.innerHTML = `
+		<div class="organization-feature-card__field">
+			<label for="organization-new-theme-name">Nome do tema</label>
+
+			<input
+				id="organization-new-theme-name"
+				type="text"
+				placeholder="Ex: Probabilidade"
+				data-organization-theme-name-input
+			/>
+		</div>
+
+		<div class="organization-inline-actions">
+			<button
+				class="organization-confirm-button"
+				type="button"
+				data-organization-theme-action="confirm-create-theme"
+				aria-label="Confirmar tema"
+				title="Confirmar"
+			>
+				✅
+			</button>
+
+			<button
+				class="organization-cancel-button"
+				type="button"
+				data-organization-theme-action="cancel-create-theme"
+				aria-label="Cancelar criação de tema"
+				title="Cancelar"
+			>
+				❌
+			</button>
+		</div>
+	`;
+
+			requestAnimationFrame(() => {
+				themeFeatureCard.querySelector('[data-organization-theme-name-input]')?.focus();
+			});
+
+			return;
+		}
+
 		const theme = getThemeById(selectedThemeId);
 
 		if (!theme) {
@@ -768,12 +924,58 @@ export function initOrganization() {
 
 		subtopicList.innerHTML = '';
 
+		if (isSubtopicFormOpen) {
+			const formCard = document.createElement('article');
+
+			formCard.classList.add('organization-subtopic-card', 'organization-subtopic-card--form');
+
+			formCard.innerHTML = `
+		<input
+			class="organization-subtopic-card__input"
+			type="text"
+			placeholder="Nome do assunto"
+			data-organization-subtopic-name-input
+			aria-label="Nome do assunto"
+		/>
+
+		<div class="organization-inline-actions organization-inline-actions--compact">
+			<button
+				class="organization-confirm-button"
+				type="button"
+				data-organization-subtopic-action="confirm-create-subtopic"
+				aria-label="Confirmar assunto"
+				title="Confirmar"
+			>
+				✅
+			</button>
+
+			<button
+				class="organization-cancel-button"
+				type="button"
+				data-organization-subtopic-action="cancel-create-subtopic"
+				aria-label="Cancelar criação de assunto"
+				title="Cancelar"
+			>
+				❌
+			</button>
+		</div>
+	`;
+
+			subtopicList.appendChild(formCard);
+
+			requestAnimationFrame(() => {
+				formCard.querySelector('[data-organization-subtopic-name-input]')?.focus();
+			});
+		}
+
 		const hasSubtopics = allSubtopics.length > 0;
 		const hasFilteredSubtopics = filteredSubtopics.length > 0;
 
-		subtopicList.hidden = !hasSubtopics || !hasFilteredSubtopics;
-		emptySubtopicsState.hidden = hasSubtopics;
-		noSubtopicResultsState.hidden = !hasSubtopics || hasFilteredSubtopics;
+		const shouldShowSubtopicList = isSubtopicFormOpen || (hasSubtopics && hasFilteredSubtopics);
+
+		subtopicList.hidden = !shouldShowSubtopicList;
+		emptySubtopicsState.hidden = hasSubtopics || isSubtopicFormOpen;
+		noSubtopicResultsState.hidden = !hasSubtopics || hasFilteredSubtopics || isSubtopicFormOpen;
 
 		if (!hasSubtopics || !hasFilteredSubtopics) {
 			return;
@@ -934,6 +1136,9 @@ export function initOrganization() {
 
 	function closeSubjectModal() {
 		isSubjectModalOpen = false;
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
 		subjectModalLayer.hidden = true;
 		document.body.style.overflow = '';
 	}
@@ -1083,6 +1288,182 @@ export function initOrganization() {
 		});
 	}
 
+	function openSubjectCreateForm() {
+		subjectCardMode = 'create';
+		selectedSubjectId = null;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function cancelSubjectCreateForm() {
+		subjectCardMode = 'view';
+		ensureSelectedSubject();
+
+		renderOrganization();
+	}
+
+	function confirmSubjectCreateForm() {
+		const input = subjectFeatureCard.querySelector('[data-organization-subject-name-input]');
+
+		if (!input) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const subjectName = input.value.trim();
+
+		if (!subjectName) {
+			input.setCustomValidity('Informe o nome da matéria.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedSubject = findDuplicatedSubject(subjectName);
+
+		if (duplicatedSubject) {
+			input.setCustomValidity(`A matéria "${duplicatedSubject.name}" já está cadastrada.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const subjects = getSubjects();
+		const newSubject = createSubject(subjectName);
+
+		saveSubjects([...subjects, newSubject]);
+
+		selectedSubjectId = newSubject.id;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+		subjectCardMode = 'view';
+
+		notifySubjectsChanged();
+		renderOrganization();
+	}
+
+	function openThemeCreateForm() {
+		if (!selectedSubjectId) {
+			return;
+		}
+
+		themeCardMode = 'create';
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+		isSubtopicFormOpen = false;
+
+		renderSubjectModal();
+	}
+
+	function cancelThemeCreateForm() {
+		themeCardMode = 'view';
+		renderSubjectModal();
+	}
+
+	function confirmThemeCreateForm() {
+		const input = themeFeatureCard.querySelector('[data-organization-theme-name-input]');
+
+		if (!input || !selectedSubjectId) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const themeName = input.value.trim();
+
+		if (!themeName) {
+			input.setCustomValidity('Informe o nome do tema.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedTheme = findDuplicatedTheme({
+			subjectId: selectedSubjectId,
+			name: themeName
+		});
+
+		if (duplicatedTheme) {
+			input.setCustomValidity(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const themes = getThemes();
+
+		const newTheme = createTheme({
+			subjectId: selectedSubjectId,
+			name: themeName
+		});
+
+		saveThemes([...themes, newTheme]);
+
+		selectedThemeId = newTheme.id;
+		selectedSubtopicId = null;
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
+		notifyThemesChanged();
+		renderOrganization();
+	}
+
+	function openSubtopicCreateForm() {
+		if (!selectedSubjectId || !selectedThemeId) {
+			return;
+		}
+
+		isSubtopicFormOpen = true;
+		selectedSubtopicId = null;
+
+		renderSubtopicPanel();
+	}
+
+	function cancelSubtopicCreateForm() {
+		isSubtopicFormOpen = false;
+		renderSubtopicPanel();
+	}
+
+	function confirmSubtopicCreateForm() {
+		const input = subtopicList.querySelector('[data-organization-subtopic-name-input]');
+
+		if (!input || !selectedSubjectId || !selectedThemeId) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const subtopicName = input.value.trim();
+
+		if (!subtopicName) {
+			input.setCustomValidity('Informe o nome do assunto.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const result = addSubtopic({
+			subjectId: selectedSubjectId,
+			themeId: selectedThemeId,
+			name: subtopicName
+		});
+
+		if (!result.ok) {
+			input.setCustomValidity(result.message);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		selectedSubtopicId = result.subtopic.id;
+		isSubtopicFormOpen = false;
+
+		renderOrganization();
+	}
+
 	function handleSubjectGalleryClick(event) {
 		const subjectCard = event.target.closest('[data-organization-subject-id]');
 
@@ -1172,6 +1553,17 @@ export function initOrganization() {
 		}
 
 		const action = actionButton.dataset.organizationAction;
+
+		if (action === 'confirm-create-subject') {
+			confirmSubjectCreateForm();
+			return;
+		}
+
+		if (action === 'cancel-create-subject') {
+			cancelSubjectCreateForm();
+			return;
+		}
+
 		const subject = getSubjectById(selectedSubjectId);
 
 		if (!subject) {
@@ -1219,13 +1611,23 @@ export function initOrganization() {
 		const themeActionButton = event.target.closest('[data-organization-theme-action]');
 
 		if (themeActionButton && !themeActionButton.disabled) {
+			const action = themeActionButton.dataset.organizationThemeAction;
+
+			if (action === 'confirm-create-theme') {
+				confirmThemeCreateForm();
+				return;
+			}
+
+			if (action === 'cancel-create-theme') {
+				cancelThemeCreateForm();
+				return;
+			}
+
 			const theme = getThemeById(selectedThemeId);
 
 			if (!theme) {
 				return;
 			}
-
-			const action = themeActionButton.dataset.organizationThemeAction;
 
 			if (action === 'create-question') {
 				openQuestionCreationFromTheme(theme);
@@ -1261,14 +1663,24 @@ export function initOrganization() {
 		const subtopicActionButton = event.target.closest('[data-organization-subtopic-action]');
 
 		if (subtopicActionButton && !subtopicActionButton.disabled) {
+			const action = subtopicActionButton.dataset.organizationSubtopicAction;
+
+			if (action === 'confirm-create-subtopic') {
+				confirmSubtopicCreateForm();
+				return;
+			}
+
+			if (action === 'cancel-create-subtopic') {
+				cancelSubtopicCreateForm();
+				return;
+			}
+
 			const subtopicId = subtopicActionButton.dataset.subtopicId;
 			const subtopic = getSubtopicById(subtopicId);
 
 			if (!subtopic) {
 				return;
 			}
-
-			const action = subtopicActionButton.dataset.organizationSubtopicAction;
 
 			if (action === 'create-question') {
 				openQuestionCreationFromSubtopic(subtopic);
@@ -1339,6 +1751,10 @@ export function initOrganization() {
 		themeSearchText = '';
 		subtopicSearchText = '';
 
+		subjectCardMode = 'view';
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
 		subjectSearchInput.value = '';
 		themeSearchInput.value = '';
 		subtopicSearchInput.value = '';
@@ -1358,6 +1774,10 @@ export function initOrganization() {
 
 	subjectGallery.addEventListener('click', handleSubjectGalleryClick);
 	subjectGallery.addEventListener('keydown', handleSubjectGalleryKeydown);
+
+	subjectAddCard.addEventListener('click', openSubjectCreateForm);
+	themeAddCard.addEventListener('click', openThemeCreateForm);
+	subtopicAddCard.addEventListener('click', openSubtopicCreateForm);
 
 	organizationTree.addEventListener('click', handleTreeClick);
 	subjectFeatureCard.addEventListener('click', handleFeatureCardAction);
