@@ -374,6 +374,7 @@
   gap: 14px;
 
   padding-right: 6px;
+  z-index: 10;
 }
 
 .organization-card {
@@ -388,6 +389,7 @@
   gap: 10px;
 
   padding: 14px;
+  margin-top: 5px;
 }
 
 .organization-card--clickable {

@@ -7,7 +7,8 @@ const defaultAppData = {
 	questions: [],
 	notes: [],
 	attempts: [],
-	reviews: []
+	reviews: [],
+	errorReviews: []
 };
 
 export function loadAppData() {

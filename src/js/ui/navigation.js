@@ -1,6 +1,7 @@
 const SECTION_NAV_GROUPS = {
 	dashboard: 'summary',
 
+	organization: 'management',
 	subjects: 'management',
 	themes: 'management',
 	questions: 'management',
