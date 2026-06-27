@@ -1631,6 +1631,21 @@
 }
 
 /* =========================================================
+   ORGANIZAÇÃO v1.2 — ESTADOS ATIVOS DO JS
+   ========================================================= */
+
+.organization-card.is-active,
+.organization-subtopic-card.is-active {
+  border-color: var(--accent);
+  background: var(--success-soft);
+}
+
+.organization-card.is-active .organization-card__name,
+.organization-subtopic-card.is-active .organization-subtopic-card__top strong {
+  border-color: var(--accent);
+}
+
+/* =========================================================
    9. RESPONSIVIDADE
    ========================================================= */
 

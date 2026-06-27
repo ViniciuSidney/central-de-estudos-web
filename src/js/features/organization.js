@@ -23,7 +23,57 @@ export function initOrganization() {
 	const emptySubjectsState = organizationSection.querySelector('#organization-empty-subjects');
 	const noSubjectResultsState = organizationSection.querySelector('#organization-no-subject-results');
 
-	if (!organizationTree || !organizationMainPanel || !subjectSearchForm || !subjectSearchInput || !subjectGallery || !subjectFeatureCard || !emptySubjectsState || !noSubjectResultsState) {
+	const subjectModalLayer = organizationSection.querySelector('#organization-subject-panel-preview');
+	const subjectModalTitle = subjectModalLayer?.querySelector('#organization-subject-modal-title');
+	const subjectModalCloseButton = subjectModalLayer?.querySelector('.organization-modal-close');
+
+	const subjectModalContent = subjectModalLayer?.querySelector('.organization-subject-content');
+	const themeSearchForm = subjectModalContent?.querySelector('.organization-search--compact');
+	const themeSearchInput = themeSearchForm?.querySelector('input[type="search"]');
+	const themeFeatureCard = subjectModalContent?.querySelector('.organization-fixed-row--modal .organization-feature-card--active');
+	const themeGallery = subjectModalContent?.querySelector('.organization-modal-gallery');
+	const emptyThemesState = subjectModalContent?.querySelector('#organization-empty-themes');
+	const noThemeResultsState = subjectModalContent?.querySelector('#organization-no-theme-results');
+
+	const topicPanel = subjectModalLayer?.querySelector('.organization-topic-panel');
+	const topicPanelTitle = topicPanel?.querySelector('.organization-modal-header--compact h3');
+	const subtopicSearchForm = topicPanel?.querySelector('.organization-search--compact');
+	const subtopicSearchInput = subtopicSearchForm?.querySelector('input[type="search"]');
+	const subtopicAddCard = topicPanel?.querySelector('.organization-add-card--horizontal');
+	const selectThemeState = topicPanel?.querySelector('#organization-select-theme-state');
+	const subtopicList = topicPanel?.querySelector('.organization-subtopic-list');
+	const emptySubtopicsState = topicPanel?.querySelector('#organization-empty-subtopics');
+	const noSubtopicResultsState = topicPanel?.querySelector('#organization-no-subtopic-results');
+
+	if (
+		!organizationTree ||
+		!organizationMainPanel ||
+		!subjectSearchForm ||
+		!subjectSearchInput ||
+		!subjectGallery ||
+		!subjectFeatureCard ||
+		!emptySubjectsState ||
+		!noSubjectResultsState ||
+		!subjectModalLayer ||
+		!subjectModalTitle ||
+		!subjectModalCloseButton ||
+		!subjectModalContent ||
+		!themeSearchForm ||
+		!themeSearchInput ||
+		!themeFeatureCard ||
+		!themeGallery ||
+		!emptyThemesState ||
+		!noThemeResultsState ||
+		!topicPanel ||
+		!topicPanelTitle ||
+		!subtopicSearchForm ||
+		!subtopicSearchInput ||
+		!subtopicAddCard ||
+		!selectThemeState ||
+		!subtopicList ||
+		!emptySubtopicsState ||
+		!noSubtopicResultsState
+	) {
 		console.warn('Organização v1.2 não iniciada: elementos não encontrados.');
 		return;
 	}
@@ -31,7 +81,12 @@ export function initOrganization() {
 	let selectedSubjectId = null;
 	let selectedThemeId = null;
 	let selectedSubtopicId = null;
+
 	let subjectSearchText = '';
+	let themeSearchText = '';
+	let subtopicSearchText = '';
+
+	let isSubjectModalOpen = false;
 
 	function getSubjects() {
 		return getCollection(SUBJECTS_COLLECTION);
@@ -75,15 +130,15 @@ export function initOrganization() {
 		});
 	}
 
-	function getThemesBySubjectId(subjectId) {
-		return getThemes().filter((theme) => {
-			return theme.subjectId === subjectId;
+	function getQuestionById(questionId) {
+		return getQuestions().find((question) => {
+			return question.id === questionId;
 		});
 	}
 
-	function getSubtopicsBySubjectId(subjectId) {
-		return getSubtopics().filter((subtopic) => {
-			return subtopic.subjectId === subjectId;
+	function getThemesBySubjectId(subjectId) {
+		return getThemes().filter((theme) => {
+			return theme.subjectId === subjectId;
 		});
 	}
 
@@ -128,10 +183,6 @@ export function initOrganization() {
 			.trim();
 	}
 
-	function formatCount(total, singular, plural) {
-		return total === 1 ? `1 ${singular}` : `${total} ${plural}`;
-	}
-
 	function getPendingErrorAttempts() {
 		const wrongAttempts = getAttempts().filter((attempt) => {
 			return !attempt.isCorrect;
@@ -162,9 +213,29 @@ export function initOrganization() {
 		});
 	}
 
+	function getAttemptQuestion(attempt) {
+		return getQuestionById(attempt.questionId);
+	}
+
 	function getPendingErrorsBySubjectId(subjectId) {
 		return getPendingErrorAttempts().filter((attempt) => {
 			return attempt.subjectId === subjectId;
+		});
+	}
+
+	function getPendingErrorsByThemeId(themeId) {
+		return getPendingErrorAttempts().filter((attempt) => {
+			const question = getAttemptQuestion(attempt);
+
+			return attempt.themeId === themeId || question?.themeId === themeId;
+		});
+	}
+
+	function getPendingErrorsBySubtopicId(subtopicId) {
+		return getPendingErrorAttempts().filter((attempt) => {
+			const question = getAttemptQuestion(attempt);
+
+			return attempt.subtopicId === subtopicId || question?.subtopicId === subtopicId;
 		});
 	}
 
@@ -177,6 +248,38 @@ export function initOrganization() {
 
 		return subjects.filter((subject) => {
 			return normalizeText(subject.name).includes(subjectSearchText);
+		});
+	}
+
+	function getFilteredThemesFromSelectedSubject() {
+		if (!selectedSubjectId) {
+			return [];
+		}
+
+		const themes = getThemesBySubjectId(selectedSubjectId);
+
+		if (!themeSearchText) {
+			return themes;
+		}
+
+		return themes.filter((theme) => {
+			return normalizeText(theme.name).includes(themeSearchText);
+		});
+	}
+
+	function getFilteredSubtopicsFromSelectedTheme() {
+		if (!selectedThemeId) {
+			return [];
+		}
+
+		const subtopics = getSubtopicsByThemeId(selectedThemeId);
+
+		if (!subtopicSearchText) {
+			return subtopics;
+		}
+
+		return subtopics.filter((subtopic) => {
+			return normalizeText(subtopic.name).includes(subtopicSearchText);
 		});
 	}
 
@@ -196,6 +299,34 @@ export function initOrganization() {
 		selectedSubjectId = subjects[0]?.id || null;
 		selectedThemeId = null;
 		selectedSubtopicId = null;
+	}
+
+	function ensureSelectedThemeBelongsToSubject() {
+		if (!selectedSubjectId || !selectedThemeId) {
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+			return;
+		}
+
+		const theme = getThemeById(selectedThemeId);
+
+		if (!theme || theme.subjectId !== selectedSubjectId) {
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+		}
+	}
+
+	function ensureSelectedSubtopicBelongsToTheme() {
+		if (!selectedThemeId || !selectedSubtopicId) {
+			selectedSubtopicId = null;
+			return;
+		}
+
+		const subtopic = getSubtopicById(selectedSubtopicId);
+
+		if (!subtopic || subtopic.themeId !== selectedThemeId) {
+			selectedSubtopicId = null;
+		}
 	}
 
 	function selectSubject(subjectId) {
@@ -261,7 +392,6 @@ export function initOrganization() {
 			const isSelectedSubject = selectedSubjectId === subject.id;
 
 			const group = document.createElement('div');
-
 			group.classList.add('organization-tree__group', 'is-open');
 
 			const themesHTML = subjectThemes
@@ -364,7 +494,7 @@ export function initOrganization() {
 
 			subjectCard.setAttribute('role', 'button');
 			subjectCard.setAttribute('tabindex', '0');
-			subjectCard.setAttribute('aria-label', `Selecionar matéria ${subject.name}`);
+			subjectCard.setAttribute('aria-label', `Abrir matéria ${subject.name}`);
 			subjectCard.dataset.organizationSubjectId = subject.id;
 
 			subjectCard.innerHTML = `
@@ -474,11 +604,338 @@ export function initOrganization() {
 		`;
 	}
 
+	function renderThemeGallery() {
+		const subject = getSubjectById(selectedSubjectId);
+		const allThemes = subject ? getThemesBySubjectId(subject.id) : [];
+		const filteredThemes = getFilteredThemesFromSelectedSubject();
+
+		themeGallery.innerHTML = '';
+
+		const hasThemes = allThemes.length > 0;
+		const hasFilteredThemes = filteredThemes.length > 0;
+
+		themeGallery.hidden = !hasThemes || !hasFilteredThemes;
+		emptyThemesState.hidden = hasThemes;
+		noThemeResultsState.hidden = !hasThemes || hasFilteredThemes;
+
+		if (!hasThemes || !hasFilteredThemes) {
+			return;
+		}
+
+		filteredThemes.forEach((theme) => {
+			const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+			const questionsCount = getQuestionsByThemeId(theme.id).length;
+
+			const themeCard = document.createElement('article');
+
+			themeCard.classList.add('organization-card', 'organization-card--topic', 'organization-card--clickable');
+
+			if (theme.id === selectedThemeId) {
+				themeCard.classList.add('is-active');
+			}
+
+			themeCard.setAttribute('role', 'button');
+			themeCard.setAttribute('tabindex', '0');
+			themeCard.setAttribute('aria-label', `Selecionar tema ${theme.name}`);
+			themeCard.dataset.organizationThemeId = theme.id;
+
+			themeCard.innerHTML = `
+				<div class="organization-card__name" title="${escapeHTML(theme.name)}">
+					${escapeHTML(theme.name)}
+				</div>
+
+				<div class="organization-card__meta">
+					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? 'assunto' : 'assuntos'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'questão' : 'questões'}</span>
+				</div>
+			`;
+
+			themeGallery.appendChild(themeCard);
+		});
+	}
+
+	function renderThemeFeatureCard() {
+		const theme = getThemeById(selectedThemeId);
+
+		if (!theme) {
+			themeFeatureCard.className = 'organization-feature-card organization-feature-card--empty';
+
+			themeFeatureCard.innerHTML = `
+				<p>Primeiro selecione um tema para editá-lo ou acessar suas ações.</p>
+			`;
+
+			return;
+		}
+
+		const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+		const questionsCount = getQuestionsByThemeId(theme.id).length;
+		const errorsCount = getPendingErrorsByThemeId(theme.id).length;
+
+		themeFeatureCard.className = 'organization-feature-card organization-feature-card--active';
+
+		themeFeatureCard.innerHTML = `
+			<div class="organization-feature-card__topline">
+				<div class="organization-feature-card__name-wrap">
+					<div class="organization-feature-card__name" title="${escapeHTML(theme.name)}">
+						${escapeHTML(theme.name)}
+					</div>
+
+					<button
+						class="organization-edit-button"
+						type="button"
+						data-organization-theme-action="edit-theme"
+						aria-label="Editar nome do tema"
+						title="Editar"
+					>
+						✏️
+					</button>
+				</div>
+			</div>
+
+			<div class="organization-feature-card__statsline">
+				<div class="organization-feature-card__stats">
+					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? 'Assunto' : 'Assuntos'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'Questão' : 'Questões'}</span>
+					<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? 'Erro' : 'Erros'}</span>
+				</div>
+			</div>
+
+			<div class="organization-feature-card__actionline">
+				<button
+					class="organization-icon-button organization-feature-card__delete"
+					type="button"
+					data-organization-theme-action="delete-theme"
+					aria-label="Excluir tema"
+					title="Excluir"
+				>
+					🗑️
+				</button>
+
+				<div class="organization-feature-card__actions">
+					<button
+						type="button"
+						data-organization-theme-action="resolve-theme"
+						${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ''}
+					>
+						Resolver
+					</button>
+
+					<button
+						type="button"
+						data-organization-theme-action="create-question"
+					>
+						+ Questão
+					</button>
+
+					<button
+						type="button"
+						data-organization-theme-action="review-theme"
+						${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ''}
+					>
+						Revisar
+					</button>
+
+					<button
+						type="button"
+						data-organization-theme-action="create-note"
+					>
+						Anotar
+					</button>
+				</div>
+			</div>
+		`;
+	}
+
+	function renderSubtopicPanel() {
+		const theme = getThemeById(selectedThemeId);
+
+		if (!theme) {
+			topicPanelTitle.textContent = 'Tema';
+			subtopicAddCard.hidden = true;
+			selectThemeState.hidden = false;
+			subtopicList.hidden = true;
+			emptySubtopicsState.hidden = true;
+			noSubtopicResultsState.hidden = true;
+			return;
+		}
+
+		topicPanelTitle.textContent = theme.name;
+		subtopicAddCard.hidden = false;
+		selectThemeState.hidden = true;
+
+		const allSubtopics = getSubtopicsByThemeId(theme.id);
+		const filteredSubtopics = getFilteredSubtopicsFromSelectedTheme();
+
+		subtopicList.innerHTML = '';
+
+		const hasSubtopics = allSubtopics.length > 0;
+		const hasFilteredSubtopics = filteredSubtopics.length > 0;
+
+		subtopicList.hidden = !hasSubtopics || !hasFilteredSubtopics;
+		emptySubtopicsState.hidden = hasSubtopics;
+		noSubtopicResultsState.hidden = !hasSubtopics || hasFilteredSubtopics;
+
+		if (!hasSubtopics || !hasFilteredSubtopics) {
+			return;
+		}
+
+		filteredSubtopics.forEach((subtopic) => {
+			const questionsCount = getQuestionsBySubtopicId(subtopic.id).length;
+			const errorsCount = getPendingErrorsBySubtopicId(subtopic.id).length;
+			const isExpanded = selectedSubtopicId === subtopic.id;
+
+			const subtopicCard = document.createElement('article');
+
+			subtopicCard.classList.add('organization-subtopic-card', 'organization-subtopic-card--clickable');
+
+			if (isExpanded) {
+				subtopicCard.classList.add('is-expanded', 'is-active');
+			}
+
+			subtopicCard.dataset.organizationSubtopicId = subtopic.id;
+
+			subtopicCard.innerHTML = `
+				<div class="organization-subtopic-card__top">
+					<strong title="${escapeHTML(subtopic.name)}">
+						${escapeHTML(subtopic.name)}
+					</strong>
+
+					<div class="organization-subtopic-card__icons">
+						<button
+							type="button"
+							data-organization-subtopic-action="delete-subtopic"
+							data-subtopic-id="${escapeHTML(subtopic.id)}"
+							aria-label="Excluir assunto"
+							title="Excluir"
+						>
+							🗑️
+						</button>
+					</div>
+				</div>
+
+				${
+					isExpanded
+						? `
+							<div class="organization-subtopic-card__stats">
+								<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'Questão' : 'Questões'}</span>
+								<span><strong>0</strong> Anotações</span>
+								<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? 'Erro' : 'Erros'}</span>
+							</div>
+
+							<div class="organization-subtopic-card__actions">
+								<button type="button" data-organization-subtopic-action="create-question" data-subtopic-id="${escapeHTML(subtopic.id)}">
+									+ Questão
+								</button>
+
+								<button type="button" data-organization-subtopic-action="create-note" data-subtopic-id="${escapeHTML(subtopic.id)}">
+									Anotar
+								</button>
+
+								<button
+									type="button"
+									data-organization-subtopic-action="review-subtopic"
+									data-subtopic-id="${escapeHTML(subtopic.id)}"
+									${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ''}
+								>
+									Revisar
+								</button>
+
+								<button
+									type="button"
+									data-organization-subtopic-action="resolve-subtopic"
+									data-subtopic-id="${escapeHTML(subtopic.id)}"
+									${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ''}
+								>
+									Resolver
+								</button>
+							</div>
+						`
+						: ''
+				}
+			`;
+
+			subtopicList.appendChild(subtopicCard);
+		});
+	}
+
+	function renderSubjectModal() {
+		if (!isSubjectModalOpen) {
+			return;
+		}
+
+		const subject = getSubjectById(selectedSubjectId);
+
+		if (!subject) {
+			closeSubjectModal();
+			return;
+		}
+
+		ensureSelectedThemeBelongsToSubject();
+		ensureSelectedSubtopicBelongsToTheme();
+
+		subjectModalTitle.textContent = subject.name;
+
+		renderThemeGallery();
+		renderThemeFeatureCard();
+		renderSubtopicPanel();
+	}
+
 	function renderOrganization() {
 		ensureSelectedSubject();
+		ensureSelectedThemeBelongsToSubject();
+		ensureSelectedSubtopicBelongsToTheme();
+
 		renderOrganizationTree();
 		renderSubjectGallery();
 		renderSubjectFeatureCard();
+		renderSubjectModal();
+	}
+
+	function openSubjectModal(subjectId) {
+		selectSubject(subjectId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		document.body.style.overflow = 'hidden';
+
+		themeSearchText = '';
+		subtopicSearchText = '';
+		themeSearchInput.value = '';
+		subtopicSearchInput.value = '';
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function openSubjectModalWithTheme(themeId) {
+		selectTheme(themeId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		document.body.style.overflow = 'hidden';
+
+		subtopicSearchText = '';
+		subtopicSearchInput.value = '';
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function openSubjectModalWithSubtopic(subtopicId) {
+		selectSubtopic(subtopicId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		document.body.style.overflow = 'hidden';
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function closeSubjectModal() {
+		isSubjectModalOpen = false;
+		subjectModalLayer.hidden = true;
+		document.body.style.overflow = '';
 	}
 
 	function openQuestionCreationFromSubject(subject) {
@@ -524,6 +981,45 @@ export function initOrganization() {
 		);
 	}
 
+	function openQuestionCreationFromTheme(theme) {
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: theme.subjectId,
+					themeId: theme.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function openQuestionCreationFromSubtopic(subtopic) {
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId,
+					subtopicId: subtopic.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
 	function openNoteCreationFromSubject(subject) {
 		document.dispatchEvent(
 			new CustomEvent('notes:prepare-create', {
@@ -542,6 +1038,51 @@ export function initOrganization() {
 		);
 	}
 
+	function openNoteCreationFromTheme(theme) {
+		document.dispatchEvent(
+			new CustomEvent('notes:prepare-create', {
+				detail: {
+					subjectId: theme.subjectId,
+					themeId: theme.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'notes'
+				}
+			})
+		);
+	}
+
+	function openNoteCreationFromSubtopic(subtopic) {
+		const theme = getThemeById(subtopic.themeId);
+
+		document.dispatchEvent(
+			new CustomEvent('notes:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'notes'
+				}
+			})
+		);
+
+		console.log('Anotação aberta a partir do assunto:', {
+			subtopic: subtopic.name,
+			theme: theme?.name || ''
+		});
+	}
+
 	function handleSubjectGalleryClick(event) {
 		const subjectCard = event.target.closest('[data-organization-subject-id]');
 
@@ -549,7 +1090,7 @@ export function initOrganization() {
 			return;
 		}
 
-		selectSubject(subjectCard.dataset.organizationSubjectId);
+		openSubjectModal(subjectCard.dataset.organizationSubjectId);
 	}
 
 	function handleSubjectGalleryKeydown(event) {
@@ -564,26 +1105,26 @@ export function initOrganization() {
 		}
 
 		event.preventDefault();
-		selectSubject(subjectCard.dataset.organizationSubjectId);
+		openSubjectModal(subjectCard.dataset.organizationSubjectId);
 	}
 
 	function handleTreeClick(event) {
-		const subjectButton = event.target.closest('[data-organization-tree-subject]');
-		const themeButton = event.target.closest('[data-organization-tree-theme]');
 		const subtopicButton = event.target.closest('[data-organization-tree-subtopic]');
+		const themeButton = event.target.closest('[data-organization-tree-theme]');
+		const subjectButton = event.target.closest('[data-organization-tree-subject]');
 
 		if (subtopicButton) {
-			selectSubtopic(subtopicButton.dataset.organizationTreeSubtopic);
+			openSubjectModalWithSubtopic(subtopicButton.dataset.organizationTreeSubtopic);
 			return;
 		}
 
 		if (themeButton) {
-			selectTheme(themeButton.dataset.organizationTreeTheme);
+			openSubjectModalWithTheme(themeButton.dataset.organizationTreeTheme);
 			return;
 		}
 
 		if (subjectButton) {
-			selectSubject(subjectButton.dataset.organizationTreeSubject);
+			openSubjectModal(subjectButton.dataset.organizationTreeSubject);
 		}
 	}
 
@@ -597,6 +1138,30 @@ export function initOrganization() {
 
 		subjectSearchText = normalizeText(subjectSearchInput.value);
 		renderSubjectGallery();
+	}
+
+	function handleThemeSearchInput() {
+		themeSearchText = normalizeText(themeSearchInput.value);
+		renderThemeGallery();
+	}
+
+	function handleThemeSearchSubmit(event) {
+		event.preventDefault();
+
+		themeSearchText = normalizeText(themeSearchInput.value);
+		renderThemeGallery();
+	}
+
+	function handleSubtopicSearchInput() {
+		subtopicSearchText = normalizeText(subtopicSearchInput.value);
+		renderSubtopicPanel();
+	}
+
+	function handleSubtopicSearchSubmit(event) {
+		event.preventDefault();
+
+		subtopicSearchText = normalizeText(subtopicSearchInput.value);
+		renderSubtopicPanel();
 	}
 
 	function handleFeatureCardAction(event) {
@@ -614,26 +1179,12 @@ export function initOrganization() {
 		}
 
 		if (action === 'resolve-subject') {
-			document.dispatchEvent(
-				new CustomEvent('app:navigate', {
-					detail: {
-						sectionId: 'solve'
-					}
-				})
-			);
-
+			document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
 			return;
 		}
 
 		if (action === 'review-subject') {
-			document.dispatchEvent(
-				new CustomEvent('app:navigate', {
-					detail: {
-						sectionId: 'reviews'
-					}
-				})
-			);
-
+			document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
 			return;
 		}
 
@@ -657,24 +1208,163 @@ export function initOrganization() {
 		}
 	}
 
+	function handleSubjectModalClick(event) {
+		const closeButton = event.target.closest('.organization-modal-close');
+
+		if (closeButton) {
+			closeSubjectModal();
+			return;
+		}
+
+		const themeActionButton = event.target.closest('[data-organization-theme-action]');
+
+		if (themeActionButton && !themeActionButton.disabled) {
+			const theme = getThemeById(selectedThemeId);
+
+			if (!theme) {
+				return;
+			}
+
+			const action = themeActionButton.dataset.organizationThemeAction;
+
+			if (action === 'create-question') {
+				openQuestionCreationFromTheme(theme);
+				return;
+			}
+
+			if (action === 'create-note') {
+				openNoteCreationFromTheme(theme);
+				return;
+			}
+
+			if (action === 'resolve-theme') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
+				return;
+			}
+
+			if (action === 'review-theme') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
+				return;
+			}
+
+			if (action === 'edit-theme') {
+				console.log('Edição de tema será implementada na próxima fase.', theme);
+				return;
+			}
+
+			if (action === 'delete-theme') {
+				console.log('Exclusão de tema será implementada na próxima fase.', theme);
+				return;
+			}
+		}
+
+		const subtopicActionButton = event.target.closest('[data-organization-subtopic-action]');
+
+		if (subtopicActionButton && !subtopicActionButton.disabled) {
+			const subtopicId = subtopicActionButton.dataset.subtopicId;
+			const subtopic = getSubtopicById(subtopicId);
+
+			if (!subtopic) {
+				return;
+			}
+
+			const action = subtopicActionButton.dataset.organizationSubtopicAction;
+
+			if (action === 'create-question') {
+				openQuestionCreationFromSubtopic(subtopic);
+				return;
+			}
+
+			if (action === 'create-note') {
+				openNoteCreationFromSubtopic(subtopic);
+				return;
+			}
+
+			if (action === 'resolve-subtopic') {
+				document.dispatchEvent(
+					new CustomEvent('solve:prepare-subtopic', {
+						detail: {
+							subtopicId: subtopic.id
+						}
+					})
+				);
+
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
+				return;
+			}
+
+			if (action === 'review-subtopic') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
+				return;
+			}
+
+			if (action === 'delete-subtopic') {
+				console.log('Exclusão de assunto será implementada na próxima fase.', subtopic);
+				return;
+			}
+		}
+
+		const themeCard = event.target.closest('[data-organization-theme-id]');
+
+		if (themeCard) {
+			selectTheme(themeCard.dataset.organizationThemeId);
+			return;
+		}
+
+		const subtopicCard = event.target.closest('[data-organization-subtopic-id]');
+
+		if (subtopicCard) {
+			selectSubtopic(subtopicCard.dataset.organizationSubtopicId);
+		}
+	}
+
+	function handleSubjectModalOverlayClick(event) {
+		if (event.target === subjectModalLayer) {
+			closeSubjectModal();
+		}
+	}
+
+	function handleSubjectModalKeydown(event) {
+		if (event.key === 'Escape' && !subjectModalLayer.hidden) {
+			closeSubjectModal();
+		}
+	}
+
 	function handleDataReset() {
 		selectedSubjectId = null;
 		selectedThemeId = null;
 		selectedSubtopicId = null;
-		subjectSearchText = '';
-		subjectSearchInput.value = '';
 
+		subjectSearchText = '';
+		themeSearchText = '';
+		subtopicSearchText = '';
+
+		subjectSearchInput.value = '';
+		themeSearchInput.value = '';
+		subtopicSearchInput.value = '';
+
+		closeSubjectModal();
 		renderOrganization();
 	}
 
 	subjectSearchForm.addEventListener('submit', handleSubjectSearchSubmit);
 	subjectSearchInput.addEventListener('input', handleSubjectSearchInput);
 
+	themeSearchForm.addEventListener('submit', handleThemeSearchSubmit);
+	themeSearchInput.addEventListener('input', handleThemeSearchInput);
+
+	subtopicSearchForm.addEventListener('submit', handleSubtopicSearchSubmit);
+	subtopicSearchInput.addEventListener('input', handleSubtopicSearchInput);
+
 	subjectGallery.addEventListener('click', handleSubjectGalleryClick);
 	subjectGallery.addEventListener('keydown', handleSubjectGalleryKeydown);
 
 	organizationTree.addEventListener('click', handleTreeClick);
 	subjectFeatureCard.addEventListener('click', handleFeatureCardAction);
+
+	subjectModalLayer.addEventListener('click', handleSubjectModalClick);
+	subjectModalLayer.addEventListener('click', handleSubjectModalOverlayClick);
+	document.addEventListener('keydown', handleSubjectModalKeydown);
 
 	document.addEventListener('subjects:changed', renderOrganization);
 	document.addEventListener('themes:changed', renderOrganization);
