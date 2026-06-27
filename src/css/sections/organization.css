@@ -1592,11 +1592,46 @@
 }
 
 /* =========================================================
+   AJUSTE VISUAL — FEEDBACK DE BUSCA NO TOPO
+   ========================================================= */
+
+.organization-main-panel > .organization-state,
+.organization-subject-content > .organization-state,
+.organization-topic-panel > .organization-state,
+.organization-direct-modal__body > .organization-state {
+  align-self: start;
+  min-height: auto;
+}
+
+.organization-state--search {
+  place-items: center;
+  align-content: center;
+
+  min-height: 120px;
+  margin-top: 0;
+}
+
+/* =========================================================
+   AJUSTE VISUAL — NOMES GRANDES NOS CARDS
+   ========================================================= */
+
+.organization-card__name {
+  min-height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: anywhere;
+  word-break: normal;
+
+  line-height: 1.25;
+}
+
+/* =========================================================
    9. RESPONSIVIDADE
-   =========================================================
-   Observação:
-   A ordem original dos media queries foi preservada para evitar
-   mudanças acidentais na cascata.
    ========================================================= */
 
 @media (max-width: 760px) {
