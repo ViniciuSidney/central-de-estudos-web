@@ -1755,6 +1755,73 @@
 }
 
 /* =========================================================
+   AJUSTE — HOVER GERAL DOS BOTÕES DA ORGANIZAÇÃO
+   ========================================================= */
+
+.organization-section button:not(:disabled),
+.organization-section .organization-state__action,
+.organization-section .organization-import-button {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    filter 0.2s ease;
+}
+
+.organization-section button:not(:disabled):hover,
+.organization-section .organization-state__action:hover,
+.organization-section .organization-import-button:hover {
+  transform: translateY(-1px);
+}
+
+.organization-section button:not(:disabled):focus-visible,
+.organization-section .organization-state__action:focus-visible,
+.organization-section .organization-import-button:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(143, 204, 172, 0.18);
+}
+
+/* Botões principais */
+
+.organization-add-card button:hover,
+.organization-feature-card__actions button:not(:disabled):hover,
+.organization-subtopic-card__actions button:not(:disabled):hover,
+.organization-state__action:hover,
+.organization-confirm-button:hover {
+  filter: brightness(1.06);
+}
+
+/* Botões secundários */
+
+.organization-search button:hover,
+.organization-icon-button:hover,
+.organization-edit-button:hover,
+.organization-import-button:hover,
+.organization-cancel-button:hover {
+  background: var(--success-soft);
+  border-color: var(--accent);
+}
+
+/* Botões de perigo */
+
+.organization-feature-card__delete:hover,
+.organization-subtopic-card__icons button[data-organization-subtopic-action="delete-subtopic"]:hover {
+  color: var(--feedback-error-border);
+  background: var(--bg);
+  border-color: var(--feedback-error-border);
+}
+
+/* Botões desabilitados */
+
+.organization-section button:disabled {
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
    9. RESPONSIVIDADE
    ========================================================= */
 

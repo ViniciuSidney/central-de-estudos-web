@@ -2356,6 +2356,26 @@ export function initOrganization() {
     renderSubtopicPanel();
   }
 
+  function handleEmptyThemesStateClick(event) {
+    const actionButton = event.target.closest("button, .organization-state__action");
+
+    if (!actionButton) {
+      return;
+    }
+
+    openThemeCreateForm();
+  }
+
+  function handleEmptySubtopicsStateClick(event) {
+    const actionButton = event.target.closest("button, .organization-state__action");
+
+    if (!actionButton) {
+      return;
+    }
+
+    openSubtopicCreateForm();
+  }
+
   function handleFeatureCardAction(event) {
     const actionButton = event.target.closest("[data-organization-action]");
 
@@ -2646,6 +2666,8 @@ export function initOrganization() {
   subjectAddCard.addEventListener("click", openSubjectCreateForm);
   themeAddCard.addEventListener("click", openThemeCreateForm);
   subtopicAddCard.addEventListener("click", openSubtopicCreateForm);
+  emptyThemesState.addEventListener("click", handleEmptyThemesStateClick);
+  emptySubtopicsState.addEventListener("click", handleEmptySubtopicsStateClick);
 
   organizationTree.addEventListener("click", handleTreeClick);
   subjectFeatureCard.addEventListener("click", handleFeatureCardAction);
