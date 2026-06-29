@@ -1,6 +1,11 @@
 import { getCollection, saveCollection } from "../core/storage.js";
 import { compareNames } from "../systems/listTextImport.js";
-import { addSubtopic } from "./subtopics.js";
+import { addSubtopic, deleteSubtopic } from "./subtopics.js";
+import {
+  removeThemesQuestionsAndRelatedDataBySubjectIds,
+  removeQuestionsAndRelatedDataByThemeIds,
+  removeSubtopicsQuestionsAndRelatedDataByThemeIds,
+} from "../systems/dataIntegrity.js";
 
 const SUBJECTS_COLLECTION = "subjects";
 const THEMES_COLLECTION = "themes";
@@ -48,8 +53,26 @@ export function initOrganization() {
   const subtopicList = topicPanel?.querySelector(".organization-subtopic-list");
   const emptySubtopicsState = topicPanel?.querySelector("#organization-empty-subtopics");
   const noSubtopicResultsState = topicPanel?.querySelector("#organization-no-subtopic-results");
+  const deleteModalLayer = organizationSection.querySelector("#organization-delete-modal");
+  const deleteModalTitle = deleteModalLayer?.querySelector("#organization-delete-title");
+  const deleteModalName = deleteModalLayer?.querySelector(".organization-delete-modal__name");
+  const deleteModalDescription = deleteModalLayer?.querySelector("#organization-delete-description");
+  const deleteModalStats = deleteModalLayer?.querySelector(".organization-delete-modal__stats");
+  const deleteModalCheckInput = deleteModalLayer?.querySelector(".organization-delete-modal__check input");
+  const deleteModalConfirmButton = deleteModalLayer?.querySelector(".organization-delete-modal__confirm");
+  const deleteModalCancelButton = deleteModalLayer?.querySelector(".organization-delete-modal__cancel");
+  const deleteModalCloseButton = deleteModalLayer?.querySelector(".organization-modal-close");
 
   if (
+    !deleteModalLayer ||
+    !deleteModalTitle ||
+    !deleteModalName ||
+    !deleteModalDescription ||
+    !deleteModalStats ||
+    !deleteModalCheckInput ||
+    !deleteModalConfirmButton ||
+    !deleteModalCancelButton ||
+    !deleteModalCloseButton ||
     !organizationTree ||
     !organizationMainPanel ||
     !subjectSearchForm ||
@@ -93,10 +116,14 @@ export function initOrganization() {
   let subtopicSearchText = "";
 
   let isSubjectModalOpen = false;
+  let isDeleteModalOpen = false;
+
   let subjectCardMode = "view";
   let themeCardMode = "view";
   let isSubtopicFormOpen = false;
   let editingSubtopicId = null;
+
+  let pendingDeleteTarget = null;
 
   const collapsedSubjectIds = new Set();
   const collapsedThemeIds = new Set();
@@ -147,6 +174,27 @@ export function initOrganization() {
 
   function notifySubtopicsChanged() {
     document.dispatchEvent(new CustomEvent("subtopics:changed"));
+  }
+
+  function notifyQuestionsChanged() {
+    document.dispatchEvent(new CustomEvent("questions:changed"));
+  }
+
+  function notifyAttemptsChanged() {
+    document.dispatchEvent(new CustomEvent("attempts:changed"));
+  }
+
+  function notifyErrorReviewsChanged() {
+    document.dispatchEvent(new CustomEvent("errorReviews:changed"));
+  }
+
+  function notifyOrganizationRelatedDataChanged() {
+    notifySubjectsChanged();
+    notifyThemesChanged();
+    notifySubtopicsChanged();
+    notifyQuestionsChanged();
+    notifyAttemptsChanged();
+    notifyErrorReviewsChanged();
   }
 
   function createSubject(name) {
@@ -250,6 +298,33 @@ export function initOrganization() {
     return getQuestions().filter((question) => {
       return question.subtopicId === subtopicId;
     });
+  }
+
+  function getSubtopicsBySubjectId(subjectId) {
+    return getSubtopics().filter((subtopic) => {
+      return subtopic.subjectId === subjectId;
+    });
+  }
+
+  function saveQuestions(questions) {
+    saveCollection(QUESTIONS_COLLECTION, questions);
+  }
+
+  function unlinkQuestionsFromSubtopic(subtopicId) {
+    const updatedQuestions = getQuestions().map((question) => {
+      if (question.subtopicId !== subtopicId) {
+        return question;
+      }
+
+      return {
+        ...question,
+        subtopicId: null,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    saveQuestions(updatedQuestions);
+    notifyQuestionsChanged();
   }
 
   function escapeHTML(value) {
@@ -1376,12 +1451,16 @@ export function initOrganization() {
     renderSubjectModal();
   }
 
+  function syncBodyScrollLock() {
+    document.body.style.overflow = isSubjectModalOpen || isDeleteModalOpen ? "hidden" : "";
+  }
+
   function openSubjectModal(subjectId) {
     selectSubject(subjectId);
 
     isSubjectModalOpen = true;
     subjectModalLayer.hidden = false;
-    document.body.style.overflow = "hidden";
+    syncBodyScrollLock();
 
     themeSearchText = "";
     subtopicSearchText = "";
@@ -1397,7 +1476,7 @@ export function initOrganization() {
 
     isSubjectModalOpen = true;
     subjectModalLayer.hidden = false;
-    document.body.style.overflow = "hidden";
+    syncBodyScrollLock();
 
     subtopicSearchText = "";
     subtopicSearchInput.value = "";
@@ -1411,7 +1490,7 @@ export function initOrganization() {
 
     isSubjectModalOpen = true;
     subjectModalLayer.hidden = false;
-    document.body.style.overflow = "hidden";
+    syncBodyScrollLock();
 
     renderSubjectModal();
     subjectModalCloseButton.focus();
@@ -1424,7 +1503,7 @@ export function initOrganization() {
     editingSubtopicId = null;
 
     subjectModalLayer.hidden = true;
-    document.body.style.overflow = "";
+    syncBodyScrollLock();
   }
 
   function openQuestionCreationFromSubject(subject) {
@@ -1957,6 +2036,226 @@ export function initOrganization() {
     renderOrganization();
   }
 
+  function getDeleteTarget({ type, id }) {
+    if (type === "subject") {
+      return getSubjectById(id);
+    }
+
+    if (type === "theme") {
+      return getThemeById(id);
+    }
+
+    if (type === "subtopic") {
+      return getSubtopicById(id);
+    }
+
+    return null;
+  }
+
+  function getDeleteModalData({ type, target }) {
+    if (type === "subject") {
+      const themesCount = getThemesBySubjectId(target.id).length;
+      const subtopicsCount = getSubtopicsBySubjectId(target.id).length;
+      const questionsCount = getQuestionsBySubjectId(target.id).length;
+
+      return {
+        tag: "Excluir matéria",
+        name: target.name,
+        description: "Esta ação remove a matéria, seus temas, assuntos, questões e registros relacionados. Use apenas se tiver certeza.",
+        stats: [
+          { label: themesCount === 1 ? "Tema" : "Temas", value: themesCount },
+          { label: subtopicsCount === 1 ? "Assunto" : "Assuntos", value: subtopicsCount },
+          { label: questionsCount === 1 ? "Questão" : "Questões", value: questionsCount },
+        ],
+      };
+    }
+
+    if (type === "theme") {
+      const subtopicsCount = getSubtopicsByThemeId(target.id).length;
+      const questionsCount = getQuestionsByThemeId(target.id).length;
+      const errorsCount = getPendingErrorsByThemeId(target.id).length;
+
+      return {
+        tag: "Excluir tema",
+        name: target.name,
+        description: "Esta ação remove o tema, seus assuntos, questões e registros relacionados. A matéria continuará cadastrada.",
+        stats: [
+          { label: subtopicsCount === 1 ? "Assunto" : "Assuntos", value: subtopicsCount },
+          { label: questionsCount === 1 ? "Questão" : "Questões", value: questionsCount },
+          { label: errorsCount === 1 ? "Erro" : "Erros", value: errorsCount },
+        ],
+      };
+    }
+
+    const questionsCount = getQuestionsBySubtopicId(target.id).length;
+    const errorsCount = getPendingErrorsBySubtopicId(target.id).length;
+
+    return {
+      tag: "Excluir assunto",
+      name: target.name,
+      description: "Esta ação remove apenas o assunto. As questões vinculadas serão mantidas no tema, mas ficarão sem assunto.",
+      stats: [
+        { label: questionsCount === 1 ? "Questão mantida" : "Questões mantidas", value: questionsCount },
+        { label: errorsCount === 1 ? "Erro vinculado" : "Erros vinculados", value: errorsCount },
+        { label: "Ação", value: "Desvincular" },
+      ],
+    };
+  }
+
+  function renderDeleteModalStats(stats) {
+    deleteModalStats.innerHTML = stats
+      .map((item) => {
+        return `
+				<span>
+					<strong>${escapeHTML(item.value)}</strong>
+					${escapeHTML(item.label)}
+				</span>
+			`;
+      })
+      .join("");
+  }
+
+  function openDeleteModal({ type, id }) {
+    const target = getDeleteTarget({ type, id });
+
+    if (!target) {
+      return;
+    }
+
+    const modalData = getDeleteModalData({ type, target });
+
+    pendingDeleteTarget = {
+      type,
+      id,
+    };
+
+    deleteModalTitle.textContent = modalData.tag;
+    deleteModalName.textContent = modalData.name;
+    deleteModalDescription.textContent = modalData.description;
+
+    renderDeleteModalStats(modalData.stats);
+
+    deleteModalCheckInput.checked = false;
+    deleteModalConfirmButton.disabled = true;
+
+    isDeleteModalOpen = true;
+    deleteModalLayer.hidden = false;
+
+    syncBodyScrollLock();
+
+    deleteModalCheckInput.focus();
+  }
+
+  function closeDeleteModal() {
+    isDeleteModalOpen = false;
+    pendingDeleteTarget = null;
+
+    deleteModalLayer.hidden = true;
+    deleteModalCheckInput.checked = false;
+    deleteModalConfirmButton.disabled = true;
+
+    syncBodyScrollLock();
+  }
+
+  function updateDeleteConfirmState() {
+    deleteModalConfirmButton.disabled = !deleteModalCheckInput.checked;
+  }
+
+  function deleteSubjectFromOrganization(subjectId) {
+    const updatedSubjects = getSubjects().filter((subject) => {
+      return subject.id !== subjectId;
+    });
+
+    saveSubjects(updatedSubjects);
+    removeThemesQuestionsAndRelatedDataBySubjectIds([subjectId]);
+
+    if (selectedSubjectId === subjectId) {
+      selectedSubjectId = null;
+      selectedThemeId = null;
+      selectedSubtopicId = null;
+    }
+
+    subjectCardMode = "view";
+    themeCardMode = "view";
+    isSubtopicFormOpen = false;
+
+    closeSubjectModal();
+    notifyOrganizationRelatedDataChanged();
+    renderOrganization();
+  }
+
+  function deleteThemeFromOrganization(themeId) {
+    const updatedThemes = getThemes().filter((theme) => {
+      return theme.id !== themeId;
+    });
+
+    saveThemes(updatedThemes);
+
+    removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
+    removeQuestionsAndRelatedDataByThemeIds([themeId]);
+
+    if (selectedThemeId === themeId) {
+      selectedThemeId = null;
+      selectedSubtopicId = null;
+    }
+
+    themeCardMode = "view";
+    isSubtopicFormOpen = false;
+
+    notifyOrganizationRelatedDataChanged();
+    renderOrganization();
+  }
+
+  function deleteSubtopicFromOrganization(subtopicId) {
+    unlinkQuestionsFromSubtopic(subtopicId);
+    deleteSubtopic(subtopicId);
+
+    if (selectedSubtopicId === subtopicId) {
+      selectedSubtopicId = null;
+    }
+
+    isSubtopicFormOpen = false;
+
+    notifySubtopicsChanged();
+    renderOrganization();
+  }
+
+  function confirmDeleteModal() {
+    if (!pendingDeleteTarget || deleteModalConfirmButton.disabled) {
+      return;
+    }
+
+    const { type, id } = pendingDeleteTarget;
+
+    closeDeleteModal();
+
+    if (type === "subject") {
+      deleteSubjectFromOrganization(id);
+      return;
+    }
+
+    if (type === "theme") {
+      deleteThemeFromOrganization(id);
+      return;
+    }
+
+    if (type === "subtopic") {
+      deleteSubtopicFromOrganization(id);
+    }
+  }
+
+  function handleDeleteModalClick(event) {
+    if (event.target === deleteModalLayer) {
+      closeDeleteModal();
+    }
+  }
+
+  function handleDeleteModalKeydown(event) {
+    if (event.key === "Escape" && isDeleteModalOpen) {
+      closeDeleteModal();
+    }
+  }
+
   function handleSubjectGalleryClick(event) {
     const subjectCard = event.target.closest("[data-organization-subject-id]");
 
@@ -2118,7 +2417,12 @@ export function initOrganization() {
     }
 
     if (action === "delete-subject") {
-      console.log("Exclusão de matéria será implementada na próxima fase.", subject);
+      openDeleteModal({
+        type: "subject",
+        id: subject.id,
+      });
+
+      return;
     }
   }
 
@@ -2187,7 +2491,11 @@ export function initOrganization() {
       }
 
       if (action === "delete-theme") {
-        console.log("Exclusão de tema será implementada na próxima fase.", theme);
+        openDeleteModal({
+          type: "theme",
+          id: theme.id,
+        });
+
         return;
       }
     }
@@ -2258,7 +2566,11 @@ export function initOrganization() {
       }
 
       if (action === "delete-subtopic") {
-        console.log("Exclusão de assunto será implementada na próxima fase.", subtopic);
+        openDeleteModal({
+          type: "subtopic",
+          id: subtopic.id,
+        });
+
         return;
       }
     }
@@ -2284,6 +2596,10 @@ export function initOrganization() {
   }
 
   function handleSubjectModalKeydown(event) {
+    if (isDeleteModalOpen) {
+      return;
+    }
+
     if (event.key === "Escape" && !subjectModalLayer.hidden) {
       closeSubjectModal();
     }
@@ -2303,10 +2619,14 @@ export function initOrganization() {
     isSubtopicFormOpen = false;
     editingSubtopicId = null;
 
+    pendingDeleteTarget = null;
+    isDeleteModalOpen = false;
+
     subjectSearchInput.value = "";
     themeSearchInput.value = "";
     subtopicSearchInput.value = "";
 
+    closeDeleteModal();
     closeSubjectModal();
     renderOrganization();
   }
@@ -2333,6 +2653,13 @@ export function initOrganization() {
   subjectModalLayer.addEventListener("click", handleSubjectModalClick);
   subjectModalLayer.addEventListener("click", handleSubjectModalOverlayClick);
   document.addEventListener("keydown", handleSubjectModalKeydown);
+
+  deleteModalLayer.addEventListener("click", handleDeleteModalClick);
+  deleteModalCloseButton.addEventListener("click", closeDeleteModal);
+  deleteModalCancelButton.addEventListener("click", closeDeleteModal);
+  deleteModalCheckInput.addEventListener("change", updateDeleteConfirmState);
+  deleteModalConfirmButton.addEventListener("click", confirmDeleteModal);
+  document.addEventListener("keydown", handleDeleteModalKeydown);
 
   document.addEventListener("subjects:changed", renderOrganization);
   document.addEventListener("themes:changed", renderOrganization);
