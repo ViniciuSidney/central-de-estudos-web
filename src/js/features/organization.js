@@ -98,6 +98,9 @@ export function initOrganization() {
   let isSubtopicFormOpen = false;
   let editingSubtopicId = null;
 
+  const collapsedSubjectIds = new Set();
+  const collapsedThemeIds = new Set();
+
   function getSubjects() {
     return getCollection(SUBJECTS_COLLECTION);
   }
@@ -264,6 +267,20 @@ export function initOrganization() {
       .normalize("NFD")
       .replaceAll(/[\u0300-\u036f]/g, "")
       .trim();
+  }
+
+  function getCardNameSizeClass(name) {
+    const nameLength = normalizeText(name).length;
+
+    if (nameLength >= 34) {
+      return "organization-card__name--very-long";
+    }
+
+    if (nameLength >= 24) {
+      return "organization-card__name--long";
+    }
+
+    return "";
   }
 
   function getPendingErrorAttempts() {
@@ -467,6 +484,34 @@ export function initOrganization() {
     renderOrganization();
   }
 
+  function toggleCollapsedSubject(subjectId) {
+    if (!subjectId) {
+      return;
+    }
+
+    if (collapsedSubjectIds.has(subjectId)) {
+      collapsedSubjectIds.delete(subjectId);
+    } else {
+      collapsedSubjectIds.add(subjectId);
+    }
+
+    renderOrganizationTree();
+  }
+
+  function toggleCollapsedTheme(themeId) {
+    if (!themeId) {
+      return;
+    }
+
+    if (collapsedThemeIds.has(themeId)) {
+      collapsedThemeIds.delete(themeId);
+    } else {
+      collapsedThemeIds.add(themeId);
+    }
+
+    renderOrganizationTree();
+  }
+
   function renderOrganizationTree() {
     const subjects = getSubjects();
 
@@ -474,11 +519,11 @@ export function initOrganization() {
 
     if (subjects.length === 0) {
       organizationTree.innerHTML = `
-				<div class="organization-state organization-state--compact">
-					<strong>Nenhuma matéria.</strong>
-					<span>Adicione uma matéria para montar sua estrutura.</span>
-				</div>
-			`;
+			<div class="organization-state organization-state--compact">
+				<strong>Nenhuma matéria.</strong>
+				<span>Adicione uma matéria para montar sua estrutura.</span>
+			</div>
+		`;
 
       return;
     }
@@ -486,74 +531,96 @@ export function initOrganization() {
     subjects.forEach((subject) => {
       const subjectThemes = getThemesBySubjectId(subject.id);
       const isSelectedSubject = selectedSubjectId === subject.id;
+      const isSubjectCollapsed = collapsedSubjectIds.has(subject.id);
+      const shouldShowThemes = subjectThemes.length > 0 && !isSubjectCollapsed;
 
       const group = document.createElement("div");
-      group.classList.add("organization-tree__group", "is-open");
+      group.classList.add("organization-tree__group");
+
+      if (!isSubjectCollapsed) {
+        group.classList.add("is-open");
+      }
 
       const themesHTML = subjectThemes
         .map((theme) => {
           const themeSubtopics = getSubtopicsByThemeId(theme.id);
           const isSelectedTheme = selectedThemeId === theme.id;
+          const isThemeCollapsed = collapsedThemeIds.has(theme.id);
+          const shouldShowSubtopics = themeSubtopics.length > 0 && !isThemeCollapsed;
 
           const subtopicsHTML = themeSubtopics
             .map((subtopic) => {
               const isSelectedSubtopic = selectedSubtopicId === subtopic.id;
 
               return `
-								<button
-									class="organization-tree__item organization-tree__item--subtopic ${isSelectedSubtopic ? "is-active" : ""}"
-									type="button"
-									data-organization-tree-subtopic="${escapeHTML(subtopic.id)}"
-								>
-									${escapeHTML(subtopic.name)}
-								</button>
-							`;
+							<button
+								class="organization-tree__item organization-tree__item--subtopic ${isSelectedSubtopic ? "is-active" : ""}"
+								type="button"
+								data-organization-tree-subtopic="${escapeHTML(subtopic.id)}"
+							>
+								${escapeHTML(subtopic.name)}
+							</button>
+						`;
             })
             .join("");
 
           return `
-						<button
-							class="organization-tree__item organization-tree__item--theme ${isSelectedTheme ? "is-active" : ""}"
-							type="button"
-							data-organization-tree-theme="${escapeHTML(theme.id)}"
-						>
-							<span>${escapeHTML(theme.name)}</span>
-							<span aria-hidden="true">${themeSubtopics.length > 0 ? "▾" : "•"}</span>
-						</button>
+					<button
+						class="organization-tree__item organization-tree__item--theme ${isSelectedTheme ? "is-active" : ""}"
+						type="button"
+						data-organization-tree-theme="${escapeHTML(theme.id)}"
+					>
+						<span>${escapeHTML(theme.name)}</span>
 
-						${
-              themeSubtopics.length > 0
-                ? `
-									<div class="organization-tree__children organization-tree__children--subtopics">
-										${subtopicsHTML}
-									</div>
-								`
-                : ""
-            }
-					`;
+						<span
+							class="organization-tree__toggle"
+							data-organization-tree-toggle-theme="${escapeHTML(theme.id)}"
+							aria-hidden="true"
+						>
+							${themeSubtopics.length > 0 ? (isThemeCollapsed ? "▸" : "▾") : "•"}
+						</span>
+					</button>
+
+					${
+            shouldShowSubtopics
+              ? `
+								<div class="organization-tree__children organization-tree__children--subtopics">
+									${subtopicsHTML}
+								</div>
+							`
+              : ""
+          }
+				`;
         })
         .join("");
 
       group.innerHTML = `
-				<button
-					class="organization-tree__item organization-tree__item--subject ${isSelectedSubject ? "is-active" : ""}"
-					type="button"
-					data-organization-tree-subject="${escapeHTML(subject.id)}"
-				>
-					<span>${escapeHTML(subject.name)}</span>
-					<span aria-hidden="true">${subjectThemes.length > 0 ? "▾" : "•"}</span>
-				</button>
+			<button
+				class="organization-tree__item organization-tree__item--subject ${isSelectedSubject ? "is-active" : ""}"
+				type="button"
+				data-organization-tree-subject="${escapeHTML(subject.id)}"
+			>
+				<span>${escapeHTML(subject.name)}</span>
 
-				${
-          subjectThemes.length > 0
-            ? `
-							<div class="organization-tree__children">
-								${themesHTML}
-							</div>
-						`
-            : ""
-        }
-			`;
+				<span
+					class="organization-tree__toggle"
+					data-organization-tree-toggle-subject="${escapeHTML(subject.id)}"
+					aria-hidden="true"
+				>
+					${subjectThemes.length > 0 ? (isSubjectCollapsed ? "▸" : "▾") : "•"}
+				</span>
+			</button>
+
+			${
+        shouldShowThemes
+          ? `
+						<div class="organization-tree__children">
+							${themesHTML}
+						</div>
+					`
+          : ""
+      }
+		`;
 
       organizationTree.appendChild(group);
     });
@@ -593,9 +660,13 @@ export function initOrganization() {
       subjectCard.setAttribute("aria-label", `Abrir matéria ${subject.name}`);
       subjectCard.dataset.organizationSubjectId = subject.id;
 
+      const nameSizeClass = getCardNameSizeClass(subject.name);
+
       subjectCard.innerHTML = `
-				<div class="organization-card__name" title="${escapeHTML(subject.name)}">
-					${escapeHTML(subject.name)}
+				<div class="organization-card__name ${nameSizeClass}" title="${escapeHTML(subject.name)}">
+					<span class="organization-card__name-text">
+						${escapeHTML(subject.name)}
+					</span>
 				</div>
 
 				<div class="organization-card__meta">
@@ -836,9 +907,13 @@ export function initOrganization() {
       themeCard.setAttribute("aria-label", `Selecionar tema ${theme.name}`);
       themeCard.dataset.organizationThemeId = theme.id;
 
+      const nameSizeClass = getCardNameSizeClass(theme.name);
+
       themeCard.innerHTML = `
-				<div class="organization-card__name" title="${escapeHTML(theme.name)}">
-					${escapeHTML(theme.name)}
+				<div class="organization-card__name ${nameSizeClass}" title="${escapeHTML(theme.name)}">
+					<span class="organization-card__name-text">
+						${escapeHTML(theme.name)}
+					</span>
 				</div>
 
 				<div class="organization-card__meta">
@@ -1908,6 +1983,25 @@ export function initOrganization() {
   }
 
   function handleTreeClick(event) {
+    const themeToggle = event.target.closest("[data-organization-tree-toggle-theme]");
+    const subjectToggle = event.target.closest("[data-organization-tree-toggle-subject]");
+
+    if (themeToggle) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      toggleCollapsedTheme(themeToggle.dataset.organizationTreeToggleTheme);
+      return;
+    }
+
+    if (subjectToggle) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      toggleCollapsedSubject(subjectToggle.dataset.organizationTreeToggleSubject);
+      return;
+    }
+
     const subtopicButton = event.target.closest("[data-organization-tree-subtopic]");
     const themeButton = event.target.closest("[data-organization-tree-theme]");
     const subjectButton = event.target.closest("[data-organization-tree-subject]");
