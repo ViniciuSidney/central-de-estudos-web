@@ -643,6 +643,7 @@
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: 14px;
+  margin-top: 5px;
 }
 
 .organization-subtopic-card__top {
