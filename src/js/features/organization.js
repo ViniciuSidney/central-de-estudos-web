@@ -600,6 +600,25 @@ export function initOrganization() {
     renderOrganization();
   }
 
+  function toggleSubtopicSelection(subtopicId) {
+    const subtopic = getSubtopicById(subtopicId);
+
+    if (!subtopic) {
+      return;
+    }
+
+    if (selectedSubtopicId === subtopic.id) {
+      selectedSubtopicId = null;
+      editingSubtopicId = null;
+      isSubtopicFormOpen = false;
+
+      renderOrganization();
+      return;
+    }
+
+    selectSubtopic(subtopic.id);
+  }
+
   function toggleCollapsedSubject(subjectId) {
     if (!subjectId) {
       return;
@@ -3158,7 +3177,7 @@ export function initOrganization() {
     const subtopicCard = event.target.closest("[data-organization-subtopic-id]");
 
     if (subtopicCard) {
-      selectSubtopic(subtopicCard.dataset.organizationSubtopicId);
+      toggleSubtopicSelection(subtopicCard.dataset.organizationSubtopicId);
     }
   }
 
