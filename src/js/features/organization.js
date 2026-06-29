@@ -1,707 +1,719 @@
-import { getCollection, saveCollection } from "../core/storage.js";
-import { compareNames } from "../systems/listTextImport.js";
-import { addSubtopic, deleteSubtopic } from "./subtopics.js";
-import {
-  removeThemesQuestionsAndRelatedDataBySubjectIds,
-  removeQuestionsAndRelatedDataByThemeIds,
-  removeSubtopicsQuestionsAndRelatedDataByThemeIds,
-} from "../systems/dataIntegrity.js";
+import {getCollection, saveCollection} from '../core/storage.js';
+import {compareNames} from '../systems/listTextImport.js';
+import {parseQuestionsFromText} from '../systems/questionTextImport.js';
+import {addSubtopic, deleteSubtopic} from './subtopics.js';
+import {removeThemesQuestionsAndRelatedDataBySubjectIds, removeQuestionsAndRelatedDataByThemeIds, removeSubtopicsQuestionsAndRelatedDataByThemeIds} from '../systems/dataIntegrity.js';
 
-const SUBJECTS_COLLECTION = "subjects";
-const THEMES_COLLECTION = "themes";
-const SUBTOPICS_COLLECTION = "subtopics";
-const QUESTIONS_COLLECTION = "questions";
-const ATTEMPTS_COLLECTION = "attempts";
-const ERROR_REVIEWS_COLLECTION = "errorReviews";
+const SUBJECTS_COLLECTION = 'subjects';
+const THEMES_COLLECTION = 'themes';
+const SUBTOPICS_COLLECTION = 'subtopics';
+const QUESTIONS_COLLECTION = 'questions';
+const ATTEMPTS_COLLECTION = 'attempts';
+const ERROR_REVIEWS_COLLECTION = 'errorReviews';
 
 export function initOrganization() {
-  const organizationSection = document.querySelector("#organization");
-
-  if (!organizationSection) {
-    return;
-  }
-
-  const organizationTree = organizationSection.querySelector(".organization-tree");
-  const organizationMainPanel = organizationSection.querySelector(".organization-main-panel");
-  const subjectSearchForm = organizationMainPanel?.querySelector(".organization-search");
-  const subjectSearchInput = organizationMainPanel?.querySelector('.organization-search input[type="search"]');
-  const subjectGallery = organizationMainPanel?.querySelector(".organization-gallery");
-  const subjectFeatureCard = organizationMainPanel?.querySelector(".organization-feature-card--active, .organization-feature-card--empty");
-  const subjectAddCard = organizationMainPanel?.querySelector(".organization-fixed-row > .organization-add-card");
-  const emptySubjectsState = organizationSection.querySelector("#organization-empty-subjects");
-  const noSubjectResultsState = organizationSection.querySelector("#organization-no-subject-results");
-
-  const subjectModalLayer = organizationSection.querySelector("#organization-subject-panel-preview");
-  const subjectModalTitle = subjectModalLayer?.querySelector("#organization-subject-modal-title");
-  const subjectModalCloseButton = subjectModalLayer?.querySelector(".organization-modal-close");
-
-  const subjectModalContent = subjectModalLayer?.querySelector(".organization-subject-content");
-  const themeSearchForm = subjectModalContent?.querySelector(".organization-search--compact");
-  const themeSearchInput = themeSearchForm?.querySelector('input[type="search"]');
-  const themeFeatureCard = subjectModalContent?.querySelector(".organization-fixed-row--modal .organization-feature-card--active");
-  const themeAddCard = subjectModalContent?.querySelector(".organization-fixed-row--modal .organization-add-card");
-  const themeGallery = subjectModalContent?.querySelector(".organization-modal-gallery");
-  const emptyThemesState = subjectModalContent?.querySelector("#organization-empty-themes");
-  const noThemeResultsState = subjectModalContent?.querySelector("#organization-no-theme-results");
-
-  const topicPanel = subjectModalLayer?.querySelector(".organization-topic-panel");
-  const topicPanelTitle = topicPanel?.querySelector(".organization-modal-header--compact h3");
-  const subtopicSearchForm = topicPanel?.querySelector(".organization-search--compact");
-  const subtopicSearchInput = subtopicSearchForm?.querySelector('input[type="search"]');
-  const subtopicAddCard = topicPanel?.querySelector(".organization-add-card--horizontal");
-  const selectThemeState = topicPanel?.querySelector("#organization-select-theme-state");
-  const subtopicList = topicPanel?.querySelector(".organization-subtopic-list");
-  const emptySubtopicsState = topicPanel?.querySelector("#organization-empty-subtopics");
-  const noSubtopicResultsState = topicPanel?.querySelector("#organization-no-subtopic-results");
-  const deleteModalLayer = organizationSection.querySelector("#organization-delete-modal");
-  const deleteModalTitle = deleteModalLayer?.querySelector("#organization-delete-title");
-  const deleteModalName = deleteModalLayer?.querySelector(".organization-delete-modal__name");
-  const deleteModalDescription = deleteModalLayer?.querySelector("#organization-delete-description");
-  const deleteModalStats = deleteModalLayer?.querySelector(".organization-delete-modal__stats");
-  const deleteModalCheckInput = deleteModalLayer?.querySelector(".organization-delete-modal__check input");
-  const deleteModalConfirmButton = deleteModalLayer?.querySelector(".organization-delete-modal__confirm");
-  const deleteModalCancelButton = deleteModalLayer?.querySelector(".organization-delete-modal__cancel");
-  const deleteModalCloseButton = deleteModalLayer?.querySelector(".organization-modal-close");
-
-  const importButtons = organizationSection.querySelectorAll("[data-organization-import]");
-  const importModalLayer = organizationSection.querySelector("#organization-import-modal");
-  const importModalCloseButton = importModalLayer?.querySelector("#organization-import-close");
-  const importModalCancelButton = importModalLayer?.querySelector("#organization-import-cancel");
-  const importModalClearButton = importModalLayer?.querySelector("#organization-import-clear");
-  const importModalValidateButton = importModalLayer?.querySelector("#organization-import-validate");
-  const importModalConfirmButton = importModalLayer?.querySelector("#organization-import-confirm");
-  const importContextLabel = importModalLayer?.querySelector("#organization-import-context");
-  const importTextInput = importModalLayer?.querySelector("#organization-import-text");
-  const importFormatHelp = importModalLayer?.querySelector("#organization-import-format-help");
-  const importTypeButtons = importModalLayer?.querySelectorAll("[data-import-kind]");
-  const importValidationStatus = importModalLayer?.querySelector("#organization-import-validation-status");
-  const importValidCount = importModalLayer?.querySelector("#organization-import-valid-count");
-  const importDuplicateCount = importModalLayer?.querySelector("#organization-import-duplicate-count");
-  const importErrorCount = importModalLayer?.querySelector("#organization-import-error-count");
-  const importResultList = importModalLayer?.querySelector("#organization-import-result-list");
-  const importErrorList = importModalLayer?.querySelector("#organization-import-error-list");
-
-  if (
-    importButtons.length === 0 ||
-    !importModalLayer ||
-    !importModalCloseButton ||
-    !importModalCancelButton ||
-    !importModalClearButton ||
-    !importModalValidateButton ||
-    !importModalConfirmButton ||
-    !importContextLabel ||
-    !importTextInput ||
-    !importFormatHelp ||
-    !importTypeButtons ||
-    importTypeButtons.length === 0 ||
-    !importValidationStatus ||
-    !importValidCount ||
-    !importDuplicateCount ||
-    !importErrorCount ||
-    !importResultList ||
-    !importErrorList ||
-    !deleteModalLayer ||
-    !deleteModalTitle ||
-    !deleteModalName ||
-    !deleteModalDescription ||
-    !deleteModalStats ||
-    !deleteModalCheckInput ||
-    !deleteModalConfirmButton ||
-    !deleteModalCancelButton ||
-    !deleteModalCloseButton ||
-    !organizationTree ||
-    !organizationMainPanel ||
-    !subjectSearchForm ||
-    !subjectSearchInput ||
-    !subjectGallery ||
-    !subjectFeatureCard ||
-    !subjectAddCard ||
-    !emptySubjectsState ||
-    !noSubjectResultsState ||
-    !subjectModalLayer ||
-    !subjectModalTitle ||
-    !subjectModalCloseButton ||
-    !subjectModalContent ||
-    !themeSearchForm ||
-    !themeSearchInput ||
-    !themeFeatureCard ||
-    !themeAddCard ||
-    !themeGallery ||
-    !emptyThemesState ||
-    !noThemeResultsState ||
-    !topicPanel ||
-    !topicPanelTitle ||
-    !subtopicSearchForm ||
-    !subtopicSearchInput ||
-    !subtopicAddCard ||
-    !selectThemeState ||
-    !subtopicList ||
-    !emptySubtopicsState ||
-    !noSubtopicResultsState
-  ) {
-    console.warn("Organização v1.2 não iniciada: elementos não encontrados.");
-    return;
-  }
-
-  let selectedSubjectId = null;
-  let selectedThemeId = null;
-  let selectedSubtopicId = null;
-
-  let subjectSearchText = "";
-  let themeSearchText = "";
-  let subtopicSearchText = "";
-
-  let isSubjectModalOpen = false;
-  let isDeleteModalOpen = false;
-  let isImportModalOpen = false;
-
-  let subjectCardMode = "view";
-  let themeCardMode = "view";
-  let isSubtopicFormOpen = false;
-  let editingSubtopicId = null;
-
-  let pendingDeleteTarget = null;
-  let activeImportKind = "subjects";
-  let validatedImportItems = [];
-  let duplicatedImportItems = [];
-  let importErrors = [];
-
-  const collapsedSubjectIds = new Set();
-  const collapsedThemeIds = new Set();
-
-  function getSubjects() {
-    return getCollection(SUBJECTS_COLLECTION);
-  }
-
-  function getThemes() {
-    return getCollection(THEMES_COLLECTION);
-  }
-
-  function getSubtopics() {
-    return getCollection(SUBTOPICS_COLLECTION);
-  }
-
-  function getQuestions() {
-    return getCollection(QUESTIONS_COLLECTION);
-  }
-
-  function getAttempts() {
-    return getCollection(ATTEMPTS_COLLECTION);
-  }
-
-  function getErrorReviews() {
-    return getCollection(ERROR_REVIEWS_COLLECTION);
-  }
-
-  function saveSubjects(subjects) {
-    saveCollection(SUBJECTS_COLLECTION, subjects);
-  }
-
-  function saveThemes(themes) {
-    saveCollection(THEMES_COLLECTION, themes);
-  }
-
-  function saveSubtopics(subtopics) {
-    saveCollection(SUBTOPICS_COLLECTION, subtopics);
-  }
-
-  function notifySubjectsChanged() {
-    document.dispatchEvent(new CustomEvent("subjects:changed"));
-  }
-
-  function notifyThemesChanged() {
-    document.dispatchEvent(new CustomEvent("themes:changed"));
-  }
-
-  function notifySubtopicsChanged() {
-    document.dispatchEvent(new CustomEvent("subtopics:changed"));
-  }
-
-  function notifyQuestionsChanged() {
-    document.dispatchEvent(new CustomEvent("questions:changed"));
-  }
-
-  function notifyAttemptsChanged() {
-    document.dispatchEvent(new CustomEvent("attempts:changed"));
-  }
-
-  function notifyErrorReviewsChanged() {
-    document.dispatchEvent(new CustomEvent("errorReviews:changed"));
-  }
-
-  function notifyOrganizationRelatedDataChanged() {
-    notifySubjectsChanged();
-    notifyThemesChanged();
-    notifySubtopicsChanged();
-    notifyQuestionsChanged();
-    notifyAttemptsChanged();
-    notifyErrorReviewsChanged();
-  }
-
-  function createSubject(name) {
-    return {
-      id: crypto.randomUUID(),
-      name,
-      description: "",
-      createdAt: new Date().toISOString(),
-    };
-  }
-
-  function createTheme({ subjectId, name }) {
-    return {
-      id: crypto.randomUUID(),
-      subjectId,
-      name,
-      description: "",
-      createdAt: new Date().toISOString(),
-    };
-  }
-
-  function findDuplicatedSubject(name) {
-    return getSubjects().find((subject) => {
-      return compareNames(subject.name, name);
-    });
-  }
-
-  function findDuplicatedTheme({ subjectId, name }) {
-    return getThemesBySubjectId(subjectId).find((theme) => {
-      return compareNames(theme.name, name);
-    });
-  }
-
-  function findDuplicatedSubjectIgnoringCurrent({ subjectId, name }) {
-    return getSubjects().find((subject) => {
-      return subject.id !== subjectId && compareNames(subject.name, name);
-    });
-  }
-
-  function findDuplicatedThemeIgnoringCurrent({ themeId, subjectId, name }) {
-    return getThemesBySubjectId(subjectId).find((theme) => {
-      return theme.id !== themeId && compareNames(theme.name, name);
-    });
-  }
-
-  function findDuplicatedSubtopicIgnoringCurrent({ subtopicId, themeId, name }) {
-    return getSubtopicsByThemeId(themeId).find((subtopic) => {
-      return subtopic.id !== subtopicId && compareNames(subtopic.name, name);
-    });
-  }
-
-  function getSubjectById(subjectId) {
-    return getSubjects().find((subject) => {
-      return subject.id === subjectId;
-    });
-  }
-
-  function getThemeById(themeId) {
-    return getThemes().find((theme) => {
-      return theme.id === themeId;
-    });
-  }
-
-  function getSubtopicById(subtopicId) {
-    return getSubtopics().find((subtopic) => {
-      return subtopic.id === subtopicId;
-    });
-  }
-
-  function getQuestionById(questionId) {
-    return getQuestions().find((question) => {
-      return question.id === questionId;
-    });
-  }
-
-  function getThemesBySubjectId(subjectId) {
-    return getThemes().filter((theme) => {
-      return theme.subjectId === subjectId;
-    });
-  }
-
-  function getSubtopicsByThemeId(themeId) {
-    return getSubtopics().filter((subtopic) => {
-      return subtopic.themeId === themeId;
-    });
-  }
-
-  function getQuestionsBySubjectId(subjectId) {
-    return getQuestions().filter((question) => {
-      return question.subjectId === subjectId;
-    });
-  }
-
-  function getQuestionsByThemeId(themeId) {
-    return getQuestions().filter((question) => {
-      return question.themeId === themeId;
-    });
-  }
-
-  function getQuestionsBySubtopicId(subtopicId) {
-    return getQuestions().filter((question) => {
-      return question.subtopicId === subtopicId;
-    });
-  }
-
-  function getSubtopicsBySubjectId(subjectId) {
-    return getSubtopics().filter((subtopic) => {
-      return subtopic.subjectId === subjectId;
-    });
-  }
-
-  function saveQuestions(questions) {
-    saveCollection(QUESTIONS_COLLECTION, questions);
-  }
-
-  function unlinkQuestionsFromSubtopic(subtopicId) {
-    const updatedQuestions = getQuestions().map((question) => {
-      if (question.subtopicId !== subtopicId) {
-        return question;
-      }
-
-      return {
-        ...question,
-        subtopicId: null,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    saveQuestions(updatedQuestions);
-    notifyQuestionsChanged();
-  }
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  function normalizeText(value) {
-    return String(value ?? "")
-      .toLowerCase()
-      .normalize("NFD")
-      .replaceAll(/[\u0300-\u036f]/g, "")
-      .trim();
-  }
-
-  function getCardNameSizeClass(name) {
-    const nameLength = normalizeText(name).length;
-
-    if (nameLength >= 34) {
-      return "organization-card__name--very-long";
-    }
-
-    if (nameLength >= 24) {
-      return "organization-card__name--long";
-    }
-
-    return "";
-  }
-
-  function getPendingErrorAttempts() {
-    const wrongAttempts = getAttempts().filter((attempt) => {
-      return !attempt.isCorrect;
-    });
-
-    const lastWrongAttemptByQuestion = new Map();
-
-    wrongAttempts.forEach((attempt) => {
-      const savedAttempt = lastWrongAttemptByQuestion.get(attempt.questionId);
-
-      if (!savedAttempt || new Date(attempt.answeredAt) > new Date(savedAttempt.answeredAt)) {
-        lastWrongAttemptByQuestion.set(attempt.questionId, attempt);
-      }
-    });
-
-    const reviewedAttemptIds = new Set(
-      getErrorReviews()
-        .filter((review) => {
-          return review.isReviewed;
-        })
-        .map((review) => {
-          return review.attemptId;
-        }),
-    );
-
-    return Array.from(lastWrongAttemptByQuestion.values()).filter((attempt) => {
-      return !reviewedAttemptIds.has(attempt.id);
-    });
-  }
-
-  function getAttemptQuestion(attempt) {
-    return getQuestionById(attempt.questionId);
-  }
-
-  function getPendingErrorsBySubjectId(subjectId) {
-    return getPendingErrorAttempts().filter((attempt) => {
-      return attempt.subjectId === subjectId;
-    });
-  }
-
-  function getPendingErrorsByThemeId(themeId) {
-    return getPendingErrorAttempts().filter((attempt) => {
-      const question = getAttemptQuestion(attempt);
-
-      return attempt.themeId === themeId || question?.themeId === themeId;
-    });
-  }
-
-  function getPendingErrorsBySubtopicId(subtopicId) {
-    return getPendingErrorAttempts().filter((attempt) => {
-      const question = getAttemptQuestion(attempt);
-
-      return attempt.subtopicId === subtopicId || question?.subtopicId === subtopicId;
-    });
-  }
-
-  function getFilteredSubjects() {
-    const subjects = getSubjects();
-
-    if (!subjectSearchText) {
-      return subjects;
-    }
-
-    return subjects.filter((subject) => {
-      return normalizeText(subject.name).includes(subjectSearchText);
-    });
-  }
-
-  function getFilteredThemesFromSelectedSubject() {
-    if (!selectedSubjectId) {
-      return [];
-    }
-
-    const themes = getThemesBySubjectId(selectedSubjectId);
-
-    if (!themeSearchText) {
-      return themes;
-    }
-
-    return themes.filter((theme) => {
-      return normalizeText(theme.name).includes(themeSearchText);
-    });
-  }
-
-  function getFilteredSubtopicsFromSelectedTheme() {
-    if (!selectedThemeId) {
-      return [];
-    }
-
-    const subtopics = getSubtopicsByThemeId(selectedThemeId);
-
-    if (!subtopicSearchText) {
-      return subtopics;
-    }
-
-    return subtopics.filter((subtopic) => {
-      return normalizeText(subtopic.name).includes(subtopicSearchText);
-    });
-  }
-
-  function ensureSelectedSubject() {
-    const subjects = getSubjects();
-
-    if (selectedSubjectId) {
-      const selectedSubjectStillExists = subjects.some((subject) => {
-        return subject.id === selectedSubjectId;
-      });
-
-      if (selectedSubjectStillExists) {
-        return;
-      }
-    }
-
-    selectedSubjectId = subjects[0]?.id || null;
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-  }
-
-  function ensureSelectedThemeBelongsToSubject() {
-    if (!selectedSubjectId || !selectedThemeId) {
-      selectedThemeId = null;
-      selectedSubtopicId = null;
-      return;
-    }
-
-    const theme = getThemeById(selectedThemeId);
-
-    if (!theme || theme.subjectId !== selectedSubjectId) {
-      selectedThemeId = null;
-      selectedSubtopicId = null;
-    }
-  }
-
-  function ensureSelectedSubtopicBelongsToTheme() {
-    if (!selectedThemeId || !selectedSubtopicId) {
-      selectedSubtopicId = null;
-      return;
-    }
-
-    const subtopic = getSubtopicById(selectedSubtopicId);
-
-    if (!subtopic || subtopic.themeId !== selectedThemeId) {
-      selectedSubtopicId = null;
-    }
-  }
-
-  function selectSubject(subjectId) {
-    const subject = getSubjectById(subjectId);
-
-    if (!subject) {
-      return;
-    }
-
-    selectedSubjectId = subject.id;
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-
-    subjectCardMode = "view";
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderOrganization();
-  }
-
-  function selectTheme(themeId) {
-    const theme = getThemeById(themeId);
-
-    if (!theme) {
-      return;
-    }
-
-    selectedSubjectId = theme.subjectId;
-    selectedThemeId = theme.id;
-    selectedSubtopicId = null;
-
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderOrganization();
-  }
-
-  function selectSubtopic(subtopicId) {
-    const subtopic = getSubtopicById(subtopicId);
-
-    if (!subtopic) {
-      return;
-    }
-
-    selectedSubjectId = subtopic.subjectId;
-    selectedThemeId = subtopic.themeId;
-    selectedSubtopicId = subtopic.id;
-
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderOrganization();
-  }
-
-  function toggleSubtopicSelection(subtopicId) {
-    const subtopic = getSubtopicById(subtopicId);
-
-    if (!subtopic) {
-      return;
-    }
-
-    if (selectedSubtopicId === subtopic.id) {
-      selectedSubtopicId = null;
-      editingSubtopicId = null;
-      isSubtopicFormOpen = false;
-
-      renderOrganization();
-      return;
-    }
-
-    selectSubtopic(subtopic.id);
-  }
-
-  function toggleCollapsedSubject(subjectId) {
-    if (!subjectId) {
-      return;
-    }
-
-    if (collapsedSubjectIds.has(subjectId)) {
-      collapsedSubjectIds.delete(subjectId);
-    } else {
-      collapsedSubjectIds.add(subjectId);
-    }
-
-    renderOrganizationTree();
-  }
-
-  function toggleCollapsedTheme(themeId) {
-    if (!themeId) {
-      return;
-    }
-
-    if (collapsedThemeIds.has(themeId)) {
-      collapsedThemeIds.delete(themeId);
-    } else {
-      collapsedThemeIds.add(themeId);
-    }
-
-    renderOrganizationTree();
-  }
-
-  function renderOrganizationTree() {
-    const subjects = getSubjects();
-
-    organizationTree.innerHTML = "";
-
-    if (subjects.length === 0) {
-      organizationTree.innerHTML = `
+	const organizationSection = document.querySelector('#organization');
+
+	if (!organizationSection) {
+		return;
+	}
+
+	const organizationTree = organizationSection.querySelector('.organization-tree');
+	const organizationMainPanel = organizationSection.querySelector('.organization-main-panel');
+	const subjectSearchForm = organizationMainPanel?.querySelector('.organization-search');
+	const subjectSearchInput = organizationMainPanel?.querySelector('.organization-search input[type="search"]');
+	const subjectGallery = organizationMainPanel?.querySelector('.organization-gallery');
+	const subjectFeatureCard = organizationMainPanel?.querySelector('.organization-feature-card--active, .organization-feature-card--empty');
+	const subjectAddCard = organizationMainPanel?.querySelector('.organization-fixed-row > .organization-add-card');
+	const emptySubjectsState = organizationSection.querySelector('#organization-empty-subjects');
+	const noSubjectResultsState = organizationSection.querySelector('#organization-no-subject-results');
+
+	const subjectModalLayer = organizationSection.querySelector('#organization-subject-panel-preview');
+	const subjectModalTitle = subjectModalLayer?.querySelector('#organization-subject-modal-title');
+	const subjectModalCloseButton = subjectModalLayer?.querySelector('.organization-modal-close');
+
+	const subjectModalContent = subjectModalLayer?.querySelector('.organization-subject-content');
+	const themeSearchForm = subjectModalContent?.querySelector('.organization-search--compact');
+	const themeSearchInput = themeSearchForm?.querySelector('input[type="search"]');
+	const themeFeatureCard = subjectModalContent?.querySelector('.organization-fixed-row--modal .organization-feature-card--active');
+	const themeAddCard = subjectModalContent?.querySelector('.organization-fixed-row--modal .organization-add-card');
+	const themeGallery = subjectModalContent?.querySelector('.organization-modal-gallery');
+	const emptyThemesState = subjectModalContent?.querySelector('#organization-empty-themes');
+	const noThemeResultsState = subjectModalContent?.querySelector('#organization-no-theme-results');
+
+	const topicPanel = subjectModalLayer?.querySelector('.organization-topic-panel');
+	const topicPanelTitle = topicPanel?.querySelector('.organization-modal-header--compact h3');
+	const subtopicSearchForm = topicPanel?.querySelector('.organization-search--compact');
+	const subtopicSearchInput = subtopicSearchForm?.querySelector('input[type="search"]');
+	const subtopicAddCard = topicPanel?.querySelector('.organization-add-card--horizontal');
+	const selectThemeState = topicPanel?.querySelector('#organization-select-theme-state');
+	const subtopicList = topicPanel?.querySelector('.organization-subtopic-list');
+	const emptySubtopicsState = topicPanel?.querySelector('#organization-empty-subtopics');
+	const noSubtopicResultsState = topicPanel?.querySelector('#organization-no-subtopic-results');
+	const deleteModalLayer = organizationSection.querySelector('#organization-delete-modal');
+	const deleteModalTitle = deleteModalLayer?.querySelector('#organization-delete-title');
+	const deleteModalName = deleteModalLayer?.querySelector('.organization-delete-modal__name');
+	const deleteModalDescription = deleteModalLayer?.querySelector('#organization-delete-description');
+	const deleteModalStats = deleteModalLayer?.querySelector('.organization-delete-modal__stats');
+	const deleteModalCheckInput = deleteModalLayer?.querySelector('.organization-delete-modal__check input');
+	const deleteModalConfirmButton = deleteModalLayer?.querySelector('.organization-delete-modal__confirm');
+	const deleteModalCancelButton = deleteModalLayer?.querySelector('.organization-delete-modal__cancel');
+	const deleteModalCloseButton = deleteModalLayer?.querySelector('.organization-modal-close');
+
+	const importButtons = organizationSection.querySelectorAll('[data-organization-import]');
+	const importModalLayer = organizationSection.querySelector('#organization-import-modal');
+	const importModalCloseButton = importModalLayer?.querySelector('#organization-import-close');
+	const importModalCancelButton = importModalLayer?.querySelector('#organization-import-cancel');
+	const importModalClearButton = importModalLayer?.querySelector('#organization-import-clear');
+	const importModalValidateButton = importModalLayer?.querySelector('#organization-import-validate');
+	const importModalConfirmButton = importModalLayer?.querySelector('#organization-import-confirm');
+	const importContextLabel = importModalLayer?.querySelector('#organization-import-context');
+	const importTextInput = importModalLayer?.querySelector('#organization-import-text');
+	const importFormatHelp = importModalLayer?.querySelector('#organization-import-format-help');
+	const importTypeButtons = importModalLayer?.querySelectorAll('[data-import-kind]');
+	const importValidationStatus = importModalLayer?.querySelector('#organization-import-validation-status');
+	const importValidCount = importModalLayer?.querySelector('#organization-import-valid-count');
+	const importDuplicateCount = importModalLayer?.querySelector('#organization-import-duplicate-count');
+	const importErrorCount = importModalLayer?.querySelector('#organization-import-error-count');
+	const importResultList = importModalLayer?.querySelector('#organization-import-result-list');
+	const importErrorList = importModalLayer?.querySelector('#organization-import-error-list');
+
+	if (
+		importButtons.length === 0 ||
+		!importModalLayer ||
+		!importModalCloseButton ||
+		!importModalCancelButton ||
+		!importModalClearButton ||
+		!importModalValidateButton ||
+		!importModalConfirmButton ||
+		!importContextLabel ||
+		!importTextInput ||
+		!importFormatHelp ||
+		!importTypeButtons ||
+		importTypeButtons.length === 0 ||
+		!importValidationStatus ||
+		!importValidCount ||
+		!importDuplicateCount ||
+		!importErrorCount ||
+		!importResultList ||
+		!importErrorList ||
+		!deleteModalLayer ||
+		!deleteModalTitle ||
+		!deleteModalName ||
+		!deleteModalDescription ||
+		!deleteModalStats ||
+		!deleteModalCheckInput ||
+		!deleteModalConfirmButton ||
+		!deleteModalCancelButton ||
+		!deleteModalCloseButton ||
+		!organizationTree ||
+		!organizationMainPanel ||
+		!subjectSearchForm ||
+		!subjectSearchInput ||
+		!subjectGallery ||
+		!subjectFeatureCard ||
+		!subjectAddCard ||
+		!emptySubjectsState ||
+		!noSubjectResultsState ||
+		!subjectModalLayer ||
+		!subjectModalTitle ||
+		!subjectModalCloseButton ||
+		!subjectModalContent ||
+		!themeSearchForm ||
+		!themeSearchInput ||
+		!themeFeatureCard ||
+		!themeAddCard ||
+		!themeGallery ||
+		!emptyThemesState ||
+		!noThemeResultsState ||
+		!topicPanel ||
+		!topicPanelTitle ||
+		!subtopicSearchForm ||
+		!subtopicSearchInput ||
+		!subtopicAddCard ||
+		!selectThemeState ||
+		!subtopicList ||
+		!emptySubtopicsState ||
+		!noSubtopicResultsState
+	) {
+		console.warn('Organização v1.2 não iniciada: elementos não encontrados.');
+		return;
+	}
+
+	let selectedSubjectId = null;
+	let selectedThemeId = null;
+	let selectedSubtopicId = null;
+
+	let subjectSearchText = '';
+	let themeSearchText = '';
+	let subtopicSearchText = '';
+
+	let isSubjectModalOpen = false;
+	let isDeleteModalOpen = false;
+	let isImportModalOpen = false;
+
+	let subjectCardMode = 'view';
+	let themeCardMode = 'view';
+	let isSubtopicFormOpen = false;
+	let editingSubtopicId = null;
+
+	let pendingDeleteTarget = null;
+	let activeImportKind = 'subjects';
+	let validatedImportItems = [];
+	let duplicatedImportItems = [];
+	let importErrors = [];
+
+	const collapsedSubjectIds = new Set();
+	const collapsedThemeIds = new Set();
+
+	function getSubjects() {
+		return getCollection(SUBJECTS_COLLECTION);
+	}
+
+	function getThemes() {
+		return getCollection(THEMES_COLLECTION);
+	}
+
+	function getSubtopics() {
+		return getCollection(SUBTOPICS_COLLECTION);
+	}
+
+	function getQuestions() {
+		return getCollection(QUESTIONS_COLLECTION);
+	}
+
+	function getAttempts() {
+		return getCollection(ATTEMPTS_COLLECTION);
+	}
+
+	function getErrorReviews() {
+		return getCollection(ERROR_REVIEWS_COLLECTION);
+	}
+
+	function saveSubjects(subjects) {
+		saveCollection(SUBJECTS_COLLECTION, subjects);
+	}
+
+	function saveThemes(themes) {
+		saveCollection(THEMES_COLLECTION, themes);
+	}
+
+	function saveSubtopics(subtopics) {
+		saveCollection(SUBTOPICS_COLLECTION, subtopics);
+	}
+
+	function notifySubjectsChanged() {
+		document.dispatchEvent(new CustomEvent('subjects:changed'));
+	}
+
+	function notifyThemesChanged() {
+		document.dispatchEvent(new CustomEvent('themes:changed'));
+	}
+
+	function notifySubtopicsChanged() {
+		document.dispatchEvent(new CustomEvent('subtopics:changed'));
+	}
+
+	function notifyQuestionsChanged() {
+		document.dispatchEvent(new CustomEvent('questions:changed'));
+	}
+
+	function notifyAttemptsChanged() {
+		document.dispatchEvent(new CustomEvent('attempts:changed'));
+	}
+
+	function notifyErrorReviewsChanged() {
+		document.dispatchEvent(new CustomEvent('errorReviews:changed'));
+	}
+
+	function notifyOrganizationRelatedDataChanged() {
+		notifySubjectsChanged();
+		notifyThemesChanged();
+		notifySubtopicsChanged();
+		notifyQuestionsChanged();
+		notifyAttemptsChanged();
+		notifyErrorReviewsChanged();
+	}
+
+	function createSubject(name) {
+		return {
+			id: crypto.randomUUID(),
+			name,
+			description: '',
+			createdAt: new Date().toISOString()
+		};
+	}
+
+	function createTheme({subjectId, name}) {
+		return {
+			id: crypto.randomUUID(),
+			subjectId,
+			name,
+			description: '',
+			createdAt: new Date().toISOString()
+		};
+	}
+
+	function createQuestion({subjectId, themeId, subtopicId = null, statement, alternatives, correctAlternative, explanation}) {
+		return {
+			id: crypto.randomUUID(),
+			subjectId,
+			themeId,
+			subtopicId: subtopicId || null,
+			statement,
+			alternatives,
+			correctAlternative,
+			explanation,
+			shouldShuffleAlternatives: true,
+			createdAt: new Date().toISOString()
+		};
+	}
+
+	function findDuplicatedSubject(name) {
+		return getSubjects().find((subject) => {
+			return compareNames(subject.name, name);
+		});
+	}
+
+	function findDuplicatedTheme({subjectId, name}) {
+		return getThemesBySubjectId(subjectId).find((theme) => {
+			return compareNames(theme.name, name);
+		});
+	}
+
+	function findDuplicatedSubjectIgnoringCurrent({subjectId, name}) {
+		return getSubjects().find((subject) => {
+			return subject.id !== subjectId && compareNames(subject.name, name);
+		});
+	}
+
+	function findDuplicatedThemeIgnoringCurrent({themeId, subjectId, name}) {
+		return getThemesBySubjectId(subjectId).find((theme) => {
+			return theme.id !== themeId && compareNames(theme.name, name);
+		});
+	}
+
+	function findDuplicatedSubtopicIgnoringCurrent({subtopicId, themeId, name}) {
+		return getSubtopicsByThemeId(themeId).find((subtopic) => {
+			return subtopic.id !== subtopicId && compareNames(subtopic.name, name);
+		});
+	}
+
+	function getSubjectById(subjectId) {
+		return getSubjects().find((subject) => {
+			return subject.id === subjectId;
+		});
+	}
+
+	function getThemeById(themeId) {
+		return getThemes().find((theme) => {
+			return theme.id === themeId;
+		});
+	}
+
+	function getSubtopicById(subtopicId) {
+		return getSubtopics().find((subtopic) => {
+			return subtopic.id === subtopicId;
+		});
+	}
+
+	function getQuestionById(questionId) {
+		return getQuestions().find((question) => {
+			return question.id === questionId;
+		});
+	}
+
+	function getThemesBySubjectId(subjectId) {
+		return getThemes().filter((theme) => {
+			return theme.subjectId === subjectId;
+		});
+	}
+
+	function getSubtopicsByThemeId(themeId) {
+		return getSubtopics().filter((subtopic) => {
+			return subtopic.themeId === themeId;
+		});
+	}
+
+	function getQuestionsBySubjectId(subjectId) {
+		return getQuestions().filter((question) => {
+			return question.subjectId === subjectId;
+		});
+	}
+
+	function getQuestionsByThemeId(themeId) {
+		return getQuestions().filter((question) => {
+			return question.themeId === themeId;
+		});
+	}
+
+	function getQuestionsBySubtopicId(subtopicId) {
+		return getQuestions().filter((question) => {
+			return question.subtopicId === subtopicId;
+		});
+	}
+
+	function getSubtopicsBySubjectId(subjectId) {
+		return getSubtopics().filter((subtopic) => {
+			return subtopic.subjectId === subjectId;
+		});
+	}
+
+	function saveQuestions(questions) {
+		saveCollection(QUESTIONS_COLLECTION, questions);
+	}
+
+	function unlinkQuestionsFromSubtopic(subtopicId) {
+		const updatedQuestions = getQuestions().map((question) => {
+			if (question.subtopicId !== subtopicId) {
+				return question;
+			}
+
+			return {
+				...question,
+				subtopicId: null,
+				updatedAt: new Date().toISOString()
+			};
+		});
+
+		saveQuestions(updatedQuestions);
+		notifyQuestionsChanged();
+	}
+
+	function escapeHTML(value) {
+		return String(value ?? '')
+			.replaceAll('&', '&amp;')
+			.replaceAll('<', '&lt;')
+			.replaceAll('>', '&gt;')
+			.replaceAll('"', '&quot;')
+			.replaceAll("'", '&#039;');
+	}
+
+	function normalizeText(value) {
+		return String(value ?? '')
+			.toLowerCase()
+			.normalize('NFD')
+			.replaceAll(/[\u0300-\u036f]/g, '')
+			.trim();
+	}
+
+	function getCardNameSizeClass(name) {
+		const nameLength = normalizeText(name).length;
+
+		if (nameLength >= 34) {
+			return 'organization-card__name--very-long';
+		}
+
+		if (nameLength >= 24) {
+			return 'organization-card__name--long';
+		}
+
+		return '';
+	}
+
+	function getPendingErrorAttempts() {
+		const wrongAttempts = getAttempts().filter((attempt) => {
+			return !attempt.isCorrect;
+		});
+
+		const lastWrongAttemptByQuestion = new Map();
+
+		wrongAttempts.forEach((attempt) => {
+			const savedAttempt = lastWrongAttemptByQuestion.get(attempt.questionId);
+
+			if (!savedAttempt || new Date(attempt.answeredAt) > new Date(savedAttempt.answeredAt)) {
+				lastWrongAttemptByQuestion.set(attempt.questionId, attempt);
+			}
+		});
+
+		const reviewedAttemptIds = new Set(
+			getErrorReviews()
+				.filter((review) => {
+					return review.isReviewed;
+				})
+				.map((review) => {
+					return review.attemptId;
+				})
+		);
+
+		return Array.from(lastWrongAttemptByQuestion.values()).filter((attempt) => {
+			return !reviewedAttemptIds.has(attempt.id);
+		});
+	}
+
+	function getAttemptQuestion(attempt) {
+		return getQuestionById(attempt.questionId);
+	}
+
+	function getPendingErrorsBySubjectId(subjectId) {
+		return getPendingErrorAttempts().filter((attempt) => {
+			return attempt.subjectId === subjectId;
+		});
+	}
+
+	function getPendingErrorsByThemeId(themeId) {
+		return getPendingErrorAttempts().filter((attempt) => {
+			const question = getAttemptQuestion(attempt);
+
+			return attempt.themeId === themeId || question?.themeId === themeId;
+		});
+	}
+
+	function getPendingErrorsBySubtopicId(subtopicId) {
+		return getPendingErrorAttempts().filter((attempt) => {
+			const question = getAttemptQuestion(attempt);
+
+			return attempt.subtopicId === subtopicId || question?.subtopicId === subtopicId;
+		});
+	}
+
+	function getFilteredSubjects() {
+		const subjects = getSubjects();
+
+		if (!subjectSearchText) {
+			return subjects;
+		}
+
+		return subjects.filter((subject) => {
+			return normalizeText(subject.name).includes(subjectSearchText);
+		});
+	}
+
+	function getFilteredThemesFromSelectedSubject() {
+		if (!selectedSubjectId) {
+			return [];
+		}
+
+		const themes = getThemesBySubjectId(selectedSubjectId);
+
+		if (!themeSearchText) {
+			return themes;
+		}
+
+		return themes.filter((theme) => {
+			return normalizeText(theme.name).includes(themeSearchText);
+		});
+	}
+
+	function getFilteredSubtopicsFromSelectedTheme() {
+		if (!selectedThemeId) {
+			return [];
+		}
+
+		const subtopics = getSubtopicsByThemeId(selectedThemeId);
+
+		if (!subtopicSearchText) {
+			return subtopics;
+		}
+
+		return subtopics.filter((subtopic) => {
+			return normalizeText(subtopic.name).includes(subtopicSearchText);
+		});
+	}
+
+	function ensureSelectedSubject() {
+		const subjects = getSubjects();
+
+		if (selectedSubjectId) {
+			const selectedSubjectStillExists = subjects.some((subject) => {
+				return subject.id === selectedSubjectId;
+			});
+
+			if (selectedSubjectStillExists) {
+				return;
+			}
+		}
+
+		selectedSubjectId = subjects[0]?.id || null;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+	}
+
+	function ensureSelectedThemeBelongsToSubject() {
+		if (!selectedSubjectId || !selectedThemeId) {
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+			return;
+		}
+
+		const theme = getThemeById(selectedThemeId);
+
+		if (!theme || theme.subjectId !== selectedSubjectId) {
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+		}
+	}
+
+	function ensureSelectedSubtopicBelongsToTheme() {
+		if (!selectedThemeId || !selectedSubtopicId) {
+			selectedSubtopicId = null;
+			return;
+		}
+
+		const subtopic = getSubtopicById(selectedSubtopicId);
+
+		if (!subtopic || subtopic.themeId !== selectedThemeId) {
+			selectedSubtopicId = null;
+		}
+	}
+
+	function selectSubject(subjectId) {
+		const subject = getSubjectById(subjectId);
+
+		if (!subject) {
+			return;
+		}
+
+		selectedSubjectId = subject.id;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+
+		subjectCardMode = 'view';
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function selectTheme(themeId) {
+		const theme = getThemeById(themeId);
+
+		if (!theme) {
+			return;
+		}
+
+		selectedSubjectId = theme.subjectId;
+		selectedThemeId = theme.id;
+		selectedSubtopicId = null;
+
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function selectSubtopic(subtopicId) {
+		const subtopic = getSubtopicById(subtopicId);
+
+		if (!subtopic) {
+			return;
+		}
+
+		selectedSubjectId = subtopic.subjectId;
+		selectedThemeId = subtopic.themeId;
+		selectedSubtopicId = subtopic.id;
+
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function toggleSubtopicSelection(subtopicId) {
+		const subtopic = getSubtopicById(subtopicId);
+
+		if (!subtopic) {
+			return;
+		}
+
+		if (selectedSubtopicId === subtopic.id) {
+			selectedSubtopicId = null;
+			editingSubtopicId = null;
+			isSubtopicFormOpen = false;
+
+			renderOrganization();
+			return;
+		}
+
+		selectSubtopic(subtopic.id);
+	}
+
+	function toggleCollapsedSubject(subjectId) {
+		if (!subjectId) {
+			return;
+		}
+
+		if (collapsedSubjectIds.has(subjectId)) {
+			collapsedSubjectIds.delete(subjectId);
+		} else {
+			collapsedSubjectIds.add(subjectId);
+		}
+
+		renderOrganizationTree();
+	}
+
+	function toggleCollapsedTheme(themeId) {
+		if (!themeId) {
+			return;
+		}
+
+		if (collapsedThemeIds.has(themeId)) {
+			collapsedThemeIds.delete(themeId);
+		} else {
+			collapsedThemeIds.add(themeId);
+		}
+
+		renderOrganizationTree();
+	}
+
+	function renderOrganizationTree() {
+		const subjects = getSubjects();
+
+		organizationTree.innerHTML = '';
+
+		if (subjects.length === 0) {
+			organizationTree.innerHTML = `
 			<div class="organization-state organization-state--compact">
 				<strong>Nenhuma matéria.</strong>
 				<span>Adicione uma matéria para montar sua estrutura.</span>
 			</div>
 		`;
 
-      return;
-    }
+			return;
+		}
 
-    subjects.forEach((subject) => {
-      const subjectThemes = getThemesBySubjectId(subject.id);
-      const isSelectedSubject = selectedSubjectId === subject.id;
-      const isSubjectCollapsed = collapsedSubjectIds.has(subject.id);
-      const shouldShowThemes = subjectThemes.length > 0 && !isSubjectCollapsed;
+		subjects.forEach((subject) => {
+			const subjectThemes = getThemesBySubjectId(subject.id);
+			const isSelectedSubject = selectedSubjectId === subject.id;
+			const isSubjectCollapsed = collapsedSubjectIds.has(subject.id);
+			const shouldShowThemes = subjectThemes.length > 0 && !isSubjectCollapsed;
 
-      const group = document.createElement("div");
-      group.classList.add("organization-tree__group");
+			const group = document.createElement('div');
+			group.classList.add('organization-tree__group');
 
-      if (!isSubjectCollapsed) {
-        group.classList.add("is-open");
-      }
+			if (!isSubjectCollapsed) {
+				group.classList.add('is-open');
+			}
 
-      const themesHTML = subjectThemes
-        .map((theme) => {
-          const themeSubtopics = getSubtopicsByThemeId(theme.id);
-          const isSelectedTheme = selectedThemeId === theme.id;
-          const isThemeCollapsed = collapsedThemeIds.has(theme.id);
-          const shouldShowSubtopics = themeSubtopics.length > 0 && !isThemeCollapsed;
+			const themesHTML = subjectThemes
+				.map((theme) => {
+					const themeSubtopics = getSubtopicsByThemeId(theme.id);
+					const isSelectedTheme = selectedThemeId === theme.id;
+					const isThemeCollapsed = collapsedThemeIds.has(theme.id);
+					const shouldShowSubtopics = themeSubtopics.length > 0 && !isThemeCollapsed;
 
-          const subtopicsHTML = themeSubtopics
-            .map((subtopic) => {
-              const isSelectedSubtopic = selectedSubtopicId === subtopic.id;
+					const subtopicsHTML = themeSubtopics
+						.map((subtopic) => {
+							const isSelectedSubtopic = selectedSubtopicId === subtopic.id;
 
-              return `
+							return `
 							<button
-								class="organization-tree__item organization-tree__item--subtopic ${isSelectedSubtopic ? "is-active" : ""}"
+								class="organization-tree__item organization-tree__item--subtopic ${isSelectedSubtopic ? 'is-active' : ''}"
 								type="button"
 								data-organization-tree-subtopic="${escapeHTML(subtopic.id)}"
 							>
 								${escapeHTML(subtopic.name)}
 							</button>
 						`;
-            })
-            .join("");
+						})
+						.join('');
 
-          return `
+					return `
 					<button
-						class="organization-tree__item organization-tree__item--theme ${isSelectedTheme ? "is-active" : ""}"
+						class="organization-tree__item organization-tree__item--theme ${isSelectedTheme ? 'is-active' : ''}"
 						type="button"
 						data-organization-tree-theme="${escapeHTML(theme.id)}"
 					>
@@ -712,26 +724,26 @@ export function initOrganization() {
 							data-organization-tree-toggle-theme="${escapeHTML(theme.id)}"
 							aria-hidden="true"
 						>
-							${themeSubtopics.length > 0 ? (isThemeCollapsed ? "▸" : "▾") : "•"}
+							${themeSubtopics.length > 0 ? (isThemeCollapsed ? '▸' : '▾') : '•'}
 						</span>
 					</button>
 
 					${
-            shouldShowSubtopics
-              ? `
+						shouldShowSubtopics
+							? `
 								<div class="organization-tree__children organization-tree__children--subtopics">
 									${subtopicsHTML}
 								</div>
 							`
-              : ""
-          }
+							: ''
+					}
 				`;
-        })
-        .join("");
+				})
+				.join('');
 
-      group.innerHTML = `
+			group.innerHTML = `
 			<button
-				class="organization-tree__item organization-tree__item--subject ${isSelectedSubject ? "is-active" : ""}"
+				class="organization-tree__item organization-tree__item--subject ${isSelectedSubject ? 'is-active' : ''}"
 				type="button"
 				data-organization-tree-subject="${escapeHTML(subject.id)}"
 			>
@@ -742,62 +754,62 @@ export function initOrganization() {
 					data-organization-tree-toggle-subject="${escapeHTML(subject.id)}"
 					aria-hidden="true"
 				>
-					${subjectThemes.length > 0 ? (isSubjectCollapsed ? "▸" : "▾") : "•"}
+					${subjectThemes.length > 0 ? (isSubjectCollapsed ? '▸' : '▾') : '•'}
 				</span>
 			</button>
 
 			${
-        shouldShowThemes
-          ? `
+				shouldShowThemes
+					? `
 						<div class="organization-tree__children">
 							${themesHTML}
 						</div>
 					`
-          : ""
-      }
+					: ''
+			}
 		`;
 
-      organizationTree.appendChild(group);
-    });
-  }
+			organizationTree.appendChild(group);
+		});
+	}
 
-  function renderSubjectGallery() {
-    const allSubjects = getSubjects();
-    const filteredSubjects = getFilteredSubjects();
+	function renderSubjectGallery() {
+		const allSubjects = getSubjects();
+		const filteredSubjects = getFilteredSubjects();
 
-    subjectGallery.innerHTML = "";
+		subjectGallery.innerHTML = '';
 
-    const hasSubjects = allSubjects.length > 0;
-    const hasFilteredSubjects = filteredSubjects.length > 0;
+		const hasSubjects = allSubjects.length > 0;
+		const hasFilteredSubjects = filteredSubjects.length > 0;
 
-    subjectGallery.hidden = !hasSubjects || !hasFilteredSubjects;
-    emptySubjectsState.hidden = hasSubjects;
-    noSubjectResultsState.hidden = !hasSubjects || hasFilteredSubjects;
+		subjectGallery.hidden = !hasSubjects || !hasFilteredSubjects;
+		emptySubjectsState.hidden = hasSubjects;
+		noSubjectResultsState.hidden = !hasSubjects || hasFilteredSubjects;
 
-    if (!hasSubjects || !hasFilteredSubjects) {
-      return;
-    }
+		if (!hasSubjects || !hasFilteredSubjects) {
+			return;
+		}
 
-    filteredSubjects.forEach((subject) => {
-      const themesCount = getThemesBySubjectId(subject.id).length;
-      const questionsCount = getQuestionsBySubjectId(subject.id).length;
+		filteredSubjects.forEach((subject) => {
+			const themesCount = getThemesBySubjectId(subject.id).length;
+			const questionsCount = getQuestionsBySubjectId(subject.id).length;
 
-      const subjectCard = document.createElement("article");
+			const subjectCard = document.createElement('article');
 
-      subjectCard.classList.add("organization-card", "organization-card--clickable");
+			subjectCard.classList.add('organization-card', 'organization-card--clickable');
 
-      if (subject.id === selectedSubjectId) {
-        subjectCard.classList.add("is-active");
-      }
+			if (subject.id === selectedSubjectId) {
+				subjectCard.classList.add('is-active');
+			}
 
-      subjectCard.setAttribute("role", "button");
-      subjectCard.setAttribute("tabindex", "0");
-      subjectCard.setAttribute("aria-label", `Abrir matéria ${subject.name}`);
-      subjectCard.dataset.organizationSubjectId = subject.id;
+			subjectCard.setAttribute('role', 'button');
+			subjectCard.setAttribute('tabindex', '0');
+			subjectCard.setAttribute('aria-label', `Abrir matéria ${subject.name}`);
+			subjectCard.dataset.organizationSubjectId = subject.id;
 
-      const nameSizeClass = getCardNameSizeClass(subject.name);
+			const nameSizeClass = getCardNameSizeClass(subject.name);
 
-      subjectCard.innerHTML = `
+			subjectCard.innerHTML = `
 				<div class="organization-card__name ${nameSizeClass}" title="${escapeHTML(subject.name)}">
 					<span class="organization-card__name-text">
 						${escapeHTML(subject.name)}
@@ -805,20 +817,20 @@ export function initOrganization() {
 				</div>
 
 				<div class="organization-card__meta">
-					<span><strong>${themesCount}</strong> ${themesCount === 1 ? "tema" : "temas"}</span>
-					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? "questão" : "questões"}</span>
+					<span><strong>${themesCount}</strong> ${themesCount === 1 ? 'tema' : 'temas'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'questão' : 'questões'}</span>
 				</div>
 			`;
 
-      subjectGallery.appendChild(subjectCard);
-    });
-  }
+			subjectGallery.appendChild(subjectCard);
+		});
+	}
 
-  function renderSubjectFeatureCard() {
-    if (subjectCardMode === "create") {
-      subjectFeatureCard.className = "organization-feature-card organization-feature-card--form";
+	function renderSubjectFeatureCard() {
+		if (subjectCardMode === 'create') {
+			subjectFeatureCard.className = 'organization-feature-card organization-feature-card--form';
 
-      subjectFeatureCard.innerHTML = `
+			subjectFeatureCard.innerHTML = `
 		<div class="organization-feature-card__field">
 			<label for="organization-new-subject-name">Nome da matéria</label>
 
@@ -853,25 +865,25 @@ export function initOrganization() {
 		</div>
 	`;
 
-      requestAnimationFrame(() => {
-        subjectFeatureCard.querySelector("[data-organization-subject-name-input]")?.focus();
-      });
+			requestAnimationFrame(() => {
+				subjectFeatureCard.querySelector('[data-organization-subject-name-input]')?.focus();
+			});
 
-      return;
-    }
+			return;
+		}
 
-    if (subjectCardMode === "edit") {
-      const subject = getSubjectById(selectedSubjectId);
+		if (subjectCardMode === 'edit') {
+			const subject = getSubjectById(selectedSubjectId);
 
-      if (!subject) {
-        subjectCardMode = "view";
-        renderOrganization();
-        return;
-      }
+			if (!subject) {
+				subjectCardMode = 'view';
+				renderOrganization();
+				return;
+			}
 
-      subjectFeatureCard.className = "organization-feature-card organization-feature-card--form";
+			subjectFeatureCard.className = 'organization-feature-card organization-feature-card--form';
 
-      subjectFeatureCard.innerHTML = `
+			subjectFeatureCard.innerHTML = `
 		<div class="organization-feature-card__field">
 			<label for="organization-edit-subject-name">Nome da matéria</label>
 
@@ -906,35 +918,35 @@ export function initOrganization() {
 		</div>
 	`;
 
-      requestAnimationFrame(() => {
-        const input = subjectFeatureCard.querySelector("[data-organization-subject-edit-input]");
+			requestAnimationFrame(() => {
+				const input = subjectFeatureCard.querySelector('[data-organization-subject-edit-input]');
 
-        input?.focus();
-        input?.select();
-      });
+				input?.focus();
+				input?.select();
+			});
 
-      return;
-    }
+			return;
+		}
 
-    const subject = getSubjectById(selectedSubjectId);
+		const subject = getSubjectById(selectedSubjectId);
 
-    if (!subject) {
-      subjectFeatureCard.className = "organization-feature-card organization-feature-card--empty";
+		if (!subject) {
+			subjectFeatureCard.className = 'organization-feature-card organization-feature-card--empty';
 
-      subjectFeatureCard.innerHTML = `
+			subjectFeatureCard.innerHTML = `
 				<p>Primeiro selecione uma matéria para editá-la ou acessar suas ações.</p>
 			`;
 
-      return;
-    }
+			return;
+		}
 
-    const themesCount = getThemesBySubjectId(subject.id).length;
-    const questionsCount = getQuestionsBySubjectId(subject.id).length;
-    const errorsCount = getPendingErrorsBySubjectId(subject.id).length;
+		const themesCount = getThemesBySubjectId(subject.id).length;
+		const questionsCount = getQuestionsBySubjectId(subject.id).length;
+		const errorsCount = getPendingErrorsBySubjectId(subject.id).length;
 
-    subjectFeatureCard.className = "organization-feature-card organization-feature-card--active";
+		subjectFeatureCard.className = 'organization-feature-card organization-feature-card--active';
 
-    subjectFeatureCard.innerHTML = `
+		subjectFeatureCard.innerHTML = `
 			<div class="organization-feature-card__topline">
 				<div class="organization-feature-card__name-wrap">
 					<div class="organization-feature-card__name" title="${escapeHTML(subject.name)}">
@@ -955,9 +967,9 @@ export function initOrganization() {
 
 			<div class="organization-feature-card__statsline">
 				<div class="organization-feature-card__stats">
-					<span><strong>${themesCount}</strong> ${themesCount === 1 ? "Tema" : "Temas"}</span>
-					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? "Questão" : "Questões"}</span>
-					<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? "Erro" : "Erros"}</span>
+					<span><strong>${themesCount}</strong> ${themesCount === 1 ? 'Tema' : 'Temas'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'Questão' : 'Questões'}</span>
+					<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? 'Erro' : 'Erros'}</span>
 				</div>
 			</div>
 
@@ -976,7 +988,7 @@ export function initOrganization() {
 					<button
 						type="button"
 						data-organization-action="resolve-subject"
-						${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ""}
+						${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ''}
 					>
 						Resolver
 					</button>
@@ -991,7 +1003,7 @@ export function initOrganization() {
 					<button
 						type="button"
 						data-organization-action="review-subject"
-						${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ""}
+						${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ''}
 					>
 						Revisar
 					</button>
@@ -1005,46 +1017,46 @@ export function initOrganization() {
 				</div>
 			</div>
 		`;
-  }
+	}
 
-  function renderThemeGallery() {
-    const subject = getSubjectById(selectedSubjectId);
-    const allThemes = subject ? getThemesBySubjectId(subject.id) : [];
-    const filteredThemes = getFilteredThemesFromSelectedSubject();
+	function renderThemeGallery() {
+		const subject = getSubjectById(selectedSubjectId);
+		const allThemes = subject ? getThemesBySubjectId(subject.id) : [];
+		const filteredThemes = getFilteredThemesFromSelectedSubject();
 
-    themeGallery.innerHTML = "";
+		themeGallery.innerHTML = '';
 
-    const hasThemes = allThemes.length > 0;
-    const hasFilteredThemes = filteredThemes.length > 0;
+		const hasThemes = allThemes.length > 0;
+		const hasFilteredThemes = filteredThemes.length > 0;
 
-    themeGallery.hidden = !hasThemes || !hasFilteredThemes;
-    emptyThemesState.hidden = hasThemes;
-    noThemeResultsState.hidden = !hasThemes || hasFilteredThemes;
+		themeGallery.hidden = !hasThemes || !hasFilteredThemes;
+		emptyThemesState.hidden = hasThemes;
+		noThemeResultsState.hidden = !hasThemes || hasFilteredThemes;
 
-    if (!hasThemes || !hasFilteredThemes) {
-      return;
-    }
+		if (!hasThemes || !hasFilteredThemes) {
+			return;
+		}
 
-    filteredThemes.forEach((theme) => {
-      const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
-      const questionsCount = getQuestionsByThemeId(theme.id).length;
+		filteredThemes.forEach((theme) => {
+			const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+			const questionsCount = getQuestionsByThemeId(theme.id).length;
 
-      const themeCard = document.createElement("article");
+			const themeCard = document.createElement('article');
 
-      themeCard.classList.add("organization-card", "organization-card--topic", "organization-card--clickable");
+			themeCard.classList.add('organization-card', 'organization-card--topic', 'organization-card--clickable');
 
-      if (theme.id === selectedThemeId) {
-        themeCard.classList.add("is-active");
-      }
+			if (theme.id === selectedThemeId) {
+				themeCard.classList.add('is-active');
+			}
 
-      themeCard.setAttribute("role", "button");
-      themeCard.setAttribute("tabindex", "0");
-      themeCard.setAttribute("aria-label", `Selecionar tema ${theme.name}`);
-      themeCard.dataset.organizationThemeId = theme.id;
+			themeCard.setAttribute('role', 'button');
+			themeCard.setAttribute('tabindex', '0');
+			themeCard.setAttribute('aria-label', `Selecionar tema ${theme.name}`);
+			themeCard.dataset.organizationThemeId = theme.id;
 
-      const nameSizeClass = getCardNameSizeClass(theme.name);
+			const nameSizeClass = getCardNameSizeClass(theme.name);
 
-      themeCard.innerHTML = `
+			themeCard.innerHTML = `
 				<div class="organization-card__name ${nameSizeClass}" title="${escapeHTML(theme.name)}">
 					<span class="organization-card__name-text">
 						${escapeHTML(theme.name)}
@@ -1052,20 +1064,20 @@ export function initOrganization() {
 				</div>
 
 				<div class="organization-card__meta">
-					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? "assunto" : "assuntos"}</span>
-					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? "questão" : "questões"}</span>
+					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? 'assunto' : 'assuntos'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'questão' : 'questões'}</span>
 				</div>
 			`;
 
-      themeGallery.appendChild(themeCard);
-    });
-  }
+			themeGallery.appendChild(themeCard);
+		});
+	}
 
-  function renderThemeFeatureCard() {
-    if (themeCardMode === "create") {
-      themeFeatureCard.className = "organization-feature-card organization-feature-card--form";
+	function renderThemeFeatureCard() {
+		if (themeCardMode === 'create') {
+			themeFeatureCard.className = 'organization-feature-card organization-feature-card--form';
 
-      themeFeatureCard.innerHTML = `
+			themeFeatureCard.innerHTML = `
 		<div class="organization-feature-card__field">
 			<label for="organization-new-theme-name">Nome do tema</label>
 
@@ -1100,25 +1112,25 @@ export function initOrganization() {
 		</div>
 	`;
 
-      requestAnimationFrame(() => {
-        themeFeatureCard.querySelector("[data-organization-theme-name-input]")?.focus();
-      });
+			requestAnimationFrame(() => {
+				themeFeatureCard.querySelector('[data-organization-theme-name-input]')?.focus();
+			});
 
-      return;
-    }
+			return;
+		}
 
-    if (themeCardMode === "edit") {
-      const theme = getThemeById(selectedThemeId);
+		if (themeCardMode === 'edit') {
+			const theme = getThemeById(selectedThemeId);
 
-      if (!theme) {
-        themeCardMode = "view";
-        renderSubjectModal();
-        return;
-      }
+			if (!theme) {
+				themeCardMode = 'view';
+				renderSubjectModal();
+				return;
+			}
 
-      themeFeatureCard.className = "organization-feature-card organization-feature-card--form";
+			themeFeatureCard.className = 'organization-feature-card organization-feature-card--form';
 
-      themeFeatureCard.innerHTML = `
+			themeFeatureCard.innerHTML = `
 		<div class="organization-feature-card__field">
 			<label for="organization-edit-theme-name">Nome do tema</label>
 
@@ -1153,35 +1165,35 @@ export function initOrganization() {
 		</div>
 	`;
 
-      requestAnimationFrame(() => {
-        const input = themeFeatureCard.querySelector("[data-organization-theme-edit-input]");
+			requestAnimationFrame(() => {
+				const input = themeFeatureCard.querySelector('[data-organization-theme-edit-input]');
 
-        input?.focus();
-        input?.select();
-      });
+				input?.focus();
+				input?.select();
+			});
 
-      return;
-    }
+			return;
+		}
 
-    const theme = getThemeById(selectedThemeId);
+		const theme = getThemeById(selectedThemeId);
 
-    if (!theme) {
-      themeFeatureCard.className = "organization-feature-card organization-feature-card--empty";
+		if (!theme) {
+			themeFeatureCard.className = 'organization-feature-card organization-feature-card--empty';
 
-      themeFeatureCard.innerHTML = `
+			themeFeatureCard.innerHTML = `
 				<p>Primeiro selecione um tema para editá-lo ou acessar suas ações.</p>
 			`;
 
-      return;
-    }
+			return;
+		}
 
-    const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
-    const questionsCount = getQuestionsByThemeId(theme.id).length;
-    const errorsCount = getPendingErrorsByThemeId(theme.id).length;
+		const subtopicsCount = getSubtopicsByThemeId(theme.id).length;
+		const questionsCount = getQuestionsByThemeId(theme.id).length;
+		const errorsCount = getPendingErrorsByThemeId(theme.id).length;
 
-    themeFeatureCard.className = "organization-feature-card organization-feature-card--active";
+		themeFeatureCard.className = 'organization-feature-card organization-feature-card--active';
 
-    themeFeatureCard.innerHTML = `
+		themeFeatureCard.innerHTML = `
 			<div class="organization-feature-card__topline">
 				<div class="organization-feature-card__name-wrap">
 					<div class="organization-feature-card__name" title="${escapeHTML(theme.name)}">
@@ -1202,9 +1214,9 @@ export function initOrganization() {
 
 			<div class="organization-feature-card__statsline">
 				<div class="organization-feature-card__stats">
-					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? "Assunto" : "Assuntos"}</span>
-					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? "Questão" : "Questões"}</span>
-					<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? "Erro" : "Erros"}</span>
+					<span><strong>${subtopicsCount}</strong> ${subtopicsCount === 1 ? 'Assunto' : 'Assuntos'}</span>
+					<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'Questão' : 'Questões'}</span>
+					<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? 'Erro' : 'Erros'}</span>
 				</div>
 			</div>
 
@@ -1223,7 +1235,7 @@ export function initOrganization() {
 					<button
 						type="button"
 						data-organization-theme-action="resolve-theme"
-						${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ""}
+						${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ''}
 					>
 						Resolver
 					</button>
@@ -1238,7 +1250,7 @@ export function initOrganization() {
 					<button
 						type="button"
 						data-organization-theme-action="review-theme"
-						${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ""}
+						${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ''}
 					>
 						Revisar
 					</button>
@@ -1252,36 +1264,36 @@ export function initOrganization() {
 				</div>
 			</div>
 		`;
-  }
+	}
 
-  function renderSubtopicPanel() {
-    const theme = getThemeById(selectedThemeId);
+	function renderSubtopicPanel() {
+		const theme = getThemeById(selectedThemeId);
 
-    if (!theme) {
-      topicPanelTitle.textContent = "Tema";
-      subtopicAddCard.hidden = true;
-      selectThemeState.hidden = false;
-      subtopicList.hidden = true;
-      emptySubtopicsState.hidden = true;
-      noSubtopicResultsState.hidden = true;
-      return;
-    }
+		if (!theme) {
+			topicPanelTitle.textContent = 'Tema';
+			subtopicAddCard.hidden = true;
+			selectThemeState.hidden = false;
+			subtopicList.hidden = true;
+			emptySubtopicsState.hidden = true;
+			noSubtopicResultsState.hidden = true;
+			return;
+		}
 
-    topicPanelTitle.textContent = theme.name;
-    subtopicAddCard.hidden = false;
-    selectThemeState.hidden = true;
+		topicPanelTitle.textContent = theme.name;
+		subtopicAddCard.hidden = false;
+		selectThemeState.hidden = true;
 
-    const allSubtopics = getSubtopicsByThemeId(theme.id);
-    const filteredSubtopics = getFilteredSubtopicsFromSelectedTheme();
+		const allSubtopics = getSubtopicsByThemeId(theme.id);
+		const filteredSubtopics = getFilteredSubtopicsFromSelectedTheme();
 
-    subtopicList.innerHTML = "";
+		subtopicList.innerHTML = '';
 
-    if (isSubtopicFormOpen) {
-      const formCard = document.createElement("article");
+		if (isSubtopicFormOpen) {
+			const formCard = document.createElement('article');
 
-      formCard.classList.add("organization-subtopic-card", "organization-subtopic-card--form");
+			formCard.classList.add('organization-subtopic-card', 'organization-subtopic-card--form');
 
-      formCard.innerHTML = `
+			formCard.innerHTML = `
 		<input
 			class="organization-subtopic-card__input"
 			type="text"
@@ -1313,46 +1325,46 @@ export function initOrganization() {
 		</div>
 	`;
 
-      subtopicList.appendChild(formCard);
+			subtopicList.appendChild(formCard);
 
-      requestAnimationFrame(() => {
-        formCard.querySelector("[data-organization-subtopic-name-input]")?.focus();
-      });
-    }
+			requestAnimationFrame(() => {
+				formCard.querySelector('[data-organization-subtopic-name-input]')?.focus();
+			});
+		}
 
-    const hasSubtopics = allSubtopics.length > 0;
-    const hasFilteredSubtopics = filteredSubtopics.length > 0;
+		const hasSubtopics = allSubtopics.length > 0;
+		const hasFilteredSubtopics = filteredSubtopics.length > 0;
 
-    const shouldShowSubtopicList = isSubtopicFormOpen || (hasSubtopics && hasFilteredSubtopics);
+		const shouldShowSubtopicList = isSubtopicFormOpen || (hasSubtopics && hasFilteredSubtopics);
 
-    subtopicList.hidden = !shouldShowSubtopicList;
-    emptySubtopicsState.hidden = hasSubtopics || isSubtopicFormOpen;
-    noSubtopicResultsState.hidden = !hasSubtopics || hasFilteredSubtopics || isSubtopicFormOpen;
+		subtopicList.hidden = !shouldShowSubtopicList;
+		emptySubtopicsState.hidden = hasSubtopics || isSubtopicFormOpen;
+		noSubtopicResultsState.hidden = !hasSubtopics || hasFilteredSubtopics || isSubtopicFormOpen;
 
-    if (!hasSubtopics || !hasFilteredSubtopics) {
-      return;
-    }
+		if (!hasSubtopics || !hasFilteredSubtopics) {
+			return;
+		}
 
-    filteredSubtopics.forEach((subtopic) => {
-      const questionsCount = getQuestionsBySubtopicId(subtopic.id).length;
-      const errorsCount = getPendingErrorsBySubtopicId(subtopic.id).length;
-      const isExpanded = selectedSubtopicId === subtopic.id;
-      const isEditingSubtopic = editingSubtopicId === subtopic.id;
+		filteredSubtopics.forEach((subtopic) => {
+			const questionsCount = getQuestionsBySubtopicId(subtopic.id).length;
+			const errorsCount = getPendingErrorsBySubtopicId(subtopic.id).length;
+			const isExpanded = selectedSubtopicId === subtopic.id;
+			const isEditingSubtopic = editingSubtopicId === subtopic.id;
 
-      const subtopicCard = document.createElement("article");
+			const subtopicCard = document.createElement('article');
 
-      subtopicCard.classList.add("organization-subtopic-card", "organization-subtopic-card--clickable");
+			subtopicCard.classList.add('organization-subtopic-card', 'organization-subtopic-card--clickable');
 
-      if (isExpanded) {
-        subtopicCard.classList.add("is-expanded", "is-active");
-      }
+			if (isExpanded) {
+				subtopicCard.classList.add('is-expanded', 'is-active');
+			}
 
-      subtopicCard.dataset.organizationSubtopicId = subtopic.id;
+			subtopicCard.dataset.organizationSubtopicId = subtopic.id;
 
-      if (isEditingSubtopic) {
-        subtopicCard.classList.add("is-expanded", "is-active");
+			if (isEditingSubtopic) {
+				subtopicCard.classList.add('is-expanded', 'is-active');
 
-        subtopicCard.innerHTML = `
+				subtopicCard.innerHTML = `
 		<input
 			class="organization-subtopic-card__input"
 			type="text"
@@ -1386,19 +1398,19 @@ export function initOrganization() {
 		</div>
 	`;
 
-        subtopicList.appendChild(subtopicCard);
+				subtopicList.appendChild(subtopicCard);
 
-        requestAnimationFrame(() => {
-          const input = subtopicCard.querySelector("[data-organization-subtopic-edit-input]");
+				requestAnimationFrame(() => {
+					const input = subtopicCard.querySelector('[data-organization-subtopic-edit-input]');
 
-          input?.focus();
-          input?.select();
-        });
+					input?.focus();
+					input?.select();
+				});
 
-        return;
-      }
+				return;
+			}
 
-      subtopicCard.innerHTML = `
+			subtopicCard.innerHTML = `
 				<div class="organization-subtopic-card__top">
 					<strong title="${escapeHTML(subtopic.name)}">
 						${escapeHTML(subtopic.name)}
@@ -1406,8 +1418,8 @@ export function initOrganization() {
 
 					<div class="organization-subtopic-card__icons">
 						${
-              isExpanded
-                ? `
+							isExpanded
+								? `
 									<button
 										type="button"
 										data-organization-subtopic-action="edit-subtopic"
@@ -1418,8 +1430,8 @@ export function initOrganization() {
 										✏️
 									</button>
 								`
-                : ""
-            }
+								: ''
+						}
 
 						<button
 							type="button"
@@ -1434,12 +1446,12 @@ export function initOrganization() {
 				</div>
 
 				${
-          isExpanded
-            ? `
+					isExpanded
+						? `
 							<div class="organization-subtopic-card__stats">
-								<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? "Questão" : "Questões"}</span>
+								<span><strong>${questionsCount}</strong> ${questionsCount === 1 ? 'Questão' : 'Questões'}</span>
 								<span><strong>0</strong> Anotações</span>
-								<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? "Erro" : "Erros"}</span>
+								<span><strong>${errorsCount}</strong> ${errorsCount === 1 ? 'Erro' : 'Erros'}</span>
 							</div>
 
 							<div class="organization-subtopic-card__actions">
@@ -1455,7 +1467,7 @@ export function initOrganization() {
 									type="button"
 									data-organization-subtopic-action="review-subtopic"
 									data-subtopic-id="${escapeHTML(subtopic.id)}"
-									${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ""}
+									${errorsCount === 0 ? 'disabled title="Nenhum erro pendente para revisar."' : ''}
 								>
 									Revisar
 								</button>
@@ -1464,965 +1476,965 @@ export function initOrganization() {
 									type="button"
 									data-organization-subtopic-action="resolve-subtopic"
 									data-subtopic-id="${escapeHTML(subtopic.id)}"
-									${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ""}
+									${questionsCount === 0 ? 'disabled title="Cadastre uma questão para resolver."' : ''}
 								>
 									Resolver
 								</button>
 							</div>
 						`
-            : ""
-        }
+						: ''
+				}
 			`;
 
-      subtopicList.appendChild(subtopicCard);
-    });
-  }
-
-  function renderSubjectModal() {
-    if (!isSubjectModalOpen) {
-      return;
-    }
-
-    const subject = getSubjectById(selectedSubjectId);
-
-    if (!subject) {
-      closeSubjectModal();
-      return;
-    }
-
-    ensureSelectedThemeBelongsToSubject();
-    ensureSelectedSubtopicBelongsToTheme();
-
-    subjectModalTitle.textContent = subject.name;
-
-    renderThemeGallery();
-    renderThemeFeatureCard();
-    renderSubtopicPanel();
-  }
-
-  function renderOrganization() {
-    ensureSelectedSubject();
-    ensureSelectedThemeBelongsToSubject();
-    ensureSelectedSubtopicBelongsToTheme();
-
-    renderOrganizationTree();
-    renderSubjectGallery();
-    renderSubjectFeatureCard();
-    renderSubjectModal();
-  }
-
-  function syncBodyScrollLock() {
-    document.body.style.overflow = isSubjectModalOpen || isDeleteModalOpen || isImportModalOpen ? "hidden" : "";
-  }
-
-  function openSubjectModal(subjectId) {
-    selectSubject(subjectId);
-
-    isSubjectModalOpen = true;
-    subjectModalLayer.hidden = false;
-    syncBodyScrollLock();
-
-    themeSearchText = "";
-    subtopicSearchText = "";
-    themeSearchInput.value = "";
-    subtopicSearchInput.value = "";
-
-    renderSubjectModal();
-    subjectModalCloseButton.focus();
-  }
-
-  function openSubjectModalWithTheme(themeId) {
-    selectTheme(themeId);
-
-    isSubjectModalOpen = true;
-    subjectModalLayer.hidden = false;
-    syncBodyScrollLock();
-
-    subtopicSearchText = "";
-    subtopicSearchInput.value = "";
-
-    renderSubjectModal();
-    subjectModalCloseButton.focus();
-  }
-
-  function openSubjectModalWithSubtopic(subtopicId) {
-    selectSubtopic(subtopicId);
-
-    isSubjectModalOpen = true;
-    subjectModalLayer.hidden = false;
-    syncBodyScrollLock();
-
-    renderSubjectModal();
-    subjectModalCloseButton.focus();
-  }
-
-  function closeSubjectModal() {
-    isSubjectModalOpen = false;
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    subjectModalLayer.hidden = true;
-    syncBodyScrollLock();
-  }
-
-  function openQuestionCreationFromSubject(subject) {
-    const subjectThemes = getThemesBySubjectId(subject.id);
-
-    if (subjectThemes.length === 0) {
-      document.dispatchEvent(
-        new CustomEvent("themes:prepare-create", {
-          detail: {
-            subjectId: subject.id,
-          },
-        }),
-      );
-
-      document.dispatchEvent(
-        new CustomEvent("app:navigate", {
-          detail: {
-            sectionId: "themes",
-          },
-        }),
-      );
-
-      return;
-    }
-
-    if (subjectThemes.length === 1) {
-      document.dispatchEvent(
-        new CustomEvent("questions:prepare-create", {
-          detail: {
-            subjectId: subject.id,
-            themeId: subjectThemes[0].id,
-          },
-        }),
-      );
-    }
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "questions",
-        },
-      }),
-    );
-  }
-
-  function openQuestionCreationFromTheme(theme) {
-    document.dispatchEvent(
-      new CustomEvent("questions:prepare-create", {
-        detail: {
-          subjectId: theme.subjectId,
-          themeId: theme.id,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "questions",
-        },
-      }),
-    );
-  }
-
-  function openQuestionCreationFromSubtopic(subtopic) {
-    document.dispatchEvent(
-      new CustomEvent("questions:prepare-create", {
-        detail: {
-          subjectId: subtopic.subjectId,
-          themeId: subtopic.themeId,
-          subtopicId: subtopic.id,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "questions",
-        },
-      }),
-    );
-  }
-
-  function openNoteCreationFromSubject(subject) {
-    document.dispatchEvent(
-      new CustomEvent("notes:prepare-create", {
-        detail: {
-          subjectId: subject.id,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "notes",
-        },
-      }),
-    );
-  }
-
-  function openNoteCreationFromTheme(theme) {
-    document.dispatchEvent(
-      new CustomEvent("notes:prepare-create", {
-        detail: {
-          subjectId: theme.subjectId,
-          themeId: theme.id,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "notes",
-        },
-      }),
-    );
-  }
-
-  function openNoteCreationFromSubtopic(subtopic) {
-    const theme = getThemeById(subtopic.themeId);
-
-    document.dispatchEvent(
-      new CustomEvent("notes:prepare-create", {
-        detail: {
-          subjectId: subtopic.subjectId,
-          themeId: subtopic.themeId,
-        },
-      }),
-    );
-
-    document.dispatchEvent(
-      new CustomEvent("app:navigate", {
-        detail: {
-          sectionId: "notes",
-        },
-      }),
-    );
-
-    console.log("Anotação aberta a partir do assunto:", {
-      subtopic: subtopic.name,
-      theme: theme?.name || "",
-    });
-  }
-
-  function openSubjectCreateForm() {
-    subjectCardMode = "create";
-    selectedSubjectId = null;
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-
-    renderOrganization();
-  }
-
-  function cancelSubjectCreateForm() {
-    subjectCardMode = "view";
-    ensureSelectedSubject();
-
-    renderOrganization();
-  }
-
-  function confirmSubjectCreateForm() {
-    const input = subjectFeatureCard.querySelector("[data-organization-subject-name-input]");
-
-    if (!input) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const subjectName = input.value.trim();
-
-    if (!subjectName) {
-      input.setCustomValidity("Informe o nome da matéria.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const duplicatedSubject = findDuplicatedSubject(subjectName);
-
-    if (duplicatedSubject) {
-      input.setCustomValidity(`A matéria "${duplicatedSubject.name}" já está cadastrada.`);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const subjects = getSubjects();
-    const newSubject = createSubject(subjectName);
-
-    saveSubjects([...subjects, newSubject]);
-
-    selectedSubjectId = newSubject.id;
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-    subjectCardMode = "view";
-
-    notifySubjectsChanged();
-    renderOrganization();
-  }
-
-  function openThemeCreateForm() {
-    if (!selectedSubjectId) {
-      return;
-    }
-
-    themeCardMode = "create";
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-    isSubtopicFormOpen = false;
-
-    renderSubjectModal();
-  }
-
-  function cancelThemeCreateForm() {
-    themeCardMode = "view";
-    renderSubjectModal();
-  }
-
-  function confirmThemeCreateForm() {
-    const input = themeFeatureCard.querySelector("[data-organization-theme-name-input]");
-
-    if (!input || !selectedSubjectId) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const themeName = input.value.trim();
-
-    if (!themeName) {
-      input.setCustomValidity("Informe o nome do tema.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const duplicatedTheme = findDuplicatedTheme({
-      subjectId: selectedSubjectId,
-      name: themeName,
-    });
-
-    if (duplicatedTheme) {
-      input.setCustomValidity(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const themes = getThemes();
-
-    const newTheme = createTheme({
-      subjectId: selectedSubjectId,
-      name: themeName,
-    });
-
-    saveThemes([...themes, newTheme]);
-
-    selectedThemeId = newTheme.id;
-    selectedSubtopicId = null;
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-
-    notifyThemesChanged();
-    renderOrganization();
-  }
-
-  function openSubtopicCreateForm() {
-    if (!selectedSubjectId || !selectedThemeId) {
-      return;
-    }
-
-    isSubtopicFormOpen = true;
-    selectedSubtopicId = null;
-    editingSubtopicId = null;
-
-    renderSubtopicPanel();
-  }
-
-  function cancelSubtopicCreateForm() {
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-    renderSubtopicPanel();
-  }
-
-  function confirmSubtopicCreateForm() {
-    const input = subtopicList.querySelector("[data-organization-subtopic-name-input]");
-
-    if (!input || !selectedSubjectId || !selectedThemeId) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const subtopicName = input.value.trim();
-
-    if (!subtopicName) {
-      input.setCustomValidity("Informe o nome do assunto.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const result = addSubtopic({
-      subjectId: selectedSubjectId,
-      themeId: selectedThemeId,
-      name: subtopicName,
-    });
-
-    if (!result.ok) {
-      input.setCustomValidity(result.message);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    selectedSubtopicId = result.subtopic.id;
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderOrganization();
-  }
-
-  function openSubjectEditForm() {
-    if (!selectedSubjectId) {
-      return;
-    }
-
-    subjectCardMode = "edit";
-    renderOrganization();
-  }
-
-  function cancelSubjectEditForm() {
-    subjectCardMode = "view";
-    renderOrganization();
-  }
-
-  function confirmSubjectEditForm() {
-    const input = subjectFeatureCard.querySelector("[data-organization-subject-edit-input]");
-    const subject = getSubjectById(selectedSubjectId);
-
-    if (!input || !subject) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const newName = input.value.trim();
-
-    if (!newName) {
-      input.setCustomValidity("Informe o nome da matéria.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const duplicatedSubject = findDuplicatedSubjectIgnoringCurrent({
-      subjectId: subject.id,
-      name: newName,
-    });
-
-    if (duplicatedSubject) {
-      input.setCustomValidity(`A matéria "${duplicatedSubject.name}" já está cadastrada.`);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const updatedSubjects = getSubjects().map((currentSubject) => {
-      if (currentSubject.id !== subject.id) {
-        return currentSubject;
-      }
-
-      return {
-        ...currentSubject,
-        name: newName,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    saveSubjects(updatedSubjects);
-
-    subjectCardMode = "view";
-
-    notifySubjectsChanged();
-    renderOrganization();
-  }
-
-  function openThemeEditForm() {
-    if (!selectedThemeId) {
-      return;
-    }
-
-    themeCardMode = "edit";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderSubjectModal();
-  }
-
-  function cancelThemeEditForm() {
-    themeCardMode = "view";
-    renderSubjectModal();
-  }
-
-  function confirmThemeEditForm() {
-    const input = themeFeatureCard.querySelector("[data-organization-theme-edit-input]");
-    const theme = getThemeById(selectedThemeId);
-
-    if (!input || !theme) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const newName = input.value.trim();
-
-    if (!newName) {
-      input.setCustomValidity("Informe o nome do tema.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const duplicatedTheme = findDuplicatedThemeIgnoringCurrent({
-      themeId: theme.id,
-      subjectId: theme.subjectId,
-      name: newName,
-    });
-
-    if (duplicatedTheme) {
-      input.setCustomValidity(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const updatedThemes = getThemes().map((currentTheme) => {
-      if (currentTheme.id !== theme.id) {
-        return currentTheme;
-      }
-
-      return {
-        ...currentTheme,
-        name: newName,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    saveThemes(updatedThemes);
-
-    themeCardMode = "view";
-
-    notifyThemesChanged();
-    renderOrganization();
-  }
-
-  function openSubtopicEditForm(subtopic) {
-    if (!subtopic) {
-      return;
-    }
-
-    selectedSubjectId = subtopic.subjectId;
-    selectedThemeId = subtopic.themeId;
-    selectedSubtopicId = subtopic.id;
-
-    isSubtopicFormOpen = false;
-    editingSubtopicId = subtopic.id;
-
-    renderSubtopicPanel();
-  }
-
-  function cancelSubtopicEditForm() {
-    editingSubtopicId = null;
-    renderSubtopicPanel();
-  }
-
-  function confirmSubtopicEditForm(subtopic) {
-    const input = subtopicList.querySelector("[data-organization-subtopic-edit-input]");
-
-    if (!input || !subtopic) {
-      return;
-    }
-
-    input.setCustomValidity("");
-
-    const newName = input.value.trim();
-
-    if (!newName) {
-      input.setCustomValidity("Informe o nome do assunto.");
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const duplicatedSubtopic = findDuplicatedSubtopicIgnoringCurrent({
-      subtopicId: subtopic.id,
-      themeId: subtopic.themeId,
-      name: newName,
-    });
-
-    if (duplicatedSubtopic) {
-      input.setCustomValidity(`O assunto "${duplicatedSubtopic.name}" já está cadastrado neste tema.`);
-      input.reportValidity();
-      input.focus();
-      return;
-    }
-
-    const updatedSubtopics = getSubtopics().map((currentSubtopic) => {
-      if (currentSubtopic.id !== subtopic.id) {
-        return currentSubtopic;
-      }
-
-      return {
-        ...currentSubtopic,
-        name: newName,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    saveSubtopics(updatedSubtopics);
-
-    editingSubtopicId = null;
-    selectedSubtopicId = subtopic.id;
-
-    notifySubtopicsChanged();
-    renderOrganization();
-  }
-
-  function getDeleteTarget({ type, id }) {
-    if (type === "subject") {
-      return getSubjectById(id);
-    }
-
-    if (type === "theme") {
-      return getThemeById(id);
-    }
-
-    if (type === "subtopic") {
-      return getSubtopicById(id);
-    }
-
-    return null;
-  }
-
-  function getDeleteModalData({ type, target }) {
-    if (type === "subject") {
-      const themesCount = getThemesBySubjectId(target.id).length;
-      const subtopicsCount = getSubtopicsBySubjectId(target.id).length;
-      const questionsCount = getQuestionsBySubjectId(target.id).length;
-
-      return {
-        tag: "Excluir matéria",
-        name: target.name,
-        description: "Esta ação remove a matéria, seus temas, assuntos, questões e registros relacionados. Use apenas se tiver certeza.",
-        stats: [
-          { label: themesCount === 1 ? "Tema" : "Temas", value: themesCount },
-          { label: subtopicsCount === 1 ? "Assunto" : "Assuntos", value: subtopicsCount },
-          { label: questionsCount === 1 ? "Questão" : "Questões", value: questionsCount },
-        ],
-      };
-    }
-
-    if (type === "theme") {
-      const subtopicsCount = getSubtopicsByThemeId(target.id).length;
-      const questionsCount = getQuestionsByThemeId(target.id).length;
-      const errorsCount = getPendingErrorsByThemeId(target.id).length;
-
-      return {
-        tag: "Excluir tema",
-        name: target.name,
-        description: "Esta ação remove o tema, seus assuntos, questões e registros relacionados. A matéria continuará cadastrada.",
-        stats: [
-          { label: subtopicsCount === 1 ? "Assunto" : "Assuntos", value: subtopicsCount },
-          { label: questionsCount === 1 ? "Questão" : "Questões", value: questionsCount },
-          { label: errorsCount === 1 ? "Erro" : "Erros", value: errorsCount },
-        ],
-      };
-    }
-
-    const questionsCount = getQuestionsBySubtopicId(target.id).length;
-    const errorsCount = getPendingErrorsBySubtopicId(target.id).length;
-
-    return {
-      tag: "Excluir assunto",
-      name: target.name,
-      description: "Esta ação remove apenas o assunto. As questões vinculadas serão mantidas no tema, mas ficarão sem assunto.",
-      stats: [
-        { label: questionsCount === 1 ? "Questão mantida" : "Questões mantidas", value: questionsCount },
-        { label: errorsCount === 1 ? "Erro vinculado" : "Erros vinculados", value: errorsCount },
-        { label: "Ação", value: "Desvincular" },
-      ],
-    };
-  }
-
-  function renderDeleteModalStats(stats) {
-    deleteModalStats.innerHTML = stats
-      .map((item) => {
-        return `
+			subtopicList.appendChild(subtopicCard);
+		});
+	}
+
+	function renderSubjectModal() {
+		if (!isSubjectModalOpen) {
+			return;
+		}
+
+		const subject = getSubjectById(selectedSubjectId);
+
+		if (!subject) {
+			closeSubjectModal();
+			return;
+		}
+
+		ensureSelectedThemeBelongsToSubject();
+		ensureSelectedSubtopicBelongsToTheme();
+
+		subjectModalTitle.textContent = subject.name;
+
+		renderThemeGallery();
+		renderThemeFeatureCard();
+		renderSubtopicPanel();
+	}
+
+	function renderOrganization() {
+		ensureSelectedSubject();
+		ensureSelectedThemeBelongsToSubject();
+		ensureSelectedSubtopicBelongsToTheme();
+
+		renderOrganizationTree();
+		renderSubjectGallery();
+		renderSubjectFeatureCard();
+		renderSubjectModal();
+	}
+
+	function syncBodyScrollLock() {
+		document.body.style.overflow = isSubjectModalOpen || isDeleteModalOpen || isImportModalOpen ? 'hidden' : '';
+	}
+
+	function openSubjectModal(subjectId) {
+		selectSubject(subjectId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		syncBodyScrollLock();
+
+		themeSearchText = '';
+		subtopicSearchText = '';
+		themeSearchInput.value = '';
+		subtopicSearchInput.value = '';
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function openSubjectModalWithTheme(themeId) {
+		selectTheme(themeId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		syncBodyScrollLock();
+
+		subtopicSearchText = '';
+		subtopicSearchInput.value = '';
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function openSubjectModalWithSubtopic(subtopicId) {
+		selectSubtopic(subtopicId);
+
+		isSubjectModalOpen = true;
+		subjectModalLayer.hidden = false;
+		syncBodyScrollLock();
+
+		renderSubjectModal();
+		subjectModalCloseButton.focus();
+	}
+
+	function closeSubjectModal() {
+		isSubjectModalOpen = false;
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		subjectModalLayer.hidden = true;
+		syncBodyScrollLock();
+	}
+
+	function openQuestionCreationFromSubject(subject) {
+		const subjectThemes = getThemesBySubjectId(subject.id);
+
+		if (subjectThemes.length === 0) {
+			document.dispatchEvent(
+				new CustomEvent('themes:prepare-create', {
+					detail: {
+						subjectId: subject.id
+					}
+				})
+			);
+
+			document.dispatchEvent(
+				new CustomEvent('app:navigate', {
+					detail: {
+						sectionId: 'themes'
+					}
+				})
+			);
+
+			return;
+		}
+
+		if (subjectThemes.length === 1) {
+			document.dispatchEvent(
+				new CustomEvent('questions:prepare-create', {
+					detail: {
+						subjectId: subject.id,
+						themeId: subjectThemes[0].id
+					}
+				})
+			);
+		}
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function openQuestionCreationFromTheme(theme) {
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: theme.subjectId,
+					themeId: theme.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function openQuestionCreationFromSubtopic(subtopic) {
+		document.dispatchEvent(
+			new CustomEvent('questions:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId,
+					subtopicId: subtopic.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'questions'
+				}
+			})
+		);
+	}
+
+	function openNoteCreationFromSubject(subject) {
+		document.dispatchEvent(
+			new CustomEvent('notes:prepare-create', {
+				detail: {
+					subjectId: subject.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'notes'
+				}
+			})
+		);
+	}
+
+	function openNoteCreationFromTheme(theme) {
+		document.dispatchEvent(
+			new CustomEvent('notes:prepare-create', {
+				detail: {
+					subjectId: theme.subjectId,
+					themeId: theme.id
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'notes'
+				}
+			})
+		);
+	}
+
+	function openNoteCreationFromSubtopic(subtopic) {
+		const theme = getThemeById(subtopic.themeId);
+
+		document.dispatchEvent(
+			new CustomEvent('notes:prepare-create', {
+				detail: {
+					subjectId: subtopic.subjectId,
+					themeId: subtopic.themeId
+				}
+			})
+		);
+
+		document.dispatchEvent(
+			new CustomEvent('app:navigate', {
+				detail: {
+					sectionId: 'notes'
+				}
+			})
+		);
+
+		console.log('Anotação aberta a partir do assunto:', {
+			subtopic: subtopic.name,
+			theme: theme?.name || ''
+		});
+	}
+
+	function openSubjectCreateForm() {
+		subjectCardMode = 'create';
+		selectedSubjectId = null;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function cancelSubjectCreateForm() {
+		subjectCardMode = 'view';
+		ensureSelectedSubject();
+
+		renderOrganization();
+	}
+
+	function confirmSubjectCreateForm() {
+		const input = subjectFeatureCard.querySelector('[data-organization-subject-name-input]');
+
+		if (!input) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const subjectName = input.value.trim();
+
+		if (!subjectName) {
+			input.setCustomValidity('Informe o nome da matéria.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedSubject = findDuplicatedSubject(subjectName);
+
+		if (duplicatedSubject) {
+			input.setCustomValidity(`A matéria "${duplicatedSubject.name}" já está cadastrada.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const subjects = getSubjects();
+		const newSubject = createSubject(subjectName);
+
+		saveSubjects([...subjects, newSubject]);
+
+		selectedSubjectId = newSubject.id;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+		subjectCardMode = 'view';
+
+		notifySubjectsChanged();
+		renderOrganization();
+	}
+
+	function openThemeCreateForm() {
+		if (!selectedSubjectId) {
+			return;
+		}
+
+		themeCardMode = 'create';
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+		isSubtopicFormOpen = false;
+
+		renderSubjectModal();
+	}
+
+	function cancelThemeCreateForm() {
+		themeCardMode = 'view';
+		renderSubjectModal();
+	}
+
+	function confirmThemeCreateForm() {
+		const input = themeFeatureCard.querySelector('[data-organization-theme-name-input]');
+
+		if (!input || !selectedSubjectId) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const themeName = input.value.trim();
+
+		if (!themeName) {
+			input.setCustomValidity('Informe o nome do tema.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedTheme = findDuplicatedTheme({
+			subjectId: selectedSubjectId,
+			name: themeName
+		});
+
+		if (duplicatedTheme) {
+			input.setCustomValidity(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const themes = getThemes();
+
+		const newTheme = createTheme({
+			subjectId: selectedSubjectId,
+			name: themeName
+		});
+
+		saveThemes([...themes, newTheme]);
+
+		selectedThemeId = newTheme.id;
+		selectedSubtopicId = null;
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+
+		notifyThemesChanged();
+		renderOrganization();
+	}
+
+	function openSubtopicCreateForm() {
+		if (!selectedSubjectId || !selectedThemeId) {
+			return;
+		}
+
+		isSubtopicFormOpen = true;
+		selectedSubtopicId = null;
+		editingSubtopicId = null;
+
+		renderSubtopicPanel();
+	}
+
+	function cancelSubtopicCreateForm() {
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+		renderSubtopicPanel();
+	}
+
+	function confirmSubtopicCreateForm() {
+		const input = subtopicList.querySelector('[data-organization-subtopic-name-input]');
+
+		if (!input || !selectedSubjectId || !selectedThemeId) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const subtopicName = input.value.trim();
+
+		if (!subtopicName) {
+			input.setCustomValidity('Informe o nome do assunto.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const result = addSubtopic({
+			subjectId: selectedSubjectId,
+			themeId: selectedThemeId,
+			name: subtopicName
+		});
+
+		if (!result.ok) {
+			input.setCustomValidity(result.message);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		selectedSubtopicId = result.subtopic.id;
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderOrganization();
+	}
+
+	function openSubjectEditForm() {
+		if (!selectedSubjectId) {
+			return;
+		}
+
+		subjectCardMode = 'edit';
+		renderOrganization();
+	}
+
+	function cancelSubjectEditForm() {
+		subjectCardMode = 'view';
+		renderOrganization();
+	}
+
+	function confirmSubjectEditForm() {
+		const input = subjectFeatureCard.querySelector('[data-organization-subject-edit-input]');
+		const subject = getSubjectById(selectedSubjectId);
+
+		if (!input || !subject) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const newName = input.value.trim();
+
+		if (!newName) {
+			input.setCustomValidity('Informe o nome da matéria.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedSubject = findDuplicatedSubjectIgnoringCurrent({
+			subjectId: subject.id,
+			name: newName
+		});
+
+		if (duplicatedSubject) {
+			input.setCustomValidity(`A matéria "${duplicatedSubject.name}" já está cadastrada.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const updatedSubjects = getSubjects().map((currentSubject) => {
+			if (currentSubject.id !== subject.id) {
+				return currentSubject;
+			}
+
+			return {
+				...currentSubject,
+				name: newName,
+				updatedAt: new Date().toISOString()
+			};
+		});
+
+		saveSubjects(updatedSubjects);
+
+		subjectCardMode = 'view';
+
+		notifySubjectsChanged();
+		renderOrganization();
+	}
+
+	function openThemeEditForm() {
+		if (!selectedThemeId) {
+			return;
+		}
+
+		themeCardMode = 'edit';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderSubjectModal();
+	}
+
+	function cancelThemeEditForm() {
+		themeCardMode = 'view';
+		renderSubjectModal();
+	}
+
+	function confirmThemeEditForm() {
+		const input = themeFeatureCard.querySelector('[data-organization-theme-edit-input]');
+		const theme = getThemeById(selectedThemeId);
+
+		if (!input || !theme) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const newName = input.value.trim();
+
+		if (!newName) {
+			input.setCustomValidity('Informe o nome do tema.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedTheme = findDuplicatedThemeIgnoringCurrent({
+			themeId: theme.id,
+			subjectId: theme.subjectId,
+			name: newName
+		});
+
+		if (duplicatedTheme) {
+			input.setCustomValidity(`O tema "${duplicatedTheme.name}" já está cadastrado nesta matéria.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const updatedThemes = getThemes().map((currentTheme) => {
+			if (currentTheme.id !== theme.id) {
+				return currentTheme;
+			}
+
+			return {
+				...currentTheme,
+				name: newName,
+				updatedAt: new Date().toISOString()
+			};
+		});
+
+		saveThemes(updatedThemes);
+
+		themeCardMode = 'view';
+
+		notifyThemesChanged();
+		renderOrganization();
+	}
+
+	function openSubtopicEditForm(subtopic) {
+		if (!subtopic) {
+			return;
+		}
+
+		selectedSubjectId = subtopic.subjectId;
+		selectedThemeId = subtopic.themeId;
+		selectedSubtopicId = subtopic.id;
+
+		isSubtopicFormOpen = false;
+		editingSubtopicId = subtopic.id;
+
+		renderSubtopicPanel();
+	}
+
+	function cancelSubtopicEditForm() {
+		editingSubtopicId = null;
+		renderSubtopicPanel();
+	}
+
+	function confirmSubtopicEditForm(subtopic) {
+		const input = subtopicList.querySelector('[data-organization-subtopic-edit-input]');
+
+		if (!input || !subtopic) {
+			return;
+		}
+
+		input.setCustomValidity('');
+
+		const newName = input.value.trim();
+
+		if (!newName) {
+			input.setCustomValidity('Informe o nome do assunto.');
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const duplicatedSubtopic = findDuplicatedSubtopicIgnoringCurrent({
+			subtopicId: subtopic.id,
+			themeId: subtopic.themeId,
+			name: newName
+		});
+
+		if (duplicatedSubtopic) {
+			input.setCustomValidity(`O assunto "${duplicatedSubtopic.name}" já está cadastrado neste tema.`);
+			input.reportValidity();
+			input.focus();
+			return;
+		}
+
+		const updatedSubtopics = getSubtopics().map((currentSubtopic) => {
+			if (currentSubtopic.id !== subtopic.id) {
+				return currentSubtopic;
+			}
+
+			return {
+				...currentSubtopic,
+				name: newName,
+				updatedAt: new Date().toISOString()
+			};
+		});
+
+		saveSubtopics(updatedSubtopics);
+
+		editingSubtopicId = null;
+		selectedSubtopicId = subtopic.id;
+
+		notifySubtopicsChanged();
+		renderOrganization();
+	}
+
+	function getDeleteTarget({type, id}) {
+		if (type === 'subject') {
+			return getSubjectById(id);
+		}
+
+		if (type === 'theme') {
+			return getThemeById(id);
+		}
+
+		if (type === 'subtopic') {
+			return getSubtopicById(id);
+		}
+
+		return null;
+	}
+
+	function getDeleteModalData({type, target}) {
+		if (type === 'subject') {
+			const themesCount = getThemesBySubjectId(target.id).length;
+			const subtopicsCount = getSubtopicsBySubjectId(target.id).length;
+			const questionsCount = getQuestionsBySubjectId(target.id).length;
+
+			return {
+				tag: 'Excluir matéria',
+				name: target.name,
+				description: 'Esta ação remove a matéria, seus temas, assuntos, questões e registros relacionados. Use apenas se tiver certeza.',
+				stats: [
+					{label: themesCount === 1 ? 'Tema' : 'Temas', value: themesCount},
+					{label: subtopicsCount === 1 ? 'Assunto' : 'Assuntos', value: subtopicsCount},
+					{label: questionsCount === 1 ? 'Questão' : 'Questões', value: questionsCount}
+				]
+			};
+		}
+
+		if (type === 'theme') {
+			const subtopicsCount = getSubtopicsByThemeId(target.id).length;
+			const questionsCount = getQuestionsByThemeId(target.id).length;
+			const errorsCount = getPendingErrorsByThemeId(target.id).length;
+
+			return {
+				tag: 'Excluir tema',
+				name: target.name,
+				description: 'Esta ação remove o tema, seus assuntos, questões e registros relacionados. A matéria continuará cadastrada.',
+				stats: [
+					{label: subtopicsCount === 1 ? 'Assunto' : 'Assuntos', value: subtopicsCount},
+					{label: questionsCount === 1 ? 'Questão' : 'Questões', value: questionsCount},
+					{label: errorsCount === 1 ? 'Erro' : 'Erros', value: errorsCount}
+				]
+			};
+		}
+
+		const questionsCount = getQuestionsBySubtopicId(target.id).length;
+		const errorsCount = getPendingErrorsBySubtopicId(target.id).length;
+
+		return {
+			tag: 'Excluir assunto',
+			name: target.name,
+			description: 'Esta ação remove apenas o assunto. As questões vinculadas serão mantidas no tema, mas ficarão sem assunto.',
+			stats: [
+				{label: questionsCount === 1 ? 'Questão mantida' : 'Questões mantidas', value: questionsCount},
+				{label: errorsCount === 1 ? 'Erro vinculado' : 'Erros vinculados', value: errorsCount},
+				{label: 'Ação', value: 'Desvincular'}
+			]
+		};
+	}
+
+	function renderDeleteModalStats(stats) {
+		deleteModalStats.innerHTML = stats
+			.map((item) => {
+				return `
 				<span>
 					<strong>${escapeHTML(item.value)}</strong>
 					${escapeHTML(item.label)}
 				</span>
 			`;
-      })
-      .join("");
-  }
+			})
+			.join('');
+	}
 
-  function openDeleteModal({ type, id }) {
-    const target = getDeleteTarget({ type, id });
+	function openDeleteModal({type, id}) {
+		const target = getDeleteTarget({type, id});
 
-    if (!target) {
-      return;
-    }
+		if (!target) {
+			return;
+		}
 
-    const modalData = getDeleteModalData({ type, target });
+		const modalData = getDeleteModalData({type, target});
 
-    pendingDeleteTarget = {
-      type,
-      id,
-    };
+		pendingDeleteTarget = {
+			type,
+			id
+		};
 
-    deleteModalTitle.textContent = modalData.tag;
-    deleteModalName.textContent = modalData.name;
-    deleteModalDescription.textContent = modalData.description;
+		deleteModalTitle.textContent = modalData.tag;
+		deleteModalName.textContent = modalData.name;
+		deleteModalDescription.textContent = modalData.description;
 
-    renderDeleteModalStats(modalData.stats);
+		renderDeleteModalStats(modalData.stats);
 
-    deleteModalCheckInput.checked = false;
-    deleteModalConfirmButton.disabled = true;
+		deleteModalCheckInput.checked = false;
+		deleteModalConfirmButton.disabled = true;
 
-    isDeleteModalOpen = true;
-    deleteModalLayer.hidden = false;
+		isDeleteModalOpen = true;
+		deleteModalLayer.hidden = false;
 
-    syncBodyScrollLock();
+		syncBodyScrollLock();
 
-    deleteModalCheckInput.focus();
-  }
+		deleteModalCheckInput.focus();
+	}
 
-  function closeDeleteModal() {
-    isDeleteModalOpen = false;
-    pendingDeleteTarget = null;
+	function closeDeleteModal() {
+		isDeleteModalOpen = false;
+		pendingDeleteTarget = null;
 
-    deleteModalLayer.hidden = true;
-    deleteModalCheckInput.checked = false;
-    deleteModalConfirmButton.disabled = true;
+		deleteModalLayer.hidden = true;
+		deleteModalCheckInput.checked = false;
+		deleteModalConfirmButton.disabled = true;
 
-    syncBodyScrollLock();
-  }
+		syncBodyScrollLock();
+	}
 
-  function updateDeleteConfirmState() {
-    deleteModalConfirmButton.disabled = !deleteModalCheckInput.checked;
-  }
+	function updateDeleteConfirmState() {
+		deleteModalConfirmButton.disabled = !deleteModalCheckInput.checked;
+	}
 
-  function deleteSubjectFromOrganization(subjectId) {
-    const updatedSubjects = getSubjects().filter((subject) => {
-      return subject.id !== subjectId;
-    });
+	function deleteSubjectFromOrganization(subjectId) {
+		const updatedSubjects = getSubjects().filter((subject) => {
+			return subject.id !== subjectId;
+		});
 
-    saveSubjects(updatedSubjects);
-    removeThemesQuestionsAndRelatedDataBySubjectIds([subjectId]);
+		saveSubjects(updatedSubjects);
+		removeThemesQuestionsAndRelatedDataBySubjectIds([subjectId]);
 
-    if (selectedSubjectId === subjectId) {
-      selectedSubjectId = null;
-      selectedThemeId = null;
-      selectedSubtopicId = null;
-    }
+		if (selectedSubjectId === subjectId) {
+			selectedSubjectId = null;
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+		}
 
-    subjectCardMode = "view";
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
+		subjectCardMode = 'view';
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
 
-    closeSubjectModal();
-    notifyOrganizationRelatedDataChanged();
-    renderOrganization();
-  }
+		closeSubjectModal();
+		notifyOrganizationRelatedDataChanged();
+		renderOrganization();
+	}
 
-  function deleteThemeFromOrganization(themeId) {
-    const updatedThemes = getThemes().filter((theme) => {
-      return theme.id !== themeId;
-    });
+	function deleteThemeFromOrganization(themeId) {
+		const updatedThemes = getThemes().filter((theme) => {
+			return theme.id !== themeId;
+		});
 
-    saveThemes(updatedThemes);
+		saveThemes(updatedThemes);
 
-    removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
-    removeQuestionsAndRelatedDataByThemeIds([themeId]);
+		removeSubtopicsQuestionsAndRelatedDataByThemeIds([themeId]);
+		removeQuestionsAndRelatedDataByThemeIds([themeId]);
 
-    if (selectedThemeId === themeId) {
-      selectedThemeId = null;
-      selectedSubtopicId = null;
-    }
+		if (selectedThemeId === themeId) {
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+		}
 
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
 
-    notifyOrganizationRelatedDataChanged();
-    renderOrganization();
-  }
+		notifyOrganizationRelatedDataChanged();
+		renderOrganization();
+	}
 
-  function deleteSubtopicFromOrganization(subtopicId) {
-    unlinkQuestionsFromSubtopic(subtopicId);
-    deleteSubtopic(subtopicId);
+	function deleteSubtopicFromOrganization(subtopicId) {
+		unlinkQuestionsFromSubtopic(subtopicId);
+		deleteSubtopic(subtopicId);
 
-    if (selectedSubtopicId === subtopicId) {
-      selectedSubtopicId = null;
-    }
+		if (selectedSubtopicId === subtopicId) {
+			selectedSubtopicId = null;
+		}
 
-    isSubtopicFormOpen = false;
+		isSubtopicFormOpen = false;
 
-    notifySubtopicsChanged();
-    renderOrganization();
-  }
+		notifySubtopicsChanged();
+		renderOrganization();
+	}
 
-  function confirmDeleteModal() {
-    if (!pendingDeleteTarget || deleteModalConfirmButton.disabled) {
-      return;
-    }
+	function confirmDeleteModal() {
+		if (!pendingDeleteTarget || deleteModalConfirmButton.disabled) {
+			return;
+		}
 
-    const { type, id } = pendingDeleteTarget;
+		const {type, id} = pendingDeleteTarget;
 
-    closeDeleteModal();
+		closeDeleteModal();
 
-    if (type === "subject") {
-      deleteSubjectFromOrganization(id);
-      return;
-    }
+		if (type === 'subject') {
+			deleteSubjectFromOrganization(id);
+			return;
+		}
 
-    if (type === "theme") {
-      deleteThemeFromOrganization(id);
-      return;
-    }
+		if (type === 'theme') {
+			deleteThemeFromOrganization(id);
+			return;
+		}
 
-    if (type === "subtopic") {
-      deleteSubtopicFromOrganization(id);
-    }
-  }
+		if (type === 'subtopic') {
+			deleteSubtopicFromOrganization(id);
+		}
+	}
 
-  function handleDeleteModalClick(event) {
-    if (event.target === deleteModalLayer) {
-      closeDeleteModal();
-    }
-  }
+	function handleDeleteModalClick(event) {
+		if (event.target === deleteModalLayer) {
+			closeDeleteModal();
+		}
+	}
 
-  function handleDeleteModalKeydown(event) {
-    if (event.key === "Escape" && isDeleteModalOpen) {
-      closeDeleteModal();
-    }
-  }
+	function handleDeleteModalKeydown(event) {
+		if (event.key === 'Escape' && isDeleteModalOpen) {
+			closeDeleteModal();
+		}
+	}
 
-  function parseImportListText(text) {
-    return String(text ?? "")
-      .split(/[\n,;]+/)
-      .map((item) => item.replace(/\s+/g, " ").trim())
-      .filter(Boolean);
-  }
+	function parseImportListText(text) {
+		return String(text ?? '')
+			.split(/[\n,;]+/)
+			.map((item) => item.replace(/\s+/g, ' ').trim())
+			.filter(Boolean);
+	}
 
-  function getImportGrammar(kind) {
-    if (kind === "subjects") {
-      return {
-        plural: "matérias",
-        validPlural: "válidas",
-        newSingular: "nova encontrada",
-        newPlural: "novas encontradas",
-        duplicateSingular: "duplicada",
-        duplicatePlural: "duplicadas",
-        alreadyRegistered: "já cadastrada",
-      };
-    }
+	function getImportGrammar(kind) {
+		if (kind === 'subjects') {
+			return {
+				plural: 'matérias',
+				validPlural: 'válidas',
+				newSingular: 'nova encontrada',
+				newPlural: 'novas encontradas',
+				duplicateSingular: 'duplicada',
+				duplicatePlural: 'duplicadas',
+				alreadyRegistered: 'já cadastrada'
+			};
+		}
 
-    if (kind === "questions") {
-      return {
-        plural: "questões",
-        validPlural: "válidas",
-        newSingular: "nova encontrada",
-        newPlural: "novas encontradas",
-        duplicateSingular: "duplicada",
-        duplicatePlural: "duplicadas",
-        alreadyRegistered: "já cadastrada",
-      };
-    }
+		if (kind === 'questions') {
+			return {
+				plural: 'questões',
+				validPlural: 'válidas',
+				newSingular: 'nova encontrada',
+				newPlural: 'novas encontradas',
+				duplicateSingular: 'duplicada',
+				duplicatePlural: 'duplicadas',
+				alreadyRegistered: 'já cadastrada'
+			};
+		}
 
-    if (kind === "themes") {
-      return {
-        plural: "temas",
-        validPlural: "válidos",
-        newSingular: "novo encontrado",
-        newPlural: "novos encontrados",
-        duplicateSingular: "duplicado",
-        duplicatePlural: "duplicados",
-        alreadyRegistered: "já cadastrado",
-      };
-    }
+		if (kind === 'themes') {
+			return {
+				plural: 'temas',
+				validPlural: 'válidos',
+				newSingular: 'novo encontrado',
+				newPlural: 'novos encontrados',
+				duplicateSingular: 'duplicado',
+				duplicatePlural: 'duplicados',
+				alreadyRegistered: 'já cadastrado'
+			};
+		}
 
-    if (kind === "subtopics") {
-      return {
-        plural: "assuntos",
-        validPlural: "válidos",
-        newSingular: "novo encontrado",
-        newPlural: "novos encontrados",
-        duplicateSingular: "duplicado",
-        duplicatePlural: "duplicados",
-        alreadyRegistered: "já cadastrado",
-      };
-    }
+		if (kind === 'subtopics') {
+			return {
+				plural: 'assuntos',
+				validPlural: 'válidos',
+				newSingular: 'novo encontrado',
+				newPlural: 'novos encontrados',
+				duplicateSingular: 'duplicado',
+				duplicatePlural: 'duplicados',
+				alreadyRegistered: 'já cadastrado'
+			};
+		}
 
-    return {
-      plural: "conteúdos",
-      validPlural: "válidos",
-      newSingular: "novo encontrado",
-      newPlural: "novos encontrados",
-      duplicateSingular: "duplicado",
-      duplicatePlural: "duplicados",
-      alreadyRegistered: "já cadastrado",
-    };
-  }
+		return {
+			plural: 'conteúdos',
+			validPlural: 'válidos',
+			newSingular: 'novo encontrado',
+			newPlural: 'novos encontrados',
+			duplicateSingular: 'duplicado',
+			duplicatePlural: 'duplicados',
+			alreadyRegistered: 'já cadastrado'
+		};
+	}
 
-  function formatImportKindName(kind) {
-    return getImportGrammar(kind).plural;
-  }
+	function formatImportKindName(kind) {
+		return getImportGrammar(kind).plural;
+	}
 
-  function formatImportNewItemsMessage(kind, total) {
-    const grammar = getImportGrammar(kind);
-    const adjective = total === 1 ? grammar.newSingular : grammar.newPlural;
+	function formatImportNewItemsMessage(kind, total) {
+		const grammar = getImportGrammar(kind);
+		const adjective = total === 1 ? grammar.newSingular : grammar.newPlural;
 
-    return `${total} ${grammar.plural} ${adjective}`;
-  }
+		return `${total} ${grammar.plural} ${adjective}`;
+	}
 
-  function getImportAlreadyRegisteredText(kind) {
-    return getImportGrammar(kind).alreadyRegistered;
-  }
+	function getImportAlreadyRegisteredText(kind) {
+		return getImportGrammar(kind).alreadyRegistered;
+	}
 
-  function getDefaultImportKind(sourceKind) {
-    if (sourceKind === "subjects") {
-      return "subjects";
-    }
+	function getDefaultImportKind(sourceKind) {
+		if (sourceKind === 'subjects') {
+			return 'subjects';
+		}
 
-    if (sourceKind === "themes") {
-      return "themes";
-    }
+		if (sourceKind === 'themes') {
+			return 'themes';
+		}
 
-    if (sourceKind === "topic") {
-      return "subtopics";
-    }
+		if (sourceKind === 'topic') {
+			return selectedSubtopicId ? 'questions' : 'subtopics';
+		}
 
-    if (sourceKind === "subtopic") {
-      return "questions";
-    }
+		if (sourceKind === 'subtopic') {
+			return 'questions';
+		}
 
-    return "subjects";
-  }
+		return 'subjects';
+	}
 
-  function getImportThemePickerHTML(subject) {
-    const themes = getThemesBySubjectId(subject.id);
+	function getImportThemePickerHTML(subject) {
+		const themes = getThemesBySubjectId(subject.id);
 
-    if (themes.length === 0) {
-      return `
+		if (themes.length === 0) {
+			return `
 			<span class="organization-import-theme-picker">
 				<button
 					class="organization-import-theme-picker__trigger"
@@ -2433,11 +2445,11 @@ export function initOrganization() {
 				</button>
 			</span>
 		`;
-    }
+		}
 
-    const themesHTML = themes
-      .map((theme) => {
-        return `
+		const themesHTML = themes
+			.map((theme) => {
+				return `
 				<button
 					class="organization-import-theme-picker__option"
 					type="button"
@@ -2447,10 +2459,10 @@ export function initOrganization() {
 					${escapeHTML(theme.name)}
 				</button>
 			`;
-      })
-      .join("");
+			})
+			.join('');
 
-    return `
+		return `
 		<span class="organization-import-theme-picker">
 			<button
 				class="organization-import-theme-picker__trigger"
@@ -2465,863 +2477,933 @@ export function initOrganization() {
 			</span>
 		</span>
 	`;
-  }
-
-  function getImportContextHTML(kind = activeImportKind) {
-    const subject = getSubjectById(selectedSubjectId);
-    const theme = getThemeById(selectedThemeId);
-    const subtopic = getSubtopicById(selectedSubtopicId);
+	}
+
+	function getImportContextHTML(kind = activeImportKind) {
+		const subject = getSubjectById(selectedSubjectId);
+		const theme = getThemeById(selectedThemeId);
+		const subtopic = getSubtopicById(selectedSubtopicId);
 
-    if (kind === "subjects") {
-      return "Organização geral";
-    }
+		if (kind === 'subjects') {
+			return 'Organização geral';
+		}
 
-    if (kind === "themes") {
-      return subject ? escapeHTML(subject.name) : "Selecione uma matéria";
-    }
+		if (kind === 'themes') {
+			return subject ? escapeHTML(subject.name) : 'Selecione uma matéria';
+		}
 
-    if (kind === "subtopics") {
-      if (subject && theme) {
-        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
-      }
+		if (kind === 'subtopics') {
+			if (subject && theme) {
+				return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
+			}
 
-      if (subject) {
-        return `${escapeHTML(subject.name)} › ${getImportThemePickerHTML(subject)}`;
-      }
+			if (subject) {
+				return `${escapeHTML(subject.name)} › ${getImportThemePickerHTML(subject)}`;
+			}
 
-      return "Selecione uma matéria e um tema";
-    }
+			return 'Selecione uma matéria e um tema';
+		}
 
-    if (kind === "questions") {
-      if (subject && theme && subtopic) {
-        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)} › ${escapeHTML(subtopic.name)}`;
-      }
+		if (kind === 'questions') {
+			if (subject && theme && subtopic) {
+				return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)} › ${escapeHTML(subtopic.name)}`;
+			}
 
-      if (subject && theme) {
-        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
-      }
+			if (subject && theme) {
+				return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
+			}
 
-      return "Selecione um tema ou assunto";
-    }
+			return 'Selecione um tema ou assunto';
+		}
 
-    return "Organização";
-  }
+		return 'Organização';
+	}
 
-  function renderImportContext(kind = activeImportKind) {
-    importContextLabel.innerHTML = getImportContextHTML(kind);
-  }
+	function renderImportContext(kind = activeImportKind) {
+		importContextLabel.innerHTML = getImportContextHTML(kind);
+	}
 
-  function getImportHelpText(kind = activeImportKind) {
-    if (kind === "subjects") {
-      return "Cole uma lista de matérias separadas por quebra de linha, vírgula ou ponto e vírgula.";
-    }
+	function getImportHelpText(kind = activeImportKind) {
+		if (kind === 'subjects') {
+			return 'Cole uma lista de matérias separadas por quebra de linha, vírgula ou ponto e vírgula.';
+		}
 
-    if (kind === "themes") {
-      return "Cole uma lista de temas. Eles serão adicionados à matéria selecionada.";
-    }
+		if (kind === 'themes') {
+			return 'Cole uma lista de temas. Eles serão adicionados à matéria selecionada.';
+		}
 
-    if (kind === "subtopics") {
-      return "Cole uma lista de assuntos. Eles serão adicionados ao tema selecionado.";
-    }
+		if (kind === 'subtopics') {
+			return 'Cole uma lista de assuntos. Eles serão adicionados ao tema selecionado.';
+		}
 
-    if (kind === "questions") {
-      return "A importação de questões pela Organização será implementada na próxima fase.";
-    }
+		if (kind === 'questions') {
+			return 'Cole questões no formato CEW Questions. Elas serão adicionadas ao tema selecionado ou ao assunto selecionado.';
+		}
 
-    return "Cole os conteúdos para importação.";
-  }
+		return 'Cole os conteúdos para importação.';
+	}
 
-  function resetImportValidation(status = "Aguardando validação.") {
-    validatedImportItems = [];
-    duplicatedImportItems = [];
-    importErrors = [];
+	function resetImportValidation(status = 'Aguardando validação.') {
+		validatedImportItems = [];
+		duplicatedImportItems = [];
+		importErrors = [];
 
-    importValidationStatus.textContent = status;
-    importValidCount.textContent = "0";
-    importDuplicateCount.textContent = "0";
-    importErrorCount.textContent = "0";
+		importValidationStatus.textContent = status;
+		importValidCount.textContent = '0';
+		importDuplicateCount.textContent = '0';
+		importErrorCount.textContent = '0';
 
-    importResultList.innerHTML = "";
-    importErrorList.innerHTML = "";
+		importResultList.innerHTML = '';
+		importErrorList.innerHTML = '';
 
-    importModalConfirmButton.disabled = true;
-  }
+		importModalConfirmButton.disabled = true;
+	}
 
-  function renderImportTypeButtons() {
-    importTypeButtons.forEach((button) => {
-      const kind = button.dataset.importKind;
-      const isQuestions = kind === "questions";
+	function renderImportTypeButtons() {
+		importTypeButtons.forEach((button) => {
+			const kind = button.dataset.importKind;
 
-      button.classList.toggle("is-active", kind === activeImportKind);
-      button.disabled = isQuestions;
-      button.title = isQuestions ? "Importação de questões entra na próxima fase." : "";
-    });
-  }
+			button.classList.toggle('is-active', kind === activeImportKind);
+			button.disabled = false;
+			button.title = '';
+		});
+	}
 
-  function setActiveImportKind(kind) {
-    activeImportKind = kind;
+	function setActiveImportKind(kind) {
+		activeImportKind = kind;
 
-    renderImportContext(kind);
-    importFormatHelp.textContent = getImportHelpText(kind);
+		renderImportContext(kind);
+		importFormatHelp.textContent = getImportHelpText(kind);
 
-    renderImportTypeButtons();
-    resetImportValidation();
-  }
+		renderImportTypeButtons();
+		resetImportValidation();
+	}
 
-  function openImportModal(sourceKind) {
-    const defaultKind = getDefaultImportKind(sourceKind);
+	function openImportModal(sourceKind) {
+		const defaultKind = getDefaultImportKind(sourceKind);
 
-    activeImportKind = defaultKind === "questions" ? "subtopics" : defaultKind;
+		activeImportKind = defaultKind;
 
-    importTextInput.value = "";
+		importTextInput.value = '';
 
-    setActiveImportKind(activeImportKind);
+		setActiveImportKind(activeImportKind);
 
-    isImportModalOpen = true;
-    importModalLayer.hidden = false;
+		isImportModalOpen = true;
+		importModalLayer.hidden = false;
 
-    syncBodyScrollLock();
+		syncBodyScrollLock();
 
-    requestAnimationFrame(() => {
-      importTextInput.focus();
-    });
-  }
+		requestAnimationFrame(() => {
+			importTextInput.focus();
+		});
+	}
 
-  function closeImportModal() {
-    isImportModalOpen = false;
+	function closeImportModal() {
+		isImportModalOpen = false;
 
-    importModalLayer.hidden = true;
-    importTextInput.value = "";
+		importModalLayer.hidden = true;
+		importTextInput.value = '';
 
-    resetImportValidation();
+		resetImportValidation();
 
-    syncBodyScrollLock();
-  }
+		syncBodyScrollLock();
+	}
 
-  function clearImportModal() {
-    importTextInput.value = "";
-    resetImportValidation();
+	function clearImportModal() {
+		importTextInput.value = '';
+		resetImportValidation();
 
-    importTextInput.focus();
-  }
+		importTextInput.focus();
+	}
 
-  function getExistingImportMatch(kind, name) {
-    if (kind === "subjects") {
-      return getSubjects().find((subject) => compareNames(subject.name, name));
-    }
+	function getExistingImportMatch(kind, name) {
+		if (kind === 'subjects') {
+			return getSubjects().find((subject) => compareNames(subject.name, name));
+		}
 
-    if (kind === "themes") {
-      return getThemesBySubjectId(selectedSubjectId).find((theme) => compareNames(theme.name, name));
-    }
+		if (kind === 'themes') {
+			return getThemesBySubjectId(selectedSubjectId).find((theme) => compareNames(theme.name, name));
+		}
 
-    if (kind === "subtopics") {
-      return getSubtopicsByThemeId(selectedThemeId).find((subtopic) => compareNames(subtopic.name, name));
-    }
+		if (kind === 'subtopics') {
+			return getSubtopicsByThemeId(selectedThemeId).find((subtopic) => compareNames(subtopic.name, name));
+		}
 
-    return null;
-  }
+		return null;
+	}
 
-  function validateImportContext() {
-    if (activeImportKind === "themes" && !selectedSubjectId) {
-      return "Selecione uma matéria antes de importar temas.";
-    }
+	function validateImportContext() {
+		if (activeImportKind === 'themes' && !selectedSubjectId) {
+			return 'Selecione uma matéria antes de importar temas.';
+		}
 
-    if (activeImportKind === "subtopics" && (!selectedSubjectId || !selectedThemeId)) {
-      return "Selecione uma matéria e um tema antes de importar assuntos.";
-    }
+		if (activeImportKind === 'subtopics' && (!selectedSubjectId || !selectedThemeId)) {
+			return 'Selecione uma matéria e um tema antes de importar assuntos.';
+		}
 
-    if (activeImportKind === "questions") {
-      return "A importação de questões pela Organização será implementada na próxima fase.";
-    }
+		if (activeImportKind === 'questions' && (!selectedSubjectId || !selectedThemeId)) {
+			return 'Selecione uma matéria e um tema antes de importar questões.';
+		}
 
-    return "";
-  }
+		return '';
+	}
 
-  function validateImportItems() {
-    resetImportValidation("Validando...");
+	function validateQuestionImportItems() {
+		const importText = importTextInput.value.trim();
 
-    const contextError = validateImportContext();
+		if (!importText) {
+			importErrors = ['Cole pelo menos uma questão para importar.'];
+			renderImportValidation();
+			return;
+		}
 
-    if (contextError) {
-      importErrors = [contextError];
-      renderImportValidation();
-      return;
-    }
+		const result = parseQuestionsFromText(importText);
 
-    const rawItems = parseImportListText(importTextInput.value);
+		validatedImportItems = result.validQuestions;
+		duplicatedImportItems = [];
+		importErrors = result.errors;
 
-    if (rawItems.length === 0) {
-      importErrors = ["Cole pelo menos um item para importar."];
-      renderImportValidation();
-      return;
-    }
+		renderImportValidation();
+	}
 
-    const seenItems = [];
+	function validateImportItems() {
+		resetImportValidation('Validando...');
 
-    rawItems.forEach((item) => {
-      const alreadyInInput = seenItems.some((seenItem) => compareNames(seenItem, item));
+		const contextError = validateImportContext();
 
-      if (alreadyInInput) {
-        duplicatedImportItems.push({
-          name: item,
-          reason: "repetido na lista",
-        });
+		if (contextError) {
+			importErrors = [contextError];
+			renderImportValidation();
+			return;
+		}
 
-        return;
-      }
+		if (activeImportKind === 'questions') {
+			validateQuestionImportItems();
+			return;
+		}
 
-      seenItems.push(item);
+		const rawItems = parseImportListText(importTextInput.value);
 
-      const existingItem = getExistingImportMatch(activeImportKind, item);
+		if (rawItems.length === 0) {
+			importErrors = ['Cole pelo menos um item para importar.'];
+			renderImportValidation();
+			return;
+		}
 
-      if (existingItem) {
-        duplicatedImportItems.push({
-          name: item,
-          reason: getImportAlreadyRegisteredText(activeImportKind),
-        });
+		const seenItems = [];
 
-        return;
-      }
+		rawItems.forEach((item) => {
+			const alreadyInInput = seenItems.some((seenItem) => compareNames(seenItem, item));
 
-      validatedImportItems.push(item);
-    });
+			if (alreadyInInput) {
+				duplicatedImportItems.push({
+					name: item,
+					reason: 'repetido na lista'
+				});
 
-    renderImportValidation();
-  }
+				return;
+			}
 
-  function renderImportValidation() {
-    importValidCount.textContent = String(validatedImportItems.length);
-    importDuplicateCount.textContent = String(duplicatedImportItems.length);
-    importErrorCount.textContent = String(importErrors.length);
+			seenItems.push(item);
 
-    const kindName = formatImportKindName(activeImportKind);
-    const newItemsMessage = formatImportNewItemsMessage(activeImportKind, validatedImportItems.length);
+			const existingItem = getExistingImportMatch(activeImportKind, item);
 
-    if (validatedImportItems.length > 0 && duplicatedImportItems.length === 0 && importErrors.length === 0) {
-      importValidationStatus.textContent = `${newItemsMessage}. Pronto para importar.`;
-    } else if (validatedImportItems.length > 0) {
-      importValidationStatus.textContent = `${newItemsMessage}. Alguns itens serão ignorados.`;
-    } else if (duplicatedImportItems.length > 0 && importErrors.length === 0) {
-      importValidationStatus.textContent = "Nenhum item novo encontrado. Todos parecem repetidos.";
-    } else {
-      importValidationStatus.textContent = "Corrija os avisos antes de importar.";
-    }
+			if (existingItem) {
+				duplicatedImportItems.push({
+					name: item,
+					reason: getImportAlreadyRegisteredText(activeImportKind)
+				});
 
-    importResultList.innerHTML = [
-      ...validatedImportItems.map((item) => {
-        return `<li>✅ ${escapeHTML(item)}</li>`;
-      }),
-      ...duplicatedImportItems.map((item) => {
-        return `<li>⚠️ ${escapeHTML(item.name)} — ${escapeHTML(item.reason)}</li>`;
-      }),
-    ].join("");
+				return;
+			}
 
-    importErrorList.innerHTML = importErrors
-      .map((error) => {
-        return `<li>${escapeHTML(error)}</li>`;
-      })
-      .join("");
+			validatedImportItems.push(item);
+		});
 
-    importModalConfirmButton.disabled = validatedImportItems.length === 0;
-  }
+		renderImportValidation();
+	}
 
-  function importValidatedItems() {
-    if (validatedImportItems.length === 0) {
-      return;
-    }
+	function renderImportValidation() {
+		importValidCount.textContent = String(validatedImportItems.length);
+		importDuplicateCount.textContent = String(duplicatedImportItems.length);
+		importErrorCount.textContent = String(importErrors.length);
 
-    if (activeImportKind === "subjects") {
-      const newSubjects = validatedImportItems.map((name) => createSubject(name));
+		const kindName = formatImportKindName(activeImportKind);
+		const newItemsMessage = formatImportNewItemsMessage(activeImportKind, validatedImportItems.length);
 
-      saveSubjects([...getSubjects(), ...newSubjects]);
+		if (validatedImportItems.length > 0 && duplicatedImportItems.length === 0 && importErrors.length === 0) {
+			importValidationStatus.textContent = `${newItemsMessage}. Pronto para importar.`;
+		} else if (validatedImportItems.length > 0) {
+			importValidationStatus.textContent = `${newItemsMessage}. Alguns itens serão ignorados.`;
+		} else if (duplicatedImportItems.length > 0 && importErrors.length === 0) {
+			importValidationStatus.textContent = 'Nenhum item novo encontrado. Todos parecem repetidos.';
+		} else {
+			importValidationStatus.textContent = 'Corrija os avisos antes de importar.';
+		}
 
-      selectedSubjectId = newSubjects[0]?.id || selectedSubjectId;
-      selectedThemeId = null;
-      selectedSubtopicId = null;
-      subjectCardMode = "view";
+		const validItemsHTML = validatedImportItems.map((item, index) => {
+			if (activeImportKind === 'questions') {
+				return `<li>✅ Questão ${String(index + 1).padStart(2, '0')} — ${escapeHTML(item.statement.slice(0, 80))}${item.statement.length > 80 ? '...' : ''}</li>`;
+			}
 
-      notifySubjectsChanged();
-      closeImportModal();
-      renderOrganization();
+			return `<li>✅ ${escapeHTML(item)}</li>`;
+		});
 
-      return;
-    }
+		importResultList.innerHTML = [
+			...validItemsHTML,
+			...duplicatedImportItems.map((item) => {
+				return `<li>⚠️ ${escapeHTML(item.name)} — ${escapeHTML(item.reason)}</li>`;
+			})
+		].join('');
 
-    if (activeImportKind === "themes") {
-      if (!selectedSubjectId) {
-        importErrors = ["Selecione uma matéria antes de importar temas."];
-        renderImportValidation();
-        return;
-      }
+		importErrorList.innerHTML = importErrors
+			.map((error) => {
+				return `<li>${escapeHTML(error)}</li>`;
+			})
+			.join('');
 
-      const newThemes = validatedImportItems.map((name) => {
-        return createTheme({
-          subjectId: selectedSubjectId,
-          name,
-        });
-      });
+		importModalConfirmButton.disabled = validatedImportItems.length === 0;
+	}
 
-      saveThemes([...getThemes(), ...newThemes]);
+	function importValidatedQuestionsFromOrganization() {
+		if (!selectedSubjectId || !selectedThemeId) {
+			importErrors = ['Selecione uma matéria e um tema antes de importar questões.'];
+			renderImportValidation();
+			return;
+		}
+
+		if (validatedImportItems.length === 0) {
+			importErrors = ['Valide o texto antes de importar.'];
+			renderImportValidation();
+			return;
+		}
 
-      selectedThemeId = newThemes[0]?.id || selectedThemeId;
-      selectedSubtopicId = null;
-      themeCardMode = "view";
+		const newQuestions = validatedImportItems.map((question) => {
+			return createQuestion({
+				subjectId: selectedSubjectId,
+				themeId: selectedThemeId,
+				subtopicId: selectedSubtopicId || null,
+				statement: question.statement,
+				alternatives: question.alternatives,
+				correctAlternative: question.correctAlternative,
+				explanation: question.explanation
+			});
+		});
 
-      notifyThemesChanged();
-      closeImportModal();
-      renderOrganization();
+		saveQuestions([...getQuestions(), ...newQuestions]);
 
-      return;
-    }
+		notifyQuestionsChanged();
 
-    if (activeImportKind === "subtopics") {
-      if (!selectedSubjectId || !selectedThemeId) {
-        importErrors = ["Selecione uma matéria e um tema antes de importar assuntos."];
-        renderImportValidation();
-        return;
-      }
+		validatedImportItems = [];
+		duplicatedImportItems = [];
+		importErrors = [];
 
-      let firstImportedSubtopicId = null;
+		closeImportModal();
+		renderOrganization();
+	}
 
-      validatedImportItems.forEach((name) => {
-        const result = addSubtopic({
-          subjectId: selectedSubjectId,
-          themeId: selectedThemeId,
-          name,
-        });
+	function importValidatedItems() {
+		if (validatedImportItems.length === 0) {
+			return;
+		}
+
+		if (activeImportKind === 'questions') {
+			importValidatedQuestionsFromOrganization();
+			return;
+		}
+
+		if (activeImportKind === 'subjects') {
+			const newSubjects = validatedImportItems.map((name) => createSubject(name));
+
+			saveSubjects([...getSubjects(), ...newSubjects]);
+
+			selectedSubjectId = newSubjects[0]?.id || selectedSubjectId;
+			selectedThemeId = null;
+			selectedSubtopicId = null;
+			subjectCardMode = 'view';
 
-        if (result.ok && !firstImportedSubtopicId) {
-          firstImportedSubtopicId = result.subtopic.id;
-        }
-      });
+			notifySubjectsChanged();
+			closeImportModal();
+			renderOrganization();
 
-      selectedSubtopicId = firstImportedSubtopicId || selectedSubtopicId;
-      isSubtopicFormOpen = false;
-      editingSubtopicId = null;
+			return;
+		}
 
-      closeImportModal();
-      renderOrganization();
+		if (activeImportKind === 'themes') {
+			if (!selectedSubjectId) {
+				importErrors = ['Selecione uma matéria antes de importar temas.'];
+				renderImportValidation();
+				return;
+			}
 
-      return;
-    }
-  }
+			const newThemes = validatedImportItems.map((name) => {
+				return createTheme({
+					subjectId: selectedSubjectId,
+					name
+				});
+			});
+
+			saveThemes([...getThemes(), ...newThemes]);
 
-  function handleImportButtonClick(event) {
-    const button = event.target.closest("[data-organization-import]");
+			selectedThemeId = newThemes[0]?.id || selectedThemeId;
+			selectedSubtopicId = null;
+			themeCardMode = 'view';
 
-    if (!button) {
-      return;
-    }
+			notifyThemesChanged();
+			closeImportModal();
+			renderOrganization();
 
-    openImportModal(button.dataset.organizationImport);
-  }
+			return;
+		}
 
-  function handleImportModalOverlayClick(event) {
-    if (event.target === importModalLayer) {
-      closeImportModal();
-    }
-  }
+		if (activeImportKind === 'subtopics') {
+			if (!selectedSubjectId || !selectedThemeId) {
+				importErrors = ['Selecione uma matéria e um tema antes de importar assuntos.'];
+				renderImportValidation();
+				return;
+			}
+
+			let firstImportedSubtopicId = null;
 
-  function handleImportModalKeydown(event) {
-    if (event.key === "Escape" && isImportModalOpen) {
-      closeImportModal();
-    }
-  }
+			validatedImportItems.forEach((name) => {
+				const result = addSubtopic({
+					subjectId: selectedSubjectId,
+					themeId: selectedThemeId,
+					name
+				});
+
+				if (result.ok && !firstImportedSubtopicId) {
+					firstImportedSubtopicId = result.subtopic.id;
+				}
+			});
+
+			selectedSubtopicId = firstImportedSubtopicId || selectedSubtopicId;
+			isSubtopicFormOpen = false;
+			editingSubtopicId = null;
+
+			closeImportModal();
+			renderOrganization();
+
+			return;
+		}
+	}
+
+	function handleImportButtonClick(event) {
+		const button = event.target.closest('[data-organization-import]');
+
+		if (!button) {
+			return;
+		}
+
+		openImportModal(button.dataset.organizationImport);
+	}
+
+	function handleImportModalOverlayClick(event) {
+		if (event.target === importModalLayer) {
+			closeImportModal();
+		}
+	}
+
+	function handleImportModalKeydown(event) {
+		if (event.key === 'Escape' && isImportModalOpen) {
+			closeImportModal();
+		}
+	}
+
+	function handleSubjectGalleryClick(event) {
+		const subjectCard = event.target.closest('[data-organization-subject-id]');
+
+		if (!subjectCard) {
+			return;
+		}
+
+		openSubjectModal(subjectCard.dataset.organizationSubjectId);
+	}
+
+	function handleSubjectGalleryKeydown(event) {
+		if (!['Enter', ' '].includes(event.key)) {
+			return;
+		}
 
-  function handleSubjectGalleryClick(event) {
-    const subjectCard = event.target.closest("[data-organization-subject-id]");
+		const subjectCard = event.target.closest('[data-organization-subject-id]');
+
+		if (!subjectCard) {
+			return;
+		}
 
-    if (!subjectCard) {
-      return;
-    }
+		event.preventDefault();
+		openSubjectModal(subjectCard.dataset.organizationSubjectId);
+	}
 
-    openSubjectModal(subjectCard.dataset.organizationSubjectId);
-  }
+	function handleTreeClick(event) {
+		const themeToggle = event.target.closest('[data-organization-tree-toggle-theme]');
+		const subjectToggle = event.target.closest('[data-organization-tree-toggle-subject]');
 
-  function handleSubjectGalleryKeydown(event) {
-    if (!["Enter", " "].includes(event.key)) {
-      return;
-    }
+		if (themeToggle) {
+			event.preventDefault();
+			event.stopPropagation();
 
-    const subjectCard = event.target.closest("[data-organization-subject-id]");
+			toggleCollapsedTheme(themeToggle.dataset.organizationTreeToggleTheme);
+			return;
+		}
 
-    if (!subjectCard) {
-      return;
-    }
+		if (subjectToggle) {
+			event.preventDefault();
+			event.stopPropagation();
 
-    event.preventDefault();
-    openSubjectModal(subjectCard.dataset.organizationSubjectId);
-  }
+			toggleCollapsedSubject(subjectToggle.dataset.organizationTreeToggleSubject);
+			return;
+		}
 
-  function handleTreeClick(event) {
-    const themeToggle = event.target.closest("[data-organization-tree-toggle-theme]");
-    const subjectToggle = event.target.closest("[data-organization-tree-toggle-subject]");
+		const subtopicButton = event.target.closest('[data-organization-tree-subtopic]');
+		const themeButton = event.target.closest('[data-organization-tree-theme]');
+		const subjectButton = event.target.closest('[data-organization-tree-subject]');
+
+		if (subtopicButton) {
+			openSubjectModalWithSubtopic(subtopicButton.dataset.organizationTreeSubtopic);
+			return;
+		}
 
-    if (themeToggle) {
-      event.preventDefault();
-      event.stopPropagation();
+		if (themeButton) {
+			openSubjectModalWithTheme(themeButton.dataset.organizationTreeTheme);
+			return;
+		}
 
-      toggleCollapsedTheme(themeToggle.dataset.organizationTreeToggleTheme);
-      return;
-    }
+		if (subjectButton) {
+			openSubjectModal(subjectButton.dataset.organizationTreeSubject);
+		}
+	}
 
-    if (subjectToggle) {
-      event.preventDefault();
-      event.stopPropagation();
+	function handleSubjectSearchInput() {
+		subjectSearchText = normalizeText(subjectSearchInput.value);
+		renderSubjectGallery();
+	}
+
+	function handleSubjectSearchSubmit(event) {
+		event.preventDefault();
 
-      toggleCollapsedSubject(subjectToggle.dataset.organizationTreeToggleSubject);
-      return;
-    }
+		subjectSearchText = normalizeText(subjectSearchInput.value);
+		renderSubjectGallery();
+	}
 
-    const subtopicButton = event.target.closest("[data-organization-tree-subtopic]");
-    const themeButton = event.target.closest("[data-organization-tree-theme]");
-    const subjectButton = event.target.closest("[data-organization-tree-subject]");
-
-    if (subtopicButton) {
-      openSubjectModalWithSubtopic(subtopicButton.dataset.organizationTreeSubtopic);
-      return;
-    }
-
-    if (themeButton) {
-      openSubjectModalWithTheme(themeButton.dataset.organizationTreeTheme);
-      return;
-    }
-
-    if (subjectButton) {
-      openSubjectModal(subjectButton.dataset.organizationTreeSubject);
-    }
-  }
-
-  function handleSubjectSearchInput() {
-    subjectSearchText = normalizeText(subjectSearchInput.value);
-    renderSubjectGallery();
-  }
-
-  function handleSubjectSearchSubmit(event) {
-    event.preventDefault();
-
-    subjectSearchText = normalizeText(subjectSearchInput.value);
-    renderSubjectGallery();
-  }
-
-  function handleThemeSearchInput() {
-    themeSearchText = normalizeText(themeSearchInput.value);
-    renderThemeGallery();
-  }
-
-  function handleThemeSearchSubmit(event) {
-    event.preventDefault();
-
-    themeSearchText = normalizeText(themeSearchInput.value);
-    renderThemeGallery();
-  }
-
-  function handleSubtopicSearchInput() {
-    subtopicSearchText = normalizeText(subtopicSearchInput.value);
-    renderSubtopicPanel();
-  }
-
-  function handleSubtopicSearchSubmit(event) {
-    event.preventDefault();
-
-    subtopicSearchText = normalizeText(subtopicSearchInput.value);
-    renderSubtopicPanel();
-  }
-
-  function handleEmptyThemesStateClick(event) {
-    const actionButton = event.target.closest("button, .organization-state__action");
-
-    if (!actionButton) {
-      return;
-    }
-
-    openThemeCreateForm();
-  }
-
-  function handleEmptySubtopicsStateClick(event) {
-    const actionButton = event.target.closest("button, .organization-state__action");
-
-    if (!actionButton) {
-      return;
-    }
-
-    openSubtopicCreateForm();
-  }
-
-  function handleFeatureCardAction(event) {
-    const actionButton = event.target.closest("[data-organization-action]");
-
-    if (!actionButton || actionButton.disabled) {
-      return;
-    }
-
-    const action = actionButton.dataset.organizationAction;
-
-    if (action === "confirm-create-subject") {
-      confirmSubjectCreateForm();
-      return;
-    }
-
-    if (action === "cancel-create-subject") {
-      cancelSubjectCreateForm();
-      return;
-    }
-
-    if (action === "confirm-edit-subject") {
-      confirmSubjectEditForm();
-      return;
-    }
-
-    if (action === "cancel-edit-subject") {
-      cancelSubjectEditForm();
-      return;
-    }
-
-    const subject = getSubjectById(selectedSubjectId);
-
-    if (!subject) {
-      return;
-    }
-
-    if (action === "resolve-subject") {
-      document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "solve" } }));
-      return;
-    }
-
-    if (action === "review-subject") {
-      document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "reviews" } }));
-      return;
-    }
-
-    if (action === "create-question") {
-      openQuestionCreationFromSubject(subject);
-      return;
-    }
-
-    if (action === "create-note") {
-      openNoteCreationFromSubject(subject);
-      return;
-    }
-
-    if (action === "edit-subject") {
-      openSubjectEditForm();
-      return;
-    }
-
-    if (action === "delete-subject") {
-      openDeleteModal({
-        type: "subject",
-        id: subject.id,
-      });
-
-      return;
-    }
-  }
-
-  function handleSubjectModalClick(event) {
-    const closeButton = event.target.closest(".organization-modal-close");
-
-    if (closeButton) {
-      closeSubjectModal();
-      return;
-    }
-
-    const themeActionButton = event.target.closest("[data-organization-theme-action]");
-
-    if (themeActionButton && !themeActionButton.disabled) {
-      const action = themeActionButton.dataset.organizationThemeAction;
-
-      if (action === "confirm-create-theme") {
-        confirmThemeCreateForm();
-        return;
-      }
-
-      if (action === "cancel-create-theme") {
-        cancelThemeCreateForm();
-        return;
-      }
-
-      if (action === "confirm-edit-theme") {
-        confirmThemeEditForm();
-        return;
-      }
-
-      if (action === "cancel-edit-theme") {
-        cancelThemeEditForm();
-        return;
-      }
-
-      const theme = getThemeById(selectedThemeId);
-
-      if (!theme) {
-        return;
-      }
-
-      if (action === "create-question") {
-        openQuestionCreationFromTheme(theme);
-        return;
-      }
-
-      if (action === "create-note") {
-        openNoteCreationFromTheme(theme);
-        return;
-      }
-
-      if (action === "resolve-theme") {
-        document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "solve" } }));
-        return;
-      }
-
-      if (action === "review-theme") {
-        document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "reviews" } }));
-        return;
-      }
-
-      if (action === "edit-theme") {
-        openThemeEditForm();
-        return;
-      }
-
-      if (action === "delete-theme") {
-        openDeleteModal({
-          type: "theme",
-          id: theme.id,
-        });
-
-        return;
-      }
-    }
-
-    const subtopicActionButton = event.target.closest("[data-organization-subtopic-action]");
-
-    if (subtopicActionButton && !subtopicActionButton.disabled) {
-      const action = subtopicActionButton.dataset.organizationSubtopicAction;
-
-      if (action === "confirm-create-subtopic") {
-        confirmSubtopicCreateForm();
-        return;
-      }
-
-      if (action === "cancel-create-subtopic") {
-        cancelSubtopicCreateForm();
-        return;
-      }
-
-      const subtopicId = subtopicActionButton.dataset.subtopicId;
-      const subtopic = getSubtopicById(subtopicId);
-
-      if (action === "confirm-edit-subtopic") {
-        confirmSubtopicEditForm(subtopic);
-        return;
-      }
-
-      if (action === "cancel-edit-subtopic") {
-        cancelSubtopicEditForm();
-        return;
-      }
-
-      if (!subtopic) {
-        return;
-      }
-
-      if (action === "create-question") {
-        openQuestionCreationFromSubtopic(subtopic);
-        return;
-      }
-
-      if (action === "create-note") {
-        openNoteCreationFromSubtopic(subtopic);
-        return;
-      }
-
-      if (action === "resolve-subtopic") {
-        document.dispatchEvent(
-          new CustomEvent("solve:prepare-subtopic", {
-            detail: {
-              subtopicId: subtopic.id,
-            },
-          }),
-        );
-
-        document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "solve" } }));
-        return;
-      }
-
-      if (action === "review-subtopic") {
-        document.dispatchEvent(new CustomEvent("app:navigate", { detail: { sectionId: "reviews" } }));
-        return;
-      }
-
-      if (action === "edit-subtopic") {
-        openSubtopicEditForm(subtopic);
-        return;
-      }
-
-      if (action === "delete-subtopic") {
-        openDeleteModal({
-          type: "subtopic",
-          id: subtopic.id,
-        });
-
-        return;
-      }
-    }
-
-    const themeCard = event.target.closest("[data-organization-theme-id]");
-
-    if (themeCard) {
-      selectTheme(themeCard.dataset.organizationThemeId);
-      return;
-    }
-
-    const subtopicCard = event.target.closest("[data-organization-subtopic-id]");
-
-    if (subtopicCard) {
-      toggleSubtopicSelection(subtopicCard.dataset.organizationSubtopicId);
-    }
-  }
-
-  function handleSubjectModalOverlayClick(event) {
-    if (event.target === subjectModalLayer) {
-      closeSubjectModal();
-    }
-  }
-
-  function handleSubjectModalKeydown(event) {
-    if (isDeleteModalOpen || isImportModalOpen) {
-      return;
-    }
-
-    if (event.key === "Escape" && !subjectModalLayer.hidden) {
-      closeSubjectModal();
-    }
-  }
-
-  function handleImportContextClick(event) {
-    const themeButton = event.target.closest("[data-organization-import-select-theme]");
-
-    if (!themeButton) {
-      return;
-    }
-
-    const theme = getThemeById(themeButton.dataset.organizationImportSelectTheme);
-
-    if (!theme) {
-      return;
-    }
-
-    selectedSubjectId = theme.subjectId;
-    selectedThemeId = theme.id;
-    selectedSubtopicId = null;
-
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    renderOrganization();
-    renderImportContext();
-
-    resetImportValidation("Tema selecionado. Valide a lista para importar.");
-    importTextInput.focus();
-  }
-
-  function handleDataReset() {
-    selectedSubjectId = null;
-    selectedThemeId = null;
-    selectedSubtopicId = null;
-
-    subjectSearchText = "";
-    themeSearchText = "";
-    subtopicSearchText = "";
-
-    subjectCardMode = "view";
-    themeCardMode = "view";
-    isSubtopicFormOpen = false;
-    editingSubtopicId = null;
-
-    pendingDeleteTarget = null;
-    isDeleteModalOpen = false;
-    isImportModalOpen = false;
-
-    subjectSearchInput.value = "";
-    themeSearchInput.value = "";
-    subtopicSearchInput.value = "";
-
-    closeImportModal();
-    closeDeleteModal();
-    closeSubjectModal();
-    renderOrganization();
-  }
-
-  subjectSearchForm.addEventListener("submit", handleSubjectSearchSubmit);
-  subjectSearchInput.addEventListener("input", handleSubjectSearchInput);
-
-  themeSearchForm.addEventListener("submit", handleThemeSearchSubmit);
-  themeSearchInput.addEventListener("input", handleThemeSearchInput);
-
-  subtopicSearchForm.addEventListener("submit", handleSubtopicSearchSubmit);
-  subtopicSearchInput.addEventListener("input", handleSubtopicSearchInput);
-
-  subjectGallery.addEventListener("click", handleSubjectGalleryClick);
-  subjectGallery.addEventListener("keydown", handleSubjectGalleryKeydown);
-
-  subjectAddCard.addEventListener("click", openSubjectCreateForm);
-  themeAddCard.addEventListener("click", openThemeCreateForm);
-  subtopicAddCard.addEventListener("click", openSubtopicCreateForm);
-  emptyThemesState.addEventListener("click", handleEmptyThemesStateClick);
-  emptySubtopicsState.addEventListener("click", handleEmptySubtopicsStateClick);
-
-  organizationTree.addEventListener("click", handleTreeClick);
-  subjectFeatureCard.addEventListener("click", handleFeatureCardAction);
-
-  subjectModalLayer.addEventListener("click", handleSubjectModalClick);
-  subjectModalLayer.addEventListener("click", handleSubjectModalOverlayClick);
-  document.addEventListener("keydown", handleSubjectModalKeydown);
-
-  deleteModalLayer.addEventListener("click", handleDeleteModalClick);
-  deleteModalCloseButton.addEventListener("click", closeDeleteModal);
-  deleteModalCancelButton.addEventListener("click", closeDeleteModal);
-  deleteModalCheckInput.addEventListener("change", updateDeleteConfirmState);
-  deleteModalConfirmButton.addEventListener("click", confirmDeleteModal);
-  document.addEventListener("keydown", handleDeleteModalKeydown);
-
-  importButtons.forEach((button) => {
-    button.addEventListener("click", handleImportButtonClick);
-  });
-
-  importModalLayer.addEventListener("click", handleImportModalOverlayClick);
-  importModalCloseButton.addEventListener("click", closeImportModal);
-  importModalCancelButton.addEventListener("click", closeImportModal);
-  importModalClearButton.addEventListener("click", clearImportModal);
-  importModalValidateButton.addEventListener("click", validateImportItems);
-  importModalConfirmButton.addEventListener("click", importValidatedItems);
-  importContextLabel.addEventListener("click", handleImportContextClick);
-
-  importTextInput.addEventListener("input", () => {
-    resetImportValidation();
-  });
-
-  importTypeButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      if (button.disabled) {
-        return;
-      }
-
-      setActiveImportKind(button.dataset.importKind);
-    });
-  });
-
-  document.addEventListener("keydown", handleImportModalKeydown);
-
-  document.addEventListener("subjects:changed", renderOrganization);
-  document.addEventListener("themes:changed", renderOrganization);
-  document.addEventListener("subtopics:changed", renderOrganization);
-  document.addEventListener("questions:changed", renderOrganization);
-  document.addEventListener("attempts:changed", renderOrganization);
-  document.addEventListener("errorReviews:changed", renderOrganization);
-  document.addEventListener("app:data-reset", handleDataReset);
-
-  renderOrganization();
-
-  console.log("Organização v1.2 carregada.");
+	function handleThemeSearchInput() {
+		themeSearchText = normalizeText(themeSearchInput.value);
+		renderThemeGallery();
+	}
+
+	function handleThemeSearchSubmit(event) {
+		event.preventDefault();
+
+		themeSearchText = normalizeText(themeSearchInput.value);
+		renderThemeGallery();
+	}
+
+	function handleSubtopicSearchInput() {
+		subtopicSearchText = normalizeText(subtopicSearchInput.value);
+		renderSubtopicPanel();
+	}
+
+	function handleSubtopicSearchSubmit(event) {
+		event.preventDefault();
+
+		subtopicSearchText = normalizeText(subtopicSearchInput.value);
+		renderSubtopicPanel();
+	}
+
+	function handleEmptyThemesStateClick(event) {
+		const actionButton = event.target.closest('button, .organization-state__action');
+
+		if (!actionButton) {
+			return;
+		}
+
+		openThemeCreateForm();
+	}
+
+	function handleEmptySubtopicsStateClick(event) {
+		const actionButton = event.target.closest('button, .organization-state__action');
+
+		if (!actionButton) {
+			return;
+		}
+
+		openSubtopicCreateForm();
+	}
+
+	function handleFeatureCardAction(event) {
+		const actionButton = event.target.closest('[data-organization-action]');
+
+		if (!actionButton || actionButton.disabled) {
+			return;
+		}
+
+		const action = actionButton.dataset.organizationAction;
+
+		if (action === 'confirm-create-subject') {
+			confirmSubjectCreateForm();
+			return;
+		}
+
+		if (action === 'cancel-create-subject') {
+			cancelSubjectCreateForm();
+			return;
+		}
+
+		if (action === 'confirm-edit-subject') {
+			confirmSubjectEditForm();
+			return;
+		}
+
+		if (action === 'cancel-edit-subject') {
+			cancelSubjectEditForm();
+			return;
+		}
+
+		const subject = getSubjectById(selectedSubjectId);
+
+		if (!subject) {
+			return;
+		}
+
+		if (action === 'resolve-subject') {
+			document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
+			return;
+		}
+
+		if (action === 'review-subject') {
+			document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
+			return;
+		}
+
+		if (action === 'create-question') {
+			openQuestionCreationFromSubject(subject);
+			return;
+		}
+
+		if (action === 'create-note') {
+			openNoteCreationFromSubject(subject);
+			return;
+		}
+
+		if (action === 'edit-subject') {
+			openSubjectEditForm();
+			return;
+		}
+
+		if (action === 'delete-subject') {
+			openDeleteModal({
+				type: 'subject',
+				id: subject.id
+			});
+
+			return;
+		}
+	}
+
+	function handleSubjectModalClick(event) {
+		const closeButton = event.target.closest('.organization-modal-close');
+
+		if (closeButton) {
+			closeSubjectModal();
+			return;
+		}
+
+		const themeActionButton = event.target.closest('[data-organization-theme-action]');
+
+		if (themeActionButton && !themeActionButton.disabled) {
+			const action = themeActionButton.dataset.organizationThemeAction;
+
+			if (action === 'confirm-create-theme') {
+				confirmThemeCreateForm();
+				return;
+			}
+
+			if (action === 'cancel-create-theme') {
+				cancelThemeCreateForm();
+				return;
+			}
+
+			if (action === 'confirm-edit-theme') {
+				confirmThemeEditForm();
+				return;
+			}
+
+			if (action === 'cancel-edit-theme') {
+				cancelThemeEditForm();
+				return;
+			}
+
+			const theme = getThemeById(selectedThemeId);
+
+			if (!theme) {
+				return;
+			}
+
+			if (action === 'create-question') {
+				openQuestionCreationFromTheme(theme);
+				return;
+			}
+
+			if (action === 'create-note') {
+				openNoteCreationFromTheme(theme);
+				return;
+			}
+
+			if (action === 'resolve-theme') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
+				return;
+			}
+
+			if (action === 'review-theme') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
+				return;
+			}
+
+			if (action === 'edit-theme') {
+				openThemeEditForm();
+				return;
+			}
+
+			if (action === 'delete-theme') {
+				openDeleteModal({
+					type: 'theme',
+					id: theme.id
+				});
+
+				return;
+			}
+		}
+
+		const subtopicActionButton = event.target.closest('[data-organization-subtopic-action]');
+
+		if (subtopicActionButton && !subtopicActionButton.disabled) {
+			const action = subtopicActionButton.dataset.organizationSubtopicAction;
+
+			if (action === 'confirm-create-subtopic') {
+				confirmSubtopicCreateForm();
+				return;
+			}
+
+			if (action === 'cancel-create-subtopic') {
+				cancelSubtopicCreateForm();
+				return;
+			}
+
+			const subtopicId = subtopicActionButton.dataset.subtopicId;
+			const subtopic = getSubtopicById(subtopicId);
+
+			if (action === 'confirm-edit-subtopic') {
+				confirmSubtopicEditForm(subtopic);
+				return;
+			}
+
+			if (action === 'cancel-edit-subtopic') {
+				cancelSubtopicEditForm();
+				return;
+			}
+
+			if (!subtopic) {
+				return;
+			}
+
+			if (action === 'create-question') {
+				openQuestionCreationFromSubtopic(subtopic);
+				return;
+			}
+
+			if (action === 'create-note') {
+				openNoteCreationFromSubtopic(subtopic);
+				return;
+			}
+
+			if (action === 'resolve-subtopic') {
+				document.dispatchEvent(
+					new CustomEvent('solve:prepare-subtopic', {
+						detail: {
+							subtopicId: subtopic.id
+						}
+					})
+				);
+
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'solve'}}));
+				return;
+			}
+
+			if (action === 'review-subtopic') {
+				document.dispatchEvent(new CustomEvent('app:navigate', {detail: {sectionId: 'reviews'}}));
+				return;
+			}
+
+			if (action === 'edit-subtopic') {
+				openSubtopicEditForm(subtopic);
+				return;
+			}
+
+			if (action === 'delete-subtopic') {
+				openDeleteModal({
+					type: 'subtopic',
+					id: subtopic.id
+				});
+
+				return;
+			}
+		}
+
+		const themeCard = event.target.closest('[data-organization-theme-id]');
+
+		if (themeCard) {
+			selectTheme(themeCard.dataset.organizationThemeId);
+			return;
+		}
+
+		const subtopicCard = event.target.closest('[data-organization-subtopic-id]');
+
+		if (subtopicCard) {
+			toggleSubtopicSelection(subtopicCard.dataset.organizationSubtopicId);
+		}
+	}
+
+	function handleSubjectModalOverlayClick(event) {
+		if (event.target === subjectModalLayer) {
+			closeSubjectModal();
+		}
+	}
+
+	function handleSubjectModalKeydown(event) {
+		if (isDeleteModalOpen || isImportModalOpen) {
+			return;
+		}
+
+		if (event.key === 'Escape' && !subjectModalLayer.hidden) {
+			closeSubjectModal();
+		}
+	}
+
+	function handleImportContextClick(event) {
+		const themeButton = event.target.closest('[data-organization-import-select-theme]');
+
+		if (!themeButton) {
+			return;
+		}
+
+		const theme = getThemeById(themeButton.dataset.organizationImportSelectTheme);
+
+		if (!theme) {
+			return;
+		}
+
+		selectedSubjectId = theme.subjectId;
+		selectedThemeId = theme.id;
+		selectedSubtopicId = null;
+
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		renderOrganization();
+		renderImportContext();
+
+		resetImportValidation('Tema selecionado. Valide a lista para importar.');
+		importTextInput.focus();
+	}
+
+	function handleDataReset() {
+		selectedSubjectId = null;
+		selectedThemeId = null;
+		selectedSubtopicId = null;
+
+		subjectSearchText = '';
+		themeSearchText = '';
+		subtopicSearchText = '';
+
+		subjectCardMode = 'view';
+		themeCardMode = 'view';
+		isSubtopicFormOpen = false;
+		editingSubtopicId = null;
+
+		pendingDeleteTarget = null;
+		isDeleteModalOpen = false;
+		isImportModalOpen = false;
+
+		subjectSearchInput.value = '';
+		themeSearchInput.value = '';
+		subtopicSearchInput.value = '';
+
+		closeImportModal();
+		closeDeleteModal();
+		closeSubjectModal();
+		renderOrganization();
+	}
+
+	subjectSearchForm.addEventListener('submit', handleSubjectSearchSubmit);
+	subjectSearchInput.addEventListener('input', handleSubjectSearchInput);
+
+	themeSearchForm.addEventListener('submit', handleThemeSearchSubmit);
+	themeSearchInput.addEventListener('input', handleThemeSearchInput);
+
+	subtopicSearchForm.addEventListener('submit', handleSubtopicSearchSubmit);
+	subtopicSearchInput.addEventListener('input', handleSubtopicSearchInput);
+
+	subjectGallery.addEventListener('click', handleSubjectGalleryClick);
+	subjectGallery.addEventListener('keydown', handleSubjectGalleryKeydown);
+
+	subjectAddCard.addEventListener('click', openSubjectCreateForm);
+	themeAddCard.addEventListener('click', openThemeCreateForm);
+	subtopicAddCard.addEventListener('click', openSubtopicCreateForm);
+	emptyThemesState.addEventListener('click', handleEmptyThemesStateClick);
+	emptySubtopicsState.addEventListener('click', handleEmptySubtopicsStateClick);
+
+	organizationTree.addEventListener('click', handleTreeClick);
+	subjectFeatureCard.addEventListener('click', handleFeatureCardAction);
+
+	subjectModalLayer.addEventListener('click', handleSubjectModalClick);
+	subjectModalLayer.addEventListener('click', handleSubjectModalOverlayClick);
+	document.addEventListener('keydown', handleSubjectModalKeydown);
+
+	deleteModalLayer.addEventListener('click', handleDeleteModalClick);
+	deleteModalCloseButton.addEventListener('click', closeDeleteModal);
+	deleteModalCancelButton.addEventListener('click', closeDeleteModal);
+	deleteModalCheckInput.addEventListener('change', updateDeleteConfirmState);
+	deleteModalConfirmButton.addEventListener('click', confirmDeleteModal);
+	document.addEventListener('keydown', handleDeleteModalKeydown);
+
+	importButtons.forEach((button) => {
+		button.addEventListener('click', handleImportButtonClick);
+	});
+
+	importModalLayer.addEventListener('click', handleImportModalOverlayClick);
+	importModalCloseButton.addEventListener('click', closeImportModal);
+	importModalCancelButton.addEventListener('click', closeImportModal);
+	importModalClearButton.addEventListener('click', clearImportModal);
+	importModalValidateButton.addEventListener('click', validateImportItems);
+	importModalConfirmButton.addEventListener('click', importValidatedItems);
+	importContextLabel.addEventListener('click', handleImportContextClick);
+
+	importTextInput.addEventListener('input', () => {
+		resetImportValidation();
+	});
+
+	importTypeButtons.forEach((button) => {
+		button.addEventListener('click', () => {
+			if (button.disabled) {
+				return;
+			}
+
+			setActiveImportKind(button.dataset.importKind);
+		});
+	});
+
+	document.addEventListener('keydown', handleImportModalKeydown);
+
+	document.addEventListener('subjects:changed', renderOrganization);
+	document.addEventListener('themes:changed', renderOrganization);
+	document.addEventListener('subtopics:changed', renderOrganization);
+	document.addEventListener('questions:changed', renderOrganization);
+	document.addEventListener('attempts:changed', renderOrganization);
+	document.addEventListener('errorReviews:changed', renderOrganization);
+	document.addEventListener('app:data-reset', handleDataReset);
+
+	renderOrganization();
+
+	console.log('Organização v1.2 carregada.');
 }
