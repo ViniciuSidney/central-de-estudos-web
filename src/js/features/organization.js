@@ -2304,24 +2304,79 @@ export function initOrganization() {
       .filter(Boolean);
   }
 
-  function formatImportKindName(kind) {
+  function getImportGrammar(kind) {
     if (kind === "subjects") {
-      return "matérias";
-    }
-
-    if (kind === "themes") {
-      return "temas";
-    }
-
-    if (kind === "subtopics") {
-      return "assuntos";
+      return {
+        plural: "matérias",
+        validPlural: "válidas",
+        newSingular: "nova encontrada",
+        newPlural: "novas encontradas",
+        duplicateSingular: "duplicada",
+        duplicatePlural: "duplicadas",
+        alreadyRegistered: "já cadastrada",
+      };
     }
 
     if (kind === "questions") {
-      return "questões";
+      return {
+        plural: "questões",
+        validPlural: "válidas",
+        newSingular: "nova encontrada",
+        newPlural: "novas encontradas",
+        duplicateSingular: "duplicada",
+        duplicatePlural: "duplicadas",
+        alreadyRegistered: "já cadastrada",
+      };
     }
 
-    return "conteúdos";
+    if (kind === "themes") {
+      return {
+        plural: "temas",
+        validPlural: "válidos",
+        newSingular: "novo encontrado",
+        newPlural: "novos encontrados",
+        duplicateSingular: "duplicado",
+        duplicatePlural: "duplicados",
+        alreadyRegistered: "já cadastrado",
+      };
+    }
+
+    if (kind === "subtopics") {
+      return {
+        plural: "assuntos",
+        validPlural: "válidos",
+        newSingular: "novo encontrado",
+        newPlural: "novos encontrados",
+        duplicateSingular: "duplicado",
+        duplicatePlural: "duplicados",
+        alreadyRegistered: "já cadastrado",
+      };
+    }
+
+    return {
+      plural: "conteúdos",
+      validPlural: "válidos",
+      newSingular: "novo encontrado",
+      newPlural: "novos encontrados",
+      duplicateSingular: "duplicado",
+      duplicatePlural: "duplicados",
+      alreadyRegistered: "já cadastrado",
+    };
+  }
+
+  function formatImportKindName(kind) {
+    return getImportGrammar(kind).plural;
+  }
+
+  function formatImportNewItemsMessage(kind, total) {
+    const grammar = getImportGrammar(kind);
+    const adjective = total === 1 ? grammar.newSingular : grammar.newPlural;
+
+    return `${total} ${grammar.plural} ${adjective}`;
+  }
+
+  function getImportAlreadyRegisteredText(kind) {
+    return getImportGrammar(kind).alreadyRegistered;
   }
 
   function getDefaultImportKind(sourceKind) {
@@ -2550,7 +2605,7 @@ export function initOrganization() {
       if (existingItem) {
         duplicatedImportItems.push({
           name: item,
-          reason: "já cadastrado",
+          reason: getImportAlreadyRegisteredText(activeImportKind),
         });
 
         return;
@@ -2568,11 +2623,12 @@ export function initOrganization() {
     importErrorCount.textContent = String(importErrors.length);
 
     const kindName = formatImportKindName(activeImportKind);
+    const newItemsMessage = formatImportNewItemsMessage(activeImportKind, validatedImportItems.length);
 
     if (validatedImportItems.length > 0 && duplicatedImportItems.length === 0 && importErrors.length === 0) {
-      importValidationStatus.textContent = `${validatedImportItems.length} ${kindName} prontos para importar.`;
+      importValidationStatus.textContent = `${newItemsMessage}. Pronto para importar.`;
     } else if (validatedImportItems.length > 0) {
-      importValidationStatus.textContent = `${validatedImportItems.length} ${kindName} novos encontrados. Alguns itens serão ignorados.`;
+      importValidationStatus.textContent = `${newItemsMessage}. Alguns itens serão ignorados.`;
     } else if (duplicatedImportItems.length > 0 && importErrors.length === 0) {
       importValidationStatus.textContent = "Nenhum item novo encontrado. Todos parecem repetidos.";
     } else {
