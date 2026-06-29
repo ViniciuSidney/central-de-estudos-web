@@ -63,7 +63,43 @@ export function initOrganization() {
   const deleteModalCancelButton = deleteModalLayer?.querySelector(".organization-delete-modal__cancel");
   const deleteModalCloseButton = deleteModalLayer?.querySelector(".organization-modal-close");
 
+  const importButtons = organizationSection.querySelectorAll("[data-organization-import]");
+  const importModalLayer = organizationSection.querySelector("#organization-import-modal");
+  const importModalCloseButton = importModalLayer?.querySelector("#organization-import-close");
+  const importModalCancelButton = importModalLayer?.querySelector("#organization-import-cancel");
+  const importModalClearButton = importModalLayer?.querySelector("#organization-import-clear");
+  const importModalValidateButton = importModalLayer?.querySelector("#organization-import-validate");
+  const importModalConfirmButton = importModalLayer?.querySelector("#organization-import-confirm");
+  const importContextLabel = importModalLayer?.querySelector("#organization-import-context");
+  const importTextInput = importModalLayer?.querySelector("#organization-import-text");
+  const importFormatHelp = importModalLayer?.querySelector("#organization-import-format-help");
+  const importTypeButtons = importModalLayer?.querySelectorAll("[data-import-kind]");
+  const importValidationStatus = importModalLayer?.querySelector("#organization-import-validation-status");
+  const importValidCount = importModalLayer?.querySelector("#organization-import-valid-count");
+  const importDuplicateCount = importModalLayer?.querySelector("#organization-import-duplicate-count");
+  const importErrorCount = importModalLayer?.querySelector("#organization-import-error-count");
+  const importResultList = importModalLayer?.querySelector("#organization-import-result-list");
+  const importErrorList = importModalLayer?.querySelector("#organization-import-error-list");
+
   if (
+    importButtons.length === 0 ||
+    !importModalLayer ||
+    !importModalCloseButton ||
+    !importModalCancelButton ||
+    !importModalClearButton ||
+    !importModalValidateButton ||
+    !importModalConfirmButton ||
+    !importContextLabel ||
+    !importTextInput ||
+    !importFormatHelp ||
+    !importTypeButtons ||
+    importTypeButtons.length === 0 ||
+    !importValidationStatus ||
+    !importValidCount ||
+    !importDuplicateCount ||
+    !importErrorCount ||
+    !importResultList ||
+    !importErrorList ||
     !deleteModalLayer ||
     !deleteModalTitle ||
     !deleteModalName ||
@@ -117,6 +153,7 @@ export function initOrganization() {
 
   let isSubjectModalOpen = false;
   let isDeleteModalOpen = false;
+  let isImportModalOpen = false;
 
   let subjectCardMode = "view";
   let themeCardMode = "view";
@@ -124,6 +161,10 @@ export function initOrganization() {
   let editingSubtopicId = null;
 
   let pendingDeleteTarget = null;
+  let activeImportKind = "subjects";
+  let validatedImportItems = [];
+  let duplicatedImportItems = [];
+  let importErrors = [];
 
   const collapsedSubjectIds = new Set();
   const collapsedThemeIds = new Set();
@@ -1452,7 +1493,7 @@ export function initOrganization() {
   }
 
   function syncBodyScrollLock() {
-    document.body.style.overflow = isSubjectModalOpen || isDeleteModalOpen ? "hidden" : "";
+    document.body.style.overflow = isSubjectModalOpen || isDeleteModalOpen || isImportModalOpen ? "hidden" : "";
   }
 
   function openSubjectModal(subjectId) {
@@ -2256,6 +2297,409 @@ export function initOrganization() {
     }
   }
 
+  function parseImportListText(text) {
+    return String(text ?? "")
+      .split(/[\n,;]+/)
+      .map((item) => item.replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+  }
+
+  function formatImportKindName(kind) {
+    if (kind === "subjects") {
+      return "matérias";
+    }
+
+    if (kind === "themes") {
+      return "temas";
+    }
+
+    if (kind === "subtopics") {
+      return "assuntos";
+    }
+
+    if (kind === "questions") {
+      return "questões";
+    }
+
+    return "conteúdos";
+  }
+
+  function getDefaultImportKind(sourceKind) {
+    if (sourceKind === "subjects") {
+      return "subjects";
+    }
+
+    if (sourceKind === "themes") {
+      return "themes";
+    }
+
+    if (sourceKind === "topic") {
+      return "subtopics";
+    }
+
+    if (sourceKind === "subtopic") {
+      return "questions";
+    }
+
+    return "subjects";
+  }
+
+  function getImportContextText(kind = activeImportKind) {
+    const subject = getSubjectById(selectedSubjectId);
+    const theme = getThemeById(selectedThemeId);
+    const subtopic = getSubtopicById(selectedSubtopicId);
+
+    if (kind === "subjects") {
+      return "Organização geral";
+    }
+
+    if (kind === "themes") {
+      return subject ? subject.name : "Selecione uma matéria";
+    }
+
+    if (kind === "subtopics") {
+      if (subject && theme) {
+        return `${subject.name} › ${theme.name}`;
+      }
+
+      if (subject) {
+        return `${subject.name} › selecione um tema`;
+      }
+
+      return "Selecione uma matéria e um tema";
+    }
+
+    if (kind === "questions") {
+      if (subject && theme && subtopic) {
+        return `${subject.name} › ${theme.name} › ${subtopic.name}`;
+      }
+
+      if (subject && theme) {
+        return `${subject.name} › ${theme.name}`;
+      }
+
+      return "Selecione um tema ou assunto";
+    }
+
+    return "Organização";
+  }
+
+  function getImportHelpText(kind = activeImportKind) {
+    if (kind === "subjects") {
+      return "Cole uma lista de matérias separadas por quebra de linha, vírgula ou ponto e vírgula.";
+    }
+
+    if (kind === "themes") {
+      return "Cole uma lista de temas. Eles serão adicionados à matéria selecionada.";
+    }
+
+    if (kind === "subtopics") {
+      return "Cole uma lista de assuntos. Eles serão adicionados ao tema selecionado.";
+    }
+
+    if (kind === "questions") {
+      return "A importação de questões pela Organização será implementada na próxima fase.";
+    }
+
+    return "Cole os conteúdos para importação.";
+  }
+
+  function resetImportValidation(status = "Aguardando validação.") {
+    validatedImportItems = [];
+    duplicatedImportItems = [];
+    importErrors = [];
+
+    importValidationStatus.textContent = status;
+    importValidCount.textContent = "0";
+    importDuplicateCount.textContent = "0";
+    importErrorCount.textContent = "0";
+
+    importResultList.innerHTML = "";
+    importErrorList.innerHTML = "";
+
+    importModalConfirmButton.disabled = true;
+  }
+
+  function renderImportTypeButtons() {
+    importTypeButtons.forEach((button) => {
+      const kind = button.dataset.importKind;
+      const isQuestions = kind === "questions";
+
+      button.classList.toggle("is-active", kind === activeImportKind);
+      button.disabled = isQuestions;
+      button.title = isQuestions ? "Importação de questões entra na próxima fase." : "";
+    });
+  }
+
+  function setActiveImportKind(kind) {
+    activeImportKind = kind;
+
+    importContextLabel.textContent = getImportContextText(kind);
+    importFormatHelp.textContent = getImportHelpText(kind);
+
+    renderImportTypeButtons();
+    resetImportValidation();
+  }
+
+  function openImportModal(sourceKind) {
+    const defaultKind = getDefaultImportKind(sourceKind);
+
+    activeImportKind = defaultKind === "questions" ? "subtopics" : defaultKind;
+
+    importTextInput.value = "";
+
+    setActiveImportKind(activeImportKind);
+
+    isImportModalOpen = true;
+    importModalLayer.hidden = false;
+
+    syncBodyScrollLock();
+
+    requestAnimationFrame(() => {
+      importTextInput.focus();
+    });
+  }
+
+  function closeImportModal() {
+    isImportModalOpen = false;
+
+    importModalLayer.hidden = true;
+    importTextInput.value = "";
+
+    resetImportValidation();
+
+    syncBodyScrollLock();
+  }
+
+  function clearImportModal() {
+    importTextInput.value = "";
+    resetImportValidation();
+
+    importTextInput.focus();
+  }
+
+  function getExistingImportMatch(kind, name) {
+    if (kind === "subjects") {
+      return getSubjects().find((subject) => compareNames(subject.name, name));
+    }
+
+    if (kind === "themes") {
+      return getThemesBySubjectId(selectedSubjectId).find((theme) => compareNames(theme.name, name));
+    }
+
+    if (kind === "subtopics") {
+      return getSubtopicsByThemeId(selectedThemeId).find((subtopic) => compareNames(subtopic.name, name));
+    }
+
+    return null;
+  }
+
+  function validateImportContext() {
+    if (activeImportKind === "themes" && !selectedSubjectId) {
+      return "Selecione uma matéria antes de importar temas.";
+    }
+
+    if (activeImportKind === "subtopics" && (!selectedSubjectId || !selectedThemeId)) {
+      return "Selecione uma matéria e um tema antes de importar assuntos.";
+    }
+
+    if (activeImportKind === "questions") {
+      return "A importação de questões pela Organização será implementada na próxima fase.";
+    }
+
+    return "";
+  }
+
+  function validateImportItems() {
+    resetImportValidation("Validando...");
+
+    const contextError = validateImportContext();
+
+    if (contextError) {
+      importErrors = [contextError];
+      renderImportValidation();
+      return;
+    }
+
+    const rawItems = parseImportListText(importTextInput.value);
+
+    if (rawItems.length === 0) {
+      importErrors = ["Cole pelo menos um item para importar."];
+      renderImportValidation();
+      return;
+    }
+
+    const seenItems = [];
+
+    rawItems.forEach((item) => {
+      const alreadyInInput = seenItems.some((seenItem) => compareNames(seenItem, item));
+
+      if (alreadyInInput) {
+        duplicatedImportItems.push({
+          name: item,
+          reason: "repetido na lista",
+        });
+
+        return;
+      }
+
+      seenItems.push(item);
+
+      const existingItem = getExistingImportMatch(activeImportKind, item);
+
+      if (existingItem) {
+        duplicatedImportItems.push({
+          name: item,
+          reason: "já cadastrado",
+        });
+
+        return;
+      }
+
+      validatedImportItems.push(item);
+    });
+
+    renderImportValidation();
+  }
+
+  function renderImportValidation() {
+    importValidCount.textContent = String(validatedImportItems.length);
+    importDuplicateCount.textContent = String(duplicatedImportItems.length);
+    importErrorCount.textContent = String(importErrors.length);
+
+    const kindName = formatImportKindName(activeImportKind);
+
+    if (validatedImportItems.length > 0 && duplicatedImportItems.length === 0 && importErrors.length === 0) {
+      importValidationStatus.textContent = `${validatedImportItems.length} ${kindName} prontos para importar.`;
+    } else if (validatedImportItems.length > 0) {
+      importValidationStatus.textContent = `${validatedImportItems.length} ${kindName} novos encontrados. Alguns itens serão ignorados.`;
+    } else if (duplicatedImportItems.length > 0 && importErrors.length === 0) {
+      importValidationStatus.textContent = "Nenhum item novo encontrado. Todos parecem repetidos.";
+    } else {
+      importValidationStatus.textContent = "Corrija os avisos antes de importar.";
+    }
+
+    importResultList.innerHTML = [
+      ...validatedImportItems.map((item) => {
+        return `<li>✅ ${escapeHTML(item)}</li>`;
+      }),
+      ...duplicatedImportItems.map((item) => {
+        return `<li>⚠️ ${escapeHTML(item.name)} — ${escapeHTML(item.reason)}</li>`;
+      }),
+    ].join("");
+
+    importErrorList.innerHTML = importErrors
+      .map((error) => {
+        return `<li>${escapeHTML(error)}</li>`;
+      })
+      .join("");
+
+    importModalConfirmButton.disabled = validatedImportItems.length === 0;
+  }
+
+  function importValidatedItems() {
+    if (validatedImportItems.length === 0) {
+      return;
+    }
+
+    if (activeImportKind === "subjects") {
+      const newSubjects = validatedImportItems.map((name) => createSubject(name));
+
+      saveSubjects([...getSubjects(), ...newSubjects]);
+
+      selectedSubjectId = newSubjects[0]?.id || selectedSubjectId;
+      selectedThemeId = null;
+      selectedSubtopicId = null;
+      subjectCardMode = "view";
+
+      notifySubjectsChanged();
+      closeImportModal();
+      renderOrganization();
+
+      return;
+    }
+
+    if (activeImportKind === "themes") {
+      if (!selectedSubjectId) {
+        importErrors = ["Selecione uma matéria antes de importar temas."];
+        renderImportValidation();
+        return;
+      }
+
+      const newThemes = validatedImportItems.map((name) => {
+        return createTheme({
+          subjectId: selectedSubjectId,
+          name,
+        });
+      });
+
+      saveThemes([...getThemes(), ...newThemes]);
+
+      selectedThemeId = newThemes[0]?.id || selectedThemeId;
+      selectedSubtopicId = null;
+      themeCardMode = "view";
+
+      notifyThemesChanged();
+      closeImportModal();
+      renderOrganization();
+
+      return;
+    }
+
+    if (activeImportKind === "subtopics") {
+      if (!selectedSubjectId || !selectedThemeId) {
+        importErrors = ["Selecione uma matéria e um tema antes de importar assuntos."];
+        renderImportValidation();
+        return;
+      }
+
+      let firstImportedSubtopicId = null;
+
+      validatedImportItems.forEach((name) => {
+        const result = addSubtopic({
+          subjectId: selectedSubjectId,
+          themeId: selectedThemeId,
+          name,
+        });
+
+        if (result.ok && !firstImportedSubtopicId) {
+          firstImportedSubtopicId = result.subtopic.id;
+        }
+      });
+
+      selectedSubtopicId = firstImportedSubtopicId || selectedSubtopicId;
+      isSubtopicFormOpen = false;
+      editingSubtopicId = null;
+
+      closeImportModal();
+      renderOrganization();
+
+      return;
+    }
+  }
+
+  function handleImportButtonClick(event) {
+    const button = event.target.closest("[data-organization-import]");
+
+    if (!button) {
+      return;
+    }
+
+    openImportModal(button.dataset.organizationImport);
+  }
+
+  function handleImportModalOverlayClick(event) {
+    if (event.target === importModalLayer) {
+      closeImportModal();
+    }
+  }
+
+  function handleImportModalKeydown(event) {
+    if (event.key === "Escape" && isImportModalOpen) {
+      closeImportModal();
+    }
+  }
+
   function handleSubjectGalleryClick(event) {
     const subjectCard = event.target.closest("[data-organization-subject-id]");
 
@@ -2616,7 +3060,7 @@ export function initOrganization() {
   }
 
   function handleSubjectModalKeydown(event) {
-    if (isDeleteModalOpen) {
+    if (isDeleteModalOpen || isImportModalOpen) {
       return;
     }
 
@@ -2641,11 +3085,13 @@ export function initOrganization() {
 
     pendingDeleteTarget = null;
     isDeleteModalOpen = false;
+    isImportModalOpen = false;
 
     subjectSearchInput.value = "";
     themeSearchInput.value = "";
     subtopicSearchInput.value = "";
 
+    closeImportModal();
     closeDeleteModal();
     closeSubjectModal();
     renderOrganization();
@@ -2682,6 +3128,33 @@ export function initOrganization() {
   deleteModalCheckInput.addEventListener("change", updateDeleteConfirmState);
   deleteModalConfirmButton.addEventListener("click", confirmDeleteModal);
   document.addEventListener("keydown", handleDeleteModalKeydown);
+
+  importButtons.forEach((button) => {
+    button.addEventListener("click", handleImportButtonClick);
+  });
+
+  importModalLayer.addEventListener("click", handleImportModalOverlayClick);
+  importModalCloseButton.addEventListener("click", closeImportModal);
+  importModalCancelButton.addEventListener("click", closeImportModal);
+  importModalClearButton.addEventListener("click", clearImportModal);
+  importModalValidateButton.addEventListener("click", validateImportItems);
+  importModalConfirmButton.addEventListener("click", importValidatedItems);
+
+  importTextInput.addEventListener("input", () => {
+    resetImportValidation();
+  });
+
+  importTypeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.disabled) {
+        return;
+      }
+
+      setActiveImportKind(button.dataset.importKind);
+    });
+  });
+
+  document.addEventListener("keydown", handleImportModalKeydown);
 
   document.addEventListener("subjects:changed", renderOrganization);
   document.addEventListener("themes:changed", renderOrganization);
