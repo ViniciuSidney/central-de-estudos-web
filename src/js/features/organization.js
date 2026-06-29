@@ -2399,7 +2399,56 @@ export function initOrganization() {
     return "subjects";
   }
 
-  function getImportContextText(kind = activeImportKind) {
+  function getImportThemePickerHTML(subject) {
+    const themes = getThemesBySubjectId(subject.id);
+
+    if (themes.length === 0) {
+      return `
+			<span class="organization-import-theme-picker">
+				<button
+					class="organization-import-theme-picker__trigger"
+					type="button"
+					disabled
+				>
+					nenhum tema cadastrado
+				</button>
+			</span>
+		`;
+    }
+
+    const themesHTML = themes
+      .map((theme) => {
+        return `
+				<button
+					class="organization-import-theme-picker__option"
+					type="button"
+					data-organization-import-select-theme="${escapeHTML(theme.id)}"
+					title="${escapeHTML(theme.name)}"
+				>
+					${escapeHTML(theme.name)}
+				</button>
+			`;
+      })
+      .join("");
+
+    return `
+		<span class="organization-import-theme-picker">
+			<button
+				class="organization-import-theme-picker__trigger"
+				type="button"
+				aria-label="Selecionar tema para importação"
+			>
+				selecione um tema
+			</button>
+
+			<span class="organization-import-theme-picker__menu" role="listbox">
+				${themesHTML}
+			</span>
+		</span>
+	`;
+  }
+
+  function getImportContextHTML(kind = activeImportKind) {
     const subject = getSubjectById(selectedSubjectId);
     const theme = getThemeById(selectedThemeId);
     const subtopic = getSubtopicById(selectedSubtopicId);
@@ -2409,16 +2458,16 @@ export function initOrganization() {
     }
 
     if (kind === "themes") {
-      return subject ? subject.name : "Selecione uma matéria";
+      return subject ? escapeHTML(subject.name) : "Selecione uma matéria";
     }
 
     if (kind === "subtopics") {
       if (subject && theme) {
-        return `${subject.name} › ${theme.name}`;
+        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
       }
 
       if (subject) {
-        return `${subject.name} › selecione um tema`;
+        return `${escapeHTML(subject.name)} › ${getImportThemePickerHTML(subject)}`;
       }
 
       return "Selecione uma matéria e um tema";
@@ -2426,17 +2475,21 @@ export function initOrganization() {
 
     if (kind === "questions") {
       if (subject && theme && subtopic) {
-        return `${subject.name} › ${theme.name} › ${subtopic.name}`;
+        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)} › ${escapeHTML(subtopic.name)}`;
       }
 
       if (subject && theme) {
-        return `${subject.name} › ${theme.name}`;
+        return `${escapeHTML(subject.name)} › ${escapeHTML(theme.name)}`;
       }
 
       return "Selecione um tema ou assunto";
     }
 
     return "Organização";
+  }
+
+  function renderImportContext(kind = activeImportKind) {
+    importContextLabel.innerHTML = getImportContextHTML(kind);
   }
 
   function getImportHelpText(kind = activeImportKind) {
@@ -2489,7 +2542,7 @@ export function initOrganization() {
   function setActiveImportKind(kind) {
     activeImportKind = kind;
 
-    importContextLabel.textContent = getImportContextText(kind);
+    renderImportContext(kind);
     importFormatHelp.textContent = getImportHelpText(kind);
 
     renderImportTypeButtons();
@@ -3125,6 +3178,34 @@ export function initOrganization() {
     }
   }
 
+  function handleImportContextClick(event) {
+    const themeButton = event.target.closest("[data-organization-import-select-theme]");
+
+    if (!themeButton) {
+      return;
+    }
+
+    const theme = getThemeById(themeButton.dataset.organizationImportSelectTheme);
+
+    if (!theme) {
+      return;
+    }
+
+    selectedSubjectId = theme.subjectId;
+    selectedThemeId = theme.id;
+    selectedSubtopicId = null;
+
+    themeCardMode = "view";
+    isSubtopicFormOpen = false;
+    editingSubtopicId = null;
+
+    renderOrganization();
+    renderImportContext();
+
+    resetImportValidation("Tema selecionado. Valide a lista para importar.");
+    importTextInput.focus();
+  }
+
   function handleDataReset() {
     selectedSubjectId = null;
     selectedThemeId = null;
@@ -3195,6 +3276,7 @@ export function initOrganization() {
   importModalClearButton.addEventListener("click", clearImportModal);
   importModalValidateButton.addEventListener("click", validateImportItems);
   importModalConfirmButton.addEventListener("click", importValidatedItems);
+  importContextLabel.addEventListener("click", handleImportContextClick);
 
   importTextInput.addEventListener("input", () => {
     resetImportValidation();

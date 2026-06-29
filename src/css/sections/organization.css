@@ -1837,6 +1837,121 @@
 }
 
 /* =========================================================
+   AJUSTE — SELETOR DE TEMA NO CONTEXTO DA IMPORTAÇÃO
+   ========================================================= */
+
+.organization-import-theme-picker {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  vertical-align: middle;
+}
+
+.organization-import-theme-picker::after {
+  content: "";
+
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 89;
+
+  width: min(260px, 72vw);
+  height: 14px;
+
+  display: none;
+}
+
+.organization-import-theme-picker__trigger {
+  min-height: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px 6px;
+
+  cursor: pointer;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+
+  background: transparent;
+  border: 1px dashed var(--accent);
+  border-radius: 999px;
+}
+
+.organization-import-theme-picker__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.organization-import-theme-picker__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 90;
+
+  width: min(260px, 72vw);
+  max-height: 220px;
+  overflow-y: auto;
+
+  display: none;
+  gap: 6px;
+
+  padding: 8px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.organization-import-theme-picker:hover::after,
+.organization-import-theme-picker:focus-within::after {
+  display: block;
+}
+
+.organization-import-theme-picker:hover .organization-import-theme-picker__menu,
+.organization-import-theme-picker:focus-within .organization-import-theme-picker__menu {
+  display: grid;
+}
+
+.organization-import-theme-picker__option {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+
+  display: block;
+
+  padding: 8px 10px;
+
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: left;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.organization-import-theme-picker__option:hover,
+.organization-import-theme-picker__option:focus-visible {
+  outline: none;
+  background: var(--success-soft);
+  border-color: var(--accent);
+}
+
+/* =========================================================
    9. RESPONSIVIDADE
    ========================================================= */
 
